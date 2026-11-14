@@ -1,0 +1,1078 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ôn Luyện Củng Cố Kiến Thức - Bài 17: Trọng Lực Và Lực Căng</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- MathJax Configuration -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)']],
+                displayMath: [['\\[', '\\]']],
+                processEscapes: true
+            },
+            options: {
+                ignoreHtmlClass: 'tex2jax_ignore',
+                processHtmlClass: 'tex2jax_process'
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0b0d19;
+            color: #f3f4f6;
+            min-height: 100vh;
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #121528;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #2a2f4c;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #3b4269;
+        }
+
+        .header-title-cream {
+            color: #FFFDD0;
+        }
+
+        .card-dark {
+            background-color: #121528;
+            border: 1px solid #1e233d;
+        }
+
+        .card-hover:hover {
+            border-color: #3b82f6;
+            transform: translateY(-2px);
+            transition: all 0.2s ease;
+        }
+
+        .btn-gold {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: #ffffff;
+        }
+        .btn-gold:hover {
+            background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%);
+        }
+
+        .btn-emerald {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: #ffffff;
+        }
+        .btn-emerald:hover {
+            background: linear-gradient(135deg, #34d399 0%, #059669 100%);
+        }
+
+        /* Quiz navigation grid active states */
+        .q-grid-btn {
+            transition: all 0.15s ease-in-out;
+        }
+        .q-grid-btn.current {
+            border: 2px solid #60a5fa !important;
+            background-color: #1e3a8a !important;
+            color: #ffffff !important;
+        }
+        .q-grid-btn.answered {
+            background-color: #d97706 !important;
+            color: #ffffff !important;
+        }
+
+        /* Radio choice styles */
+        .option-box {
+            background-color: #1a1d36;
+            border: 1px solid #2a2f4c;
+            transition: all 0.2s ease;
+        }
+        .option-box:hover {
+            border-color: #4f46e5;
+            background-color: #212545;
+        }
+        .option-box.selected {
+            border-color: #3b82f6;
+            background-color: #1e293b;
+            box-shadow: 0 0 10px rgba(59, 130, 246, 0.2);
+        }
+
+        /* Results Option styles */
+        .option-correct {
+            border-color: #10b981 !important;
+            background-color: rgba(16, 185, 129, 0.15) !important;
+            color: #a7f3d0 !important;
+        }
+        .option-wrong {
+            border-color: #ef4444 !important;
+            background-color: rgba(239, 68, 68, 0.15) !important;
+            color: #fca5a5 !important;
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen text-slate-100">
+
+    <!-- TOP HEADER BAR -->
+    <header class="bg-[#0e1122] border-b border-[#1e233d] sticky top-0 z-50 px-4 py-3 shadow-md">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-2">
+            <div class="flex items-center space-x-3">
+                <div class="bg-amber-500/20 p-2 rounded-lg text-amber-400">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="font-extrabold text-lg md:text-xl tracking-tight header-title-cream uppercase">
+                        ÔN LUYỆN CỦNG CỐ KIẾN THỨC
+                    </h1>
+                    <p class="text-xs text-slate-400 font-medium">
+                        Bài 17: TRỌNG LỰC VÀ LỰC CĂNG <span class="text-slate-500">(Vật lí 10 - Chương III: Động lực học)</span>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Mode status badge -->
+            <div id="top-status-badge" class="flex items-center space-x-2 bg-[#1a1d36] px-3 py-1.5 rounded-full border border-slate-700/60 text-xs text-slate-300 font-medium">
+                <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+                <span id="top-status-text">Chưa chọn chế độ</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="flex-grow max-w-7xl w-full mx-auto p-4 md:p-6">
+
+        <!-- SCREEN 1: LANDING & MODE SELECTION -->
+        <section id="view-landing" class="space-y-8 py-4">
+            <!-- Hero Title -->
+            <div class="text-center space-y-3 max-w-3xl mx-auto">
+                <div class="inline-flex items-center justify-center p-3 bg-amber-500/10 rounded-full text-amber-400 mb-2">
+                    <svg class="w-10 h-10" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                    </svg>
+                </div>
+                <h2 class="text-2xl md:text-4xl font-black text-white tracking-wide uppercase">
+                    BÀI KIỂM TRA TRẮC NGHIỆM KHÁCH QUAN
+                </h2>
+                <p class="text-sm md:text-base text-slate-300">
+                    Bộ câu hỏi chuẩn hóa gồm <strong class="text-amber-400">20 câu hỏi</strong> bám sát nội dung bài học <strong class="text-amber-300">Trọng Lực Và Lực Căng</strong> với 4 mức độ tư duy chuẩn cấu trúc Bộ Giáo dục.
+                </p>
+            </div>
+
+            <!-- 4 Difficulty level indicator cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="card-dark p-4 rounded-xl space-y-2 border-l-4 border-l-blue-500">
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs font-bold text-blue-400 uppercase tracking-wider">MỨC BIẾT</span>
+                        <span class="text-xs px-2 py-0.5 rounded bg-blue-500/20 text-blue-300 font-semibold">8 CÂU</span>
+                    </div>
+                    <p class="text-xs text-slate-400 leading-relaxed">
+                        Định nghĩa trọng lực, biểu thức \(\vec{P} = m\vec{g}\), phân biệt trọng lượng và khối lượng, đặc điểm lực căng dây.
+                    </p>
+                </div>
+
+                <div class="card-dark p-4 rounded-xl space-y-2 border-l-4 border-l-emerald-500">
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs font-bold text-emerald-400 uppercase tracking-wider">MỨC HIỂU</span>
+                        <span class="text-xs px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-semibold">7 CÂU</span>
+                    </div>
+                    <p class="text-xs text-slate-400 leading-relaxed">
+                        Trọng tâm của vật đối xứng, lực căng tại các điểm trên dây nhẹ, vệ tinh rơi xuống Trái Đất, phân tích lực cân bằng.
+                    </p>
+                </div>
+
+                <div class="card-dark p-4 rounded-xl space-y-2 border-l-4 border-l-amber-500">
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs font-bold text-amber-400 uppercase tracking-wider">VẬN DỤNG</span>
+                        <span class="text-xs px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 font-semibold">3 CÂU</span>
+                    </div>
+                    <p class="text-xs text-slate-400 leading-relaxed">
+                        Tính khối lượng từ số chỉ lực kế, bài toán bóng đèn treo cân bằng kiểm tra lực căng giới hạn, dây treo đối xứng.
+                    </p>
+                </div>
+
+                <div class="card-dark p-4 rounded-xl space-y-2 border-l-4 border-l-purple-500">
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs font-bold text-purple-400 uppercase tracking-wider">VD CAO</span>
+                        <span class="text-xs px-2 py-0.5 rounded bg-purple-500/20 text-purple-300 font-semibold">2 CÂU</span>
+                    </div>
+                    <p class="text-xs text-slate-400 leading-relaxed">
+                        Bài toán vật kéo lên có gia tốc bằng dây, hệ hai vật nối dây chuyển động hoặc treo qua ròng rọc.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Mode Select Title -->
+            <div class="pt-4 text-center">
+                <span class="text-xs font-bold text-slate-400 uppercase tracking-widest bg-[#1a1d36] px-4 py-2 rounded-full border border-slate-700/60">
+                    VUI LÒNG CHỌN HÌNH THỨC KIỂM TRA:
+                </span>
+            </div>
+
+            <!-- Mode Select Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+                <!-- Practice Mode Card -->
+                <div onclick="startQuiz('practice')" class="card-dark card-hover p-6 rounded-2xl cursor-pointer flex flex-col justify-between space-y-4 border-2 border-slate-800">
+                    <div>
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="text-xl font-bold text-white flex items-center gap-2">
+                                <span class="text-amber-400">1.</span> Chế độ Luyện Tập
+                            </h3>
+                            <span class="text-xs px-2.5 py-1 rounded-full bg-slate-700 text-slate-200 font-medium">
+                                Không giới hạn
+                            </span>
+                        </div>
+                        <p class="text-xs text-slate-400 font-medium mb-3">Học tập & củng cố kiến thức không áp lực</p>
+                        <p class="text-sm text-slate-300 leading-relaxed">
+                            Làm bài không tính giờ. Giúp học sinh bình tĩnh suy ngẫm, củng cố kiến thức. Xem điểm và lời giải chi tiết ngay sau khi hoàn thành.
+                        </p>
+                    </div>
+                    <button class="w-full py-3 rounded-xl font-bold btn-gold shadow-lg text-sm uppercase tracking-wide flex items-center justify-center gap-2">
+                        <span>Bắt đầu Luyện Tập</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                    </button>
+                </div>
+
+                <!-- Timed Mode Card -->
+                <div onclick="startQuiz('timed')" class="card-dark card-hover p-6 rounded-2xl cursor-pointer flex flex-col justify-between space-y-4 border-2 border-slate-800">
+                    <div>
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="text-xl font-bold text-white flex items-center gap-2">
+                                <span class="text-amber-400">2.</span> Chế độ Tính Giờ
+                            </h3>
+                            <span class="text-xs px-2.5 py-1 rounded-full bg-amber-500/20 text-amber-300 font-medium">
+                                20 Phút
+                            </span>
+                        </div>
+                        <p class="text-xs text-slate-400 font-medium mb-3">Thử thách & kiểm tra đánh giá năng lực</p>
+                        <p class="text-sm text-slate-300 leading-relaxed">
+                            Có đồng hồ đếm ngược 20 phút. Trật tự câu hỏi và đáp án ngẫu nhiên giúp đánh giá chính xác thực lực, chống học vẹt hay chép đáp án.
+                        </p>
+                    </div>
+                    <button class="w-full py-3 rounded-xl font-bold btn-emerald shadow-lg text-sm uppercase tracking-wide flex items-center justify-center gap-2">
+                        <span>Bắt đầu Tính Giờ</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- SCREEN 2: ACTIVE QUIZ VIEW -->
+        <section id="view-quiz" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-6">
+            
+            <!-- Left Sidebar Navigator -->
+            <aside class="lg:col-span-4 space-y-4">
+                <div class="card-dark p-5 rounded-2xl space-y-5">
+                    
+                    <!-- Timer Widget (If Timed Mode) -->
+                    <div id="timer-box" class="hidden bg-[#1a1d36] p-4 rounded-xl border border-amber-500/30 flex items-center justify-between">
+                        <div class="flex items-center space-x-2 text-amber-400">
+                            <svg class="w-5 h-5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            <span class="text-xs font-semibold uppercase">Thời gian còn lại:</span>
+                        </div>
+                        <span id="timer-display" class="font-mono text-2xl font-black text-amber-300">20:00</span>
+                    </div>
+
+                    <!-- Question Navigator Title & Progress -->
+                    <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                        <h3 class="text-sm font-bold uppercase tracking-wide text-slate-300">DANH SÁCH CÂU HỎI</h3>
+                        <span id="progress-text" class="text-xs font-semibold bg-blue-500/20 text-blue-300 px-2.5 py-1 rounded-md">0 / 20 đã làm</span>
+                    </div>
+
+                    <!-- 20 Question Grid Buttons -->
+                    <div id="question-grid" class="grid grid-cols-5 gap-2.5">
+                        <!-- Dynamic grid elements generated via JS -->
+                    </div>
+
+                    <!-- Grid Legend -->
+                    <div class="pt-2 border-t border-slate-800/80 space-y-1.5 text-xs text-slate-400">
+                        <div class="flex items-center space-x-2">
+                            <span class="w-3.5 h-3.5 rounded bg-[#1a1d36] border border-slate-700 inline-block"></span>
+                            <span>Chưa trả lời</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="w-3.5 h-3.5 rounded bg-amber-600 inline-block"></span>
+                            <span>Đã chọn đáp án</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="w-3.5 h-3.5 rounded bg-blue-900 border-2 border-blue-400 inline-block"></span>
+                            <span>Đang làm (Hiện tại)</span>
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button onclick="submitQuiz()" class="w-full py-3.5 rounded-xl font-bold btn-emerald shadow-xl text-sm uppercase tracking-wider flex items-center justify-center gap-2 mt-4">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        <span>Nộp Bài & Kết Thúc</span>
+                    </button>
+                </div>
+            </aside>
+
+            <!-- Right Question Box -->
+            <article class="lg:col-span-8">
+                <div class="card-dark p-6 md:p-8 rounded-2xl space-y-6 min-h-[500px] flex flex-col justify-between">
+                    
+                    <!-- Question Header & Level -->
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center border-b border-slate-800 pb-4">
+                            <h2 class="text-lg md:text-xl font-bold text-white flex items-center gap-2">
+                                <span id="q-title-number">Câu 1 / 20</span>
+                            </h2>
+                            <span id="q-level-badge" class="text-xs font-bold px-3 py-1 rounded-md bg-blue-500/20 text-blue-300 border border-blue-500/30">
+                                Mức Biết
+                            </span>
+                        </div>
+
+                        <!-- Question Text Content -->
+                        <div id="q-text" class="text-base md:text-lg font-medium text-slate-100 leading-relaxed pt-2">
+                            <!-- Question text populated by JS -->
+                        </div>
+
+                        <!-- 4 Radio Option Cards -->
+                        <div id="q-options" class="space-y-3 pt-4">
+                            <!-- Options populated by JS -->
+                        </div>
+                    </div>
+
+                    <!-- Bottom Nav Controls -->
+                    <div class="flex flex-wrap items-center justify-between gap-3 border-t border-slate-800 pt-5">
+                        <button id="btn-prev" onclick="prevQuestion()" class="px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs md:text-sm font-semibold transition disabled:opacity-40 disabled:cursor-not-allowed">
+                            &lt; Câu Trước
+                        </button>
+
+                        <button onclick="clearChoice()" class="text-xs text-slate-400 hover:text-amber-400 underline transition">
+                            Xóa lựa chọn câu này
+                        </button>
+
+                        <button id="btn-next" onclick="nextQuestion()" class="px-5 py-2.5 rounded-xl btn-gold text-xs md:text-sm font-semibold transition">
+                            Câu Tiếp &gt;
+                        </button>
+                    </div>
+
+                </div>
+            </article>
+        </section>
+
+        <!-- SCREEN 3: RESULT & DETAILED EXPLANATIONS VIEW -->
+        <section id="view-result" class="hidden space-y-8">
+            
+            <!-- Result Summary Card -->
+            <div class="card-dark p-6 md:p-10 rounded-2xl max-w-4xl mx-auto text-center space-y-6 border border-slate-700 shadow-2xl">
+                
+                <!-- Trophy Icon -->
+                <div class="inline-flex items-center justify-center p-4 bg-amber-500/10 rounded-full text-amber-400 ring-8 ring-amber-500/5">
+                    <svg class="w-14 h-14" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M5 2a1 1 0 011-1h8a1 1 0 011 1v1h1a2 2 0 012 2v2a2 2 0 01-2 2h-1v.172a5 5 0 01-3.2 4.675V15h2a1 1 0 110 2H7a1 1 0 110-2h2v-2.153A5 5 0 015.8 8.172V8H4a2 2 0 01-2-2V4a2 2 0 012-2h1V2zm11 3h-1v3h1a1 1 0 001-1V5a1 1 0 00-1-1zM4 5v2a1 1 0 001 1h1V5H4zm5 6a3 3 0 003-3V3H8v5a3 3 0 003 3z" clip-rule="evenodd"></path>
+                    </svg>
+                </div>
+
+                <div>
+                    <h2 class="text-2xl md:text-4xl font-black text-white tracking-wide uppercase">
+                        KẾT QUẢ BÀI KIỂM TRA
+                    </h2>
+                    <p id="result-mode-subtitle" class="text-sm text-slate-400 font-medium mt-1">
+                        Chế độ LUYỆN TẬP
+                    </p>
+                </div>
+
+                <!-- 3 Stats metrics -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-2xl mx-auto">
+                    <div class="bg-[#1a1d36] p-4 rounded-xl border border-slate-800">
+                        <span class="text-xs text-slate-400 font-medium block mb-1">Điểm số</span>
+                        <span id="res-score" class="text-2xl md:text-3xl font-black text-amber-400">0.0 / 100</span>
+                    </div>
+
+                    <div class="bg-[#1a1d36] p-4 rounded-xl border border-slate-800">
+                        <span class="text-xs text-slate-400 font-medium block mb-1">Số câu đúng</span>
+                        <span id="res-correct" class="text-2xl md:text-3xl font-black text-emerald-400">0 / 20 câu</span>
+                    </div>
+
+                    <div class="bg-[#1a1d36] p-4 rounded-xl border border-slate-800">
+                        <span class="text-xs text-slate-400 font-medium block mb-1">Thời gian làm bài</span>
+                        <span id="res-time" class="text-2xl md:text-3xl font-black text-blue-400">Không giới hạn</span>
+                    </div>
+                </div>
+
+                <!-- Teacher Feedback Box -->
+                <div class="bg-[#1a1d36] p-5 rounded-xl border border-amber-500/30 text-left max-w-3xl mx-auto space-y-2">
+                    <div class="flex items-center space-x-2 text-amber-400 font-bold text-sm">
+                        <span>💬 Đánh giá & Nhận xét từ Giáo viên:</span>
+                    </div>
+                    <p id="res-feedback-text" class="text-sm text-slate-200 leading-relaxed italic">
+                        <!-- Dynamic feedback generated here -->
+                    </p>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex flex-wrap items-center justify-center gap-4 pt-2">
+                    <button onclick="resetQuiz()" class="px-6 py-3 rounded-xl font-bold btn-gold shadow-lg text-sm uppercase tracking-wider flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                        <span>Làm lại bài kiểm tra</span>
+                    </button>
+                    
+                    <a href="#detailed-explanations" class="px-6 py-3 rounded-xl font-bold bg-slate-800 hover:bg-slate-700 text-slate-200 text-sm uppercase tracking-wider flex items-center gap-2 border border-slate-700">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                        <span>Xem đáp án & Lời giải</span>
+                    </a>
+                </div>
+
+            </div>
+
+            <!-- Detailed Explanation List Section -->
+            <div id="detailed-explanations" class="space-y-6 pt-6">
+                <div class="flex justify-between items-center border-b border-slate-800 pb-4 max-w-4xl mx-auto">
+                    <h3 class="text-xl font-bold text-white flex items-center gap-2">
+                        <span class="text-amber-400">📜</span> ĐÁP ÁN & LỜI GIẢI CHI TIẾT
+                    </h3>
+                    <span class="text-xs font-semibold text-slate-400">20/20 câu hỏi</span>
+                </div>
+
+                <div id="explanations-container" class="space-y-6 max-w-4xl mx-auto">
+                    <!-- Dynamic detailed explanation cards -->
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="border-t border-slate-800 bg-[#0e1122] py-4 text-center text-xs text-slate-500 mt-auto">
+        <p>© 2026 Hệ thống Kiểm tra Trắc nghiệm Vật lí 10 - Bài 17: Trọng lực và Lực căng</p>
+    </footer>
+
+    <script>
+        /* RAW QUIZ DATA (20 standardized questions strictly adherence to PDF Bài 17: TRỌNG LỰC VÀ LỰC CĂNG) */
+        const originalQuizData = [
+            // --- MỨC BIẾT (8 câu: 1 -> 8) ---
+            {
+                id: 1,
+                level: "Biết",
+                levelCode: "B",
+                question: "Trọng lực được định nghĩa là:",
+                options: [
+                    "Lực ma sát của không khí tác dụng vào vật rơi.",
+                    "Lực hấp dẫn do Trái Đất tác dụng lên vật gây ra cho vật gia tốc rơi tự do.",
+                    "Lực đàn hồi do mặt đất tác dụng đẩy vật lên.",
+                    "Lực xuất hiện khi vật bị kéo dãn bởi một sợi dây."
+                ],
+                correct: 1,
+                explanation: "SGK Bài 17 nêu rõ: Trọng lực là lực hấp dẫn do Trái Đất tác dụng lên vật gây ra cho vật gia tốc rơi tự do. Kí hiệu của trọng lực là vectơ \\(\\vec{P}\\)."
+            },
+            {
+                id: 2,
+                level: "Biết",
+                levelCode: "B",
+                question: "Ở gần Trái Đất, trọng lực \\(\\vec{P}\\) tác dụng lên một vật có các đặc điểm nào sau đây?",
+                options: [
+                    "Phương nằm ngang, chiều từ trái sang phải, điểm đặt tại đỉnh vật.",
+                    "Phương thẳng đứng, chiều hướng về phía tâm Trái Đất, điểm đặt tại trọng tâm của vật.",
+                    "Phương xiên góc, chiều từ dưới lên trên, điểm đặt tại chân vật.",
+                    "Phương thẳng đứng, chiều hướng lên trên, điểm đặt tại trọng tâm."
+                ],
+                correct: 1,
+                explanation: "Ở gần Trái Đất, trọng lực có phương thẳng đứng, chiều từ trên xuống dưới (hướng về phía tâm Trái Đất) và điểm đặt gọi là trọng tâm của vật."
+            },
+            {
+                id: 3,
+                level: "Biết",
+                levelCode: "B",
+                question: "Công thức liên hệ giữa trọng lực \\(\\vec{P}\\), khối lượng \\(m\\) của vật và gia tốc rơi tự do \\(\\vec{g}\\) theo Định luật 2 Newton là:",
+                options: [
+                    "\\(\\vec{P} = \\frac{\\vec{g}}{m}\\)",
+                    "\\(\\vec{P} = m \\cdot \\vec{g}\\)",
+                    "\\(P = \\frac{m}{g}\\)",
+                    "\\(\\vec{P} = m^2 \\cdot \\vec{g}\\)"
+                ],
+                correct: 1,
+                explanation: "Áp dụng Định luật 2 Newton vào trường hợp vật rơi tự do thu được công thức vectơ của trọng lực là \\(\\vec{P} = m \\cdot \\vec{g}\\)."
+            },
+            {
+                id: 4,
+                level: "Biết",
+                levelCode: "B",
+                question: "Độ lớn của trọng lực tác dụng lên một vật được gọi là:",
+                options: [
+                    "Khối lượng của vật.",
+                    "Trọng lượng của vật.",
+                    "Lực căng của vật.",
+                    "Lực quán tính của vật."
+                ],
+                correct: 1,
+                explanation: "Độ lớn của trọng lực tác dụng lên một vật gọi là trọng lượng của vật, kí hiệu là \\(P = m \\cdot g\\)."
+            },
+            {
+                id: 5,
+                level: "Biết",
+                levelCode: "B",
+                question: "Để đo trọng lượng của một vật trực tiếp trong phòng thí nghiệm, người ta dùng dụng cụ nào?",
+                options: [
+                    "Thước kẹp.",
+                    "Nhiệt kế.",
+                    "Lực kế hoặc cân lò xo.",
+                    "Đồng hồ bấm giây."
+                ],
+                correct: 2,
+                explanation: "SGK khẳng định: Trọng lượng của một vật có thể đo bằng lực kế hoặc cân lò xo."
+            },
+            {
+                id: 6,
+                level: "Biết",
+                levelCode: "B",
+                question: "Phát biểu nào sau đây là ĐÚNG khi so sánh giữa trọng lượng và khối lượng của một vật?",
+                options: [
+                    "Trọng lượng không đổi khi di chuyển vật, khối lượng thay đổi theo độ cao.",
+                    "Khối lượng là số đo lượng chất của vật nên không thay đổi khi chuyển vật từ nơi này sang nơi khác.",
+                    "Khối lượng thay đổi khi đem vật lên Mặt Trăng.",
+                    "Cả trọng lượng và khối lượng đều luôn bằng 0 ở cực Bắc."
+                ],
+                correct: 1,
+                explanation: "Khối lượng là số đo lượng chất của vật nên không thay đổi khi chuyển từ nơi này đến nơi khác. Còn trọng lượng \\(P = mg\\) thay đổi khi đem vật đến nơi có gia tốc rơi tự do \\(g\\) thay đổi."
+            },
+            {
+                id: 7,
+                level: "Biết",
+                levelCode: "B",
+                question: "Lực xuất hiện ở mọi điểm trên sợi dây khi dây bị kéo để chống lại sự kéo dãn gọi là:",
+                options: [
+                    "Trọng lực.",
+                    "Lực ma sát trượt.",
+                    "Lực căng dây (kí hiệu \\(\\vec{T}\\)).",
+                    "Lực hướng tâm."
+                ],
+                correct: 2,
+                explanation: "Khi một sợi dây bị kéo thì ở tại mọi điểm trên dây, kể cả hai đầu dây xuất hiện lực để chống lại sự kéo, lực này gọi là lực căng dây, kí hiệu là \\(\\vec{T}\\)."
+            },
+
+            {
+                id: 8,
+                level: "Biết",
+                levelCode: "B",
+                question: "Đặc điểm về phương và chiều của lực căng do sợi dây tác dụng vào vật kéo dãn dây là:",
+                options: [
+                    "Phương vuông góc sợi dây, chiều hướng ra xa dây.",
+                    "Phương trùng với phương của sợi dây, chiều hướng từ điểm tiếp xúc vào trong lòng sợi dây.",
+                    "Phương nằm ngang, chiều luôn hướng từ trên xuống.",
+                    "Phương trùng sợi dây, chiều trùng với chiều của lực kéo dãn dây."
+                ],
+                correct: 1,
+                explanation: "Lực căng do sợi dây tác dụng vào vật có phương trùng với phương của sợi dây, có chiều ngược với chiều của lực do vật kéo dãn dây (tức hướng vào trong lòng sợi dây)."
+            },
+
+            // --- MỨC HIỂU (7 câu: 9 -> 15) ---
+            {
+                id: 9,
+                level: "Hiểu",
+                levelCode: "H",
+                question: "Trọng tâm của các vật phẳng, mỏng, đồng chất và có dạng hình học đối xứng (như tấm bìa hình tròn, hình vuông, hình tam giác đều) nằm ở vị trí nào?",
+                options: [
+                    "Nằm ở viền mép ngoài của vật.",
+                    "Nằm tại tâm đối xứng của vật.",
+                    "Nằm ở điểm bất kỳ trên mặt phẳng.",
+                    "Không thể xác định được vị trí trọng tâm."
+                ],
+                correct: 1,
+                explanation: "Kết luận trong SGK Bài 17: Trọng tâm của các vật phẳng, mỏng và có dạng hình học đối xứng nằm ở tâm đối xứng của vật."
+            },
+            {
+                id: 10,
+                level: "Hiểu",
+                levelCode: "H",
+                question: "Đo trọng lượng một vật ở địa điểm A có \\(g_A = 9,80\\text{ m/s}^2\\) thu được \\(P_A = 9,80\\text{ N}\\). Đem vật đó đến địa điểm B có \\(g_B = 9,78\\text{ m/s}^2\\). Khối lượng \\(m_B\\) và trọng lượng \\(P_B\\) đo được tại B lần lượt là:",
+                options: [
+                    "\\(m_B = 1,00\\text{ kg}\\); \\(P_B = 9,80\\text{ N}\\)",
+                    "\\(m_B = 0,98\\text{ kg}\\); \\(P_B = 9,78\\text{ N}\\)",
+                    "\\(m_B = 1,00\\text{ kg}\\); \\(P_B = 9,78\\text{ N}\\)",
+                    "\\(m_B = 0,98\\text{ kg}\\); \\(P_B = 9,80\\text{ N}\\)"
+                ],
+                correct: 2,
+                explanation: "Khối lượng vật không đổi: \\(m = \\frac{P_A}{g_A} = \\frac{9,80}{9,80} = 1,00\\text{ kg}\\).<br>Tại địa điểm B: \\(m_B = m = 1,00\\text{ kg}\\). Trọng lượng tại B: \\(P_B = m \\cdot g_B = 1,00 \\times 9,78 = 9,78\\text{ N}\\)."
+            },
+            {
+                id: 11,
+                level: "Hiểu",
+                levelCode: "H",
+                question: "Một ngọn đèn đường treo cân bằng vào đầu một sợi dây mảnh thẳng đứng. Các lực tác dụng lên ngọn đèn bao gồm:",
+                options: [
+                    "Chỉ có trọng lực \\(\\vec{P}\\).",
+                    "Trọng lực \\(\\vec{P}\\) và lực căng dây \\(\\vec{T}\\), đây là hai lực cân bằng.",
+                    "Lực căng dây \\(\\vec{T}\\) và lực ma sát không khí.",
+                    "Trọng lực \\(\\vec{P}\\), lực căng dây \\(\\vec{T}\\) và áp lực của mặt đất."
+                ],
+                correct: 1,
+                explanation: "Bóng đèn đứng yên cân bằng chịu tác dụng của 2 lực: Trọng lực \\(\\vec{P}\\) (hướng xuống) và Lực căng dây \\(\\vec{T}\\) (hướng lên). Hai lực này cùng phương, ngược chiều, cùng độ lớn nên cân bằng nhau."
+            },
+            {
+                id: 12,
+                level: "Hiểu",
+                levelCode: "H",
+                question: "Trong thí nghiệm treo vật khối lượng \\(m\\) vào một ròng rọc cố định bằng một sợi dây nhẹ không co dãn (Hình 17.6 SGK). Kết luận nào sau đây là ĐÚNG về độ lớn lực căng dây tại các điểm trên dây?",
+                options: [
+                    "Lực căng ở đoạn dây thẳng đứng lớn hơn đoạn dây nằm ngang.",
+                    "Lực căng ở hai đầu dây bằng nhau, nhưng ở đỉnh ròng rọc bằng 0.",
+                    "Lực căng tại mọi điểm trên dây có độ lớn bằng nhau.",
+                    "Lực căng dây giảm dần từ vật treo đến tay người kéo."
+                ],
+                correct: 2,
+                explanation: "SGK lưu ý: Nếu khối lượng của ròng rọc và dây rất nhỏ (coi như bằng 0) và dây không dãn thì lực căng tại mọi điểm trên sợi dây có độ lớn bằng nhau."
+            },
+            {
+                id: 13,
+                level: "Hiểu",
+                levelCode: "H",
+                question: "Tại sao các vệ tinh nhân tạo quay quanh Trái Đất ở quỹ đạo thấp sau một thời gian hoạt động cuối cùng đều rơi xuống Trái Đất?",
+                options: [
+                    "Vì Trái Đất hết lực hấp dẫn sau một khoảng thời gian.",
+                    "Vì lực cản của khí quyển ở tầng cao làm giảm dần vận tốc vệ tinh, làm lực hút của Trái Đất kéo vệ tinh rơi xuống.",
+                    "Vì động cơ của vệ tinh đẩy vệ tinh quay trở về Trái Đất.",
+                    "Vì áp suất khí quyển phía trên đẩy vệ tinh rơi xuống."
+                ],
+                correct: 1,
+                explanation: "Ở các tầng khí quyển cao vẫn tồn tại lớp không khí loãng gây lực cản. Lực cản này làm vận tốc và năng lượng của vệ tinh giảm dần, trọng lực hút Trái Đất kéo quỹ đạo rơi dần về phía Trái Đất."
+            },
+            {
+                id: 14,
+                level: "Hiểu",
+                levelCode: "H",
+                question: "Mỗi sợi dây treo chỉ chịu được một 'lực căng giới hạn' \\(T_{\\text{gh}}\\). Điều gì xảy ra khi lực căng thực tế \\(T\\) tác dụng lên sợi dây vượt quá giá trị giới hạn này (\\(T > T_{\\text{gh}}\\))?",
+                options: [
+                    "Sợi dây co lại ngắn hơn ban đầu.",
+                    "Sợi dây sẽ bị đứt.",
+                    "Trọng lượng của vật treo giảm về 0.",
+                    "Gia tốc rơi tự do bị biến đổi."
+                ],
+                correct: 1,
+                explanation: "Phần 'Em có biết' SGK ghi rõ: Mỗi sợi dây chỉ chịu được một lực căng giới hạn. Khi lực tác dụng lên dây vượt quá giá trị giới hạn này thì dây sẽ đứt."
+            },
+            {
+                id: 15,
+                level: "Hiểu",
+                levelCode: "H",
+                question: "Khi hai người nắm vào hai đầu một sợi dây và cùng kéo dãn dây ra (Hình 17.4 SGK), lực căng \\(\\vec{T}\\) tác dụng lên tay người thứ nhất và lực căng \\(\\vec{T}'\\) tác dụng lên tay người thứ hai có mối quan hệ như thế nào?",
+                options: [
+                    "Cùng phương, cùng chiều, độ lớn khác nhau.",
+                    "Cùng phương, ngược chiều, có độ lớn bằng nhau (\\(T = T'\\)).",
+                    "Vuông góc với nhau.",
+                    "Lực tác dụng lên người khỏe hơn sẽ có độ lớn nhỏ hơn."
+                ],
+                correct: 1,
+                explanation: "Trên cùng một sợi dây nhẹ, hai lực căng tác dụng lên hai đầu dây là cặp lực trực đối hướng vào lòng sợi dây, cùng phương, ngược chiều và có độ lớn bằng nhau."
+            },
+
+            // --- MỨC VẬN DỤNG (3 câu: 16 -> 18) ---
+            {
+                id: 16,
+                level: "Vận dụng",
+                levelCode: "VD",
+                question: "Móc một vật vào một lực kế lò xo thẳng đứng, khi vật đứng yên cân bằng lực kế chỉ vạch \\(1\\text{ N}\\). Lấy gia tốc rơi tự do \\(g = 9,8\\text{ m/s}^2\\). Trọng lượng \\(P\\) và khối lượng \\(m\\) của vật treo lần lượt là:",
+                options: [
+                    "\\(P = 1\\text{ N}\\); \\(m \\approx 0,102\\text{ kg}\\) (hay \\(102\\text{ g}\\))",
+                    "\\(P = 9,8\\text{ N}\\); \\(m = 1\\text{ kg}\\)",
+                    "\\(P = 1\\text{ N}\\); \\(m = 9,8\\text{ kg}\\)",
+                    "\\(P = 0,102\\text{ N}\\); \\(m = 1\\text{ g}\\)"
+                ],
+                correct: 0,
+                explanation: "Lực kế chỉ số đo trọng lượng của vật: \\(P = 1\\text{ N}\\).<br>Khối lượng của vật: \\(m = \\frac{P}{g} = \\frac{1}{9,8} \\approx 0,102\\text{ kg} = 102\\text{ g}\\)."
+            },
+
+            {
+                id: 17,
+                level: "Vận dụng",
+                levelCode: "VD",
+                question: "Một bóng đèn có khối lượng \\(m = 500\\text{ g}\\) được treo thẳng đứng vào trần nhà bằng một sợi dây nhẹ. Lấy \\(g = 9,8\\text{ m/s}^2\\). Biết dây treo chỉ chịu được lực căng giới hạn \\(T_{\\text{gh}} = 5,5\\text{ N}\\). Độ lớn lực căng dây \\(T\\) khi bóng đèn cân bằng và trạng thái của dây là:",
+                options: [
+                    "\\(T = 4,9\\text{ N}\\), dây không bị đứt.",
+                    "\\(T = 5,5\\text{ N}\\), dây vừa đứt.",
+                    "\\(T = 4900\\text{ N}\\), dây bị đứt ngay lập tức.",
+                    "\\(T = 4,9\\text{ N}\\), dây bị đứt."
+                ],
+                correct: 0,
+                explanation: "Đổi \\(m = 500\\text{ g} = 0,5\\text{ kg}\\).<br>Khi bóng đèn cân bằng: \\(T = P = m \\cdot g = 0,5 \\times 9,8 = 4,9\\text{ N}\\).<br>Vì \\(T = 4,9\\text{ N} < T_{\\text{gh}} = 5,5\\text{ N}\\) nên sợi dây không bị đứt."
+            },
+            {
+                id: 18,
+                level: "Vận dụng",
+                levelCode: "VD",
+                question: "Treo một vật nặng khối lượng \\(m = 2\\text{ kg}\\) vào điểm chính giữa của một sợi dây nhẹ không dãn AB. Hai đầu A và B gắn cố định vào trần nhà sao cho hai nửa sợi dây tạo với phương thẳng đứng các góc đối xứng \\(\\alpha = 60^\\circ\\). Lấy \\(g = 10\\text{ m/s}^2\\). Độ lớn lực căng \\(T\\) của mỗi nửa sợi dây khi hệ cân bằng là:",
+                options: [
+                    "\\(10\\text{ N}\\)",
+                    "\\(20\\text{ N}\\)",
+                    "\\(40\\text{ N}\\)",
+                    "\\(20\\sqrt{3}\\text{ N}\\)"
+                ],
+                correct: 1,
+                explanation: "Trọng lượng vật: \\(P = m \\cdot g = 2 \\times 10 = 20\\text{ N}\\).<br>Điều kiện cân bằng tại điểm treo: \\(2T \\cdot \\cos\\alpha = P\\).<br>Suy ra lực căng dây: \\(T = \\frac{P}{2 \\cdot \\cos 60^\\circ} = \\frac{20}{2 \\times 0,5} = 20\\text{ N}\\)."
+            },
+
+            // --- MỨC VẬN DỤNG CAO (2 câu: 19 -> 20) ---
+            {
+                id: 19,
+                level: "Vận dụng cao",
+                levelCode: "VDC",
+                question: "Một vật có khối lượng \\(m = 4\\text{ kg}\\) được buộc vào đầu một sợi dây nhẹ không dãn. Dùng tay kéo đầu dây còn lại để chuyển động vật lên cao thẳng đứng với gia tốc không đổi \\(a = 2\\text{ m/s}^2\\). Lấy \\(g = 9,8\\text{ m/s}^2\\). Độ lớn lực căng dây \\(T\\) trong quá trình vật kéo lên là bao nhiêu?",
+                options: [
+                    "\\(31,2\\text{ N}\\)",
+                    "\\(47,2\\text{ N}\\)",
+                    "\\(39,2\\text{ N}\\)",
+                    "\\(8,0\\text{ N}\\)"
+                ],
+                correct: 1,
+                explanation: "Chọn trục tọa độ thẳng đứng hướng lên.<br>Áp dụng Định luật 2 Newton cho vật: \\(\\vec{T} + \\vec{P} = m \\cdot \\vec{a}\\).<br>Chiếu lên trục hướng lên: \\(T - P = m \\cdot a \\Rightarrow T = P + m \\cdot a = m(g + a)\\).<br>Thay số: \\(T = 4 \\times (9,8 + 2) = 4 \\times 11,8 = 47,2\\text{ N}\\)."
+            },
+            {
+                id: 20,
+                level: "Vận dụng cao",
+                levelCode: "VDC",
+                question: "Hai vật \\(A\\) và \\(B\\) có khối lượng \\(m_A = 3\\text{ kg}\\) và \\(m_B = 2\\text{ kg}\\) được nối với nhau bằng một sợi dây nhẹ không dãn đặt trên mặt bàn nằm ngang không ma sát. Tác dụng lực kéo nằm ngang \\(F = 15\\text{ N}\\) vào vật \\(A\\) để kéo cả hai vật chuyển động cùng gia tốc. Độ lớn lực căng \\(T\\) của sợi dây nối giữa hai vật \\(A\\) và \\(B\\) là:",
+                options: [
+                    "\\(6\\text{ N}\\)",
+                    "\\(9\\text{ N}\\)",
+                    "\\(15\\text{ N}\\)",
+                    "\\(3\\text{ N}\\)"
+                ],
+                correct: 0,
+                explanation: "Gia tốc chung của hệ hai vật: \\(a = \\frac{F}{m_A + m_B} = \\frac{15}{3 + 2} = 3\\text{ m/s}^2\\).<br>Lực căng dây \\(T\\) kéo vật \\(B\\) chuyển động với gia tốc \\(a\\):<br>\\(T = m_B \\cdot a = 2 \\times 3 = 6\\text{ N}\\)."
+            }
+        ];
+
+        // App State
+        let currentMode = 'practice'; // 'practice' or 'timed'
+        let activeQuestions = [];
+        let currentIndex = 0;
+        let userAnswers = {}; // { questionId: chosenIndex }
+        let timerInterval = null;
+        let timeLeft = 1200; // 20 minutes in seconds
+        let quizStartTime = 0;
+        let quizEndTime = 0;
+
+        // DOM Element references
+        const viewLanding = document.getElementById('view-landing');
+        const viewQuiz = document.getElementById('view-quiz');
+        const viewResult = document.getElementById('view-result');
+        const topStatusText = document.getElementById('top-status-text');
+        const timerBox = document.getElementById('timer-box');
+        const timerDisplay = document.getElementById('timer-display');
+        const questionGrid = document.getElementById('question-grid');
+        const progressText = document.getElementById('progress-text');
+        const qTitleNumber = document.getElementById('q-title-number');
+        const qLevelBadge = document.getElementById('q-level-badge');
+        const qText = document.getElementById('q-text');
+        const qOptions = document.getElementById('q-options');
+        const btnPrev = document.getElementById('btn-prev');
+        const btnNext = document.getElementById('btn-next');
+
+        function triggerMathJax() {
+            if (window.MathJax && window.MathJax.typesetPromise) {
+                window.MathJax.typesetPromise().catch((err) => console.log('MathJax error:', err));
+            }
+        }
+
+        function shuffleArray(array) {
+            const arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        function startQuiz(mode) {
+            currentMode = mode;
+            userAnswers = {};
+            currentIndex = 0;
+            quizStartTime = Date.now();
+
+            if (mode === 'timed') {
+                topStatusText.textContent = 'Chế độ TÍNH GIỜ';
+                // Shuffle questions for timed mode to evaluate real capacity
+                activeQuestions = shuffleArray(originalQuizData);
+                timerBox.classList.remove('hidden');
+                timeLeft = 1200; // 20 mins
+                startTimer();
+            } else {
+                topStatusText.textContent = 'Chế độ LUYỆN TẬP';
+                activeQuestions = [...originalQuizData];
+                timerBox.classList.add('hidden');
+                clearInterval(timerInterval);
+            }
+
+            viewLanding.classList.add('hidden');
+            viewResult.classList.add('hidden');
+            viewQuiz.classList.remove('hidden');
+
+            renderGridNav();
+            renderQuestion(currentIndex);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function startTimer() {
+            clearInterval(timerInterval);
+            updateTimerDisplay();
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                updateTimerDisplay();
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    alert("Đã hết thời gian 20 phút! Hệ thống sẽ tự động nộp bài.");
+                    submitQuiz();
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const mins = Math.floor(timeLeft / 60);
+            const secs = timeLeft % 60;
+            timerDisplay.textContent = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        function renderGridNav() {
+            questionGrid.innerHTML = '';
+            const answeredCount = Object.keys(userAnswers).length;
+            progressText.textContent = `${answeredCount} / ${activeQuestions.length} đã làm`;
+
+            activeQuestions.forEach((q, idx) => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = `q-grid-btn text-xs font-bold py-2.5 rounded-lg border border-slate-700 bg-[#1a1d36] text-slate-300 hover:bg-slate-700`;
+                btn.textContent = idx + 1;
+
+                if (userAnswers[q.id] !== undefined) {
+                    btn.classList.add('answered');
+                }
+                if (idx === currentIndex) {
+                    btn.classList.add('current');
+                }
+
+                btn.onclick = () => jumpToQuestion(idx);
+                questionGrid.appendChild(btn);
+            });
+        }
+
+        function renderQuestion(index) {
+            currentIndex = index;
+            const q = activeQuestions[index];
+
+            qTitleNumber.textContent = `Câu ${index + 1} / ${activeQuestions.length}`;
+            
+            // Set level badge style
+            qLevelBadge.textContent = `Mức ${q.level}`;
+            if (q.levelCode === 'B') {
+                qLevelBadge.className = "text-xs font-bold px-3 py-1 rounded-md bg-blue-500/20 text-blue-300 border border-blue-500/30";
+            } else if (q.levelCode === 'H') {
+                qLevelBadge.className = "text-xs font-bold px-3 py-1 rounded-md bg-emerald-500/20 text-emerald-300 border border-emerald-500/30";
+            } else if (q.levelCode === 'VD') {
+                qLevelBadge.className = "text-xs font-bold px-3 py-1 rounded-md bg-amber-500/20 text-amber-300 border border-amber-500/30";
+            } else {
+                qLevelBadge.className = "text-xs font-bold px-3 py-1 rounded-md bg-purple-500/20 text-purple-300 border border-purple-500/30";
+            }
+
+            qText.innerHTML = q.question;
+
+            // Render options A, B, C, D
+            qOptions.innerHTML = '';
+            const labels = ['A', 'B', 'C', 'D'];
+            q.options.forEach((optText, optIdx) => {
+                const isSelected = userAnswers[q.id] === optIdx;
+                const optionBox = document.createElement('div');
+                optionBox.className = `option-box p-4 rounded-xl cursor-pointer flex items-start space-x-3 text-sm transition ${isSelected ? 'selected' : ''}`;
+                optionBox.onclick = () => selectOption(q.id, optIdx);
+
+                optionBox.innerHTML = `
+                    <div class="flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center font-bold text-xs ${isSelected ? 'bg-blue-500 text-white' : 'bg-slate-800 text-slate-300 border border-slate-700'}">
+                        ${labels[optIdx]}
+                    </div>
+                    <div class="text-slate-200 font-medium pt-0.5 leading-relaxed flex-grow">
+                        ${optText}
+                    </div>
+                `;
+                qOptions.appendChild(optionBox);
+            });
+
+            // Update Navigation buttons
+            btnPrev.disabled = index === 0;
+            if (index === activeQuestions.length - 1) {
+                btnNext.textContent = 'Trang Cuối';
+            } else {
+                btnNext.textContent = 'Câu Tiếp >';
+            }
+
+            renderGridNav();
+            triggerMathJax();
+        }
+
+        function selectOption(qId, choiceIdx) {
+            userAnswers[qId] = choiceIdx;
+            renderQuestion(currentIndex);
+        }
+
+        function clearChoice() {
+            const q = activeQuestions[currentIndex];
+            delete userAnswers[q.id];
+            renderQuestion(currentIndex);
+        }
+
+        function nextQuestion() {
+            if (currentIndex < activeQuestions.length - 1) {
+                renderQuestion(currentIndex + 1);
+            }
+        }
+
+        function prevQuestion() {
+            if (currentIndex > 0) {
+                renderQuestion(currentIndex - 1);
+            }
+        }
+
+        function jumpToQuestion(idx) {
+            renderQuestion(idx);
+        }
+
+        function submitQuiz() {
+            clearInterval(timerInterval);
+            quizEndTime = Date.now();
+
+            // Calculate score
+            let correctCount = 0;
+            activeQuestions.forEach(q => {
+                if (userAnswers[q.id] === q.correct) {
+                    correctCount++;
+                }
+            });
+
+            const score = (correctCount / activeQuestions.length) * 100;
+            const timeTakenSec = Math.floor((quizEndTime - quizStartTime) / 1000);
+            
+            // Format time taken
+            let timeTakenText = "Không giới hạn";
+            if (currentMode === 'timed') {
+                const elapsedMins = Math.floor(timeTakenSec / 60);
+                const elapsedSecs = timeTakenSec % 60;
+                timeTakenText = `${elapsedMins} phút ${elapsedSecs} giây`;
+            }
+
+            // Render Result Summary Screen
+            document.getElementById('result-mode-subtitle').textContent = currentMode === 'timed' ? 'Chế độ TÍNH GIỜ (20 Phút)' : 'Chế độ LUYỆN TẬP';
+            document.getElementById('res-score').textContent = `${score.toFixed(1)} / 100`;
+            document.getElementById('res-correct').textContent = `${correctCount} / ${activeQuestions.length} câu`;
+            document.getElementById('res-time').textContent = timeTakenText;
+
+            // Generate Teacher Assessment & Feedback
+            const feedbackBox = document.getElementById('res-feedback-text');
+            if (score === 100) {
+                feedbackBox.textContent = "Xuất sắc! Em đã nắm vững hoàn toàn lý thuyết Bài 17: Trọng lực và Lực căng từ định nghĩa, công thức đến kỹ năng giải bài tập vận dụng cao. Hãy tiếp tục duy trì phong độ học tập này nhé!";
+            } else if (score >= 80) {
+                feedbackBox.textContent = "Rất tốt! Em đã hiểu rõ bản chất trọng lực, trọng lượng, vị trí trọng tâm và đặc điểm của lực căng dây. Hãy đọc lại lời giải chi tiết ở các câu chưa chính xác để hoàn thiện kiến thức bài 17 nhé!";
+            } else if (score >= 50) {
+                feedbackBox.textContent = "Khá tốt! Em đã nắm được các kiến thức cơ bản của Bài 17. Tuy nhiên em cần chú ý luyện tập kĩ hơn các dạng bài toán lực căng dây giới hạn và lực căng dây trong chuyển động có gia tốc.";
+            } else {
+                feedbackBox.textContent = "Cần cố gắng nhiều hơn! Kết quả cho thấy em chưa nắm vững lý thuyết Bài 17: Trọng lực và Lực căng. Hãy xem kĩ phần lời giải chi tiết bên dưới và ôn tập lại bài học trong SGK trước khi làm lại bài test!";
+            }
+
+            // Render Detailed Explanations
+            renderDetailedExplanations();
+
+            // Switch view
+            viewQuiz.classList.add('hidden');
+            viewResult.classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function renderDetailedExplanations() {
+            const container = document.getElementById('explanations-container');
+            container.innerHTML = '';
+
+            const labels = ['A', 'B', 'C', 'D'];
+
+            activeQuestions.forEach((q, idx) => {
+                const userChoice = userAnswers[q.id];
+                const isCorrect = userChoice === q.correct;
+
+                const card = document.createElement('div');
+                card.className = `card-dark p-6 rounded-2xl space-y-4 border ${isCorrect ? 'border-emerald-500/40' : 'border-rose-500/40'}`;
+
+                let optionsHTML = '';
+                q.options.forEach((optText, optIdx) => {
+                    let optClass = 'bg-[#1a1d36] border-slate-700/60 text-slate-300';
+                    let iconBadge = `<span class="w-6 h-6 rounded-full bg-slate-800 text-slate-400 border border-slate-700 flex items-center justify-center font-bold text-xs">${labels[optIdx]}</span>`;
+
+                    if (optIdx === q.correct) {
+                        optClass = 'option-correct font-semibold';
+                        iconBadge = `<span class="w-6 h-6 rounded-full bg-emerald-500 text-white flex items-center justify-center font-bold text-xs">✓</span>`;
+                    } else if (optIdx === userChoice && !isCorrect) {
+                        optClass = 'option-wrong font-semibold';
+                        iconBadge = `<span class="w-6 h-6 rounded-full bg-rose-500 text-white flex items-center justify-center font-bold text-xs">✗</span>`;
+                    }
+
+                    optionsHTML += `
+                        <div class="p-3.5 rounded-xl border ${optClass} flex items-start space-x-3 text-sm">
+                            <div class="flex-shrink-0 pt-0.5">${iconBadge}</div>
+                            <div class="leading-relaxed flex-grow">${optText}</div>
+                        </div>
+                    `;
+                });
+
+                card.innerHTML = `
+                    <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="font-bold text-base text-white">Câu ${idx + 1}</span>
+                            <span class="text-xs px-2.5 py-0.5 rounded bg-slate-800 text-slate-300 font-medium">Mức ${q.level}</span>
+                        </div>
+                        <span class="text-xs font-bold px-3 py-1 rounded-full ${isCorrect ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : 'bg-rose-500/20 text-rose-300 border border-rose-500/30'}">
+                            ${isCorrect ? '✓ Đúng' : '✗ Sai'}
+                        </span>
+                    </div>
+
+                    <div class="text-base font-medium text-slate-100 leading-relaxed pt-1">
+                        ${q.question}
+                    </div>
+
+                    <div class="space-y-2.5 pt-2">
+                        ${optionsHTML}
+                    </div>
+
+                    <div class="bg-[#1a1d36] p-4 rounded-xl border border-blue-500/20 text-sm space-y-1.5 text-slate-300">
+                        <div class="flex items-center space-x-2 text-blue-400 font-bold text-xs uppercase tracking-wider">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            <span>Lời giải chi tiết:</span>
+                        </div>
+                        <div class="leading-relaxed pt-1">
+                            ${q.explanation}
+                        </div>
+                    </div>
+                `;
+
+                container.appendChild(card);
+            });
+
+            triggerMathJax();
+        }
+
+        function resetQuiz() {
+            clearInterval(timerInterval);
+            userAnswers = {};
+            currentIndex = 0;
+            topStatusText.textContent = 'Chưa chọn chế độ';
+
+            viewQuiz.classList.add('hidden');
+            viewResult.classList.add('hidden');
+            viewLanding.classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>

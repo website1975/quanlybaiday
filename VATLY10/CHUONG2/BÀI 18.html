@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ôn Luyện Củng Cố Kiến Thức - Bài 18: Lực Ma Sát</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- MathJax Configuration -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)']],
+                displayMath: [['\\[', '\\]']],
+                processEscapes: true
+            },
+            options: {
+                ignoreHtmlClass: 'tex2jax_ignore',
+                processHtmlClass: 'tex2jax_process'
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0b0d19;
+            color: #f3f4f6;
+            min-height: 100vh;
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #121528;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #2a2f4c;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #3b4269;
+        }
+
+        .header-title-cream {
+            color: #FFFDD0;
+        }
+
+        .card-dark {
+            background-color: #121528;
+            border: 1px solid #1e233d;
+        }
+
+        .card-hover:hover {
+            border-color: #3b82f6;
+            transform: translateY(-2px);
+            transition: all 0.2s ease;
+        }
+
+        .btn-gold {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: #ffffff;
+        }
+        .btn-gold:hover {
+            background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%);
+        }
+
+        .btn-emerald {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: #ffffff;
+        }
+        .btn-emerald:hover {
+            background: linear-gradient(135deg, #34d399 0%, #059669 100%);
+        }
+
+        /* Quiz navigation grid active states */
+        .q-grid-btn {
+            transition: all 0.15s ease-in-out;
+        }
+        .q-grid-btn.current {
+            border: 2px solid #60a5fa !important;
+            background-color: #1e3a8a !important;
+            color: #ffffff !important;
+        }
+        .q-grid-btn.answered {
+            background-color: #d97706 !important;
+            color: #ffffff !important;
+        }
+
+        /* Radio choice styles */
+        .option-box {
+            background-color: #1a1d36;
+            border: 1px solid #2a2f4c;
+            transition: all 0.2s ease;
+        }
+        .option-box:hover {
+            border-color: #4f46e5;
+            background-color: #212545;
+        }
+        .option-box.selected {
+            border-color: #3b82f6;
+            background-color: #1e293b;
+            box-shadow: 0 0 10px rgba(59, 130, 246, 0.2);
+        }
+
+        /* Results Option styles */
+        .option-correct {
+            border-color: #10b981 !important;
+            background-color: rgba(16, 185, 129, 0.15) !important;
+            color: #a7f3d0 !important;
+        }
+        .option-wrong {
+            border-color: #ef4444 !important;
+            background-color: rgba(239, 68, 68, 0.15) !important;
+            color: #fca5a5 !important;
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen text-slate-100">
+
+    <!-- TOP HEADER BAR -->
+    <header class="bg-[#0e1122] border-b border-[#1e233d] sticky top-0 z-50 px-4 py-3 shadow-md">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-2">
+            <div class="flex items-center space-x-3">
+                <div class="bg-amber-500/20 p-2 rounded-lg text-amber-400">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="font-extrabold text-lg md:text-xl tracking-tight header-title-cream uppercase">
+                        ÔN LUYỆN CỦNG CỐ KIẾN THỨC
+                    </h1>
+                    <p class="text-xs text-slate-400 font-medium">
+                        Bài 18: LỰC MA SÁT <span class="text-slate-500">(Vật lí 10 - Chương III: Động lực học)</span>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Mode status badge -->
+            <div id="top-status-badge" class="flex items-center space-x-2 bg-[#1a1d36] px-3 py-1.5 rounded-full border border-slate-700/60 text-xs text-slate-300 font-medium">
+                <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+                <span id="top-status-text">Chưa chọn chế độ</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="flex-grow max-w-7xl w-full mx-auto p-4 md:p-6">
+
+        <!-- SCREEN 1: LANDING & MODE SELECTION -->
+        <section id="view-landing" class="space-y-8 py-4">
+            <!-- Hero Title -->
+            <div class="text-center space-y-3 max-w-3xl mx-auto">
+                <div class="inline-flex items-center justify-center p-3 bg-amber-500/10 rounded-full text-amber-400 mb-2">
+                    <svg class="w-10 h-10" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                    </svg>
+                </div>
+                <h2 class="text-2xl md:text-4xl font-black text-white tracking-wide uppercase">
+                    BÀI KIỂM TRA TRẮC NGHIỆM KHÁCH QUAN
+                </h2>
+                <p class="text-sm md:text-base text-slate-300">
+                    Bộ câu hỏi chuẩn hóa gồm <strong class="text-amber-400">20 câu hỏi</strong> bám sát nội dung bài học <strong class="text-amber-300">Lực Ma Sát</strong> với 4 mức độ tư duy chuẩn cấu trúc Bộ Giáo dục.
+                </p>
+            </div>
+
+            <!-- 4 Difficulty level indicator cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="card-dark p-4 rounded-xl space-y-2 border-l-4 border-l-blue-500">
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs font-bold text-blue-400 uppercase tracking-wider">MỨC BIẾT</span>
+                        <span class="text-xs px-2 py-0.5 rounded bg-blue-500/20 text-blue-300 font-semibold">8 CÂU</span>
+                    </div>
+                    <p class="text-xs text-slate-400 leading-relaxed">
+                        Định nghĩa ma sát nghỉ, ma sát trượt, ma sát lăn, công thức \(F_{ms} = \mu \cdot N\), hệ số \(\mu\), các cách làm giảm ma sát.
+                    </p>
+                </div>
+
+                <div class="card-dark p-4 rounded-xl space-y-2 border-l-4 border-l-emerald-500">
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs font-bold text-emerald-400 uppercase tracking-wider">MỨC HIỂU</span>
+                        <span class="text-xs px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-semibold">7 CÂU</span>
+                    </div>
+                    <p class="text-xs text-slate-400 leading-relaxed">
+                        Đặc điểm không phụ thuộc diện tích tiếp xúc, vai trò ma sát nghỉ trong chuyển động, tác dụng phấn magie, rãnh lốp xe.
+                    </p>
+                </div>
+
+                <div class="card-dark p-4 rounded-xl space-y-2 border-l-4 border-l-amber-500">
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs font-bold text-amber-400 uppercase tracking-wider">VẬN DỤNG</span>
+                        <span class="text-xs px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 font-semibold">3 CÂU</span>
+                    </div>
+                    <p class="text-xs text-slate-400 leading-relaxed">
+                        Tính lực kéo duy trì trượt đều, bài toán lực ma sát nghỉ cực đại khi hai người cùng đẩy tủ, tính gia tốc chuyển động.
+                    </p>
+                </div>
+
+                <div class="card-dark p-4 rounded-xl space-y-2 border-l-4 border-l-purple-500">
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs font-bold text-purple-400 uppercase tracking-wider">VD CAO</span>
+                        <span class="text-xs px-2 py-0.5 rounded bg-purple-500/20 text-purple-300 font-semibold">2 CÂU</span>
+                    </div>
+                    <p class="text-xs text-slate-400 leading-relaxed">
+                        Bài toán xe đạp phanh hãm bánh trượt tìm hệ số \(\mu\), ô tô tăng tốc trên đường có ma sát tính quãng đường đi được.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Mode Select Title -->
+            <div class="pt-4 text-center">
+                <span class="text-xs font-bold text-slate-400 uppercase tracking-widest bg-[#1a1d36] px-4 py-2 rounded-full border border-slate-700/60">
+                    VUI LÒNG CHỌN HÌNH THỨC KIỂM TRA:
+                </span>
+            </div>
+
+            <!-- Mode Select Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+                <!-- Practice Mode Card -->
+                <div onclick="startQuiz('practice')" class="card-dark card-hover p-6 rounded-2xl cursor-pointer flex flex-col justify-between space-y-4 border-2 border-slate-800">
+                    <div>
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="text-xl font-bold text-white flex items-center gap-2">
+                                <span class="text-amber-400">1.</span> Chế độ Luyện Tập
+                            </h3>
+                            <span class="text-xs px-2.5 py-1 rounded-full bg-slate-700 text-slate-200 font-medium">
+                                Không giới hạn
+                            </span>
+                        </div>
+                        <p class="text-xs text-slate-400 font-medium mb-3">Học tập & củng cố kiến thức không áp lực</p>
+                        <p class="text-sm text-slate-300 leading-relaxed">
+                            Làm bài không tính giờ. Giúp học sinh bình tĩnh suy ngẫm, củng cố kiến thức. Xem điểm và lời giải chi tiết ngay sau khi hoàn thành.
+                        </p>
+                    </div>
+                    <button class="w-full py-3 rounded-xl font-bold btn-gold shadow-lg text-sm uppercase tracking-wide flex items-center justify-center gap-2">
+                        <span>Bắt đầu Luyện Tập</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                    </button>
+                </div>
+
+                <!-- Timed Mode Card -->
+                <div onclick="startQuiz('timed')" class="card-dark card-hover p-6 rounded-2xl cursor-pointer flex flex-col justify-between space-y-4 border-2 border-slate-800">
+                    <div>
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="text-xl font-bold text-white flex items-center gap-2">
+                                <span class="text-amber-400">2.</span> Chế độ Tính Giờ
+                            </h3>
+                            <span class="text-xs px-2.5 py-1 rounded-full bg-amber-500/20 text-amber-300 font-medium">
+                                20 Phút
+                            </span>
+                        </div>
+                        <p class="text-xs text-slate-400 font-medium mb-3">Thử thách & kiểm tra đánh giá năng lực</p>
+                        <p class="text-sm text-slate-300 leading-relaxed">
+                            Có đồng hồ đếm ngược 20 phút. Trật tự câu hỏi và đáp án ngẫu nhiên giúp đánh giá chính xác thực lực, chống học vẹt hay chép đáp án.
+                        </p>
+                    </div>
+                    <button class="w-full py-3 rounded-xl font-bold btn-emerald shadow-lg text-sm uppercase tracking-wide flex items-center justify-center gap-2">
+                        <span>Bắt đầu Tính Giờ</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- SCREEN 2: ACTIVE QUIZ VIEW -->
+        <section id="view-quiz" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-6">
+            
+            <!-- Left Sidebar Navigator -->
+            <aside class="lg:col-span-4 space-y-4">
+                <div class="card-dark p-5 rounded-2xl space-y-5">
+                    
+                    <!-- Timer Widget (If Timed Mode) -->
+                    <div id="timer-box" class="hidden bg-[#1a1d36] p-4 rounded-xl border border-amber-500/30 flex items-center justify-between">
+                        <div class="flex items-center space-x-2 text-amber-400">
+                            <svg class="w-5 h-5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            <span class="text-xs font-semibold uppercase">Thời gian còn lại:</span>
+                        </div>
+                        <span id="timer-display" class="font-mono text-2xl font-black text-amber-300">20:00</span>
+                    </div>
+
+                    <!-- Question Navigator Title & Progress -->
+                    <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                        <h3 class="text-sm font-bold uppercase tracking-wide text-slate-300">DANH SÁCH CÂU HỎI</h3>
+                        <span id="progress-text" class="text-xs font-semibold bg-blue-500/20 text-blue-300 px-2.5 py-1 rounded-md">0 / 20 đã làm</span>
+                    </div>
+
+                    <!-- 20 Question Grid Buttons -->
+                    <div id="question-grid" class="grid grid-cols-5 gap-2.5">
+                        <!-- Dynamic grid elements generated via JS -->
+                    </div>
+
+                    <!-- Grid Legend -->
+                    <div class="pt-2 border-t border-slate-800/80 space-y-1.5 text-xs text-slate-400">
+                        <div class="flex items-center space-x-2">
+                            <span class="w-3.5 h-3.5 rounded bg-[#1a1d36] border border-slate-700 inline-block"></span>
+                            <span>Chưa trả lời</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="w-3.5 h-3.5 rounded bg-amber-600 inline-block"></span>
+                            <span>Đã chọn đáp án</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="w-3.5 h-3.5 rounded bg-blue-900 border-2 border-blue-400 inline-block"></span>
+                            <span>Đang làm (Hiện tại)</span>
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button onclick="submitQuiz()" class="w-full py-3.5 rounded-xl font-bold btn-emerald shadow-xl text-sm uppercase tracking-wider flex items-center justify-center gap-2 mt-4">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        <span>Nộp Bài & Kết Thúc</span>
+                    </button>
+                </div>
+            </aside>
+
+            <!-- Right Question Box -->
+            <article class="lg:col-span-8">
+                <div class="card-dark p-6 md:p-8 rounded-2xl space-y-6 min-h-[500px] flex flex-col justify-between">
+                    
+                    <!-- Question Header & Level -->
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center border-b border-slate-800 pb-4">
+                            <h2 class="text-lg md:text-xl font-bold text-white flex items-center gap-2">
+                                <span id="q-title-number">Câu 1 / 20</span>
+                            </h2>
+                            <span id="q-level-badge" class="text-xs font-bold px-3 py-1 rounded-md bg-blue-500/20 text-blue-300 border border-blue-500/30">
+                                Mức Biết
+                            </span>
+                        </div>
+
+                        <!-- Question Text Content -->
+                        <div id="q-text" class="text-base md:text-lg font-medium text-slate-100 leading-relaxed pt-2">
+                            <!-- Question text populated by JS -->
+                        </div>
+
+                        <!-- 4 Radio Option Cards -->
+                        <div id="q-options" class="space-y-3 pt-4">
+                            <!-- Options populated by JS -->
+                        </div>
+                    </div>
+
+                    <!-- Bottom Nav Controls -->
+                    <div class="flex flex-wrap items-center justify-between gap-3 border-t border-slate-800 pt-5">
+                        <button id="btn-prev" onclick="prevQuestion()" class="px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs md:text-sm font-semibold transition disabled:opacity-40 disabled:cursor-not-allowed">
+                            &lt; Câu Trước
+                        </button>
+
+                        <button onclick="clearChoice()" class="text-xs text-slate-400 hover:text-amber-400 underline transition">
+                            Xóa lựa chọn câu này
+                        </button>
+
+                        <button id="btn-next" onclick="nextQuestion()" class="px-5 py-2.5 rounded-xl btn-gold text-xs md:text-sm font-semibold transition">
+                            Câu Tiếp &gt;
+                        </button>
+                    </div>
+
+                </div>
+            </article>
+        </section>
+
+        <!-- SCREEN 3: RESULT & DETAILED EXPLANATIONS VIEW -->
+        <section id="view-result" class="hidden space-y-8">
+            
+            <!-- Result Summary Card -->
+            <div class="card-dark p-6 md:p-10 rounded-2xl max-w-4xl mx-auto text-center space-y-6 border border-slate-700 shadow-2xl">
+                
+                <!-- Trophy Icon -->
+                <div class="inline-flex items-center justify-center p-4 bg-amber-500/10 rounded-full text-amber-400 ring-8 ring-amber-500/5">
+                    <svg class="w-14 h-14" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M5 2a1 1 0 011-1h8a1 1 0 011 1v1h1a2 2 0 012 2v2a2 2 0 01-2 2h-1v.172a5 5 0 01-3.2 4.675V15h2a1 1 0 110 2H7a1 1 0 110-2h2v-2.153A5 5 0 015.8 8.172V8H4a2 2 0 01-2-2V4a2 2 0 012-2h1V2zm11 3h-1v3h1a1 1 0 001-1V5a1 1 0 00-1-1zM4 5v2a1 1 0 001 1h1V5H4zm5 6a3 3 0 003-3V3H8v5a3 3 0 003 3z" clip-rule="evenodd"></path>
+                    </svg>
+                </div>
+
+                <div>
+                    <h2 class="text-2xl md:text-4xl font-black text-white tracking-wide uppercase">
+                        KẾT QUẢ BÀI KIỂM TRA
+                    </h2>
+                    <p id="result-mode-subtitle" class="text-sm text-slate-400 font-medium mt-1">
+                        Chế độ LUYỆN TẬP
+                    </p>
+                </div>
+
+                <!-- 3 Stats metrics -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-2xl mx-auto">
+                    <div class="bg-[#1a1d36] p-4 rounded-xl border border-slate-800">
+                        <span class="text-xs text-slate-400 font-medium block mb-1">Điểm số</span>
+                        <span id="res-score" class="text-2xl md:text-3xl font-black text-amber-400">0.0 / 100</span>
+                    </div>
+
+                    <div class="bg-[#1a1d36] p-4 rounded-xl border border-slate-800">
+                        <span class="text-xs text-slate-400 font-medium block mb-1">Số câu đúng</span>
+                        <span id="res-correct" class="text-2xl md:text-3xl font-black text-emerald-400">0 / 20 câu</span>
+                    </div>
+
+                    <div class="bg-[#1a1d36] p-4 rounded-xl border border-slate-800">
+                        <span class="text-xs text-slate-400 font-medium block mb-1">Thời gian làm bài</span>
+                        <span id="res-time" class="text-2xl md:text-3xl font-black text-blue-400">Không giới hạn</span>
+                    </div>
+                </div>
+
+                <!-- Teacher Feedback Box -->
+                <div class="bg-[#1a1d36] p-5 rounded-xl border border-amber-500/30 text-left max-w-3xl mx-auto space-y-2">
+                    <div class="flex items-center space-x-2 text-amber-400 font-bold text-sm">
+                        <span>💬 Đánh giá & Nhận xét từ Giáo viên:</span>
+                    </div>
+                    <p id="res-feedback-text" class="text-sm text-slate-200 leading-relaxed italic">
+                        <!-- Dynamic feedback generated here -->
+                    </p>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex flex-wrap items-center justify-center gap-4 pt-2">
+                    <button onclick="resetQuiz()" class="px-6 py-3 rounded-xl font-bold btn-gold shadow-lg text-sm uppercase tracking-wider flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                        <span>Làm lại bài kiểm tra</span>
+                    </button>
+                    
+                    <a href="#detailed-explanations" class="px-6 py-3 rounded-xl font-bold bg-slate-800 hover:bg-slate-700 text-slate-200 text-sm uppercase tracking-wider flex items-center gap-2 border border-slate-700">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                        <span>Xem đáp án & Lời giải</span>
+                    </a>
+                </div>
+
+            </div>
+
+            <!-- Detailed Explanation List Section -->
+            <div id="detailed-explanations" class="space-y-6 pt-6">
+                <div class="flex justify-between items-center border-b border-slate-800 pb-4 max-w-4xl mx-auto">
+                    <h3 class="text-xl font-bold text-white flex items-center gap-2">
+                        <span class="text-amber-400">📜</span> ĐÁP ÁN & LỜI GIẢI CHI TIẾT
+                    </h3>
+                    <span class="text-xs font-semibold text-slate-400">20/20 câu hỏi</span>
+                </div>
+
+                <div id="explanations-container" class="space-y-6 max-w-4xl mx-auto">
+                    <!-- Dynamic detailed explanation cards -->
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="border-t border-slate-800 bg-[#0e1122] py-4 text-center text-xs text-slate-500 mt-auto">
+        <p>© 2026 Hệ thống Kiểm tra Trắc nghiệm Vật lí 10 - Bài 18: Lực ma sát</p>
+    </footer>
+
+    <script>
+        /* RAW QUIZ DATA (20 standardized questions strictly adhering to PDF Bài 18: LỰC MA SÁT) */
+        const originalQuizData = [
+            // --- MỨC BIẾT (8 câu: 1 -> 8) ---
+            {
+                id: 1,
+                level: "Biết",
+                levelCode: "B",
+                question: "Lực ma sát nghỉ là lực tác dụng lên mặt tiếp xúc giữa vật và bề mặt giữ cho vật đứng yên khi nào?",
+                options: [
+                    "Khi vật chịu tác dụng của lực \\(\\vec{F}\\) song song với bề mặt tiếp xúc.",
+                    "Khi không có bất kì lực nào tác dụng lên vật.",
+                    "Khi vật trượt đều trên bề mặt nằm ngang.",
+                    "Khi vật rơi tự do trong chân không."
+                ],
+                correct: 0,
+                explanation: "SGK Bài 18 (mục I) định nghĩa: Lực ma sát nghỉ là lực ma sát tác dụng lên mặt tiếp xúc của vật với bề mặt giữ cho vật đứng yên, khi vật chịu tác dụng của lực \\(\\vec{F}\\) song song với bề mặt."
+            },
+            {
+                id: 2,
+                level: "Biết",
+                levelCode: "B",
+                question: "Đặc điểm nào sau đây là ĐÚNG đối với độ lớn của lực ma sát trượt?",
+                options: [
+                    "Phụ thuộc vào diện tích của bề mặt tiếp xúc.",
+                    "Phụ thuộc vào tốc độ chuyển động trượt của vật.",
+                    "Phụ thuộc vào vật liệu và tình trạng của hai bề mặt tiếp xúc.",
+                    "Tỉ lệ nghịch với áp lực vuông góc lên bề mặt tiếp xúc."
+                ],
+                correct: 2,
+                explanation: "Qua Thí nghiệm 1 và Thí nghiệm 2 (SGK Bài 18), độ lớn lực ma sát trượt tỉ lệ thuận với áp lực \\(N\\), phụ thuộc vật liệu và tình trạng bề mặt tiếp xúc, KHÔNG phụ thuộc vào diện tích tiếp xúc hay tốc độ của vật."
+            },
+            {
+                id: 3,
+                level: "Biết",
+                levelCode: "B",
+                question: "Biểu thức tính độ lớn của lực ma sát trượt là:",
+                options: [
+                    "\\(F_{\\text{ms}} = \\mu \\cdot N\\)",
+                    "\\(F_{\\text{ms}} = \\frac{\\mu}{N}\\)",
+                    "\\(F_{\\text{ms}} = \\mu \\cdot m \\cdot a\\)",
+                    "\\(F_{\\text{ms}} = \\frac{N}{\\mu}\\)"
+                ],
+                correct: 0,
+                explanation: "Công thức tính lực ma sát trượt trong SGK là \\(F_{\\text{ms}} = \\mu \\cdot N\\), trong đó \\(\\mu\\) là hệ số ma sát trượt và \\(N\\) là áp lực lên bề mặt tiếp xúc."
+            },
+            {
+                id: 4,
+                level: "Biết",
+                levelCode: "B",
+                question: "Hệ số ma sát trượt \\(\\mu\\) có đặc điểm nào sau đây?",
+                options: [
+                    "Có đơn vị đo là Newton (N).",
+                    "Không có đơn vị, phụ thuộc vào vật liệu và tình trạng của hai mặt tiếp xúc.",
+                    "Có đơn vị là m/s² và tỉ lệ với áp lực \\(N\\).",
+                    "Luôn luôn có giá trị lớn hơn 1."
+                ],
+                correct: 1,
+                explanation: "Hệ số ma sát trượt \\(\\mu = \\frac{F_{\\text{ms}}}{N}\\) là tỉ số giữa hai lực nên không có đơn vị, phụ thuộc vào bản chất vật liệu (khô, ướt, nhẵn, rát...) của cặp bề mặt tiếp xúc."
+            },
+            {
+                id: 5,
+                level: "Biết",
+                levelCode: "B",
+                question: "Trong cùng điều kiện áp lực \\(N\\) tác dụng, lực ma sát lăn so với lực ma sát trượt có độ lớn như thế nào?",
+                options: [
+                    "Bằng nhau.",
+                    "Lớn hơn rất nhiều.",
+                    "Nhỏ hơn rất nhiều.",
+                    "Không thể so sánh được."
+                ],
+                correct: 2,
+                explanation: "Mục 'Em có biết?' SGK trang 75 ghi rõ: Trong các điều kiện cùng áp lực \\(N\\) thì lực ma sát nghỉ tác dụng vào các vật lăn nhỏ hơn lực ma sát trượt tác dụng lên các vật trượt rất nhiều."
+            },
+            {
+                id: 6,
+                level: "Biết",
+                levelCode: "B",
+                question: "Khi tác dụng lực kéo song song với mặt tiếp xúc tăng dần lên một vật đang đứng yên, lực ma sát nghỉ sẽ:",
+                options: [
+                    "Giữ nguyên độ lớn không đổi.",
+                    "Tăng lên tương ứng với lực kéo cho đến khi đạt giá trị cực đại \\(F_0\\).",
+                    "Giảm dần về 0.",
+                    "Biến đổi thành lực ma sát lăn ngay lập tức."
+                ],
+                correct: 1,
+                explanation: "Lực ma sát nghỉ có độ lớn tăng dần bằng độ lớn lực kéo song song để giữ vật cân bằng, cho đến khi lực kéo vượt quá lực ma sát nghỉ cực đại \\(F_0\\) thì vật bắt đầu trượt."
+            },
+            {
+                id: 7,
+                level: "Biết",
+                levelCode: "B",
+                question: "Để giảm ma sát cản trở chuyển động trong kĩ thuật (như ở các trục quay), người ta thường áp dụng biện pháp nào?",
+                options: [
+                    "Thay ma sát trượt bằng ma sát lăn (đặt con lăn, ổ bi) hoặc dùng dầu mỡ bôi trơn.",
+                    "Tăng áp lực vuông góc lên bề mặt tiếp xúc.",
+                    "Tăng độ rát của hai bề mặt kim loại tiếp xúc.",
+                    "Tăng diện tích mặt tiếp xúc."
+                ],
+                correct: 0,
+                explanation: "Để giảm ma sát trong máy móc kĩ thuật, người ta chèn ổ bi/con lăn để chuyển ma sát trượt thành ma sát lăn, đồng thời tra dầu mỡ bôi trơn bề mặt tiếp xúc."
+            },
+            {
+                id: 8,
+                level: "Biết",
+                levelCode: "B",
+                question: "Khi hai bàn tay xoa vào nhau, ma sát xuất hiện giữa hai lòng bàn tay là:",
+                options: [
+                    "Lực ma sát nghỉ.",
+                    "Lực ma sát trượt.",
+                    "Lực ma sát lăn.",
+                    "Lực đàn hồi."
+                ],
+                correct: 1,
+                explanation: "Câu hỏi thảo luận SGK trang 72: Hai bàn tay trượt trên nhau khi xoa vào nhau xuất hiện lực ma sát trượt cản trở chuyển động của hai bàn tay."
+            },
+
+            // --- MỨC HIỂU (7 câu: 9 -> 15) ---
+            {
+                id: 9,
+                level: "Hiểu",
+                levelCode: "H",
+                question: "Một chiếc thùng gỗ nằm yên trên mặt sàn nằm ngang. Một người đẩy thùng với lực \\(F = 120\\text{ N}\\) theo phương nằm ngang nhưng thùng vẫn không chuyển động. Lực ma sát nghỉ khi đó có độ lớn và chiều là:",
+                options: [
+                    "\\(F_{\\text{ms nghỉ}} = 0\\text{ N}\\)",
+                    "\\(F_{\\text{ms nghỉ}} = 120\\text{ N}\\), ngược chiều với lực đẩy \\(\\vec{F}\\)",
+                    "\\(F_{\\text{ms nghỉ}} > 120\\text{ N}\\), cùng chiều với lực đẩy \\(\\vec{F}\\)",
+                    "\\(F_{\\text{ms nghỉ}} = 120\\text{ N}\\), cùng chiều với lực đẩy \\(\\vec{F}\\)"
+                ],
+                correct: 1,
+                explanation: "Vì thùng đứng yên cân bằng nên lực ma sát nghỉ trực đối với lực đẩy: \\(F_{\\text{ms nghỉ}} = F = 120\\text{ N}\\) và có chiều ngược với chiều lực đẩy."
+            },
+            {
+                id: 10,
+                level: "Hiểu",
+                levelCode: "H",
+                question: "Đặt một vali lên băng chuyền đang chuyển động thẳng đều ở sân bay. Vali nằm yên đối với băng chuyền và chuyển động cùng băng chuyền. Lực nào đóng vai trò là lực phát động giúp vali chuyển động?",
+                options: [
+                    "Lực ma sát trượt.",
+                    "Lực ma sát nghỉ giữa mặt băng chuyền và đáy vali.",
+                    "Trọng lực tác dụng lên vali.",
+                    "Lực cản của không khí."
+                ],
+                correct: 1,
+                explanation: "Khi băng chuyền chuyển động, lực ma sát nghỉ giữa băng chuyền và mặt đáy vali đẩy vali chuyển động cùng tốc độ với băng chuyền mà không bị trượt lùi lại."
+            },
+            {
+                id: 11,
+                level: "Hiểu",
+                levelCode: "H",
+                question: "Phát biểu nào sau đây là **SAI** khi nói về đặc điểm của lực ma sát nghỉ?",
+                options: [
+                    "Lực ma sát nghỉ luôn có tác dụng cản trở chuyển động và có hại trong mọi trường hợp.",
+                    "Lực ma sát nghỉ giúp người đi bộ có thể bước đi trên mặt đường mà không bị trượt chân lùi về sau.",
+                    "Một vật có thể đứng yên cân bằng trên mặt phẳng nghiêng nhờ lực ma sát nghỉ.",
+                    "Độ lớn của lực ma sát nghỉ điều chỉnh tự động bằng độ lớn lực kéo song song mặt tiếp xúc đến giá trị cực đại \\(F_0\\)."
+                ],
+                correct: 0,
+                explanation: "Phát biểu A sai vì lực ma sát nghỉ không phải lúc nào cũng có hại; nó đóng vai trò lực phát động giúp con người bước đi, xe cộ di chuyển, và giữ đồ vật đứng yên không trượt."
+            },
+            {
+                id: 12,
+                level: "Hiểu",
+                levelCode: "H",
+                question: "Thí nghiệm 1 (Hình 18.4 SGK) dùng lực kế kéo khối gỗ trượt đều trên mặt gỗ lần lượt theo hai cách: đặt mặt diện tích lớn và đặt mặt diện tích nhỏ tiếp xúc. Kết quả cho thấy số chỉ lực kế ở hai cách đặt là:",
+                options: [
+                    "Như nhau, chứng tỏ độ lớn lực ma sát trượt không phụ thuộc vào diện tích tiếp xúc.",
+                    "Lớn hơn khi đặt mặt diện tích lớn tiếp xúc.",
+                    "Nhỏ hơn khi đặt mặt diện tích lớn tiếp xúc.",
+                    "Bằng 0 khi đặt mặt diện tích nhỏ tiếp xúc."
+                ],
+                correct: 0,
+                explanation: "Kết luận thí nghiệm 1 SGK: Độ lớn của lực ma sát trượt chỉ phụ thuộc vào vật liệu và tình trạng bề mặt tiếp xúc, KHÔNG phụ thuộc vào diện tích bề mặt tiếp xúc."
+            },
+            {
+                id: 13,
+                level: "Hiểu",
+                levelCode: "H",
+                question: "Vận động viên thể dục dụng cụ thường xoa phấn magie (magnesium carbonate) vào lòng bàn tay trước khi nâng tạ hoặc nắm vào xà đơn nhằm mục đích gì?",
+                options: [
+                    "Làm giảm ma sát trượt giúp tay xoay xà dễ dàng hơn.",
+                    "Hút ẩm mồ hôi và làm tăng lực ma sát nghỉ, ma sát trượt giúp tay bám chắc chắn vào thanh xà.",
+                    "Tạo lớp đệm mềm giảm bớt áp lực của thanh xà.",
+                    "Làm mát bàn tay trong khi thi đấu."
+                ],
+                correct: 1,
+                explanation: "Bột phấn magie hút ẩm mồ hôi làm tăng độ nhám, tăng lực ma sát giữa tay vận động viên và dụng cụ thi đấu, tránh bị trượt ngã gây tai nạn."
+            },
+            {
+                id: 14,
+                level: "Hiểu",
+                levelCode: "H",
+                question: "Một ô tô đang chuyển động nhanh trên đường nằm ngang, nếu tài xế phanh gấp khiến bánh xe bị khóa cứng và trượt trên mặt đường, lực cản chính làm ô tô giảm tốc độ rồi dừng lại là:",
+                options: [
+                    "Trọng lực của xe.",
+                    "Lực ma sát trượt giữa lốp xe bị khóa cứng và mặt đường.",
+                    "Lực ma sát nghỉ giữa bánh xe và mặt đường.",
+                    "Phản lực vuông góc của mặt đường."
+                ],
+                correct: 1,
+                explanation: "Khi bánh xe bị bó cứng không quay được và trượt trên mặt đường, lực cản chuyển động lúc này là lực ma sát trượt giữa lốp xe và mặt đường."
+            },
+            {
+                id: 15,
+                level: "Hiểu",
+                levelCode: "H",
+                question: "Vì sao lốp xe ô tô, xe máy lại được chế tạo có các rãnh, khía sâu trên bề mặt cao su?",
+                options: [
+                    "Để làm tăng độ thẩm mỹ và giảm tiếng ồn khi chạy.",
+                    "Để tăng lực ma sát giữa lốp xe và mặt đường, giúp thoát nước mưa và tăng độ bám đường an toàn khi phanh.",
+                    "Để làm giảm khối lượng nguyên liệu cao su chế tạo lốp.",
+                    "Để giảm bớt hệ số ma sát trượt giúp xe chạy tiết kiệm nhiên liệu."
+                ],
+                correct: 1,
+                explanation: "Các rãnh, khía sâu trên lốp xe giúp gạt nước mưa, tăng độ bám và tăng lực ma sát giữa lốp với mặt đường, giúp xe không bị trượt khi phanh gấp hoặc ôm cua."
+            },
+
+            // --- MỨC VẬN DỤNG (3 câu: 16 -> 18) ---
+            {
+                id: 16,
+                level: "Vận dụng",
+                levelCode: "VD",
+                question: "Một người đẩy một chiếc tủ gỗ có khối lượng \\(m = 80\\text{ kg}\\) trượt đều trên sàn nhà nằm ngang. Hệ số ma sát trượt giữa tủ và sàn nhà là \\(\\mu = 0,35\\). Lấy \\(g = 10\\text{ m/s}^2\\). Cần tác dụng lực đẩy theo phương nằm ngang có độ lớn bằng bao nhiêu?",
+                options: [
+                    "\\(28\\text{ N}\\)",
+                    "\\(280\\text{ N}\\)",
+                    "\\(800\\text{ N}\\)",
+                    "\\(2800\\text{ N}\\)"
+                ],
+                correct: 1,
+                explanation: "Áp lực của tủ lên mặt sàn nằm ngang: \\(N = P = m \\cdot g = 80 \\times 10 = 800\\text{ N}\\).<br>Để duy trì tủ trượt đều, lực đẩy nằm ngang bằng độ lớn lực ma sát trượt:<br>\\(F = F_{\\text{ms}} = \\mu \\cdot N = 0,35 \\times 800 = 280\\text{ N}\\)."
+            },
+
+            {
+                id: 17,
+                level: "Vận dụng",
+                levelCode: "VD",
+                question: "Để làm chiếc tủ gỗ trượt trên sàn, lực kéo nằm ngang tối thiểu phải thắng được lực ma sát nghỉ cực đại \\(F_0 = 300\\text{ N}\\). Người thứ nhất kéo tủ với lực \\(F_1 = 35\\text{ N}\\), người thứ hai cùng đẩy tủ theo chiều đó với lực \\(F_2 = 260\\text{ N}\\). Hỏi tủ có dịch chuyển được không và độ lớn lực ma sát khi đó bằng bao nhiêu?",
+                options: [
+                    "Tủ dịch chuyển được; lực ma sát bằng \\(295\\text{ N}\\).",
+                    "Tủ KHÔNG dịch chuyển được; lực ma sát nghỉ bằng \\(295\\text{ N}\\).",
+                    "Tủ dịch chuyển được; lực ma sát nghỉ bằng \\(300\\text{ N}\\).",
+                    "Tủ KHÔNG dịch chuyển được; lực ma sát nghỉ bằng \\(300\\text{ N}\\)."
+                ],
+                correct: 1,
+                explanation: "Tổng lực kéo/đẩy nằm ngang: \\(F = F_1 + F_2 = 35 + 260 = 295\\text{ N}\\).<br>Vì \\(F = 295\\text{ N} < F_0 = 300\\text{ N}\\) nên tủ vẫn đứng yên.<br>Do tủ đứng yên nên độ lớn lực ma sát nghỉ cân bằng với tổng lực tác dụng: \\(F_{\\text{ms nghỉ}} = F = 295\\text{ N}\\)."
+            },
+            {
+                id: 18,
+                level: "Vận dụng",
+                levelCode: "VD",
+                question: "Một khúc gỗ khối lượng \\(m = 5\\text{ kg}\\) đặt trên sàn nhà nằm ngang. Tác dụng lực kéo nằm ngang \\(F = 20\\text{ N}\\) làm khúc gỗ trượt. Biết hệ số ma sát trượt giữa khúc gỗ và sàn là \\(\\mu = 0,25\\). Lấy \\(g = 10\\text{ m/s}^2\\). Gia tốc chuyển động của khúc gỗ là:",
+                options: [
+                    "\\(1,5\\text{ m/s}^2\\)",
+                    "\\(4,0\\text{ m/s}^2\\)",
+                    "\\(2,5\\text{ m/s}^2\\)",
+                    "\\(0,75\\text{ m/s}^2\\)"
+                ],
+                correct: 0,
+                explanation: "Lực ma sát trượt: \\(F_{\\text{ms}} = \\mu \\cdot m \\cdot g = 0,25 \\times 5 \\times 10 = 12,5\\text{ N}\\).<br>Theo Định luật 2 Newton: \\(F - F_{\\text{ms}} = m \\cdot a\\).<br>Suy ra gia tốc: \\(a = \\frac{F - F_{\\text{ms}}}{m} = \\frac{20 - 12,5}{5} = \\frac{7,5}{5} = 1,5\\text{ m/s}^2\\)."
+            },
+
+            // --- MỨC VẬN DỤNG CAO (2 câu: 19 -> 20) ---
+            {
+                id: 19,
+                level: "Vận dụng cao",
+                levelCode: "VDC",
+                question: "Một người đi xe đạp có khối lượng tổng cộng cả người và xe \\(m = 86\\text{ kg}\\) đang chạy trên đường nằm ngang với vận tốc \\(v_0 = 4\\text{ m/s}\\). Khi hãm phanh khóa cứng bánh xe khiến lốp trượt đi đoạn đường \\(s = 2\\text{ m}\\) thì xe dừng lại. Lấy \\(g = 10\\text{ m/s}^2\\). Hệ số ma sát trượt \\(\\mu\\) giữa lốp xe và mặt đường là bao nhiêu? (Bài tập Ví dụ SGK trang 75)",
+                options: [
+                    "\\(0,20\\)",
+                    "\\(0,40\\)",
+                    "\\(0,25\\)",
+                    "\\(0,50\\)"
+                ],
+                correct: 1,
+                explanation: "Gia tốc hãm của xe: \\(a = \\frac{v^2 - v_0^2}{2s} = \\frac{0 - 4^2}{2 \\times 2} = -4\\text{ m/s}^2\\).<br>Lực ma sát trượt cản trở chuyển động: \\(F_{\\text{ms}} = m \\cdot |a| = 86 \\times 4 = 344\\text{ N}\\).<br>Áp lực \\(N = m \\cdot g = 86 \\times 10 = 860\\text{ N}\\).<br>Hệ số ma sát trượt: \\(\\mu = \\frac{F_{\\text{ms}}}{N} = \\frac{344}{860} = 0,40\\)."
+            },
+            {
+                id: 20,
+                level: "Vận dụng cao",
+                levelCode: "VDC",
+                question: "Một ô tô khối lượng \\(m = 1,5\\text{ tấn}\\) khởi hành chuyển động thẳng nhanh dần đều trên đường nằm ngang. Lực kéo của động cơ ô tô theo phương nằm ngang có độ lớn \\(F_k = 4500\\text{ N}\\). Hệ số ma sát trượt giữa bánh xe và mặt đường là \\(\\mu = 0,20\\). Lấy \\(g = 10\\text{ m/s}^2\\). Quãng đường ô tô đi được sau thời gian \\(t = 10\\text{ s}\\) kể từ lúc bắt đầu khởi hành là:",
+                options: [
+                    "\\(50\\text{ m}\\)",
+                    "\\(100\\text{ m}\\)",
+                    "\\(150\\text{ m}\\)",
+                    "\\(200\\text{ m}\\)"
+                ],
+                correct: 0,
+                explanation: "Đổi \\(m = 1,5\\text{ tấn} = 1500\\text{ kg}\\).<br>Độ lớn lực ma sát trượt: \\(F_{\\text{ms}} = \\mu \\cdot m \\cdot g = 0,20 \\times 1500 \\times 10 = 3000\\text{ N}\\).<br>Hợp lực nằm ngang tác dụng lên xe: \\(F_{\\text{hl}} = F_k - F_{\\text{ms}} = 4500 - 3000 = 1500\\text{ N}\\).<br>Gia tốc ô tô: \\(a = \\frac{F_{\\text{hl}}}{m} = \\frac{1500}{1500} = 1\\text{ m/s}^2\\).<br>Quãng đường đi được sau 10s (khởi hành \\(v_0 = 0\\)):<br>\\(s = \\frac{1}{2} a t^2 = \\frac{1}{2} \\times 1 \\times 10^2 = 50\\text{ m}\\)."
+            }
+        ];
+
+        // App State
+        let currentMode = 'practice'; // 'practice' or 'timed'
+        let activeQuestions = [];
+        let currentIndex = 0;
+        let userAnswers = {}; // { questionId: chosenIndex }
+        let timerInterval = null;
+        let timeLeft = 1200; // 20 minutes in seconds
+        let quizStartTime = 0;
+        let quizEndTime = 0;
+
+        // DOM Element references
+        const viewLanding = document.getElementById('view-landing');
+        const viewQuiz = document.getElementById('view-quiz');
+        const viewResult = document.getElementById('view-result');
+        const topStatusText = document.getElementById('top-status-text');
+        const timerBox = document.getElementById('timer-box');
+        const timerDisplay = document.getElementById('timer-display');
+        const questionGrid = document.getElementById('question-grid');
+        const progressText = document.getElementById('progress-text');
+        const qTitleNumber = document.getElementById('q-title-number');
+        const qLevelBadge = document.getElementById('q-level-badge');
+        const qText = document.getElementById('q-text');
+        const qOptions = document.getElementById('q-options');
+        const btnPrev = document.getElementById('btn-prev');
+        const btnNext = document.getElementById('btn-next');
+
+        function triggerMathJax() {
+            if (window.MathJax && window.MathJax.typesetPromise) {
+                window.MathJax.typesetPromise().catch((err) => console.log('MathJax error:', err));
+            }
+        }
+
+        function shuffleArray(array) {
+            const arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        function startQuiz(mode) {
+            currentMode = mode;
+            userAnswers = {};
+            currentIndex = 0;
+            quizStartTime = Date.now();
+
+            if (mode === 'timed') {
+                topStatusText.textContent = 'Chế độ TÍNH GIỜ';
+                // Shuffle questions for timed mode to evaluate real capacity
+                activeQuestions = shuffleArray(originalQuizData);
+                timerBox.classList.remove('hidden');
+                timeLeft = 1200; // 20 mins
+                startTimer();
+            } else {
+                topStatusText.textContent = 'Chế độ LUYỆN TẬP';
+                activeQuestions = [...originalQuizData];
+                timerBox.classList.add('hidden');
+                clearInterval(timerInterval);
+            }
+
+            viewLanding.classList.add('hidden');
+            viewResult.classList.add('hidden');
+            viewQuiz.classList.remove('hidden');
+
+            renderGridNav();
+            renderQuestion(currentIndex);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function startTimer() {
+            clearInterval(timerInterval);
+            updateTimerDisplay();
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                updateTimerDisplay();
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    alert("Đã hết thời gian 20 phút! Hệ thống sẽ tự động nộp bài.");
+                    submitQuiz();
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const mins = Math.floor(timeLeft / 60);
+            const secs = timeLeft % 60;
+            timerDisplay.textContent = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        function renderGridNav() {
+            questionGrid.innerHTML = '';
+            const answeredCount = Object.keys(userAnswers).length;
+            progressText.textContent = `${answeredCount} / ${activeQuestions.length} đã làm`;
+
+            activeQuestions.forEach((q, idx) => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = `q-grid-btn text-xs font-bold py-2.5 rounded-lg border border-slate-700 bg-[#1a1d36] text-slate-300 hover:bg-slate-700`;
+                btn.textContent = idx + 1;
+
+                if (userAnswers[q.id] !== undefined) {
+                    btn.classList.add('answered');
+                }
+                if (idx === currentIndex) {
+                    btn.classList.add('current');
+                }
+
+                btn.onclick = () => jumpToQuestion(idx);
+                questionGrid.appendChild(btn);
+            });
+        }
+
+        function renderQuestion(index) {
+            currentIndex = index;
+            const q = activeQuestions[index];
+
+            qTitleNumber.textContent = `Câu ${index + 1} / ${activeQuestions.length}`;
+            
+            // Set level badge style
+            qLevelBadge.textContent = `Mức ${q.level}`;
+            if (q.levelCode === 'B') {
+                qLevelBadge.className = "text-xs font-bold px-3 py-1 rounded-md bg-blue-500/20 text-blue-300 border border-blue-500/30";
+            } else if (q.levelCode === 'H') {
+                qLevelBadge.className = "text-xs font-bold px-3 py-1 rounded-md bg-emerald-500/20 text-emerald-300 border border-emerald-500/30";
+            } else if (q.levelCode === 'VD') {
+                qLevelBadge.className = "text-xs font-bold px-3 py-1 rounded-md bg-amber-500/20 text-amber-300 border border-amber-500/30";
+            } else {
+                qLevelBadge.className = "text-xs font-bold px-3 py-1 rounded-md bg-purple-500/20 text-purple-300 border border-purple-500/30";
+            }
+
+            qText.innerHTML = q.question;
+
+            // Render options A, B, C, D
+            qOptions.innerHTML = '';
+            const labels = ['A', 'B', 'C', 'D'];
+            q.options.forEach((optText, optIdx) => {
+                const isSelected = userAnswers[q.id] === optIdx;
+                const optionBox = document.createElement('div');
+                optionBox.className = `option-box p-4 rounded-xl cursor-pointer flex items-start space-x-3 text-sm transition ${isSelected ? 'selected' : ''}`;
+                optionBox.onclick = () => selectOption(q.id, optIdx);
+
+                optionBox.innerHTML = `
+                    <div class="flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center font-bold text-xs ${isSelected ? 'bg-blue-500 text-white' : 'bg-slate-800 text-slate-300 border border-slate-700'}">
+                        ${labels[optIdx]}
+                    </div>
+                    <div class="text-slate-200 font-medium pt-0.5 leading-relaxed flex-grow">
+                        ${optText}
+                    </div>
+                `;
+                qOptions.appendChild(optionBox);
+            });
+
+            // Update Navigation buttons
+            btnPrev.disabled = index === 0;
+            if (index === activeQuestions.length - 1) {
+                btnNext.textContent = 'Trang Cuối';
+            } else {
+                btnNext.textContent = 'Câu Tiếp >';
+            }
+
+            renderGridNav();
+            triggerMathJax();
+        }
+
+        function selectOption(qId, choiceIdx) {
+            userAnswers[qId] = choiceIdx;
+            renderQuestion(currentIndex);
+        }
+
+        function clearChoice() {
+            const q = activeQuestions[currentIndex];
+            delete userAnswers[q.id];
+            renderQuestion(currentIndex);
+        }
+
+        function nextQuestion() {
+            if (currentIndex < activeQuestions.length - 1) {
+                renderQuestion(currentIndex + 1);
+            }
+        }
+
+        function prevQuestion() {
+            if (currentIndex > 0) {
+                renderQuestion(currentIndex - 1);
+            }
+        }
+
+        function jumpToQuestion(idx) {
+            renderQuestion(idx);
+        }
+
+        function submitQuiz() {
+            clearInterval(timerInterval);
+            quizEndTime = Date.now();
+
+            // Calculate score
+            let correctCount = 0;
+            activeQuestions.forEach(q => {
+                if (userAnswers[q.id] === q.correct) {
+                    correctCount++;
+                }
+            });
+
+            const score = (correctCount / activeQuestions.length) * 100;
+            const timeTakenSec = Math.floor((quizEndTime - quizStartTime) / 1000);
+            
+            // Format time taken
+            let timeTakenText = "Không giới hạn";
+            if (currentMode === 'timed') {
+                const elapsedMins = Math.floor(timeTakenSec / 60);
+                const elapsedSecs = timeTakenSec % 60;
+                timeTakenText = `${elapsedMins} phút ${elapsedSecs} giây`;
+            }
+
+            // Render Result Summary Screen
+            document.getElementById('result-mode-subtitle').textContent = currentMode === 'timed' ? 'Chế độ TÍNH GIỜ (20 Phút)' : 'Chế độ LUYỆN TẬP';
+            document.getElementById('res-score').textContent = `${score.toFixed(1)} / 100`;
+            document.getElementById('res-correct').textContent = `${correctCount} / ${activeQuestions.length} câu`;
+            document.getElementById('res-time').textContent = timeTakenText;
+
+            // Generate Teacher Assessment & Feedback
+            const feedbackBox = document.getElementById('res-feedback-text');
+            if (score === 100) {
+                feedbackBox.textContent = "Xuất sắc! Em đã nắm vững toàn bộ lý thuyết Bài 18: Lực Ma Sát từ định nghĩa, công thức F_ms = µ.N đến các bài toán vận dụng cao về phanh hãm và chuyển động có ma sát. Hãy phát huy tinh thần học tập tuyệt vời này nhé!";
+            } else if (score >= 80) {
+                feedbackBox.textContent = "Rất tốt! Em hiểu rõ đặc điểm ma sát nghỉ, ma sát trượt, vai trò của ma sát trong thực tế và tính toán bài tập đạt kết quả cao. Xem lại chi tiết các câu làm chưa đúng để đạt điểm tối đa nhé!";
+            } else if (score >= 50) {
+                feedbackBox.textContent = "Khá tốt! Em đã nắm được cơ bản định nghĩa và công thức ma sát. Tuy nhiên em cần chú ý rèn luyện kĩ hơn bài toán ma sát nghỉ cực đại và phương trình động lực học có ma sát.";
+            } else {
+                feedbackBox.textContent = "Cần cố gắng nhiều hơn! Kết quả cho thấy em chưa hiểu kĩ khái niệm ma sát nghỉ và công thức tính ma sát trượt Bài 18. Hãy đọc kĩ lời giải chi tiết bên dưới và xem lại SGK trước khi thực hiện lại bài test nhé!";
+            }
+
+            // Render Detailed Explanations
+            renderDetailedExplanations();
+
+            // Switch view
+            viewQuiz.classList.add('hidden');
+            viewResult.classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function renderDetailedExplanations() {
+            const container = document.getElementById('explanations-container');
+            container.innerHTML = '';
+
+            const labels = ['A', 'B', 'C', 'D'];
+
+            activeQuestions.forEach((q, idx) => {
+                const userChoice = userAnswers[q.id];
+                const isCorrect = userChoice === q.correct;
+
+                const card = document.createElement('div');
+                card.className = `card-dark p-6 rounded-2xl space-y-4 border ${isCorrect ? 'border-emerald-500/40' : 'border-rose-500/40'}`;
+
+                let optionsHTML = '';
+                q.options.forEach((optText, optIdx) => {
+                    let optClass = 'bg-[#1a1d36] border-slate-700/60 text-slate-300';
+                    let iconBadge = `<span class="w-6 h-6 rounded-full bg-slate-800 text-slate-400 border border-slate-700 flex items-center justify-center font-bold text-xs">${labels[optIdx]}</span>`;
+
+                    if (optIdx === q.correct) {
+                        optClass = 'option-correct font-semibold';
+                        iconBadge = `<span class="w-6 h-6 rounded-full bg-emerald-500 text-white flex items-center justify-center font-bold text-xs">✓</span>`;
+                    } else if (optIdx === userChoice && !isCorrect) {
+                        optClass = 'option-wrong font-semibold';
+                        iconBadge = `<span class="w-6 h-6 rounded-full bg-rose-500 text-white flex items-center justify-center font-bold text-xs">✗</span>`;
+                    }
+
+                    optionsHTML += `
+                        <div class="p-3.5 rounded-xl border ${optClass} flex items-start space-x-3 text-sm">
+                            <div class="flex-shrink-0 pt-0.5">${iconBadge}</div>
+                            <div class="leading-relaxed flex-grow">${optText}</div>
+                        </div>
+                    `;
+                });
+
+                card.innerHTML = `
+                    <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="font-bold text-base text-white">Câu ${idx + 1}</span>
+                            <span class="text-xs px-2.5 py-0.5 rounded bg-slate-800 text-slate-300 font-medium">Mức ${q.level}</span>
+                        </div>
+                        <span class="text-xs font-bold px-3 py-1 rounded-full ${isCorrect ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : 'bg-rose-500/20 text-rose-300 border border-rose-500/30'}">
+                            ${isCorrect ? '✓ Đúng' : '✗ Sai'}
+                        </span>
+                    </div>
+
+                    <div class="text-base font-medium text-slate-100 leading-relaxed pt-1">
+                        ${q.question}
+                    </div>
+
+                    <div class="space-y-2.5 pt-2">
+                        ${optionsHTML}
+                    </div>
+
+                    <div class="bg-[#1a1d36] p-4 rounded-xl border border-blue-500/20 text-sm space-y-1.5 text-slate-300">
+                        <div class="flex items-center space-x-2 text-blue-400 font-bold text-xs uppercase tracking-wider">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            <span>Lời giải chi tiết:</span>
+                        </div>
+                        <div class="leading-relaxed pt-1">
+                            ${q.explanation}
+                        </div>
+                    </div>
+                `;
+
+                container.appendChild(card);
+            });
+
+            triggerMathJax();
+        }
+
+        function resetQuiz() {
+            clearInterval(timerInterval);
+            userAnswers = {};
+            currentIndex = 0;
+            topStatusText.textContent = 'Chưa chọn chế độ';
+
+            viewQuiz.classList.add('hidden');
+            viewResult.classList.add('hidden');
+            viewLanding.classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>

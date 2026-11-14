@@ -1,0 +1,1054 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ôn Luyện Củng Cố Kiến Thức - Bài 13: Tổng Hợp Và Phân Tích Lực. Cân Bằng Lực</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Font: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- MathJax Configuration & Script -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)'], ['$', '$']],
+                displayMath: [['\\[', '\\]'], ['$$', '$$']]
+            },
+            svg: { fontCache: 'global' }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cream: '#FFFDD0',
+                        darkBg: '#0b0f19',
+                        cardBg: '#131b2e',
+                        cardHover: '#1c2842',
+                        accentBlue: '#3b82f6',
+                        accentPurple: '#6366f1',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #0b0f19;
+            color: #e2e8f0;
+            font-family: 'Inter', sans-serif;
+        }
+        .header-title {
+            color: #FFFDD0;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #131b2e;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-indigo-500 selection:text-white">
+
+    <!-- TOP NAVIGATION BAR -->
+    <header class="bg-[#111726] border-b border-slate-800 sticky top-0 z-40 px-4 py-3 shadow-lg">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-2">
+            <div class="flex items-center space-x-3">
+                <div class="bg-amber-500/20 text-amber-300 p-2.5 rounded-xl border border-amber-500/30">
+                    <i class="fa-solid fa-scale-balanced text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold header-title tracking-wide">ÔN LUYỆN CỦNG CỐ KIẾN THỨC</h1>
+                    <p class="text-xs text-slate-400 font-medium">Bài 13: TỔNG HỢP VÀ PHÂN TÍCH LỰC. CÂN BẰNG LỰC <span class="text-slate-500">(Vật lí 10 - Chương III)</span></p>
+                </div>
+            </div>
+            <div id="header-mode-badge" class="flex items-center gap-2 bg-slate-800/80 px-3 py-1.5 rounded-full border border-slate-700 text-xs font-semibold text-slate-300">
+                <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+                <span id="current-mode-text">Chưa chọn chế độ</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto w-full px-4 py-6 flex-grow">
+
+        <!-- ==================== STATE 1: BẮT ĐẦU LÀM (WELCOME SCREEN) ==================== -->
+        <section id="screen-start" class="block space-y-8 my-4">
+            <div class="text-center space-y-3">
+                <div class="inline-flex items-center justify-center w-16 h-16 bg-amber-500/10 text-amber-400 rounded-2xl border border-amber-500/20 mb-2 shadow-inner">
+                    <i class="fa-solid fa-award text-2xl"></i>
+                </div>
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight uppercase">BÀI KIỂM TRA TRẮC NGHIỆM KHÁCH QUAN</h2>
+                <p class="text-slate-400 max-w-2xl mx-auto text-sm sm:text-base leading-relaxed">
+                    Bộ câu hỏi chuẩn hóa gồm <span class="text-amber-300 font-bold">20 câu hỏi</span> bám sát nội dung bài học <span class="text-indigo-300 font-semibold">Tổng hợp và Phân tích lực. Cân bằng lực</span> với 4 mức độ tư duy chuẩn cấu trúc Bộ Giáo dục.
+                </p>
+            </div>
+
+            <!-- 4 LEVEL CARDS -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="bg-cardBg border border-slate-800 rounded-xl p-5 hover:border-slate-700 transition-all duration-200">
+                    <div class="text-indigo-400 font-bold text-sm tracking-wider uppercase mb-1">MỨC BIẾT (8 CÂU)</div>
+                    <p class="text-xs text-slate-400 leading-relaxed">Khái niệm hợp lực, quy tắc hình bình hành, tổng hợp hai lực cùng phương, điều kiện cân bằng lực.</p>
+                </div>
+                <div class="bg-cardBg border border-slate-800 rounded-xl p-5 hover:border-slate-700 transition-all duration-200">
+                    <div class="text-emerald-400 font-bold text-sm tracking-wider uppercase mb-1">MỨC HIỂU (7 CÂU)</div>
+                    <p class="text-xs text-slate-400 leading-relaxed">Phân tích tác dụng của lực trên mặt phẳng nghiêng, giới hạn độ lớn hợp lực, phân tích hai lực vuông góc.</p>
+                </div>
+                <div class="bg-cardBg border border-slate-800 rounded-xl p-5 hover:border-slate-700 transition-all duration-200">
+                    <div class="text-amber-400 font-bold text-sm tracking-wider uppercase mb-1">VẬN DỤNG (3 CÂU)</div>
+                    <p class="text-xs text-slate-400 leading-relaxed">Tính hợp lực tàu kéo, tìm góc giữa hai lực đồng quy, thành phần trọng lực trượt trên mặt phẳng nghiêng.</p>
+                </div>
+                <div class="bg-cardBg border border-slate-800 rounded-xl p-5 hover:border-slate-700 transition-all duration-200">
+                    <div class="text-rose-400 font-bold text-sm tracking-wider uppercase mb-1">VD CAO (2 CÂU)</div>
+                    <p class="text-xs text-slate-400 leading-relaxed">Tổng hợp hệ 3 lực đồng quy bất kỳ, bài toán hợp lực vuông góc với lực thành phần.</p>
+                </div>
+            </div>
+
+            <!-- MODE SELECTION CARDS -->
+            <div class="pt-4 text-center">
+                <p class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-6">VUI LÒNG CHỌN HÌNH THỨC KIỂM TRA:</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+                    
+                    <!-- Mode 1: Practice -->
+                    <div onclick="startQuiz('practice')" class="group bg-cardBg border border-indigo-900/50 hover:border-indigo-500 rounded-2xl p-6 text-left cursor-pointer transition-all duration-300 shadow-lg hover:shadow-indigo-950/50 relative overflow-hidden flex flex-col justify-between">
+                        <div>
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="text-xl font-bold text-white group-hover:text-indigo-300 transition-colors">1. Chế độ Luyện Tập</h3>
+                                <span class="bg-indigo-500/10 text-indigo-300 text-xs px-3 py-1 rounded-full border border-indigo-500/20 font-medium">Không giới hạn</span>
+                            </div>
+                            <p class="text-xs text-slate-400 mb-2 font-medium">Học tập & củng cố kiến thức không áp lực</p>
+                            <p class="text-xs text-slate-300 leading-relaxed">Làm bài không tính giờ. Giúp học sinh bình tĩnh suy ngẫm, củng cố kiến thức. Xem điểm và lời giải chi tiết ngay sau khi hoàn thành.</p>
+                        </div>
+                        <div class="mt-6 flex items-center text-sm font-semibold text-indigo-400 group-hover:text-indigo-300">
+                            Bắt đầu Luyện Tập <i class="fa-solid fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i>
+                        </div>
+                    </div>
+
+                    <!-- Mode 2: Timer -->
+                    <div onclick="startQuiz('timer')" class="group bg-cardBg border border-amber-900/50 hover:border-amber-500 rounded-2xl p-6 text-left cursor-pointer transition-all duration-300 shadow-lg hover:shadow-amber-950/50 relative overflow-hidden flex flex-col justify-between">
+                        <div>
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="text-xl font-bold text-white group-hover:text-amber-300 transition-colors">2. Chế độ Tính Giờ</h3>
+                                <span class="bg-amber-500/10 text-amber-300 text-xs px-3 py-1 rounded-full border border-amber-500/20 font-medium">20 Phút</span>
+                            </div>
+                            <p class="text-xs text-slate-400 mb-2 font-medium">Thử thách & kiểm tra đánh giá năng lực</p>
+                            <p class="text-xs text-slate-300 leading-relaxed">Có đồng hồ đếm ngược 20 phút. Trật tự câu hỏi và đáp án ngẫu nhiên giúp đánh giá chính xác thực lực, chống học vẹt hay chép đáp án.</p>
+                        </div>
+                        <div class="mt-6 flex items-center text-sm font-semibold text-amber-400 group-hover:text-amber-300">
+                            Bắt đầu Tính Giờ <i class="fa-solid fa-stopwatch ml-2 group-hover:scale-110 transition-transform"></i>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== STATE 2: ĐANG LÀM (QUIZ ACTIVE SCREEN) ==================== -->
+        <section id="screen-quiz" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-6">
+            
+            <!-- LEFT SIDEBAR: MATRIX & CONTROLS -->
+            <div class="lg:col-span-4 xl:col-span-3 space-y-4">
+                <div class="bg-cardBg border border-slate-800 rounded-xl p-5 sticky top-20 shadow-xl">
+                    <div class="flex justify-between items-center pb-4 border-b border-slate-800">
+                        <div>
+                            <h3 class="text-sm font-bold uppercase tracking-wider text-slate-300">DANH SÁCH CÂU HỎI</h3>
+                            <p class="text-xs text-slate-500"><span id="answered-count" class="text-amber-400 font-bold">0</span> / 20 đã làm</p>
+                        </div>
+                        <!-- Timer display (visible in timer mode) -->
+                        <div id="timer-box" class="hidden flex items-center gap-2 bg-amber-500/10 text-amber-400 border border-amber-500/30 px-3 py-1.5 rounded-lg font-mono font-bold text-sm">
+                            <i class="fa-solid fa-clock text-xs"></i>
+                            <span id="timer-display">20:00</span>
+                        </div>
+                    </div>
+
+                    <!-- Question Grid 1-20 -->
+                    <div id="question-grid" class="grid grid-cols-5 gap-2 my-5">
+                        <!-- Dynamically populated buttons -->
+                    </div>
+
+                    <!-- Legend -->
+                    <div class="pt-3 border-t border-slate-800 text-[11px] text-slate-400 space-y-2">
+                        <div class="flex items-center gap-2">
+                            <span class="w-3 h-3 rounded bg-slate-800 border border-slate-700"></span> Chưa trả lời
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="w-3 h-3 rounded bg-amber-500"></span> Đã chọn đáp án
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="w-3 h-3 rounded bg-indigo-600 border border-indigo-400"></span> Đang làm (Hiện tại)
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button onclick="confirmSubmit()" class="w-full mt-6 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 px-4 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-paper-plane"></i> Nộp Bài & Kết Thúc
+                    </button>
+                </div>
+            </div>
+
+            <!-- MAIN QUESTION PANEL -->
+            <div class="lg:col-span-8 xl:col-span-9">
+                <div class="bg-cardBg border border-slate-800 rounded-xl p-6 sm:p-8 min-h-[500px] flex flex-col justify-between shadow-xl">
+                    
+                    <div>
+                        <!-- Header Question info -->
+                        <div class="flex justify-between items-center mb-6">
+                            <div class="flex items-center gap-3">
+                                <span id="question-number-badge" class="text-xl sm:text-2xl font-black text-white">Câu 1 / 20</span>
+                                <span id="question-level-badge" class="text-xs px-3 py-1 rounded-full font-semibold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+                                    Mức Biết
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Question Content -->
+                        <div id="question-text" class="text-base sm:text-lg font-medium text-slate-100 mb-8 leading-relaxed">
+                            <!-- Question text dynamically injected -->
+                        </div>
+
+                        <!-- Options List -->
+                        <div id="options-container" class="space-y-3">
+                            <!-- Dynamically populated 4 options -->
+                        </div>
+                    </div>
+
+                    <!-- Footer Controls -->
+                    <div class="pt-8 mt-6 border-t border-slate-800 flex flex-wrap justify-between items-center gap-4">
+                        <button id="btn-prev" onclick="prevQuestion()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold px-5 py-2.5 rounded-lg transition-all text-sm flex items-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed">
+                            <i class="fa-solid fa-chevron-left text-xs"></i> Câu Trước
+                        </button>
+
+                        <button onclick="clearCurrentSelection()" class="text-xs text-slate-400 hover:text-slate-200 underline transition-colors">
+                            Xóa lựa chọn câu này
+                        </button>
+
+                        <button id="btn-next" onclick="nextQuestion()" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-6 py-2.5 rounded-lg transition-all text-sm flex items-center gap-2">
+                            Câu Tiếp <i class="fa-solid fa-chevron-right text-xs"></i>
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+
+        </section>
+
+        <!-- ==================== STATE 3: KẾT THÚC (RESULTS & EXPLANATIONS) ==================== -->
+        <section id="screen-result" class="hidden space-y-8 my-4">
+            
+            <!-- RESULT SUMMARY CARD -->
+            <div class="bg-cardBg border border-slate-800 rounded-2xl p-6 sm:p-10 text-center max-w-4xl mx-auto shadow-2xl relative overflow-hidden">
+                <div class="inline-flex items-center justify-center w-20 h-20 bg-amber-500/10 text-amber-400 rounded-full border border-amber-500/20 mb-4">
+                    <i class="fa-solid fa-trophy text-3xl"></i>
+                </div>
+                <h2 class="text-2xl sm:text-3xl font-black text-white tracking-wide uppercase">KẾT QUẢ BÀI KIỂM TRA</h2>
+                <p id="result-mode-title" class="text-xs text-slate-400 font-medium mt-1">Chế độ LUYỆN TẬP</p>
+
+                <!-- Stats Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 my-8 max-w-2xl mx-auto">
+                    <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-4">
+                        <p class="text-xs text-slate-400 uppercase font-semibold">Điểm số</p>
+                        <p class="text-3xl font-black text-amber-400 mt-1"><span id="res-score">0.0</span> <span class="text-sm font-normal text-slate-500">/ 10</span></p>
+                    </div>
+                    <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-4">
+                        <p class="text-xs text-slate-400 uppercase font-semibold">Số câu đúng</p>
+                        <p class="text-3xl font-black text-emerald-400 mt-1"><span id="res-correct">0</span> <span class="text-sm font-normal text-slate-500">/ 20 câu</span></p>
+                    </div>
+                    <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-4">
+                        <p class="text-xs text-slate-400 uppercase font-semibold">Thời gian làm bài</p>
+                        <p id="res-time" class="text-xl font-bold text-indigo-300 mt-2">Không giới hạn</p>
+                    </div>
+                </div>
+
+                <!-- Teacher Evaluation Box -->
+                <div class="bg-indigo-950/40 border border-indigo-800/50 rounded-xl p-5 text-left max-w-2xl mx-auto">
+                    <div class="flex items-center gap-2 text-amber-400 font-bold text-sm mb-2">
+                        <i class="fa-solid fa-comment-dots"></i> Đánh giá & Nhận xét từ Giáo viên:
+                    </div>
+                    <p id="res-feedback" class="text-sm text-slate-200 leading-relaxed">
+                        --
+                    </p>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="mt-8 flex flex-wrap justify-center gap-4">
+                    <button onclick="resetToStart()" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-6 py-3 rounded-xl shadow-lg transition-all text-sm flex items-center gap-2">
+                        <i class="fa-solid fa-rotate-right"></i> Làm lại bài kiểm tra
+                    </button>
+                    <a href="#explanations-section" class="bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold px-6 py-3 rounded-xl border border-slate-700 transition-all text-sm flex items-center gap-2">
+                        <i class="fa-solid fa-list-check"></i> Xem đáp án & Lời giải
+                    </a>
+                </div>
+            </div>
+
+            <!-- EXPLANATIONS LIST SECTION -->
+            <div id="explanations-section" class="max-w-4xl mx-auto pt-6 space-y-6">
+                <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+                    <h3 class="text-xl font-extrabold text-amber-300 uppercase tracking-wide flex items-center gap-2">
+                        <i class="fa-solid fa-book"></i> ĐÁP ÁN & LỜI GIẢI CHI TIẾT
+                    </h3>
+                    <span class="text-xs text-slate-400 font-medium">20/20 câu hỏi</span>
+                </div>
+
+                <div id="explanations-container" class="space-y-6">
+                    <!-- Dynamically generated solution cards -->
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- CUSTOM MODAL DIALOG (REPLACES ALERT & CONFIRM) -->
+    <div id="custom-modal" class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-cardBg border border-slate-700 rounded-2xl p-6 max-w-md w-full shadow-2xl space-y-4 animate-in fade-in zoom-in duration-150">
+            <div class="flex items-center gap-3 text-amber-400 font-bold text-lg border-b border-slate-800 pb-3">
+                <i id="modal-icon" class="fa-solid fa-circle-question text-xl"></i>
+                <span id="modal-title">Xác nhận</span>
+            </div>
+            <p id="modal-msg" class="text-sm text-slate-300 leading-relaxed"></p>
+            <div class="flex justify-end gap-3 pt-2">
+                <button id="modal-btn-cancel" class="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-semibold transition-colors">Hủy</button>
+                <button id="modal-btn-confirm" class="px-4 py-2 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 text-sm font-bold transition-colors">Đồng ý</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="bg-[#0c101b] border-t border-slate-900 py-4 text-center text-xs text-slate-500">
+        <div class="max-w-7xl mx-auto px-4">
+            <p>Hệ thống Ôn luyện & Củng cố kiến thức Vật lí THPT — Bài 13: Tổng hợp và Phân tích lực (Sách GK Kết nối tri thức)</p>
+        </div>
+    </footer>
+
+    <script>
+        /*
+         * NGÂN HÀNG CÂU HỎI CHUẨN 20 CÂU BÁM SÁT BÀI 13: TỔNG HỢP VÀ PHÂN TÍCH LỰC. CÂN BẰNG LỰC
+         * Cơ cấu: 8 Biết, 7 Hiểu, 3 Vận dụng, 2 Vận dụng cao
+         */
+        const RAW_QUESTIONS = [
+            // --- MỨC BIẾT (8 CÂU: 1 - 8) ---
+            {
+                id: 1,
+                level: "Biết",
+                levelClass: "bg-indigo-500/20 text-indigo-300 border-indigo-500/30",
+                question: "Tổng hợp lực là gì?",
+                options: [
+                    "Phép thay thế một lực bằng nhiều lực có cùng độ lớn tác dụng vào các vật khác nhau.",
+                    "Phép thay thế các lực tác dụng đồng thời vào cùng một vật bằng một lực có tác dụng giống hệt như các lực ấy.",
+                    "Phép phân tích một lực thành hai lực vuông góc có tác dụng triệt tiêu lẫn nhau.",
+                    "Phép cộng độ lớn đại số của tất cả các lực tác dụng vào một hệ vật."
+                ],
+                correctIndex: 1,
+                explanation: "Theo định nghĩa SGK Bài 13 (Mục I): Tổng hợp lực là phép thay thế các lực tác dụng đồng thời vào cùng một vật bằng một lực có tác dụng giống hệt như các lực ấy. Lực thay thế gọi là hợp lực."
+            },
+            {
+                id: 2,
+                level: "Biết",
+                levelClass: "bg-indigo-500/20 text-indigo-300 border-indigo-500/30",
+                question: "Phép tổng hợp hai lực đồng quy tuân theo quy tắc hình học nào sau đây?",
+                options: [
+                    "Quy tắc tam giác đều.",
+                    "Quy tắc hình chữ nhật.",
+                    "Quy tắc hình bình hành.",
+                    "Quy tắc hình thang vuông."
+                ],
+                correctIndex: 2,
+                explanation: "Theo SGK Bài 13 (Mục I.2): Phép tổng hợp hai lực đồng quy tuân theo quy tắc hình bình hành. Vectơ hợp lực \\(\\vec{F}\\) trùng với đường chéo xuất phát từ điểm gốc \\(O\\) chung của hai vectơ lực thành phần \\(\\vec{F}_1\\) và \\(\\vec{F}_2\\)."
+            },
+            {
+                id: 3,
+                level: "Biết",
+                levelClass: "bg-indigo-500/20 text-indigo-300 border-indigo-500/30",
+                question: "Hai lực \\(\\vec{F}_1\\) và \\(\\vec{F}_2\\) tác dụng vào cùng một vật, cùng phương và cùng chiều. Độ lớn của hợp lực \\(F\\) được xác định bằng công thức nào?",
+                options: [
+                    "\\(F = F_1 + F_2\\)",
+                    "\\(F = |F_1 - F_2|\\)",
+                    "\\(F = \\sqrt{F_1^2 + F_2^2}\\)",
+                    "\\(F = \\sqrt{F_1^2 - F_2^2}\\)"
+                ],
+                correctIndex: 0,
+                explanation: "Khi hai lực cùng phương, cùng chiều (\\(\\alpha = 0^\\circ\\)), hợp lực có độ lớn bằng tổng độ lớn hai lực thành phần: \\(F = F_1 + F_2\\)."
+            },
+            {
+                id: 4,
+                level: "Biết",
+                levelClass: "bg-indigo-500/20 text-indigo-300 border-indigo-500/30",
+                question: "Hai lực \\(\\vec{F}_1\\) và \\(\\vec{F}_2\\) tác dụng vào cùng một vật, cùng phương nhưng ngược chiều. Độ lớn của hợp lực \\(F\\) được xác định bằng công thức nào?",
+                options: [
+                    "\\(F = F_1 + F_2\\)",
+                    "\\(F = |F_1 - F_2|\\)",
+                    "\\(F = \\sqrt{F_1 F_2}\\)",
+                    "\\(F = F_1 - F_2\\)"
+                ],
+                correctIndex: 1,
+                explanation: "Khi hai lực cùng phương, ngược chiều (\\(\\alpha = 180^\\circ\\)), hợp lực có độ lớn bằng hiệu độ lớn hai lực thành phần: \\(F = |F_1 - F_2|\\) và có chiều theo chiều của lực lớn hơn."
+            },
+            {
+                id: 5,
+                level: "Biết",
+                levelClass: "bg-indigo-500/20 text-indigo-300 border-indigo-500/30",
+                question: "Một vật đứng yên dưới tác dụng của nhiều lực. Điều kiện để vật ở trạng thái cân bằng lực là:",
+                options: [
+                    "Hợp lực tác dụng lên vật có độ lớn cực đại.",
+                    "Hợp lực tác dụng lên vật bằng 0 (\\(\\vec{F} = \\vec{0}\\)).",
+                    "Các lực tác dụng lên vật phải cùng chiều.",
+                    "Các lực tác dụng lên vật có độ lớn bằng nhau từng đôi một."
+                ],
+                correctIndex: 1,
+                explanation: "SGK Bài 13 (Mục II.1): Khi tổng hợp các lực tác dụng lên vật bằng 0 (\\(\\vec{F} = \\vec{F}_1 + \\vec{F}_2 + ... = \\vec{0}\\)), ta nói các lực tác dụng lên vật là các lực cân bằng và vật ở trạng thái cân bằng."
+            },
+            {
+                id: 6,
+                level: "Biết",
+                levelClass: "bg-indigo-500/20 text-indigo-300 border-indigo-500/30",
+                question: "Hiện tượng nào xảy ra khi hợp lực tác dụng lên một vật khác 0 (các lực tác dụng không cân bằng)?",
+                options: [
+                    "Vật luôn đứng yên không chuyển động.",
+                    "Vận tốc của vật bị thay đổi (về độ lớn hoặc hướng).",
+                    "Khối lượng của vật thay đổi.",
+                    "Lực hấp dẫn tác dụng lên vật bị biến mất."
+                ],
+                correctIndex: 1,
+                explanation: "SGK Bài 13 (Mục II.2): Khi hợp lực của các lực khác 0 thì các lực này không cân bằng. Hợp lực này tác dụng vào vật sẽ làm thay đổi vận tốc của vật (độ lớn hoặc hướng)."
+            },
+            {
+                id: 7,
+                level: "Biết",
+                levelClass: "bg-indigo-500/20 text-indigo-300 border-indigo-500/30",
+                question: "Phân tích lực là gì?",
+                options: [
+                    "Phép cộng các lực thành phần để tìm hợp lực.",
+                    "Phép triệt tiêu các lực tác dụng lên vật.",
+                    "Phép thay thế một lực bằng hai lực thành phần có tác dụng giống hệt như lực ấy.",
+                    "Phép tính gia tốc do một lực duy nhất gây ra."
+                ],
+                correctIndex: 2,
+                explanation: "SGK Bài 13 (Mục III): Phân tích lực là phép thay thế một lực bằng hai lực thành phần có tác dụng giống hệt như lực đó."
+            },
+            {
+                id: 8,
+                level: "Biết",
+                levelClass: "bg-indigo-500/20 text-indigo-300 border-indigo-500/30",
+                question: "Người ta thường phân tích một lực theo hai phương có đặc điểm như thế nào?",
+                options: [
+                    "Hai phương trùng nhau.",
+                    "Hai phương song song nhau.",
+                    "Hai phương vuông góc với nhau.",
+                    "Hai phương hợp với nhau góc \\(45^\\circ\\)."
+                ],
+                correctIndex: 2,
+                explanation: "SGK Bài 13 (Mục III.1): Thường người ta phân tích lực thành hai lực thành phần vuông góc với nhau để lực thành phần này không có tác dụng nào theo phương của lực thành phần kia."
+            },
+
+            // --- MỨC HIỂU (7 CÂU: 9 - 15) ---
+            {
+                id: 9,
+                level: "Hiểu",
+                levelClass: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30",
+                question: "Độ lớn hợp lực \\(F\\) của hai lực đồng quy \\(F_1\\) và \\(F_2\\) luôn thỏa mãn điều kiện bất đẳng thức nào?",
+                options: [
+                    "\\(F_1 - F_2 \\le F \\le F_1 + F_2\\)",
+                    "\\(|F_1 - F_2| \\le F \\le F_1 + F_2\\)",
+                    "\\(F = F_1 + F_2\\)",
+                    "\\(F \\ge F_1 + F_2\\)"
+                ],
+                correctIndex: 1,
+                explanation: "Độ lớn của hợp lực luôn bị chặn giữa giá trị nhỏ nhất (hai lực ngược chiều) và lớn nhất (hai lực cùng chiều): \\(|F_1 - F_2| \\le F \\le F_1 + F_2\\)."
+            },
+            {
+                id: 10,
+                level: "Hiểu",
+                levelClass: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30",
+                question: "Hai lực đồng quy \\(\\vec{F}_1\\) và \\(\\vec{F}_2\\) có độ lớn \\(F_1 = 6\\text{ N}\\) và \\(F_2 = 8\\text{ N}\\) vuông góc với nhau. Độ lớn của hợp lực \\(F\\) bằng bao nhiêu?",
+                options: [
+                    "\\(14\\text{ N}\\)",
+                    "\\(2\\text{ N}\\)",
+                    "\\(10\\text{ N}\\)",
+                    "\\(48\\text{ N}\\)"
+                ],
+                correctIndex: 2,
+                explanation: "Vì hai lực vuông góc (\\(\\alpha = 90^\\circ\\)), nên theo định lý Pytago trong quy tắc hình bình hành (hình chữ nhật): \\(F = \\sqrt{F_1^2 + F_2^2} = \\sqrt{6^2 + 8^2} = \\sqrt{100} = 10\\text{ N}\\)."
+            },
+            {
+                id: 11,
+                level: "Hiểu",
+                levelClass: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30",
+                question: "Một ô tô chịu lực kéo \\(F_1 = 400\\text{ N}\\) hướng về phía trước và lực cản \\(F_2 = 300\\text{ N}\\) hướng về phía sau. Hợp lực tác dụng lên ô tô có độ lớn và hướng như thế nào?",
+                options: [
+                    "Độ lớn \\(700\\text{ N}\\), hướng về phía trước.",
+                    "Độ lớn \\(100\\text{ N}\\), hướng về phía trước.",
+                    "Độ lớn \\(100\\text{ N}\\), hướng về phía sau.",
+                    "Độ lớn \\(700\\text{ N}\\), hướng về phía sau."
+                ],
+                correctIndex: 1,
+                explanation: "Hai lực cùng phương ngược chiều: \\(F = |F_1 - F_2| = |400 - 300| = 100\\text{ N}\\). Vì \\(F_1 > F_2\\) nên hợp lực hướng theo chiều của \\(F_1\\) (phía trước)."
+            },
+            {
+                id: 12,
+                level: "Hiểu",
+                levelClass: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30",
+                question: "Một quyển sách nằm yên trên mặt bàn nằm ngang. Các lực tác dụng lên quyển sách gồm trọng lực \\(\\vec{P}\\) và phản lực \\(\\vec{N}\\) của mặt bàn. Khẳng định nào sau đây là ĐÚNG?",
+                options: [
+                    "Trọng lực \\(\\vec{P}\\) lớn hơn phản lực \\(\\vec{N}\\).",
+                    "\\(\\vec{P}\\) và \\(\\vec{N}\\) là hai lực cân bằng, có cùng độ lớn nhưng ngược chiều.",
+                    "\\(\\vec{P}\\) và \\(\\vec{N}\\) cùng chiều thẳng đứng hướng xuống.",
+                    "Hợp lực của \\(\\vec{P}\\) và \\(\\vec{N}\\) khác 0 nên quyển sách đứng yên."
+                ],
+                correctIndex: 1,
+                explanation: "Vì quyển sách đứng yên nên tổng hợp lực tác dụng lên nó bằng 0: \\(\\vec{P} + \\vec{N} = \\vec{0} \\implies \\vec{N} = -\\vec{P}\\). Đây là hai lực cân bằng (cùng độ lớn, cùng phương, ngược chiều)."
+            },
+            {
+                id: 13,
+                level: "Hiểu",
+                levelClass: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30",
+                question: "Một vật có trọng lực \\(\\vec{P}\\) đang trượt xuống trên một mặt phẳng nghiêng góc \\(\\alpha\\) so với phương ngang. Khi phân tích trọng lực \\(\\vec{P}\\) thành hai lực thành phần \\(\\vec{P}_t\\) (song song mặt nghiêng) và \\(\\vec{P}_n\\) (vuông góc mặt nghiêng), tác dụng của lực thành phần \\(\\vec{P}_t\\) là gì?",
+                options: [
+                    "Ép vật chặt vào mặt phẳng nghiêng.",
+                    "Kéo vật trượt xuống dọc theo mặt phẳng nghiêng.",
+                    "Nâng vật hổng lên khỏi mặt phẳng nghiêng.",
+                    "Triệt tiêu hoàn toàn lực ma sát trượt."
+                ],
+                correctIndex: 1,
+                explanation: "Theo SGK Bài 13 (Hình 13.9): Trọng lực \\(\\vec{P}\\) được phân tích thành \\(\\vec{P}_n\\) có tác dụng ép vật vào mặt phẳng nghiêng và \\(\\vec{P}_t\\) có tác dụng kéo vật trượt xuống dọc theo mặt phẳng nghiêng."
+            },
+            {
+                id: 14,
+                level: "Hiểu",
+                levelClass: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30",
+                question: "Biểu thức xác định độ lớn lực thành phần \\(P_t\\) (song song mặt nghiêng) kéo vật trượt xuống mặt phẳng nghiêng góc \\(\\alpha\\) là:",
+                options: [
+                    "\\(P_t = P \\cdot \\sin \\alpha\\)",
+                    "\\(P_t = P \\cdot \\cos \\alpha\\)",
+                    "\\(P_t = P \\cdot \\tan \\alpha\\)",
+                    "\\(P_t = P \\cdot \\cot \\alpha\\)"
+                ],
+                correctIndex: 0,
+                explanation: "Trong tam giác vuông phân tích lực: góc giữa \\(\\vec{P}\\) và \\(\\vec{P}_n\\) chính bằng góc nghiêng \\(\\alpha\\). Do đó \\(P_t = P \\sin \\alpha\\) và \\(P_n = P \\cos \\alpha\\)."
+            },
+            {
+                id: 15,
+                level: "Hiểu",
+                levelClass: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30",
+                question: "Vì sao người ta thường chọn hệ trục tọa độ vuông góc \\(Oxy\\) để phân tích lực khi giải các bài toán động lực học?",
+                options: [
+                    "Vì khi phân tích thành hai lực vuông góc, lực thành phần này không gây ra tác dụng theo phương của lực thành phần kia.",
+                    "Vì đó là quy định bắt buộc duy nhất của vật lý.",
+                    "Vì phân tích vuông góc giúp làm tăng độ lớn của hợp lực.",
+                    "Vì lực vuông góc sẽ tự động bằng 0."
+                ],
+                correctIndex: 0,
+                explanation: "SGK Bài 13 (Mục III.1): Phân tích lực thành hai lực vuông góc giúp việc tính toán độc lập từng phương dễ dàng vì lực thành phần trên trục này không có thành phần chiếu (không có tác dụng) lên trục kia."
+            },
+
+            // --- MỨC VẬN DỤNG (3 CÂU: 16 - 18) ---
+            {
+                id: 16,
+                level: "Vận dụng",
+                levelClass: "bg-amber-500/20 text-amber-300 border-amber-500/30",
+                question: "Hai tàu kéo dùng dây cáp kéo một tàu chở hàng bằng hai lực kéo \\(F_1 = F_2 = 8000\\text{ N}\\). Biết góc giữa hai dây cáp kéo bằng \\(30^\\circ\\). Độ lớn hợp lực tác dụng lên tàu chở hàng xấp xỉ bằng:",
+                options: [
+                    "\\(16000\\text{ N}\\)",
+                    "\\(15455\\text{ N}\\)",
+                    "\\(13856\\text{ N}\\)",
+                    "\\(8000\\text{ N}\\)"
+                ],
+                correctIndex: 1,
+                explanation: "Vì \\(F_1 = F_2 = 8000\\text{ N}\\), áp dụng công thức hợp lực hai lực bằng nhau: \\(F = 2 F_1 \\cos\\left(\\frac{\\alpha}{2}\\right) = 2 \\cdot 8000 \\cdot \\cos(15^\\circ) \\approx 16000 \\cdot 0,9659 \\approx 15455\\text{ N}\\)."
+            },
+            {
+                id: 17,
+                level: "Vận dụng",
+                levelClass: "bg-amber-500/20 text-amber-300 border-amber-500/30",
+                question: "Cho hai lực đồng quy có độ lớn \\(F_1 = 6\\text{ N}\\) và \\(F_2 = 8\\text{ N}\\). Nếu hợp lực có độ lớn \\(F = 10\\text{ N}\\) thì góc \\(\\alpha\\) giữa hai lực \\(\\vec{F}_1\\) và \\(\\vec{F}_2\\) bằng bao nhiêu?",
+                options: [
+                    "\\(0^\\circ\\)",
+                    "\\(60^\\circ\\)",
+                    "\\(90^\\circ\\)",
+                    "\\(180^\\circ\\)"
+                ],
+                correctIndex: 2,
+                explanation: "Nhận thấy \\(6^2 + 8^2 = 36 + 64 = 100 = 10^2\\) (thỏa mãn \\(F^2 = F_1^2 + F_2^2\\)). Suy ra tam giác lực là tam giác vuông, do đó góc giữa hai lực \\(\\alpha = 90^\\circ\\)."
+            },
+            {
+                id: 18,
+                level: "Vận dụng",
+                levelClass: "bg-amber-500/20 text-amber-300 border-amber-500/30",
+                question: "Một vật có khối lượng \\(m = 2\\text{ kg}\\) đặt trên mặt phẳng nghiêng nhẵn hợp với phương nằm ngang góc \\(\\alpha = 30^\\circ\\). Lấy \\(g = 9,8\\text{ m/s}^2\\). Độ lớn của thành phần trọng lực kéo vật trượt xuống dọc theo mặt phẳng nghiêng bằng:",
+                options: [
+                    "\\(19,6\\text{ N}\\)",
+                    "\\(9,8\\text{ N}\\)",
+                    "\\(16,97\\text{ N}\\)",
+                    "\\(4,9\\text{ N}\\)"
+                ],
+                correctIndex: 1,
+                explanation: "Trọng lực của vật: \\(P = m \\cdot g = 2 \\cdot 9,8 = 19,6\\text{ N}\\).\nThành phần kéo vật trượt xuống: \\(P_t = P \\sin \\alpha = 19,6 \\cdot \\sin 30^\\circ = 19,6 \\cdot 0,5 = 9,8\\text{ N}\\)."
+            },
+
+            // --- MỨC VẬN DỤNG CAO (2 CÂU: 19 - 20) ---
+            {
+                id: 19,
+                level: "Vận dụng cao",
+                levelClass: "bg-rose-500/20 text-rose-300 border-rose-500/30",
+                question: "Cho ba lực đồng quy cùng nằm trong một mặt phẳng có độ lớn \\(F_1 = F_2 = F_3 = 10\\text{ N}\\). Biết góc giữa \\(\\vec{F}_1\\) và \\(\\vec{F}_2\\) bằng \\(60^\\circ\\), lực \\(\\vec{F}_3\\) hướng ngược chiều với hợp lực của \\(\\vec{F}_1\\) và \\(\\vec{F}_2\\). Độ lớn hợp lực của cả ba lực trên xấp xỉ bằng:",
+                options: [
+                    "\\(7,32\\text{ N}\\)",
+                    "\\(27,32\\text{ N}\\)",
+                    "\\(10,00\\text{ N}\\)",
+                    "\\(0\\text{ N}\\)"
+                ],
+                correctIndex: 0,
+                explanation: "1. Tổng hợp hai lực \\(\\vec{F}_1\\) và \\(\\vec{F}_2\\):\n\\(F_{12} = 2 F_1 \\cos\\left(\\frac{60^\\circ}{2}\\right) = 2 \\cdot 10 \\cdot \\cos(30^\\circ) = 20 \\cdot \\frac{\\sqrt{3}}{2} = 10\\sqrt{3} \\approx 17,32\\text{ N}\\).\n\n2. Hợp lực của ba lực: Vì \\(\\vec{F}_3\\) ngược chiều với \\(\\vec{F}_{12}\\) nên hợp lực tổng cộng có độ lớn:\n\\(F = |F_{12} - F_3| = |17,32 - 10| = 7,32\\text{ N}\\)."
+            },
+            {
+                id: 20,
+                level: "Vận dụng cao",
+                levelClass: "bg-rose-500/20 text-rose-300 border-rose-500/30",
+                question: "Hai lực đồng quy \\(\\vec{F}_1\\) và \\(\\vec{F}_2\\) có độ lớn \\(F_1 = 12\\text{ N}\\) và \\(F_2 = 16\\text{ N}\\). Biết vectơ hợp lực \\(\\vec{F}\\) vuông góc với lực thành phần \\(\\vec{F}_1\\). Độ lớn hợp lực \\(F\\) và góc \\(\\alpha\\) giữa hai lực \\(\\vec{F}_1\\) và \\(\\vec{F}_2\\) xấp xỉ bằng:",
+                options: [
+                    "\\(F = 10,58\\text{ N}; \\alpha \\approx 138,6^\\circ\\)",
+                    "\\(F = 20,00\\text{ N}; \\alpha = 90^\\circ\\)",
+                    "\\(F = 4,00\\text{ N}; \\alpha = 180^\\circ\\)",
+                    "\\(F = 10,58\\text{ N}; \\alpha \\approx 41,4^\\circ\\)"
+                ],
+                correctIndex: 0,
+                explanation: "Vì hợp lực \\(\\vec{F}\\) vuông góc với \\(\\vec{F}_1\\), ta vẽ hình bình hành quy tắc lực: đường chéo \\(\\vec{F}\\) vuông góc với cạnh \\(\\vec{F}_1\\), tạo thành tam giác lực vuông tại đầu mút \\(\\vec{F}_1\\) với cạnh huyền là \\(F_2\\).\n\n- Theo định lý Pytago:\n\\(F_2^2 = F_1^2 + F^2 \\implies F = \\sqrt{F_2^2 - F_1^2} = \\sqrt{16^2 - 12^2} = \\sqrt{256 - 144} = \\sqrt{112} \\approx 10,58\\text{ N}\\).\n\n- Xét góc \\(\\beta\\) giữa \\(\\vec{F}_1\\) và \\(\\vec{F}_2\\) trong tam giác lực:\n\\(\\cos(180^\\circ - \\alpha) = \\frac{F_1}{F_2} = \\frac{12}{16} = 0,75 \\implies 180^\\circ - \\alpha \\approx 41,41^\\circ \\implies \\alpha \\approx 138,6^\\circ\\)."
+            }
+        ];
+
+        let currentMode = null; // 'practice' | 'timer'
+        let currentQuestions = []; // Active list of questions
+        let userAnswers = new Array(20).fill(null);
+        let currentQuestionIndex = 0;
+        let timerInterval = null;
+        let remainingSeconds = 1200; // 20 minutes = 1200s
+        let timeSpentSeconds = 0;
+
+        window.onload = function() {
+            if (window.MathJax) {
+                MathJax.typesetPromise();
+            }
+        };
+
+        // Custom Modal implementation replacing alert and confirm
+        function showCustomModal(options) {
+            const modal = document.getElementById('custom-modal');
+            const titleEl = document.getElementById('modal-title');
+            const msgEl = document.getElementById('modal-msg');
+            const iconEl = document.getElementById('modal-icon');
+            const btnCancel = document.getElementById('modal-btn-cancel');
+            const btnConfirm = document.getElementById('modal-btn-confirm');
+
+            titleEl.innerText = options.title || "Thông báo";
+            msgEl.innerText = options.message || "";
+            
+            if (options.icon) {
+                iconEl.className = options.icon;
+            } else {
+                iconEl.className = "fa-solid fa-circle-info text-xl";
+            }
+
+            if (options.hideCancel) {
+                btnCancel.classList.add('hidden');
+            } else {
+                btnCancel.classList.remove('hidden');
+            }
+
+            btnConfirm.innerText = options.confirmText || "Đồng ý";
+            btnCancel.innerText = options.cancelText || "Hủy";
+
+            modal.classList.remove('hidden');
+
+            const cleanup = () => {
+                modal.classList.add('hidden');
+                btnConfirm.onclick = null;
+                btnCancel.onclick = null;
+            };
+
+            btnConfirm.onclick = () => {
+                cleanup();
+                if (options.onConfirm) options.onConfirm();
+            };
+
+            btnCancel.onclick = () => {
+                cleanup();
+                if (options.onCancel) options.onCancel();
+            };
+        }
+
+        function startQuiz(mode) {
+            currentMode = mode;
+            userAnswers = new Array(20).fill(null);
+            currentQuestionIndex = 0;
+            remainingSeconds = 1200;
+            timeSpentSeconds = 0;
+
+            // Update Header Mode Badge
+            const modeBadge = document.getElementById('current-mode-text');
+            if (mode === 'practice') {
+                modeBadge.innerText = 'Chế độ LUYỆN TẬP';
+                document.getElementById('timer-box').classList.add('hidden');
+            } else {
+                modeBadge.innerText = 'Chế độ TÍNH GIỜ (20 Phút)';
+                document.getElementById('timer-box').classList.remove('hidden');
+            }
+
+            // Clone questions
+            if (mode === 'timer') {
+                currentQuestions = shuffleArray([...RAW_QUESTIONS]).map(q => {
+                    const originalOptions = [...q.options];
+                    const correctAnswerText = originalOptions[q.correctIndex];
+                    const shuffledOpts = shuffleArray([...originalOptions]);
+                    const newCorrectIndex = shuffledOpts.indexOf(correctAnswerText);
+                    return {
+                        ...q,
+                        options: shuffledOpts,
+                        correctIndex: newCorrectIndex
+                    };
+                });
+                startTimer();
+            } else {
+                currentQuestions = [...RAW_QUESTIONS];
+            }
+
+            // Switch screens
+            document.getElementById('screen-start').classList.add('hidden');
+            document.getElementById('screen-result').classList.add('hidden');
+            document.getElementById('screen-quiz').classList.remove('hidden');
+
+            renderQuestionGrid();
+            renderCurrentQuestion();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function startTimer() {
+            clearInterval(timerInterval);
+            updateTimerDisplay();
+            timerInterval = setInterval(() => {
+                remainingSeconds--;
+                timeSpentSeconds++;
+                updateTimerDisplay();
+
+                if (remainingSeconds <= 0) {
+                    clearInterval(timerInterval);
+                    showCustomModal({
+                        title: "Hết giờ làm bài!",
+                        message: "Đã hết thời gian 20 phút. Hệ thống tự động nộp bài làm của bạn.",
+                        hideCancel: true,
+                        confirmText: "Xem kết quả",
+                        onConfirm: () => submitQuiz()
+                    });
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const m = Math.floor(remainingSeconds / 60);
+            const s = remainingSeconds % 60;
+            const formatted = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+            document.getElementById('timer-display').innerText = formatted;
+        }
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function renderQuestionGrid() {
+            const grid = document.getElementById('question-grid');
+            grid.innerHTML = '';
+
+            currentQuestions.forEach((q, idx) => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.onclick = () => jumpToQuestion(idx);
+
+                let baseClasses = "w-full aspect-square rounded-lg font-bold text-xs flex items-center justify-center transition-all ";
+                
+                if (idx === currentQuestionIndex) {
+                    baseClasses += "bg-indigo-600 text-white border-2 border-indigo-400 shadow-md scale-105";
+                } else if (userAnswers[idx] !== null) {
+                    baseClasses += "bg-amber-500 text-slate-950 shadow";
+                } else {
+                    baseClasses += "bg-slate-800 text-slate-300 hover:bg-slate-700 border border-slate-700";
+                }
+
+                btn.className = baseClasses;
+                btn.innerText = idx + 1;
+                grid.appendChild(btn);
+            });
+
+            // Update answered counter
+            const answeredCount = userAnswers.filter(a => a !== null).length;
+            document.getElementById('answered-count').innerText = answeredCount;
+        }
+
+        function renderCurrentQuestion() {
+            const q = currentQuestions[currentQuestionIndex];
+
+            // Badges & Counter
+            document.getElementById('question-number-badge').innerText = `Câu ${currentQuestionIndex + 1} / 20`;
+            const levelBadge = document.getElementById('question-level-badge');
+            levelBadge.innerText = `Mức ${q.level}`;
+            levelBadge.className = `text-xs px-3 py-1 rounded-full font-semibold border ${q.levelClass}`;
+
+            // Text
+            document.getElementById('question-text').innerHTML = q.question;
+
+            // Options
+            const container = document.getElementById('options-container');
+            container.innerHTML = '';
+
+            const prefixes = ['A', 'B', 'C', 'D'];
+            q.options.forEach((optText, optIdx) => {
+                const isSelected = userAnswers[currentQuestionIndex] === optIdx;
+
+                const optDiv = document.createElement('div');
+                optDiv.onclick = () => selectOption(optIdx);
+
+                let optClasses = "p-4 rounded-xl border cursor-pointer transition-all duration-200 flex items-center gap-4 ";
+                if (isSelected) {
+                    optClasses += "bg-amber-500/15 border-amber-500 text-amber-200 shadow-lg";
+                } else {
+                    optClasses += "bg-slate-900/60 border-slate-800 hover:border-slate-700 text-slate-200 hover:bg-slate-800/50";
+                }
+
+                optDiv.className = optClasses;
+                optDiv.innerHTML = `
+                    <div class="w-8 h-8 rounded-lg flex items-center justify-center font-bold text-xs transition-all ${
+                        isSelected 
+                        ? 'bg-amber-500 text-slate-950 font-extrabold' 
+                        : 'bg-slate-800 text-slate-400'
+                    }">
+                        ${prefixes[optIdx]}
+                    </div>
+                    <div class="text-sm font-medium leading-relaxed flex-grow">${optText}</div>
+                `;
+                container.appendChild(optDiv);
+            });
+
+            // Prev/Next disable logic
+            document.getElementById('btn-prev').disabled = (currentQuestionIndex === 0);
+            
+            const btnNext = document.getElementById('btn-next');
+            if (currentQuestionIndex === currentQuestions.length - 1) {
+                btnNext.innerHTML = 'Câu Cuối';
+            } else {
+                btnNext.innerHTML = 'Câu Tiếp <i class="fa-solid fa-chevron-right text-xs"></i>';
+            }
+
+            // MathJax re-render
+            if (window.MathJax) {
+                MathJax.typesetPromise([document.getElementById('question-text'), container]);
+            }
+        }
+
+        function selectOption(optIdx) {
+            userAnswers[currentQuestionIndex] = optIdx;
+            renderQuestionGrid();
+            renderCurrentQuestion();
+        }
+
+        function clearCurrentSelection() {
+            userAnswers[currentQuestionIndex] = null;
+            renderQuestionGrid();
+            renderCurrentQuestion();
+        }
+
+        function jumpToQuestion(idx) {
+            currentQuestionIndex = idx;
+            renderQuestionGrid();
+            renderCurrentQuestion();
+        }
+
+        function prevQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                renderQuestionGrid();
+                renderCurrentQuestion();
+            }
+        }
+
+        function nextQuestion() {
+            if (currentQuestionIndex < currentQuestions.length - 1) {
+                currentQuestionIndex++;
+                renderQuestionGrid();
+                renderCurrentQuestion();
+            }
+        }
+
+        function confirmSubmit() {
+            const unanswered = userAnswers.filter(a => a === null).length;
+            if (unanswered > 0) {
+                showCustomModal({
+                    title: "Xác nhận nộp bài",
+                    message: `Bạn còn ${unanswered} câu chưa trả lời. Bạn có chắc chắn muốn nộp bài ngay bây giờ?`,
+                    icon: "fa-solid fa-triangle-exclamation text-amber-400 text-xl",
+                    confirmText: "Nộp ngay",
+                    cancelText: "Làm tiếp",
+                    onConfirm: () => submitQuiz()
+                });
+            } else {
+                showCustomModal({
+                    title: "Xác nhận nộp bài",
+                    message: "Bạn đã hoàn thành tất cả 20 câu hỏi. Bạn có muốn nộp bài để xem điểm số?",
+                    icon: "fa-solid fa-circle-check text-emerald-400 text-xl",
+                    confirmText: "Xác nhận nộp",
+                    cancelText: "Xem lại",
+                    onConfirm: () => submitQuiz()
+                });
+            }
+        }
+
+        function submitQuiz() {
+            if (timerInterval) clearInterval(timerInterval);
+
+            // Calculate Score
+            let correctCount = 0;
+            currentQuestions.forEach((q, idx) => {
+                if (userAnswers[idx] === q.correctIndex) {
+                    correctCount++;
+                }
+            });
+
+            const score = (correctCount / 20) * 10;
+            const scoreFormatted = score.toFixed(1);
+
+            // Update Result UI elements
+            document.getElementById('res-score').innerText = scoreFormatted;
+            document.getElementById('res-correct').innerText = correctCount;
+            document.getElementById('result-mode-title').innerText = (currentMode === 'practice') ? 'Chế độ LUYỆN TẬP' : 'Chế độ TÍNH GIỜ';
+
+            if (currentMode === 'timer') {
+                const m = Math.floor(timeSpentSeconds / 60);
+                const s = timeSpentSeconds % 60;
+                document.getElementById('res-time').innerText = `${m} phút ${s} giây`;
+            } else {
+                document.getElementById('res-time').innerText = "Không giới hạn";
+            }
+
+            // Teacher Feedback Logic
+            const feedbackElem = document.getElementById('res-feedback');
+            if (score === 10) {
+                feedbackElem.innerHTML = "<strong class='text-emerald-400'>Xuất sắc!</strong> Em đã nắm vững hoàn toàn kiến thức Bài 13: Tổng hợp và Phân tích lực. Cân bằng lực. Giải thành thạo các bài toán từ lý thuyết cơ bản đến các dạng quy tắc hình bình hành nâng cao!";
+            } else if (score >= 8.0) {
+                feedbackElem.innerHTML = "<strong class='text-emerald-300'>Rất tốt!</strong> Em nắm chắc kiến thức nền tảng và vận dụng tốt quy tắc hình bình hành. Hãy đọc kỹ phần đáp án & lời giải chi tiết bên dưới cho các câu bị sai để hoàn thiện kỹ năng giải bài toán nâng cao.";
+            } else if (score >= 5.0) {
+                feedbackElem.innerHTML = "<strong class='text-amber-300'>Khá tốt!</strong> Em đã hiểu các khái niệm cơ bản về hợp lực và cân bằng lực, nhưng cần ôn tập kỹ công thức phân tích lực trên mặt phẳng nghiêng và các góc tổng hợp đặc biệt. Xem cẩn thận đáp án bên dưới nhé!";
+            } else {
+                feedbackElem.innerHTML = "<strong class='text-rose-400'>Cần cố gắng nhiều hơn!</strong> Kết quả cho thấy em chưa nắm vững lý thuyết quy tắc hình bình hành và phép phân tích lực. Hãy đọc kỹ đáp án chi tiết từng câu và ôn tập kĩ lại bài học SGK Bài 13 nhé!";
+            }
+
+            // Render Explanations
+            renderExplanations();
+
+            // Switch Screen
+            document.getElementById('screen-quiz').classList.add('hidden');
+            document.getElementById('screen-result').classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function renderExplanations() {
+            const container = document.getElementById('explanations-container');
+            container.innerHTML = '';
+
+            const prefixes = ['A', 'B', 'C', 'D'];
+
+            currentQuestions.forEach((q, idx) => {
+                const userAns = userAnswers[idx];
+                const isCorrect = (userAns === q.correctIndex);
+
+                const card = document.createElement('div');
+                card.className = `bg-cardBg border ${isCorrect ? 'border-slate-800' : 'border-rose-900/40'} rounded-xl p-6 shadow-md space-y-4`;
+
+                let userAnsBadge = '';
+                if (userAns === null) {
+                    userAnsBadge = `<span class="bg-slate-800 text-slate-400 text-xs font-semibold px-2.5 py-1 rounded">Chưa làm</span>`;
+                } else if (isCorrect) {
+                    userAnsBadge = `<span class="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-bold px-2.5 py-1 rounded"><i class="fa-solid fa-check"></i> Đúng</span>`;
+                } else {
+                    userAnsBadge = `<span class="bg-rose-500/20 text-rose-400 border border-rose-500/30 text-xs font-bold px-2.5 py-1 rounded"><i class="fa-solid fa-xmark"></i> Sai</span>`;
+                }
+
+                let optionsHtml = '';
+                q.options.forEach((optText, optIdx) => {
+                    let optBg = "bg-slate-900/40 border-slate-800 text-slate-300";
+                    let iconHtml = '';
+
+                    if (optIdx === q.correctIndex) {
+                        optBg = "bg-emerald-950/40 border-emerald-500/50 text-emerald-200 font-semibold";
+                        iconHtml = '<i class="fa-solid fa-circle-check text-emerald-400 ml-auto"></i>';
+                    } else if (optIdx === userAns && !isCorrect) {
+                        optBg = "bg-rose-950/40 border-rose-500/50 text-rose-200";
+                        iconHtml = '<i class="fa-solid fa-circle-xmark text-rose-400 ml-auto"></i>';
+                    }
+
+                    optionsHtml += `
+                        <div class="p-3 rounded-lg border text-sm flex items-center gap-3 ${optBg}">
+                            <span class="w-6 h-6 rounded flex items-center justify-center font-bold text-xs bg-slate-800/80">${prefixes[optIdx]}</span>
+                            <span>${optText}</span>
+                            ${iconHtml}
+                        </div>
+                    `;
+                });
+
+                card.innerHTML = `
+                    <div class="flex justify-between items-center pb-2 border-b border-slate-800">
+                        <div class="flex items-center gap-2">
+                            <span class="font-bold text-white text-base">Câu ${idx + 1}</span>
+                            <span class="text-xs px-2.5 py-0.5 rounded-full font-medium border ${q.levelClass}">Mức ${q.level}</span>
+                        </div>
+                        <div>${userAnsBadge}</div>
+                    </div>
+
+                    <div class="text-sm sm:text-base font-medium text-slate-100 leading-relaxed">${q.question}</div>
+
+                    <div class="space-y-2 pt-1">${optionsHtml}</div>
+
+                    <div class="bg-indigo-950/30 border border-indigo-900/40 rounded-lg p-4 text-xs sm:text-sm text-slate-300 space-y-1">
+                        <div class="text-indigo-300 font-bold flex items-center gap-1.5 mb-1">
+                            <i class="fa-solid fa-lightbulb"></i> Lời giải chi tiết:
+                        </div>
+                        <div class="leading-relaxed text-slate-300 whitespace-pre-line">${q.explanation}</div>
+                    </div>
+                `;
+
+                container.appendChild(card);
+            });
+
+            if (window.MathJax) {
+                MathJax.typesetPromise([container]);
+            }
+        }
+
+        function resetToStart() {
+            if (timerInterval) clearInterval(timerInterval);
+            document.getElementById('screen-result').classList.add('hidden');
+            document.getElementById('screen-quiz').classList.add('hidden');
+            document.getElementById('screen-start').classList.remove('hidden');
+            document.getElementById('current-mode-text').innerText = 'Chưa chọn chế độ';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
