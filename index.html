@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hệ thống Quản lý Đề Thi - Có Nút Copy Link</title>
+    <title>Hệ thống Quản lý Đề Thi</title>
     <style>
         * { box-sizing: border-box; }
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; margin: 0; padding: 0; height: 100vh; display: flex; flex-direction: column; }
@@ -67,7 +67,7 @@
 <body>
 
     <header>
-        <h2>Quản lý Kho Đề Thi (Full Tiện Ích)</h2>
+        <h2>Quản lý Kho Đề Thi</h2>
         <div class="config-box">
             <input type="text" id="username" placeholder="Username GitHub">
             <input type="text" id="repo" placeholder="Tên Repo">
@@ -77,7 +77,6 @@
     </header>
 
     <div class="main-container">
-        
         <!-- PANEL TRÁI -->
         <div class="left-panel">
             <h3>📂 Cây Thư Mục Đề Thi</h3>
@@ -113,7 +112,6 @@
             </div>
             <iframe id="previewFrame" style="display: none;" title="Trình xem trước"></iframe>
         </div>
-
     </div>
 
 <script>
@@ -221,7 +219,6 @@ function renderTreeHTML(node, username, repo, currentPath) {
     return ul;
 }
 
-// Hàm copy link trực tiếp vào bộ nhớ tạm
 function copyLink(url, fileName) {
     navigator.clipboard.writeText(url).then(() => {
         alert(`Đã copy link của file "${fileName}"!\n\nĐường dẫn:\n${url}`);
@@ -379,4 +376,34 @@ function uploadFile() {
         fetch(apiUrl, {
             headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json' }
         })
-        .then(res => res.ok
+        .then(res => res.ok ? res.json() : null)
+        .then(existingFile => {
+            let bodyData = { message: `Upload ${uploadPath}`, content: contentBase64 };
+            if (existingFile && existingFile.sha) bodyData.sha = existingFile.sha;
+
+            return fetch(apiUrl, {
+                method: 'PUT',
+                headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json', 'Accept': 'application/vnd.github.v3+json' },
+                body: JSON.stringify(bodyData)
+            });
+        })
+        .then(res => {
+            statusDiv.style.display = 'none';
+            if (res && res.ok) {
+                alert("Upload thành công!");
+                loadRepoTree();
+            } else {
+                alert("Upload thất bại! Kiểm tra lại đường dẫn hoặc Token.");
+            }
+        })
+        .catch(err => {
+            statusDiv.style.display = 'none';
+            alert("Lỗi kết nối khi upload!");
+        });
+    };
+    reader.readAsDataURL(file);
+}
+</script>
+
+</body>
+</html>
