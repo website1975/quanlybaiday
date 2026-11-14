@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hệ thống Quản lý Đề Thi - Có Nút Xóa & Sửa</title>
+    <title>Hệ thống Quản lý Đề Thi - Thông minh hơn</title>
     <style>
         * { box-sizing: border-box; }
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; margin: 0; padding: 0; height: 100vh; display: flex; flex-direction: column; }
@@ -19,24 +19,28 @@
         /* Bố cục 2 Panel chính */
         .main-container { display: flex; flex: 1; overflow: hidden; }
         
-        /* Panel Trái: Cây thư mục & Upload */
+        /* Panel Trái */
         .left-panel { width: 380px; background: #fff; border-right: 1px solid #ddd; display: flex; flex-direction: column; padding: 15px; overflow-y: auto; }
         .left-panel h3 { font-size: 15px; color: #000080; margin-top: 0; border-bottom: 2px solid #000080; padding-bottom: 5px; }
         
-        /* Panel Phải: Hiển thị nội dung bài học */
+        /* Panel Phải */
         .right-panel { flex: 1; background: #fff; display: flex; flex-direction: column; padding: 0; position: relative; }
         .right-header { background: #f8f9fa; padding: 10px 20px; border-bottom: 1px solid #ddd; font-weight: bold; color: #333; display: flex; justify-content: space-between; align-items: center; }
         #previewFrame { width: 100%; height: 100%; border: none; flex: 1; background: #fff; }
         .welcome-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: #666; text-align: center; padding: 20px; }
 
-        /* Khung Cây thư mục (Tree View) */
+        /* Khung Cây thư mục */
         .tree-container { flex: 1; overflow-y: auto; background: #fdfdfd; border: 1px solid #e1e4e8; border-radius: 6px; padding: 10px; margin-top: 10px; font-size: 14px; }
         ul.tree, ul.tree ul { list-style-type: none; margin: 0; padding-left: 15px; }
         ul.tree li { margin: 4px 0; position: relative; }
-        .folder-toggle { cursor: pointer; font-weight: bold; color: #d73a49; user-select: none; }
-        .folder-toggle:hover { color: #b31d28; }
         
-        /* Dòng hiển thị file và các nút thao tác */
+        /* Thêm hiệu ứng click chọn thư mục */
+        .folder-row { display: flex; align-items: center; justify-content: space-between; padding: 2px 4px; border-radius: 3px; cursor: pointer; }
+        .folder-row:hover { background-color: #f1f8ff; }
+        .folder-toggle { font-weight: bold; color: #d73a49; user-select: none; flex: 1; }
+        .folder-select-btn { font-size: 11px; background: #0366d6; color: white; border: none; padding: 2px 5px; border-radius: 3px; cursor: pointer; }
+        .folder-select-btn:hover { background: #0056b3; }
+
         .file-row { display: flex; align-items: center; justify-content: space-between; padding: 3px 0; }
         .file-item { cursor: pointer; color: #0366d6; text-decoration: none; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-right: 5px; }
         .file-item:hover { text-decoration: underline; }
@@ -55,13 +59,14 @@
         .upload-section button { width: 100%; background: #000080; color: white; border: none; padding: 8px; border-radius: 4px; cursor: pointer; font-weight: bold; }
         .upload-section button:hover { background: #000050; }
         .loading { font-size: 12px; color: #666; font-style: italic; text-align: center; margin-top: 5px; display: none; }
+        
+        .current-path-badge { background: #eef2f7; padding: 5px 8px; border-radius: 4px; font-size: 12px; margin-bottom: 8px; border-left: 3px solid #000080; word-break: break-all; }
     </style>
 </head>
 <body>
 
-    <!-- Header nhập cấu hình -->
     <header>
-        <h2>Quản lý Kho Đề Thi (Full CRUD)</h2>
+        <h2>Quản lý Kho Đề Thi (Thông minh)</h2>
         <div class="config-box">
             <input type="text" id="username" placeholder="Username GitHub">
             <input type="text" id="repo" placeholder="Tên Repo">
@@ -70,29 +75,32 @@
         </div>
     </header>
 
-    <!-- Giao diện 2 Panel -->
     <div class="main-container">
         
-        <!-- PANEL TRÁI: Menu cây & Upload -->
+        <!-- PANEL TRÁI -->
         <div class="left-panel">
             <h3>📂 Cây Thư Mục Đề Thi</h3>
             <div class="tree-container" id="treeView">
-                <div style="color: #888; text-align: center; margin-top: 20px;">Nhập thông tin kết nối ở trên và bấm "Kết nối & Quét"</div>
+                <div style="color: #888; text-align: center; margin-top: 20px;">Nhập thông tin kết nối và bấm "Kết nối & Quét"</div>
             </div>
 
-            <!-- Upload nhanh file mới -->
+            <!-- Upload thông minh -->
             <div class="upload-section">
                 <h3>⬆️ Tải Lên File Mới</h3>
-                <label>Đường dẫn thư mục & Tên file:</label>
+                <div class="current-path-badge">Thư mục đích: <b id="selectedFolderDisplay" style="color:#000080;">(Thư mục gốc)</b></div>
+                
+                <label>Chọn file HTML từ máy tính:</label>
+                <input type="file" id="fileInput" accept=".html" onchange="handleFileSelect(this)">
+                
+                <label>Đường dẫn lưu trên GitHub (Tự động điền):</label>
                 <input type="text" id="uploadPath" placeholder="vd: chuong1/de-01.html">
-                <label>Chọn file HTML:</label>
-                <input type="file" id="fileInput" accept=".html">
+                
                 <button onclick="uploadFile()">Đẩy lên GitHub</button>
                 <div class="loading" id="uploadStatus">Đang tải lên...</div>
             </div>
         </div>
 
-        <!-- PANEL PHẢI: Xem trước nội dung bài -->
+        <!-- PANEL PHẢI -->
         <div class="right-panel">
             <div class="right-header" id="previewHeader">
                 <span>Trình xem trước bài trắc nghiệm</span>
@@ -108,7 +116,8 @@
     </div>
 
 <script>
-// Tự động khôi phục cấu hình từ localStorage
+let currentSelectedFolder = ""; // Biến lưu thư mục đang chọn
+
 ['username', 'repo', 'token'].forEach(id => {
     const el = document.getElementById(id);
     if(localStorage.getItem(id)) el.value = localStorage.getItem(id);
@@ -132,7 +141,7 @@ function loadRepoTree() {
         return;
     }
 
-    treeView.innerHTML = '<div style="text-align:center; color:#666; padding:20px;">Đang quét cây thư mục từ GitHub...</div>';
+    treeView.innerHTML = '<div style="text-align:center; color:#666; padding:20px;">Đang quét cây thư mục...</div>';
 
     const apiUrl = `https://api.github.com/repos/${username}/${repo}/git/trees/main?recursive=1`;
 
@@ -152,7 +161,7 @@ function loadRepoTree() {
         if (data.tree) {
             const root = buildTreeStructure(data.tree);
             treeView.innerHTML = '';
-            treeView.appendChild(renderTreeHTML(root, username, repo));
+            treeView.appendChild(renderTreeHTML(root, username, repo, ""));
         } else {
             treeView.innerHTML = '<div style="color:red; text-align:center;">Không tìm thấy dữ liệu hoặc repo trống.</div>';
         }
@@ -177,28 +186,33 @@ function buildTreeStructure(flatList) {
     return root;
 }
 
-function renderTreeHTML(node, username, repo) {
+function renderTreeHTML(node, username, repo, currentPath) {
     let ul = document.createElement('ul');
     ul.className = 'tree';
     for (let key in node) {
         if (key === '__is_file') continue;
         let li = document.createElement('li');
         let val = node[key];
+        let itemPath = currentPath ? `${currentPath}/${key}` : key;
 
         if (val.__is_file) {
             let liveUrl = `https://${username}.github.io/${repo}/${val.path}`;
-            // Bổ sung nút Sửa tên và Xóa ngay bên cạnh tên file
             li.innerHTML = `
                 <div class="file-row">
                     <span class="file-item" onclick="openPreview('${liveUrl}', '${key}')" title="${val.path}">📄 ${key}</span>
                     <div class="action-btns">
-                        <button class="btn-sm btn-rename" onclick="renameFile('${val.path}', '${key}')" title="Đổi tên file">Sửa</button>
-                        <button class="btn-sm btn-delete" onclick="deleteFile('${val.path}')" title="Xóa file">Xóa</button>
+                        <button class="btn-sm btn-rename" onclick="renameFile('${val.path}', '${key}')">Sửa</button>
+                        <button class="btn-sm btn-delete" onclick="deleteFile('${val.path}')">Xóa</button>
                     </div>
                 </div>`;
         } else {
-            li.innerHTML = `<span class="folder-toggle" onclick="toggleFolder(this)">📁 <b>${key}</b></span>`;
-            let subUl = renderTreeHTML(val, username, repo);
+            // Thư mục: có nút chọn đích upload và nút thu gọn/mở rộng
+            li.innerHTML = `
+                <div class="folder-row">
+                    <span class="folder-toggle" onclick="toggleFolder(this)">📁 <b>${key}</b></span>
+                    <button class="folder-select-btn" onclick="selectFolder('${itemPath}')" title="Chọn thư mục này để upload file vào">Chọn</button>
+                </div>`;
+            let subUl = renderTreeHTML(val, username, repo, itemPath);
             li.appendChild(subUl);
         }
         ul.appendChild(li);
@@ -206,8 +220,36 @@ function renderTreeHTML(node, username, repo) {
     return ul;
 }
 
+// Khi thầy bấm nút "Chọn" cạnh thư mục
+function selectFolder(folderPath) {
+    currentSelectedFolder = folderPath;
+    document.getElementById('selectedFolderDisplay').innerText = folderPath + "/";
+    
+    // Tự động cập nhật lại ô uploadPath nếu đang có tên file
+    let fileInput = document.getElementById('fileInput');
+    if (fileInput.files.length > 0) {
+        let fileName = fileInput.files[0].name;
+        document.getElementById('uploadPath').value = `${currentSelectedFolder}/${fileName}`;
+    } else {
+        document.getElementById('uploadPath').value = `${currentSelectedFolder}/`;
+    }
+}
+
+// Khi thầy chọn file từ máy tính
+function handleFileSelect(input) {
+    if (input.files.length > 0) {
+        let fileName = input.files[0].name;
+        // Tự động ghép thư mục đang chọn với tên file
+        if (currentSelectedFolder) {
+            document.getElementById('uploadPath').value = `${currentSelectedFolder}/${fileName}`;
+        } else {
+            document.getElementById('uploadPath').value = fileName;
+        }
+    }
+}
+
 function toggleFolder(element) {
-    let nextUl = element.nextElementSibling;
+    let nextUl = element.parentElement.nextElementSibling;
     if (nextUl && nextUl.tagName === 'UL') {
         nextUl.style.display = nextUl.style.display === 'none' ? 'block' : 'none';
     }
@@ -225,27 +267,20 @@ function openPreview(url, fileName) {
     extLink.style.display = 'inline';
 }
 
-// HÀM XÓA FILE TRÊN GITHUB
 function deleteFile(filePath) {
-    if (!confirm(`Thầy có chắc chắn muốn xóa vĩnh viễn file: "${filePath}" không?`)) return;
+    if (!confirm(`Thầy có chắc chắn muốn xóa file: "${filePath}" không?`)) return;
 
     const username = document.getElementById('username').value.trim();
     const repo = document.getElementById('repo').value.trim();
     const token = document.getElementById('token').value.trim();
     const apiUrl = `https://api.github.com/repos/${username}/${repo}/contents/${filePath}`;
 
-    // Bước 1: Lấy mã SHA của file cần xóa (GitHub bắt buộc phải có SHA mới cho phép xóa)
     fetch(apiUrl, {
         headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json' }
     })
     .then(res => res.json())
     .then(fileData => {
-        if (!fileData.sha) {
-            alert("Không tìm thấy mã SHA của file!");
-            return;
-        }
-
-        // Bước 2: Gửi request DELETE lên GitHub API
+        if (!fileData.sha) return;
         return fetch(apiUrl, {
             method: 'DELETE',
             headers: {
@@ -253,31 +288,24 @@ function deleteFile(filePath) {
                 'Content-Type': 'application/json',
                 'Accept': 'application/vnd.github.v3+json'
             },
-            body: JSON.stringify({
-                message: `Delete ${filePath} via Web Manager`,
-                sha: fileData.sha
-            })
+            body: JSON.stringify({ message: `Delete ${filePath}`, sha: fileData.sha })
         });
     })
     .then(res => {
         if (res && res.ok) {
             alert("Đã xóa file thành công!");
-            loadRepoTree(); // Quét lại cây thư mục
+            loadRepoTree();
         } else {
             alert("Xóa file thất bại!");
         }
     })
-    .catch(err => {
-        alert("Lỗi kết nối khi xóa file!");
-    });
+    .catch(err => alert("Lỗi kết nối khi xóa!"));
 }
 
-// HÀM ĐỔI TÊN FILE (SỬA)
 function renameFile(oldPath, oldName) {
-    let newName = prompt(`Nhập tên mới cho file (giữ nguyên đuôi .html):`, oldName);
+    let newName = prompt(`Nhập tên mới cho file (.html):`, oldName);
     if (!newName || newName === oldName) return;
     
-    // Tính toán lại đường dẫn mới (giữ nguyên thư mục cũ, đổi tên file)
     let pathArr = oldPath.split('/');
     pathArr[pathArr.length - 1] = newName;
     let newPath = pathArr.join('/');
@@ -287,63 +315,40 @@ function renameFile(oldPath, oldName) {
     const token = document.getElementById('token').value.trim();
     const oldApiUrl = `https://api.github.com/repos/${username}/${repo}/contents/${oldPath}`;
 
-    // Bước 1: Đọc nội dung file cũ và lấy SHA
     fetch(oldApiUrl, {
         headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json' }
     })
     .then(res => res.json())
     .then(fileData => {
-        let contentBase64 = fileData.content; // Nội dung file cũ dưới dạng Base64
+        let contentBase64 = fileData.content;
         let oldSha = fileData.sha;
-
         const newApiUrl = `https://api.github.com/repos/${username}/${repo}/contents/${newPath}`;
 
-        // Bước 2: Tạo file mới với tên mới
         return fetch(newApiUrl, {
             method: 'PUT',
-            headers: {
-                'Authorization': `token ${token}`,
-                'Content-Type': 'application/json',
-                'Accept': 'application/vnd.github.v3+json'
-            },
-            body: JSON.stringify({
-                message: `Rename ${oldPath} to ${newPath}`,
-                content: contentBase64
-            })
+            headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json', 'Accept': 'application/vnd.github.v3+json' },
+            body: JSON.stringify({ message: `Rename to ${newPath}`, content: contentBase64 })
         })
         .then(res => {
-            if (!res.ok) throw new Error("Không thể tạo file với tên mới");
-            
-            // Bước 3: Sau khi tạo file mới thành công thì xóa file cũ đi
+            if (!res.ok) throw new Error();
             return fetch(oldApiUrl, {
                 method: 'DELETE',
-                headers: {
-                    'Authorization': `token ${token}`,
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/vnd.github.v3+json'
-                },
-                body: JSON.stringify({
-                    message: `Clean up old file after rename`,
-                    sha: oldSha
-                })
+                headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json', 'Accept': 'application/vnd.github.v3+json' },
+                body: JSON.stringify({ message: `Clean old file`, sha: oldSha })
             });
         });
     })
     .then(res => {
         if (res && res.ok) {
-            alert("Đổi tên file thành công!");
+            alert("Đổi tên thành công!");
             loadRepoTree();
         } else {
             alert("Đổi tên thất bại!");
         }
     })
-    .catch(err => {
-        console.error(err);
-        alert("Đã xảy ra lỗi khi đổi tên file!");
-    });
+    .catch(err => alert("Đã xảy ra lỗi khi đổi tên!"));
 }
 
-// HÀM UPLOAD FILE MỚI
 function uploadFile() {
     const username = document.getElementById('username').value.trim();
     const repo = document.getElementById('repo').value.trim();
@@ -353,7 +358,7 @@ function uploadFile() {
     const statusDiv = document.getElementById('uploadStatus');
 
     if (!username || !repo || !token || !uploadPath || fileInput.files.length === 0) {
-        alert("Vui lòng điền đủ thông tin, đường dẫn và chọn file HTML cần upload!");
+        alert("Vui lòng chọn file và kiểm tra lại đường dẫn upload!");
         return;
     }
 
@@ -370,7 +375,7 @@ function uploadFile() {
         })
         .then(res => res.ok ? res.json() : null)
         .then(existingFile => {
-            let bodyData = { message: `Upload ${uploadPath} via 2-Panel App`, content: contentBase64 };
+            let bodyData = { message: `Upload ${uploadPath}`, content: contentBase64 };
             if (existingFile && existingFile.sha) bodyData.sha = existingFile.sha;
 
             return fetch(apiUrl, {
@@ -385,7 +390,7 @@ function uploadFile() {
                 alert("Upload thành công!");
                 loadRepoTree();
             } else {
-                alert("Upload thất bại! Kiểm tra lại đường dẫn thư mục hoặc Token.");
+                alert("Upload thất bại! Kiểm tra lại đường dẫn hoặc Token.");
             }
         })
         .catch(err => {
