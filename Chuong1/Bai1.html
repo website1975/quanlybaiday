@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài học: Giá trị lượng giác của góc lượng giác</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)']],
+                displayMath: [['\\[', '\\]']]
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <style>
+        body {
+            background-color: #f4f7f9;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .main-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .section-title {
+            text-transform: uppercase;
+            font-weight: bold;
+            font-size: 1.5rem;
+            color: #1a202c;
+            border-bottom: 4px solid #1e40af;
+            padding-bottom: 8px;
+            margin-bottom: 20px;
+            margin-top: 30px;
+        }
+        .sub-title {
+            font-weight: 600;
+            font-size: 1.25rem;
+            color: #2d3748;
+            margin-bottom: 12px;
+            margin-top: 20px;
+        }
+        .content-box {
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+        .header-box {
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 24px;
+            border: 1px solid #e2e8f0;
+        }
+        /* Header top & bottom colors */
+        .header-top {
+            background-color: #66FF99;
+            padding: 16px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.25rem;
+            color: #064e3b;
+            border-bottom: 1px solid #047857;
+        }
+        .header-bottom {
+            background-color: #33FF33;
+            padding: 16px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.5rem;
+            color: #064e3b;
+            text-transform: uppercase;
+        }
+        .intro-box {
+            background-color: #ffffff;
+            border: 1px solid #000000;
+            padding: 16px;
+            font-style: italic;
+            margin-bottom: 24px;
+        }
+        /* Defs and formulas block */
+        .highlight-box {
+            background-color: #fffbeb;
+            border: 2px solid #fbbf24;
+            padding: 16px;
+            border-radius: 8px;
+            margin: 16px 0;
+            font-weight: 500;
+        }
+        /* Q&A / Activity Block */
+        .qa-box {
+            background-color: #edf2f7;
+            border-left: 5px solid #2b6cb0;
+            padding: 16px;
+            border-radius: 0 8px 8px 0;
+            margin: 16px 0;
+        }
+        .answer-box {
+            background-color: #d1fae5; /* Light green */
+            border: 1px solid #34d399;
+            padding: 16px;
+            border-radius: 8px;
+            margin-top: 12px;
+            display: none; /* Hidden by default */
+        }
+        /* Button style */
+        .btn-action {
+            background-color: #33FF33;
+            color: #064e3b;
+            font-weight: bold;
+            padding: 8px 16px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .btn-action:hover {
+            background-color: #2be62b;
+        }
+        /* Notices */
+        .note-box {
+            background-color: #fff5f5;
+            border: 1px solid #fc8181;
+            padding: 16px;
+            border-radius: 8px;
+            margin: 16px 0;
+        }
+        .info-box {
+            background-color: #ebf8ff;
+            border: 1px solid #63b3ed;
+            padding: 16px;
+            border-radius: 8px;
+            margin: 16px 0;
+        }
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+        }
+        th, td {
+            border: 1px solid #cbd5e0;
+            padding: 12px;
+            text-align: center;
+        }
+        th {
+            background-color: #e2e8f0;
+        }
+        .img-placeholder {
+            display: block;
+            margin: 16px auto;
+            max-width: 100%;
+            height: auto;
+            background-color: #e2e8f0;
+            text-align: center;
+            padding: 20px;
+            color: #718096;
+            border: 1px dashed #a0aec0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="main-container max-w-5xl mx-auto space-y-6">
+
+    <div class="header-box">
+        <div class="header-top">
+            CHƯƠNG I: HÀM SỐ LƯỢNG GIÁC VÀ PHƯƠNG TRÌNH LƯỢNG GIÁC
+        </div>
+        <div class="header-bottom">
+            BÀI 1: GIÁ TRỊ LƯỢNG GIÁC CỦA GÓC LƯỢNG GIÁC
+        </div>
+    </div>
+
+    <div class="intro-box">
+        <p><strong>Tình huống mở đầu:</strong> Trạm vũ trụ Quốc tế ISS nằm trong quỹ đạo tròn cách bề mặt Trái Đất khoảng 400 km. Nếu trạm mặt đất theo dõi được ISS khi nó nằm trong góc \(45^\circ\) ở tâm của quỹ đạo, thì ISS đã di chuyển được bao nhiêu km trong lúc theo dõi? (Giả sử bán kính Trái Đất là 6400 km).</p>
+    </div>
+
+    <div class="content-box">
+        <h2 class="section-title">1. GÓC LƯỢNG GIÁC</h2>
+        
+        <h3 class="sub-title">a) Khái niệm góc lượng giác và số đo của góc lượng giác</h3>
+        
+        <div class="qa-box">
+            <p><strong><span class="text-blue-800">✍️ Hoạt động 1:</span></strong> Trên đồng hồ, kim phút đang chỉ đúng số 2. Phải quay kim phút mấy phần của một vòng tròn theo chiều ngược kim đồng hồ (chiều dương) / cùng kim đồng hồ (chiều âm) để nó chỉ đúng số 12?</p>
+            <button class="btn-action mt-3" onclick="toggleAnswer('ans_hd1')">Xem lời giải</button>
+            <div id="ans_hd1" class="answer-box">
+                <p>a) Ngược chiều kim đồng hồ: Quay \(\frac{10}{12} = \frac{5}{6}\) vòng tròn.</p>
+                <p>b) Cùng chiều kim đồng hồ: Quay \(\frac{2}{12} = \frac{1}{6}\) vòng tròn.</p>
+                <p>c) Có vô số cách quay kim phút để từ vị trí số 2 về số 12 (quay thêm các vòng nguyên).</p>
+            </div>
+        </div>
+
+        <p>Trong mặt phẳng, cho hai tia \(Ou, Ov\). Xét tia \(Om\) quay quanh \(O\) từ \(Ou\) đến \(Ov\), ta nói nó quét một <strong>góc lượng giác</strong> với tia đầu \(Ou\), tia cuối \(Ov\), kí hiệu là \((Ou, Ov)\).</p>
+        
+        <div class="highlight-box shadow-sm">
+            <p><strong>Quy ước:</strong> Chiều quay ngược với chiều kim đồng hồ là <strong>chiều dương</strong>, cùng chiều kim đồng hồ là <strong>chiều âm</strong>.</p>
+            <p>Mỗi góc lượng giác gốc \(O\) được xác định bởi tia đầu \(Ou\), tia cuối \(Ov\) và số đo của nó, kí hiệu số đo là \(sđ(Ou, Ov)\).</p>
+        </div>
+
+        <img src="h1_3.png" alt="Hình 1.3: Chiều quay góc lượng giác" class="img-placeholder" title="Hình 1.3">
+
+        <div class="note-box shadow-sm">
+            <p><strong><span class="text-red-600">CHÚ Ý:</span></strong> Cho hai tia \(Ou, Ov\) thì có vô số góc lượng giác tia đầu \(Ou\), tia cuối \(Ov\). Số đo của các góc này sai khác nhau một bội nguyên của \(360^\circ\): 
+            \[sđ(Ou, Ov) = a^\circ + k \cdot 360^\circ \quad (k \in \mathbb{Z})\]</p>
+        </div>
+
+        <div class="qa-box">
+            <p><strong><span class="text-blue-800">📝 Luyện tập 1:</span></strong> Cho góc hình học \(\widehat{uOv} = 45^\circ\). Xác định số đo góc lượng giác \((Ou, Ov)\) theo hai chiều.</p>
+            <button class="btn-action mt-3" onclick="toggleAnswer('ans_lt1')">Xem lời giải</button>
+            <div id="ans_lt1" class="answer-box">
+                <p>Theo chiều dương: \(sđ(Ou, Ov) = 45^\circ + k360^\circ \quad (k \in \mathbb{Z})\).</p>
+                <p>Theo chiều âm (từ \(Ou\) đến \(Ov\)): \(sđ(Ou, Ov) = -315^\circ + k360^\circ \quad (k \in \mathbb{Z})\).</p>
+            </div>
+        </div>
+
+        <h3 class="sub-title">b) Hệ thức Chasles</h3>
+        
+        <div class="highlight-box shadow-sm">
+            <p><strong>Hệ thức Chasles:</strong> Với ba tia \(Ou, Ov, Ow\) bất kì, ta có:</p>
+            <p class="text-center font-bold text-lg">\[sđ(Ou, Ov) + sđ(Ov, Ow) = sđ(Ou, Ow) + k \cdot 360^\circ \quad (k \in \mathbb{Z})\]</p>
+        </div>
+        
+        <div class="info-box shadow-sm">
+            <p><strong>EM CÓ BIẾT?</strong> Hệ thức này tương tự công thức cộng đoạn thẳng đại số: \(\overline{AB} = \overline{OB} - \overline{OA}\). Do đó: \(sđ(Ou, Ov) = sđ(Ox, Ov) - sđ(Ox, Ou) + k360^\circ\).</p>
+        </div>
+    </div>
+
+    <div class="content-box">
+        <h2 class="section-title">2. ĐƠN VỊ ĐO GÓC VÀ ĐỘ DÀI CUNG TRÒN</h2>
+        
+        <h3 class="sub-title">a) Đơn vị đo góc và cung tròn</h3>
+        <p>Đơn vị độ: \(1^\circ = 60', 1' = 60''\).</p>
+        
+        <div class="highlight-box shadow-sm">
+            <p><strong>Đơn vị radian:</strong> Cung tròn có số đo bằng 1 radian (rad) nếu độ dài của nó đúng bằng bán kính \(R\).</p>
+            <p><strong>Quan hệ giữa độ và radian:</strong></p>
+            <p class="text-center font-bold">\(1^\circ = \frac{\pi}{180} \text{ rad}\) \(\quad\) và \(\quad\) \(1 \text{ rad} = \left(\frac{180}{\pi}\right)^\circ\)</p>
+            <p class="text-center text-blue-700 mt-2">\(\Rightarrow a^\circ = a \cdot \frac{\pi}{180} \text{ rad} \quad ; \quad \alpha \text{ rad} = \alpha \cdot \left(\frac{180}{\pi}\right)^\circ\)</p>
+        </div>
+
+        <p class="mt-4"><strong>Bảng số đo đặc biệt:</strong></p>
+        <table>
+            <tr>
+                <th>Độ</th>
+                <td>\(0^\circ\)</td>
+                <td>\(30^\circ\)</td>
+                <td>\(45^\circ\)</td>
+                <td>\(60^\circ\)</td>
+                <td>\(90^\circ\)</td>
+                <td>\(120^\circ\)</td>
+                <td>\(135^\circ\)</td>
+                <td>\(150^\circ\)</td>
+                <td>\(180^\circ\)</td>
+            </tr>
+            <tr>
+                <th>Radian</th>
+                <td>\(0\)</td>
+                <td>\(\frac{\pi}{6}\)</td>
+                <td>\(\frac{\pi}{4}\)</td>
+                <td>\(\frac{\pi}{3}\)</td>
+                <td>\(\frac{\pi}{2}\)</td>
+                <td>\(\frac{2\pi}{3}\)</td>
+                <td>\(\frac{3\pi}{4}\)</td>
+                <td>\(\frac{5\pi}{6}\)</td>
+                <td>\(\pi\)</td>
+            </tr>
+        </table>
+
+        <div class="qa-box">
+            <p><strong><span class="text-blue-800">📝 Luyện tập 3:</span></strong> Đổi \(360^\circ, 450^\circ\) sang radian; Đổi \(3\pi, -\frac{11\pi}{5}\) sang độ.</p>
+            <button class="btn-action mt-3" onclick="toggleAnswer('ans_lt3')">Xem lời giải</button>
+            <div id="ans_lt3" class="answer-box">
+                <p>\(360^\circ = 360 \cdot \frac{\pi}{180} = 2\pi\) rad.</p>
+                <p>\(450^\circ = 450 \cdot \frac{\pi}{180} = \frac{5\pi}{2}\) rad.</p>
+                <p>\(3\pi \text{ rad} = 3\pi \cdot \frac{180}{\pi} = 540^\circ\).</p>
+                <p>\(-\frac{11\pi}{5} \text{ rad} = -\frac{11\pi}{5} \cdot \frac{180}{\pi} = -396^\circ\).</p>
+            </div>
+        </div>
+
+        <h3 class="sub-title">b) Độ dài cung tròn</h3>
+        
+        <div class="highlight-box shadow-sm">
+            <p>Một cung của đường tròn bán kính \(R\) và có số đo \(\alpha\) (rad) thì có độ dài:</p>
+            <p class="text-center font-bold text-xl">\[l = R \cdot \alpha\]</p>
+        </div>
+
+        <div class="qa-box">
+            <p><strong><span class="text-blue-800">❓ Giải bài toán mở đầu:</span></strong> Tính quãng đường ISS di chuyển được.</p>
+            <button class="btn-action mt-3" onclick="toggleAnswer('ans_vd4')">Xem lời giải</button>
+            <div id="ans_vd4" class="answer-box">
+                <p>Bán kính quỹ đạo \(R = 6400 + 400 = 6800\) (km).</p>
+                <p>Góc theo dõi \(\alpha = 45^\circ = \frac{\pi}{4}\) rad.</p>
+                <p>Độ dài quãng đường: \(l = R\alpha = 6800 \cdot \frac{\pi}{4} \approx 5341\) (km).</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="content-box">
+        <h2 class="section-title">3. GIÁ TRỊ LƯỢNG GIÁC CỦA GÓC LƯỢNG GIÁC</h2>
+        
+        <h3 class="sub-title">a) Đường tròn lượng giác</h3>
+        
+        <div class="highlight-box shadow-sm">
+            <p><strong>Đường tròn lượng giác</strong> là đường tròn có tâm tại gốc tọa độ \(O\), bán kính \(R=1\), định hướng (ngược kim đồng hồ là chiều dương) và lấy điểm \(A(1;0)\) làm điểm gốc.</p>
+            <p>Điểm biểu diễn góc lượng giác \(\alpha\) là điểm \(M\) sao cho \(sđ(OA, OM) = \alpha\).</p>
+        </div>
+
+        <img src="h1_7.png" alt="Hình 1.7: Đường tròn lượng giác" class="img-placeholder" title="Hình 1.7">
+
+        <h3 class="sub-title">b) Các giá trị lượng giác của góc lượng giác</h3>
+        
+        <div class="highlight-box shadow-sm">
+            <p>Giả sử \(M(x; y)\) là điểm trên đường tròn lượng giác biểu diễn góc \(\alpha\). Khi đó:</p>
+            <ul class="list-disc ml-6 mt-2">
+                <li>Hoành độ \(x\) là <strong>côsin</strong> của \(\alpha\): \(\cos\alpha = x\). (Trục hoành \(Ox\) là trục côsin).</li>
+                <li>Tung độ \(y\) là <strong>sin</strong> của \(\alpha\): \(\sin\alpha = y\). (Trục tung \(Oy\) là trục sin).</li>
+                <li>\(\tan\alpha = \frac{\sin\alpha}{\cos\alpha} = \frac{y}{x} \quad (x \neq 0)\).</li>
+                <li>\(\cot\alpha = \frac{\cos\alpha}{\sin\alpha} = \frac{x}{y} \quad (y \neq 0)\).</li>
+            </ul>
+        </div>
+
+        <div class="note-box shadow-sm">
+            <p><strong><span class="text-red-600">CHÚ Ý:</span></strong></p>
+            <ul class="list-disc ml-6">
+                <li>\(-1 \le \sin\alpha \le 1\) và \(-1 \le \cos\alpha \le 1\).</li>
+                <li>\(\sin(\alpha + k2\pi) = \sin\alpha\) ; \(\cos(\alpha + k2\pi) = \cos\alpha \quad (k \in \mathbb{Z})\).</li>
+            </ul>
+        </div>
+
+        <p class="mt-4 font-bold">Dấu của các giá trị lượng giác theo góc phần tư:</p>
+        <table>
+            <tr>
+                <th>Góc phần tư</th>
+                <th>I</th>
+                <th>II</th>
+                <th>III</th>
+                <th>IV</th>
+            </tr>
+            <tr>
+                <td>\(\cos\alpha\)</td>
+                <td>+</td>
+                <td>-</td>
+                <td>-</td>
+                <td>+</td>
+            </tr>
+            <tr>
+                <td>\(\sin\alpha\)</td>
+                <td>+</td>
+                <td>+</td>
+                <td>-</td>
+                <td>-</td>
+            </tr>
+            <tr>
+                <td>\(\tan\alpha\)</td>
+                <td>+</td>
+                <td>-</td>
+                <td>+</td>
+                <td>-</td>
+            </tr>
+            <tr>
+                <td>\(\cot\alpha\)</td>
+                <td>+</td>
+                <td>-</td>
+                <td>+</td>
+                <td>-</td>
+            </tr>
+        </table>
+        
+        <h3 class="sub-title">c) Giá trị lượng giác của các góc đặc biệt</h3>
+        <table>
+            <tr>
+                <th>Góc \(\alpha\) (rad)</th>
+                <th>\(0\)</th>
+                <th>\(\frac{\pi}{6}\)</th>
+                <th>\(\frac{\pi}{4}\)</th>
+                <th>\(\frac{\pi}{3}\)</th>
+                <th>\(\frac{\pi}{2}\)</th>
+            </tr>
+            <tr>
+                <th>\(\sin\alpha\)</th>
+                <td>\(0\)</td>
+                <td>\(\frac{1}{2}\)</td>
+                <td>\(\frac{\sqrt{2}}{2}\)</td>
+                <td>\(\frac{\sqrt{3}}{2}\)</td>
+                <td>\(1\)</td>
+            </tr>
+            <tr>
+                <th>\(\cos\alpha\)</th>
+                <td>\(1\)</td>
+                <td>\(\frac{\sqrt{3}}{2}\)</td>
+                <td>\(\frac{\sqrt{2}}{2}\)</td>
+                <td>\(\frac{1}{2}\)</td>
+                <td>\(0\)</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="content-box">
+        <h2 class="section-title">4. QUAN HỆ GIỮA CÁC GIÁ TRỊ LƯỢNG GIÁC</h2>
+        
+        <h3 class="sub-title">a) Các công thức lượng giác cơ bản</h3>
+        
+        <div class="highlight-box shadow-sm">
+            <ul class="space-y-3 font-bold text-center text-lg">
+                <li>\(\sin^2\alpha + \cos^2\alpha = 1\)</li>
+                <li>\(1 + \tan^2\alpha = \frac{1}{\cos^2\alpha} \quad (\alpha \neq \frac{\pi}{2} + k\pi)\)</li>
+                <li>\(1 + \cot^2\alpha = \frac{1}{\sin^2\alpha} \quad (\alpha \neq k\pi)\)</li>
+                <li>\(\tan\alpha \cdot \cot\alpha = 1 \quad (\alpha \neq \frac{k\pi}{2})\)</li>
+            </ul>
+        </div>
+
+        <div class="qa-box">
+            <p><strong><span class="text-blue-800">📝 Luyện tập 6:</span></strong> Tính các giá trị lượng giác của góc \(\alpha\), biết \(\cos\alpha = -\frac{2}{3}\) và \(\pi < \alpha < \frac{3\pi}{2}\).</p>
+            <button class="btn-action mt-3" onclick="toggleAnswer('ans_lt6')">Xem lời giải</button>
+            <div id="ans_lt6" class="answer-box">
+                <p>Vì \(\pi < \alpha < \frac{3\pi}{2}\) (Góc phần tư thứ III) nên \(\sin\alpha < 0\).</p>
+                <p>Từ \(\sin^2\alpha + \cos^2\alpha = 1 \Rightarrow \sin\alpha = -\sqrt{1 - \cos^2\alpha} = -\sqrt{1 - \frac{4}{9}} = -\frac{\sqrt{5}}{3}\).</p>
+                <p>\(\tan\alpha = \frac{\sin\alpha}{\cos\alpha} = \frac{\sqrt{5}}{2}\).</p>
+                <p>\(\cot\alpha = \frac{1}{\tan\alpha} = \frac{2}{\sqrt{5}}\).</p>
+            </div>
+        </div>
+
+        <h3 class="sub-title">b) Giá trị lượng giác của các góc có liên quan đặc biệt</h3>
+        
+        <div class="highlight-box shadow-sm text-center">
+            <p><strong>Góc đối nhau (\(\alpha\) và \(-\alpha\)):</strong> \(\cos(-\alpha) = \cos\alpha\) ; \(\sin(-\alpha) = -\sin\alpha\)</p>
+            <p class="mt-2"><strong>Góc bù nhau (\(\alpha\) và \(\pi - \alpha\)):</strong> \(\sin(\pi - \alpha) = \sin\alpha\) ; \(\cos(\pi - \alpha) = -\cos\alpha\)</p>
+            <p class="mt-2"><strong>Góc phụ nhau (\(\alpha\) và \(\frac{\pi}{2} - \alpha\)):</strong> \(\sin(\frac{\pi}{2} - \alpha) = \cos\alpha\) ; \(\cos(\frac{\pi}{2} - \alpha) = \sin\alpha\)</p>
+            <p class="mt-2"><strong>Góc hơn kém \(\pi\) (\(\alpha\) và \(\pi + \alpha\)):</strong> \(\tan(\pi + \alpha) = \tan\alpha\) ; \(\cot(\pi + \alpha) = \cot\alpha\)</p>
+            <p class="mt-2 text-sm italic text-gray-700">(Câu thần chú: "Cos đối, sin bù, phụ chéo, khác pi tan")</p>
+        </div>
+    </div>
+
+    <div class="content-box border-t-8 border-[#1e40af]">
+        <h2 class="section-title" style="border:none; color: #1e40af;">BÀI TẬP TRẮC NGHIỆM CỦNG CỐ</h2>
+        <p class="italic mb-4 text-gray-600">Chọn đáp án đúng nhất cho các câu hỏi sau, sau đó nhấn NỘP BÀI để kiểm tra.</p>
+        
+        <div class="space-y-6">
+            <div>
+                <p class="font-bold">Câu 1: Số đo của góc \(150^\circ\) đổi sang radian là:</p>
+                <label class="block mt-2"><input type="radio" name="q1" value="A"> A. \(\frac{5\pi}{6}\)</label>
+                <label class="block mt-1"><input type="radio" name="q1" value="B"> B. \(\frac{3\pi}{4}\)</label>
+                <label class="block mt-1"><input type="radio" name="q1" value="C"> C. \(\frac{2\pi}{3}\)</label>
+                <label class="block mt-1"><input type="radio" name="q1" value="D"> D. \(\frac{7\pi}{6}\)</label>
+                <div id="exp-q1" class="hidden mt-2 text-sm p-3 bg-gray-100 rounded border border-gray-300" data-exp="Công thức đổi: \(150 \cdot \frac{\pi}{180} = \frac{5\pi}{6}\)."></div>
+            </div>
+
+            <div>
+                <p class="font-bold">Câu 2: Giá trị của \(\sin\left(-\frac{\pi}{3}\right)\) bằng:</p>
+                <label class="block mt-2"><input type="radio" name="q2" value="A"> A. \(\frac{1}{2}\)</label>
+                <label class="block mt-1"><input type="radio" name="q2" value="B"> B. \(-\frac{\sqrt{3}}{2}\)</label>
+                <label class="block mt-1"><input type="radio" name="q2" value="C"> C. \(\frac{\sqrt{3}}{2}\)</label>
+                <label class="block mt-1"><input type="radio" name="q2" value="D"> D. \(-\frac{1}{2}\)</label>
+                <div id="exp-q2" class="hidden mt-2 text-sm p-3 bg-gray-100 rounded border border-gray-300" data-exp="Ta có: \(\sin(-\frac{\pi}{3}) = -\sin(\frac{\pi}{3}) = -\frac{\sqrt{3}}{2}\)."></div>
+            </div>
+
+            <div>
+                <p class="font-bold">Câu 3: Đẳng thức nào sau đây ĐÚNG với mọi góc \(\alpha\)?</p>
+                <label class="block mt-2"><input type="radio" name="q3" value="A"> A. \(\sin^2\alpha - \cos^2\alpha = 1\)</label>
+                <label class="block mt-1"><input type="radio" name="q3" value="B"> B. \(\sin\alpha + \cos\alpha = 1\)</label>
+                <label class="block mt-1"><input type="radio" name="q3" value="C"> C. \(\sin^2\alpha + \cos^2\alpha = 1\)</label>
+                <label class="block mt-1"><input type="radio" name="q3" value="D"> D. \(\tan^2\alpha + \cot^2\alpha = 1\)</label>
+                <div id="exp-q3" class="hidden mt-2 text-sm p-3 bg-gray-100 rounded border border-gray-300" data-exp="Đây là hệ thức lượng giác cơ bản: \(\sin^2\alpha + \cos^2\alpha = 1\)."></div>
+            </div>
+
+            <div>
+                <p class="font-bold">Câu 4: Điểm biểu diễn góc \(\alpha = \frac{5\pi}{6}\) nằm ở góc phần tư thứ mấy trên đường tròn lượng giác?</p>
+                <label class="block mt-2"><input type="radio" name="q4" value="A"> A. Góc phần tư thứ I</label>
+                <label class="block mt-1"><input type="radio" name="q4" value="B"> B. Góc phần tư thứ III</label>
+                <label class="block mt-1"><input type="radio" name="q4" value="C"> C. Góc phần tư thứ II</label>
+                <label class="block mt-1"><input type="radio" name="q4" value="D"> D. Góc phần tư thứ IV</label>
+                <div id="exp-q4" class="hidden mt-2 text-sm p-3 bg-gray-100 rounded border border-gray-300" data-exp="Góc \(\frac{5\pi}{6}\) tương đương \(150^\circ\), lớn hơn \(90^\circ\) và nhỏ hơn \(180^\circ\), do đó nằm ở góc phần tư thứ II."></div>
+            </div>
+
+            <div>
+                <p class="font-bold">Câu 5: Độ dài cung tròn có bán kính \(R = 20\) cm và số đo \(\frac{\pi}{4}\) radian là:</p>
+                <label class="block mt-2"><input type="radio" name="q5" value="A"> A. \(10\) cm</label>
+                <label class="block mt-1"><input type="radio" name="q5" value="B"> B. \(5\pi\) cm</label>
+                <label class="block mt-1"><input type="radio" name="q5" value="C"> C. \(10\pi\) cm</label>
+                <label class="block mt-1"><input type="radio" name="q5" value="D"> D. \(20\pi\) cm</label>
+                <div id="exp-q5" class="hidden mt-2 text-sm p-3 bg-gray-100 rounded border border-gray-300" data-exp="Độ dài cung tròn \(l = R\alpha = 20 \cdot \frac{\pi}{4} = 5\pi\) cm."></div>
+            </div>
+        </div>
+
+        <button class="bg-[#1e40af] text-white font-bold py-2 px-6 rounded mt-6 hover:bg-blue-800 shadow" onclick="checkQuiz()">NỘP BÀI</button>
+        <div id="quiz-result" class="mt-4 p-4 rounded text-lg hidden border"></div>
+    </div>
+
+    <div class="content-box">
+        <h2 class="section-title">BÀI TẬP VẬN DỤNG TÍNH TOÁN CÓ LỜI GIẢI</h2>
+        
+        <div class="qa-box">
+            <p><strong>Bài tập 1:</strong> Bánh xe của người đi xe đạp quay được 11 vòng trong 5 giây. Tính góc (theo độ và radian) mà bánh xe quay được trong 1 giây.</p>
+            <button class="btn-action mt-3" onclick="toggleAnswer('ans_bt1')">Xem lời giải</button>
+            <div id="ans_bt1" class="answer-box">
+                <p>Trong 5 giây, bánh xe quay được 11 vòng.</p>
+                <p>Trong 1 giây, số vòng quay được là: \(\frac{11}{5} = 2.2\) (vòng).</p>
+                <p>Mỗi vòng quay tương ứng với \(360^\circ\) hoặc \(2\pi\) rad.</p>
+                <p>Góc quay theo độ: \(2.2 \times 360^\circ = 792^\circ\).</p>
+                <p>Góc quay theo radian: \(2.2 \times 2\pi = 4.4\pi\) (rad).</p>
+            </div>
+        </div>
+
+        <div class="qa-box">
+            <p><strong>Bài tập 2:</strong> Tính các giá trị lượng giác của góc \(\alpha\), biết \(\sin\alpha = \frac{1}{3}\) và \(90^\circ < \alpha < 180^\circ\).</p>
+            <button class="btn-action mt-3" onclick="toggleAnswer('ans_bt2')">Xem lời giải</button>
+            <div id="ans_bt2" class="answer-box">
+                <p>Vì \(90^\circ < \alpha < 180^\circ\) nên \(\cos\alpha < 0\).</p>
+                <p>Áp dụng hệ thức \(\sin^2\alpha + \cos^2\alpha = 1 \Rightarrow \cos^2\alpha = 1 - \sin^2\alpha = 1 - (\frac{1}{3})^2 = \frac{8}{9}\).</p>
+                <p>Suy ra \(\cos\alpha = -\frac{2\sqrt{2}}{3}\).</p>
+                <p>\(\tan\alpha = \frac{\sin\alpha}{\cos\alpha} = \frac{1/3}{-2\sqrt{2}/3} = -\frac{1}{2\sqrt{2}} = -\frac{\sqrt{2}}{4}\).</p>
+                <p>\(\cot\alpha = \frac{1}{\tan\alpha} = -2\sqrt{2}\).</p>
+            </div>
+        </div>
+
+        <div class="qa-box">
+            <p><strong>Bài tập 3:</strong> Huyết áp tâm trương của một người trạng thái nghỉ ngơi thời điểm \(t\) được cho bởi công thức \(B(t) = 80 + 7\sin(\frac{\pi t}{12})\) (mmHg), trong đó \(t\) là số giờ tính từ lúc nửa đêm. Tìm huyết áp của người này vào lúc 6 giờ sáng.</p>
+            <button class="btn-action mt-3" onclick="toggleAnswer('ans_bt3')">Xem lời giải</button>
+            <div id="ans_bt3" class="answer-box">
+                <p>Lúc 6 giờ sáng, tương ứng với \(t = 6\).</p>
+                <p>Thay \(t = 6\) vào công thức: \(B(6) = 80 + 7\sin(\frac{6\pi}{12}) = 80 + 7\sin(\frac{\pi}{2})\).</p>
+                <p>Vì \(\sin(\frac{\pi}{2}) = 1\), ta có: \(B(6) = 80 + 7(1) = 87\) (mmHg).</p>
+                <p>Vậy huyết áp lúc 6h sáng là 87 mmHg.</p>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+    // Hàm ẩn/hiện lời giải
+    function toggleAnswer(id) {
+        var element = document.getElementById(id);
+        if (element.style.display === "block") {
+            element.style.display = "none";
+        } else {
+            element.style.display = "block";
+        }
+    }
+
+    // Hàm kiểm tra bài trắc nghiệm
+    function checkQuiz() {
+        let score = 0;
+        const answers = { q1: 'A', q2: 'B', q3: 'C', q4: 'C', q5: 'B' };
+        
+        for (let key in answers) {
+            const selected = document.querySelector(`input[name="${key}"]:checked`);
+            const expDiv = document.getElementById(`exp-${key}`);
+            
+            if (selected) {
+                if (selected.value === answers[key]) {
+                    score++;
+                    expDiv.innerHTML = "<span style='color: green; font-weight: bold;'>Đúng!</span> " + expDiv.dataset.exp;
+                    expDiv.classList.replace('bg-gray-100', 'bg-green-50');
+                    expDiv.classList.replace('border-gray-300', 'border-green-300');
+                } else {
+                    expDiv.innerHTML = "<span style='color: red; font-weight: bold;'>Sai.</span> " + expDiv.dataset.exp;
+                    expDiv.classList.replace('bg-gray-100', 'bg-red-50');
+                    expDiv.classList.replace('border-gray-300', 'border-red-300');
+                }
+                expDiv.classList.remove('hidden');
+            } else {
+                expDiv.innerHTML = "<span style='color: #d97706; font-weight: bold;'>Chưa chọn đáp án.</span> Yêu cầu chọn đáp án để xem giải thích.";
+                expDiv.classList.remove('hidden');
+                expDiv.classList.replace('bg-gray-100', 'bg-yellow-50');
+                expDiv.classList.replace('border-gray-300', 'border-yellow-300');
+            }
+            // re-render mathjax for newly displayed content if necessary
+            if (window.MathJax) {
+                MathJax.typesetPromise([expDiv]);
+            }
+        }
+        
+        const resultDiv = document.getElementById('quiz-result');
+        resultDiv.classList.remove('hidden');
+        if (score === 5) {
+            resultDiv.innerHTML = `<span style='color: #064e3b; font-weight: bold;'><i class="fas fa-check-circle"></i> Tuyệt vời! Bạn trả lời đúng ${score}/5 câu.</span>`;
+            resultDiv.className = "mt-4 p-4 rounded text-lg border bg-green-100 border-green-400";
+        } else {
+            resultDiv.innerHTML = `<span style='color: #991b1b; font-weight: bold;'>Bạn trả lời đúng ${score}/5 câu. Hãy xem lại giải thích chi tiết từng câu nhé!</span>`;
+            resultDiv.className = "mt-4 p-4 rounded text-lg border bg-red-100 border-red-400";
+        }
+    }
+</script>
+
+</body>
+</html>
