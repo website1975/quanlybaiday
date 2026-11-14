@@ -1,0 +1,983 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ôn luyện củng cố kiến thức - Bài 31: Động học của chuyển động tròn đều</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- MathJax Configuration and Library -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)'], ['$', '$']],
+                displayMath: [['\\[', '\\]'], ['$$', '$$']]
+            },
+            svg: {
+                fontCache: 'global'
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3e8ff; /* Nền tím nhạt theo đúng yêu cầu */
+            color: #111827; /* Chữ màu đen/tối */
+        }
+        
+        /* Màu tiêu đề chữ kem (#FFFDD0) */
+        .text-cream {
+            color: #FFFDD0;
+        }
+
+        /* Gradient tím sang trọng cho Header */
+        .bg-purple-header {
+            background: linear-gradient(135deg, #4c1d95 0%, #5b21b6 50%, #6d28d9 100%);
+        }
+
+        /* Radio button tùy chỉnh */
+        .custom-radio {
+            accent-color: #7c3aed;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #c084fc;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a855f7;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between antialiased selection:bg-purple-300 selection:text-purple-900">
+
+    <!-- HEADER TỔNG QUAN -->
+    <header class="bg-purple-header shadow-lg border-b-4 border-purple-400 sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 py-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="text-center md:text-left">
+                <div class="inline-flex items-center gap-2 bg-purple-900/60 text-purple-200 text-xs font-semibold px-3 py-1 rounded-full mb-1 border border-purple-400/30">
+                    <i class="fa-solid fa-graduation-cap"></i> Vật Lý 10 - Bộ sách Kết Nối Tri Thức
+                </div>
+                <h1 class="text-2xl sm:text-3xl font-extrabold text-cream tracking-tight">
+                    Ôn luyện củng cố kiến thức
+                </h1>
+                <p class="text-purple-200 text-sm font-medium mt-0.5">
+                    Bài 31: ĐỘNG HỌC CỦA CHUYỂN ĐỘNG TRÒN ĐỀU
+                </p>
+            </div>
+
+            <!-- Thông tin tổng quan bài test -->
+            <div class="flex flex-wrap items-center justify-center gap-3 text-xs sm:text-sm font-medium">
+                <div class="bg-white/10 backdrop-blur-md text-cream px-3 py-1.5 rounded-lg border border-white/20 flex items-center gap-1.5">
+                    <i class="fa-regular fa-clock text-amber-300"></i>
+                    <span>Thời gian: <strong>20 phút</strong></span>
+                </div>
+                <div class="bg-white/10 backdrop-blur-md text-cream px-3 py-1.5 rounded-lg border border-white/20 flex items-center gap-1.5">
+                    <i class="fa-solid fa-list-check text-emerald-300"></i>
+                    <span>Số câu: <strong>20 câu</strong></span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="max-w-6xl mx-auto px-4 py-6 sm:px-6 lg:px-8 flex-grow w-full">
+
+        <!-- SCREEN 1: BẮT ĐẦU LÀM (Start Screen) -->
+        <div id="screen-start" class="bg-white rounded-2xl shadow-xl p-6 sm:p-8 border border-purple-100 transition-all">
+            <div class="max-w-3xl mx-auto text-center space-y-6">
+                <div class="inline-flex p-4 bg-purple-100 text-purple-700 rounded-full text-3xl">
+                    <i class="fa-solid fa-compass-drafting"></i>
+                </div>
+                
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-900 sm:text-3xl">Kiểm Tra Củng Cố Kiến Thức Bài 31</h2>
+                    <p class="text-gray-600 mt-2">Hệ thống 20 câu hỏi trắc nghiệm phân hóa chuẩn 4 mức độ tư duy giúp học sinh làm chủ concepts độ dịch chuyển góc, tốc độ góc, chu kì, tần số và vận tốc tức thời trong chuyển động tròn đều.</p>
+                </div>
+
+                <!-- Bảng phân bố mức độ câu hỏi -->
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-left">
+                    <div class="bg-purple-50 p-3 rounded-xl border border-purple-200">
+                        <span class="text-xs font-semibold text-purple-700 uppercase tracking-wider block">Biết</span>
+                        <span class="text-lg font-bold text-purple-900">8 câu</span>
+                        <p class="text-xs text-gray-500 mt-1">Đơn vị, khái niệm & công thức nền tảng</p>
+                    </div>
+                    <div class="bg-blue-50 p-3 rounded-xl border border-blue-200">
+                        <span class="text-xs font-semibold text-blue-700 uppercase tracking-wider block">Hiểu</span>
+                        <span class="text-lg font-bold text-blue-900">7 câu</span>
+                        <p class="text-xs text-gray-500 mt-1">Giải thích đặc điểm & so sánh đại lượng</p>
+                    </div>
+                    <div class="bg-amber-50 p-3 rounded-xl border border-amber-200">
+                        <span class="text-xs font-semibold text-amber-700 uppercase tracking-wider block">Vận dụng</span>
+                        <span class="text-lg font-bold text-amber-900">3 câu</span>
+                        <p class="text-xs text-gray-500 mt-1">Bài toán chuyển động đồng hồ & Trái Đất</p>
+                    </div>
+                    <div class="bg-rose-50 p-3 rounded-xl border border-rose-200">
+                        <span class="text-xs font-semibold text-rose-700 uppercase tracking-wider block">Vận dụng cao</span>
+                        <span class="text-lg font-bold text-rose-900">2 câu</span>
+                        <p class="text-xs text-gray-500 mt-1">Bài toán đĩa quay & chuyển động đuổi nhau</p>
+                    </div>
+                </div>
+
+                <!-- Lựa chọn hình thức làm bài -->
+                <div class="bg-gray-50 p-5 rounded-xl border border-gray-200 text-left space-y-4">
+                    <h3 class="font-bold text-gray-800 text-base flex items-center gap-2">
+                        <i class="fa-solid fa-sliders text-purple-600"></i> Chọn hình thức làm bài:
+                    </h3>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Mode Luyện tập -->
+                        <label class="relative flex p-4 rounded-xl border-2 cursor-pointer transition-all hover:bg-purple-50/50 has-[:checked]:border-purple-600 has-[:checked]:bg-purple-50/80 border-gray-200">
+                            <input type="radio" name="testMode" value="practice" class="custom-radio mt-1" checked>
+                            <div class="ml-3">
+                                <span class="block font-bold text-gray-900">Chế độ Luyện tập</span>
+                                <span class="block text-xs text-gray-600 mt-1">Không giới hạn thời gian. Thích hợp ôn củng cố kiến thức, xem đáp án chuẩn và lời giải chi tiết ngay sau khi nộp bài.</span>
+                            </div>
+                        </label>
+
+                        <!-- Mode Tính giờ -->
+                        <label class="relative flex p-4 rounded-xl border-2 cursor-pointer transition-all hover:bg-purple-50/50 has-[:checked]:border-purple-600 has-[:checked]:bg-purple-50/80 border-gray-200">
+                            <input type="radio" name="testMode" value="timed" class="custom-radio mt-1">
+                            <div class="ml-3">
+                                <span class="block font-bold text-gray-900">Chế độ Tính giờ (20 phút)</span>
+                                <span class="block text-xs text-gray-600 mt-1">Đồng hồ đếm ngược 20:00. Thứ tự câu hỏi xáo trộn ngẫu nhiên giúp đánh giá chính xác thực lực bản thân.</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Nút Bắt đầu -->
+                <button onclick="startQuiz()" class="w-full sm:w-auto px-8 py-4 bg-purple-700 hover:bg-purple-800 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all transform active:scale-95 text-lg flex items-center justify-center gap-3 mx-auto">
+                    <i class="fa-solid fa-play"></i> Bắt đầu làm bài
+                </button>
+            </div>
+        </div>
+
+        <!-- SCREEN 2: ĐANG LÀM (Exam In-Progress Screen) -->
+        <div id="screen-exam" class="hidden space-y-6">
+            <!-- Thanh thông tin điều hướng cố định trên màn hình thi -->
+            <div class="bg-white rounded-xl shadow-md p-4 border border-purple-100 flex flex-wrap justify-between items-center gap-4 sticky top-20 z-40">
+                <div class="flex items-center gap-3">
+                    <span id="mode-badge" class="px-3 py-1 rounded-full text-xs font-bold bg-purple-100 text-purple-800">
+                        Luyện tập
+                    </span>
+                    <span class="text-sm font-semibold text-gray-600">
+                        Đã làm: <strong id="answered-count" class="text-purple-700">0</strong>/20
+                    </span>
+                </div>
+
+                <!-- Đồng hồ đếm ngược (Chỉ hiện khi Tính giờ) -->
+                <div id="timer-box" class="hidden items-center gap-2 bg-rose-50 text-rose-700 px-4 py-1.5 rounded-lg border border-rose-200 font-mono font-bold text-lg">
+                    <i class="fa-regular fa-clock animate-pulse"></i>
+                    <span id="timer-display">20:00</span>
+                </div>
+
+                <button onclick="submitQuizConfirm()" class="px-5 py-2 bg-purple-700 hover:bg-purple-800 text-white font-bold rounded-lg shadow transition flex items-center gap-2 text-sm">
+                    <i class="fa-solid fa-check"></i> Kết thúc bài làm
+                </button>
+            </div>
+
+            <!-- Layout chính: Bảng danh sách câu hỏi & Palette câu hỏi -->
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+                <!-- Cột chính: Các câu hỏi -->
+                <div class="lg:col-span-3 space-y-6" id="questions-container">
+                    <!-- Danh sách câu hỏi sẽ được sinh bằng Javascript -->
+                </div>
+
+                <!-- Cột phải: Palette chuyển nhanh câu hỏi -->
+                <div class="lg:col-span-1">
+                    <div class="bg-white rounded-xl shadow-md p-4 border border-purple-100 sticky top-40 space-y-4">
+                        <h4 class="font-bold text-gray-800 text-sm border-b pb-2 flex items-center justify-between">
+                            <span><i class="fa-solid fa-th text-purple-600 mr-1"></i> Danh sách câu</span>
+                            <span class="text-xs font-normal text-gray-500">Bài 31</span>
+                        </h4>
+                        
+                        <div id="question-palette" class="grid grid-cols-5 gap-2">
+                            <!-- Nút chuyển nhanh 1-20 sinh từ JS -->
+                        </div>
+
+                        <div class="pt-2 border-t text-xs space-y-1.5 text-gray-600">
+                            <div class="flex items-center gap-2">
+                                <span class="w-3 h-3 rounded-full bg-purple-600 inline-block"></span> Đã chọn
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="w-3 h-3 rounded-full bg-gray-200 inline-block"></span> Chưa chọn
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SCREEN 3: KẾT THÚC (Result Screen) -->
+        <div id="screen-result" class="hidden space-y-6">
+            <!-- Tổng quan kết quả & Đánh giá của giáo viên -->
+            <div class="bg-white rounded-2xl shadow-xl p-6 sm:p-8 border border-purple-100 space-y-6">
+                <div class="text-center space-y-2">
+                    <span class="px-4 py-1 rounded-full text-xs font-bold uppercase tracking-wide bg-purple-100 text-purple-800">
+                        Kết quả kiểm tra
+                    </span>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-gray-900">BÁO CÁO NĂNG LỰC HỌC TẬP</h2>
+                    <p class="text-gray-500 text-sm">Chủ đề: Động học của chuyển động tròn đều (Bài 31 - Vật Lý 10)</p>
+                </div>
+
+                <!-- Điểm số & Số câu đúng -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
+                    <div class="bg-purple-50 p-4 rounded-xl border border-purple-200">
+                        <span class="text-xs text-purple-700 uppercase font-semibold">Điểm số</span>
+                        <div class="text-3xl font-black text-purple-900 mt-1" id="score-text">0 / 10</div>
+                    </div>
+                    <div class="bg-emerald-50 p-4 rounded-xl border border-emerald-200">
+                        <span class="text-xs text-emerald-700 uppercase font-semibold">Số câu đúng</span>
+                        <div class="text-3xl font-black text-emerald-800 mt-1" id="correct-text">0 / 20</div>
+                    </div>
+                    <div class="bg-amber-50 p-4 rounded-xl border border-amber-200">
+                        <span class="text-xs text-amber-700 uppercase font-semibold">Thời gian làm</span>
+                        <div class="text-3xl font-black text-amber-900 mt-1" id="time-spent-text">00:00</div>
+                    </div>
+                </div>
+
+                <!-- Khung nhận xét của Giáo viên -->
+                <div class="bg-purple-900/5 p-5 rounded-xl border-l-4 border-purple-700 space-y-2">
+                    <h4 class="font-bold text-purple-950 flex items-center gap-2">
+                        <i class="fa-solid fa-user-ninja text-purple-700"></i> Đánh giá & Nhận xét từ Giáo viên:
+                    </h4>
+                    <p id="teacher-feedback" class="text-gray-800 text-sm leading-relaxed italic">
+                        -- Đang cập nhật nhận xét --
+                    </p>
+                </div>
+
+                <!-- Nút thao tác -->
+                <div class="flex flex-wrap justify-center gap-4 pt-2">
+                    <button onclick="restartQuiz()" class="px-6 py-3 bg-purple-700 hover:bg-purple-800 text-white font-bold rounded-xl shadow transition flex items-center gap-2">
+                        <i class="fa-solid fa-rotate-right"></i> Làm lại bài kiểm tra
+                    </button>
+                    <a href="#solutions-header" class="px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold rounded-xl shadow-sm transition flex items-center gap-2">
+                        <i class="fa-solid fa-book-open"></i> Xem lời giải chi tiết
+                    </a>
+                </div>
+            </div>
+
+            <!-- Chi tiết lời giải từng câu -->
+            <div class="bg-white rounded-2xl shadow-xl p-6 sm:p-8 border border-purple-100 space-y-6">
+                <h3 id="solutions-header" class="text-xl font-bold text-gray-900 border-b pb-3 flex items-center gap-2">
+                    <i class="fa-solid fa-square-check text-purple-600"></i> Đáp án & Lời giải chi tiết
+                </h3>
+
+                <div id="solutions-container" class="space-y-6">
+                    <!-- Sinh kết quả kèm đáp án & lời giải chi tiết từ JS -->
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-purple-950 text-purple-200 text-xs text-center py-4 border-t border-purple-800 mt-8">
+        <div class="max-w-6xl mx-auto px-4">
+            <p>© Đề kiểm tra củng cố kiến thức Vật Lý 10 - Bài 31: Động học của chuyển động tròn đều</p>
+            <p class="text-purple-400 mt-1">Biên soạn chuẩn cấu trúc ma trận 4 mức độ tư duy (8 Biết, 7 Hiểu, 3 Vận dụng, 2 Vận dụng cao)</p>
+        </div>
+    </footer>
+
+    <!-- MODAL CẢNH BÁO / THÔNG BÁO -->
+    <div id="custom-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl p-6 max-w-sm w-full shadow-2xl text-center space-y-4">
+            <div id="modal-icon" class="text-4xl text-amber-500">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <h3 id="modal-title" class="text-lg font-bold text-gray-900">Xác nhận</h3>
+            <p id="modal-message" class="text-sm text-gray-600">Bạn có chắc chắn muốn nộp bài?</p>
+            <div class="flex justify-center gap-3 pt-2" id="modal-buttons">
+                <!-- Nút modal sinh từ JS -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /* ==========================================================================
+           BỘ DỮ LIỆU 20 CÂU HỎI TRẮC NGHIỆM CHUẨN BÀI 31: 
+           ĐỘNG HỌC CỦA CHUYỂN ĐỘNG TRÒN ĐỀU
+           Phân bố: 8 Biết, 7 Hiểu, 3 Vận dụng, 2 Vận dụng cao.
+           ========================================================================== */
+        const rawQuestions = [
+            // --- 8 CÂU BIẾT ---
+            {
+                id: 1,
+                level: "Biết",
+                levelBadge: "bg-purple-100 text-purple-800 border-purple-300",
+                question: "Đơn vị thường dùng của tốc độ góc \\(\\omega\\) trong hệ đơn vị SI là gì?",
+                options: [
+                    "A. \\(\\text{rad/s}\\)",
+                    "B. \\(\\text{m/s}\\)",
+                    "C. \\(\\text{vòng/phút}\\)",
+                    "D. \\(\\text{độ/s}\\)"
+                ],
+                correct: 0,
+                explanation: "Theo định nghĩa trong SGK Bài 31 (Mục II.2), tốc độ góc được tính bằng độ dịch chuyển góc chia cho thời gian dịch chuyển \\(\\omega = \\frac{\\theta}{t}\\), đơn vị thường dùng của tốc độ góc là \\(\\text{rad/s}\\)."
+            },
+            {
+                id: 2,
+                level: "Biết",
+                levelBadge: "bg-purple-100 text-purple-800 border-purple-300",
+                question: "Công thức liên hệ giữa độ dịch chuyển góc \\(\\theta\\) (tính bằng \\(\\text{rad}\\)), quãng đường đi được \\(s\\) (độ dài cung tròn) và bán kính \\(r\\) của đường tròn là:",
+                options: [
+                    "A. \\(\\theta = \\frac{s}{r}\\)",
+                    "B. \\(\\theta = s \\cdot r\\)",
+                    "C. \\(\\theta = \\frac{r}{s}\\)",
+                    "D. \\(\\theta = \\frac{1}{s \\cdot r}\\)"
+                ],
+                correct: 0,
+                explanation: "Theo công thức (31.1) SGK Bài 31: Mối quan hệ giữa độ dài cung với góc chắn tâm và bán kính đường tròn là \\(\\theta = \\frac{s}{r}\\)."
+            },
+            {
+                id: 3,
+                level: "Biết",
+                levelBadge: "bg-purple-100 text-purple-800 border-purple-300",
+                question: "Một rađian (\\(1\\text{ rad}\\)) được định nghĩa là:",
+                options: [
+                    "A. Góc ở tâm chắn cung có độ dài bằng nửa bán kính đường tròn.",
+                    "B. Góc ở tâm chắn cung có độ dài bằng bán kính đường tròn.",
+                    "C. Góc ở tâm chắn cung có độ dài bằng đường kính đường tròn.",
+                    "D. Góc ở tâm chắn cung có độ dài bằng chu vi đường tròn."
+                ],
+                correct: 1,
+                explanation: "Theo nội dung mục 'Em đã học' SGK Bài 31: Một rađian là góc ở tâm chắn cung có độ dài bằng bán kính đường tròn (khi \\(s = r\\) thì \\(\\theta = \\frac{s}{r} = 1\\text{ rad}\\))."
+            },
+            {
+                id: 4,
+                level: "Biết",
+                levelBadge: "bg-purple-100 text-purple-800 border-purple-300",
+                question: "Mối quan hệ giữa đơn vị đo góc bằng độ (\\(^\\circ\\)) và đơn vị rađian (\\(\\text{rad}\\)) khi chất điểm quay được một vòng tròn là:",
+                options: [
+                    "A. \\(180^\\circ = 2\\pi\\text{ (rad)}\\)",
+                    "B. \\(360^\\circ = \\pi\\text{ (rad)}\\)",
+                    "C. \\(360^\\circ = 2\\pi\\text{ (rad)}\\)",
+                    "D. \\(90^\\circ = \\pi\\text{ (rad)}\\)"
+                ],
+                correct: 2,
+                explanation: "Khi vật quay được 1 vòng tròn, góc ở tâm là \\(360^\\circ\\), tương ứng với độ dịch chuyển góc \\(\\theta = \\frac{2\\pi r}{r} = 2\\pi\\text{ (rad)}\\). Do đó: \\(360^\\circ = 2\\pi\\text{ (rad)}\\)."
+            },
+            {
+                id: 5,
+                level: "Biết",
+                levelBadge: "bg-purple-100 text-purple-800 border-purple-300",
+                question: "Chuyển động tròn đều là chuyển động có đặc điểm nào sau đây?",
+                options: [
+                    "A. Quỹ đạo tròn và tốc độ thay đổi liên tục theo thời gian.",
+                    "B. Quỹ đạo tròn và tốc độ không đổi \\(v = \\frac{s}{t} = \\text{hằng số}\\).",
+                    "C. Quỹ đạo thẳng và tốc độ không thay đổi.",
+                    "D. Quỹ đạo tròn và vectơ vận tốc tức thời không đổi về hướng."
+                ],
+                correct: 1,
+                explanation: "Theo mục II.1 SGK Bài 31: Chuyển động tròn đều là chuyển động theo quỹ đạo tròn có tốc độ không thay đổi \\(v = \\frac{s}{t} = \\text{hằng số}\\)."
+            },
+            {
+                id: 6,
+                level: "Biết",
+                levelBadge: "bg-purple-100 text-purple-800 border-purple-300",
+                question: "Chu kì \\(T\\) trong chuyển động tròn đều được định nghĩa là:",
+                options: [
+                    "A. Số vòng vật đi được trong khoảng thời gian một giây.",
+                    "B. Thời gian để vật quay hết một vòng tròn.",
+                    "C. Tốc độ góc của vật tính theo đơn vị vòng trên phút.",
+                    "D. Quãng đường vật đi được trong khoảng thời gian một giây."
+                ],
+                correct: 1,
+                explanation: "Theo hộp 'Em có biết?' SGK Bài 31: Chu kì (kí hiệu là \\(T\\)) trong chuyển động tròn đều là thời gian để vật quay hết một vòng tròn."
+            },
+            {
+                id: 7,
+                level: "Biết",
+                levelBadge: "bg-purple-100 text-purple-800 border-purple-300",
+                question: "Vectơ vận tốc tức thời \\(\\vec{v}\\) tại một thời điểm trong chuyển động tròn đều có phương như thế nào?",
+                options: [
+                    "A. Phương trùng với bán kính đường tròn hướng vào tâm.",
+                    "B. Phương trùng với tiếp tuyến của đường tròn quỹ đạo tại điểm đó.",
+                    "C. Phương song song với trục quay cố định.",
+                    "D. Phương vuông góc với tiếp tuyến của đường tròn quỹ đạo."
+                ],
+                correct: 1,
+                explanation: "Theo Mục III và Hình 31.2 SGK Bài 31: Tại mỗi thời điểm, vectơ vận tốc tức thời \\(\\vec{v}\\) sẽ có phương trùng với tiếp tuyến của đường tròn quỹ đạo."
+            },
+            {
+                id: 8,
+                level: "Biết",
+                levelBadge: "bg-purple-100 text-purple-800 border-purple-300",
+                question: "Tần số \\(f\\) của chuyển động tròn đều đại diện cho số vòng vật đi được trong một giây. Đơn vị chuẩn của tần số là:",
+                options: [
+                    "A. Rađian (\\(\\text{rad}\\)).",
+                    "B. Giây (\\(\\text{s}\\)).",
+                    "C. Héc (\\(\\text{Hz}\\)).",
+                    "D. Mét trên giây (\\(\\text{m/s}\\))."
+                ],
+                correct: 2,
+                explanation: "Theo hộp 'Em có biết?' SGK Bài 31: Tần số (kí hiệu là \\(f\\)) là số vòng vật đi được trong một giây. Đơn vị của tần số là héc (\\(\\text{Hz}\\))."
+            },
+
+            // --- 7 CÂU HIỂU ---
+            {
+                id: 9,
+                level: "Hiểu",
+                levelBadge: "bg-blue-100 text-blue-800 border-blue-300",
+                question: "Xét kim phút và kim giây của một chiếc đồng hồ đang chạy chuẩn xác. Nhận xét nào sau đây về tốc độ góc \\(\\omega\\) của hai kim là **chính xác**?",
+                options: [
+                    "A. Tốc độ góc của kim phút lớn hơn tốc độ góc của kim giây.",
+                    "B. Tốc độ góc của kim giây lớn hơn tốc độ góc của kim phút.",
+                    "C. Tốc độ góc của hai kim bằng nhau vì cùng gắn trên mặt đồng hồ.",
+                    "D. Tốc độ góc của kim phút và kim giây luôn biến thiên theo thời gian."
+                ],
+                correct: 1,
+                explanation: "Chu kì quay 1 vòng của kim giây là \\(T_2 = 60\\text{ s}\\), còn kim phút là \\(T_1 = 3600\\text{ s}\\). Vì \\(\\omega = \\frac{2\\pi}{T}\\), do \\(T_2 < T_1\\) nên tốc độ góc của kim giây lớn hơn tốc độ góc của kim phút (\\(\\omega_2 > \\omega_1\\))."
+            },
+            {
+                id: 10,
+                level: "Hiểu",
+                levelBadge: "bg-blue-100 text-blue-800 border-blue-300",
+                question: "Trong chuyển động tròn đều, mặc dù độ lớn tốc độ \\(v\\) là không đổi nhưng người ta vẫn khẳng định vận tốc tức thời \\(\\vec{v}\\) luôn thay đổi. Nguyên nhân là do:",
+                options: [
+                    "A. Bán kính quỹ đạo đường tròn thay đổi liên tục.",
+                    "B. Chu kì chuyển động biến đổi theo thời gian.",
+                    "C. Hướng của vectơ vận tốc (phương tiếp tuyến) liên tục thay đổi tại mỗi điểm trên quỹ đạo.",
+                    "D. Độ dịch chuyển góc \\(\\theta\\) luôn bằng 0."
+                ],
+                correct: 2,
+                explanation: "Vectơ vận tốc \\(\\vec{v}\\) bao gồm cả độ lớn và hướng. Trong chuyển động tròn đều, độ lớn tốc độ không đổi nhưng hướng của tiếp tuyến tại mỗi điểm trên đường tròn thay đổi liên tục, nên vectơ vận tốc \\(\\vec{v}\\) liên tục thay đổi."
+            },
+            {
+                id: 11,
+                level: "Hiểu",
+                levelBadge: "bg-blue-100 text-blue-800 border-blue-300",
+                question: "Xét hai điểm \\(A\\) và \\(B\\) nằm trên cùng một cánh quạt máy đang quay đều quanh trục cố định. Điểm \\(A\\) nằm ở đầu mép cánh quạt, điểm \\(B\\) nằm gần trục quay hơn (\\(r_A > r_B\\)). So sánh tốc độ góc \\(\\omega\\) và tốc độ \\(v\\) của hai điểm:",
+                options: [
+                    "A. \\(\\omega_A = \\omega_B\\) và \\(v_A > v_B\\)",
+                    "B. \\(\\omega_A > \\omega_B\\) và \\(v_A = v_B\\)",
+                    "C. \\(\\omega_A < \\omega_B\\) và \\(v_A < v_B\\)",
+                    "D. \\(\\omega_A = \\omega_B\\) và \\(v_A = v_B\\)"
+                ],
+                correct: 0,
+                explanation: "Tất cả các điểm trên cùng một vật rắn quay quanh một trục cố định đều có cùng độ dịch chuyển góc trong cùng thời gian, do đó \\(\\omega_A = \\omega_B\\). Mặt khác, do \\(v = \\omega \\cdot r\\) và \\(r_A > r_B\\) nên tốc độ \\(v_A > v_B\\)."
+            },
+            {
+                id: 12,
+                level: "Hiểu",
+                levelBadge: "bg-blue-100 text-blue-800 border-blue-300",
+                question: "Công thức nào sau đây biểu diễn **sai** mối liên hệ giữa các đại lượng trong chuyển động tròn đều?",
+                options: [
+                    "A. \\(v = \\omega \\cdot r\\)",
+                    "B. \\(T = \\frac{2\\pi}{\\omega}\\)",
+                    "C. \\(f = \\frac{1}{T}\\)",
+                    "D. \\(\\omega = 2\\pi \\cdot T\\)"
+                ],
+                correct: 3,
+                explanation: "Mối liên hệ đúng giữa tốc độ góc \\(\\omega\\) và chu kì \\(T\\) là \\(\\omega = \\frac{2\\pi}{T}\\) hoặc \\(\\omega = 2\\pi f\\). Do đó công thức \\(\\omega = 2\\pi \\cdot T\\) là phát biểu sai."
+            },
+            {
+                id: 13,
+                level: "Hiểu",
+                levelBadge: "bg-blue-100 text-blue-800 border-blue-300",
+                question: "Một xe đồ chơi chạy với tốc độ không đổi \\(v = 0{,}2\\text{ m/s}\\) trên một đường ray tròn tâm \\(O\\), đường kính \\(AB\\) theo chiều kim đồng hồ (Hình 31.3 SGK). Khi xe đi từ điểm \\(A\\) đến điểm \\(B\\), sự thay đổi của vận tốc tức thời là:",
+                options: [
+                    "A. Vận tốc tức thời hoàn toàn không đổi vì tốc độ xe là \\(0{,}2\\text{ m/s}\\).",
+                    "B. Hướng của vectơ vận tốc tại \\(A\\) và tại \\(B\\) ngược chiều nhau.",
+                    "C. Vectơ vận tốc tại \\(A\\) và tại \\(B\\) trùng nhau về cả phương và chiều.",
+                    "D. Độ lớn vận tốc tại \\(B\\) tăng gấp đôi so với độ lớn vận tốc tại \\(A\\)."
+                ],
+                correct: 1,
+                explanation: "Tại điểm \\(A\\), tiếp tuyến có chiều từ dưới lên (hoặc hướng theo chiều quay). Tại điểm \\(B\\) ở đối diện qua đường kính, tiếp tuyến có chiều ngược lại. Do đó vectơ vận tốc tại \\(A\\) và \\(B\\) có độ lớn bằng nhau nhưng ngược chiều nhau."
+            },
+            {
+                id: 14,
+                level: "Hiểu",
+                levelBadge: "bg-blue-100 text-blue-800 border-blue-300",
+                question: "Xét chuyển động của kim giờ đồng hồ. Trong khoảng thời gian từ \\(12\\text{ giờ}\\) đến \\(15\\text{ giờ } 30\\text{ phút}\\) (tương ứng \\(3{,}5\\text{ giờ}\\)), độ dịch chuyển góc \\(\\theta\\) của kim giờ bằng bao nhiêu?",
+                options: [
+                    "A. \\(\\frac{7\\pi}{12}\\text{ (rad)}\\)",
+                    "B. \\(\\frac{\\pi}{2}\\text{ (rad)}\\)",
+                    "C. \\(\\pi\\text{ (rad)}\\)",
+                    "D. \\(\\frac{7\\pi}{6}\\text{ (rad)}\\)"
+                ],
+                correct: 0,
+                explanation: "Kim giờ quay một vòng (\\(2\\pi\\text{ rad}\\)) mất \\(12\\text{ giờ}\\). Tốc độ góc kim giờ: \\(\\omega = \\frac{2\\pi}{12} = \\frac{\\pi}{6}\\text{ rad/h}\\).\nTrong khoảng thời gian \\(t = 3{,}5\\text{ h}\\), độ dịch chuyển góc \\(\\theta = \\omega \\cdot t = \\frac{\\pi}{6} \\times 3{,}5 = \\frac{7\\pi}{12}\\text{ rad}\\)."
+            },
+            {
+                id: 15,
+                level: "Hiểu",
+                levelBadge: "bg-blue-100 text-blue-800 border-blue-300",
+                question: "Roto trong một tổ máy của nhà máy thủy điện Hòa Bình quay đều với tốc độ \\(125\\text{ vòng/phút}\\). Tốc độ góc \\(\\omega\\) của roto này theo đơn vị \\(\\text{rad/s}\\) xấp xỉ bằng:",
+                options: [
+                    "A. \\(13{,}09\\text{ rad/s}\\)",
+                    "B. \\(20{,}83\\text{ rad/s}\\)",
+                    "C. \\(125\\text{ rad/s}\\)",
+                    "D. \\(785{,}4\\text{ rad/s}\\)"
+                ],
+                correct: 0,
+                explanation: "Một vòng tương ứng với \\(2\\pi\\text{ rad}\\) và \\(1\\text{ phút} = 60\\text{ s}\\).\nTốc độ góc \\(\\omega = \\frac{125 \\times 2\\pi}{60} = \\frac{250\\pi}{60} \\approx 13{,}09\\text{ rad/s}\\)."
+            },
+
+            // --- 3 CÂU VẬN DỤNG ---
+            {
+                id: 16,
+                level: "Vận dụng",
+                levelBadge: "bg-amber-100 text-amber-800 border-amber-300",
+                question: "Chiều dài của kim phút và kim giây của một chiếc đồng hồ lần lượt là \\(r_1 = 4\\text{ cm}\\) và \\(r_2 = 5\\text{ cm}\\). Tỉ số tốc độ ở đầu kim giây và đầu kim phút (\\(\\frac{v_2}{v_1}\\)) bằng:",
+                options: [
+                    "A. \\(75\\)",
+                    "B. \\(60\\)",
+                    "C. \\(48\\)",
+                    "D. \\(15\\)"
+                ],
+                correct: 0,
+                explanation: "Chu kì kim phút \\(T_1 = 3600\\text{ s}\\), chu kì kim giây \\(T_2 = 60\\text{ s}\\).\nTỉ số tốc độ góc: \\(\\frac{\\omega_2}{\\omega_1} = \\frac{T_1}{T_2} = \\frac{3600}{60} = 60\\).\nTỉ số tốc độ: \\(\\frac{v_2}{v_1} = \\frac{\\omega_2 \\cdot r_2}{\\omega_1 \\cdot r_1} = 60 \\times \\frac{5}{4} = 75\\)."
+            },
+            {
+                id: 17,
+                level: "Vận dụng",
+                levelBadge: "bg-amber-100 text-amber-800 border-amber-300",
+                question: "Một chất điểm chuyển động tròn đều trên quỹ đạo bán kính \\(r = 2\\text{ m}\\). Khi độ dịch chuyển góc của chất điểm là \\(\\theta = 1\\text{ rad}\\), quãng đường đi được \\(s\\) trên cung tròn và góc \\(\\theta\\) tính theo đơn vị độ (\\(^\\circ\\)) xấp xỉ bằng:",
+                options: [
+                    "A. \\(s = 2\\text{ m}\\) và \\(\\theta \\approx 57{,}3^\\circ\\)",
+                    "B. \\(s = 1\\text{ m}\\) và \\(\\theta = 60^\\circ\\)",
+                    "C. \\(s = 4\\text{ m}\\) và \\(\\theta = 180^\\circ\\)",
+                    "D. \\(s = 2\\text{ m}\\) và \\(\\theta = 360^\\circ\\)"
+                ],
+                correct: 0,
+                explanation: "1) Quãng đường đi được: \\(s = \\theta \\cdot r = 1 \\times 2 = 2\\text{ m}\\).\n2) Đổi đơn vị độ dịch chuyển góc: \\(\\theta = 1\\text{ rad} = 1 \\times \\frac{180^\\circ}{\\pi} \\approx 57{,}3^\\circ\\)."
+            },
+            {
+                id: 18,
+                level: "Vận dụng",
+                levelBadge: "bg-amber-100 text-amber-800 border-amber-300",
+                question: "Xét một điểm nằm trên đường xích đạo trong chuyển động tự quay quanh trục của Trái Đất. Bán kính Trái Đất tại xích đạo là \\(R = 6400\\text{ km} = 6{,}4 \\times 10^6\\text{ m}\\), chu kì quay là \\(T = 24\\text{ giờ} = 86400\\text{ s}\\). Tốc độ góc \\(\\omega\\) và tốc độ \\(v\\) của điểm đó xấp xỉ bằng:",
+                options: [
+                    "A. \\(\\omega \\approx 7{,}27 \\times 10^{-5}\\text{ rad/s}\\) và \\(v \\approx 465{,}4\\text{ m/s}\\)",
+                    "B. \\(\\omega \\approx 1{,}25 \\times 10^{-4}\\text{ rad/s}\\) và \\(v \\approx 800\\text{ m/s}\\)",
+                    "C. \\(\\omega \\approx 7{,}27 \\times 10^{-5}\\text{ rad/s}\\) và \\(v \\approx 266{,}7\\text{ m/s}\\)",
+                    "D. \\(\\omega \\approx 3{,}14 \\times 10^{-4}\\text{ rad/s}\\) và \\(v \\approx 1000\\text{ m/s}\\)"
+                ],
+                correct: 0,
+                explanation: "1) Tốc độ góc: \\(\\omega = \\frac{2\\pi}{T} = \\frac{2\\pi}{86400} \\approx 7{,}272 \\times 10^{-5}\\text{ rad/s}\\).\n2) Tốc độ: \\(v = \\omega \\cdot R = 7{,}272 \\times 10^{-5} \\times 6{,}4 \\times 10^6 \\approx 465{,}4\\text{ m/s}\\)."
+            },
+
+            // --- 2 CÂU VẬN DỤNG CAO ---
+            {
+                id: 19,
+                level: "Vận dụng cao",
+                levelBadge: "bg-rose-100 text-rose-800 border-rose-300",
+                question: "Hai điểm \\(M\\) và \\(N\\) nằm trên cùng một bán kính của một đĩa tròn đang quay đều quanh tâm \\(O\\). Điểm \\(M\\) nằm ở mép ngoài đĩa (bán kính \\(R\\)), điểm \\(N\\) nằm cách điểm \\(M\\) một khoảng \\(0{,}25\\text{ m}\\). Biết tốc độ của điểm \\(M\\) là \\(v_M = 1{,}5\\text{ m/s}\\) và của điểm \\(N\\) là \\(v_N = 1{,}0\\text{ m/s}\\). Trong khoảng thời gian \\(\\Delta t = 1\\text{ s}\\), hiệu quãng đường đi được của \\(M\\) và \\(N\\) là \\(0{,}5\\text{ m}\\). Bán kính \\(R\\) của đĩa và tốc độ góc \\(\\omega\\) của đĩa lần lượt là:",
+                options: [
+                    "A. \\(R = 0{,}75\\text{ m}\\) và \\(\\omega = 2{,}0\\text{ rad/s}\\)",
+                    "B. \\(R = 0{,}50\\text{ m}\\) và \\(\\omega = 3{,}0\\text{ rad/s}\\)",
+                    "C. \\(R = 1{,}00\\text{ m}\\) và \\(\\omega = 1{,}5\\text{ rad/s}\\)",
+                    "D. \\(R = 1{,}20\\text{ m}\\) và \\(\\omega = 1{,}25\\text{ rad/s}\\)"
+                ],
+                correct: 0,
+                explanation: "1) Khoảng cách từ \\(N\\) tới tâm là \\(r_N = R - 0{,}25\\text{ m}\\).\n2) Vì đĩa quay đều nên \\(\\omega_M = \\omega_N = \\omega\\).\nTa có tỉ số tốc độ: \\(\\frac{v_M}{v_N} = \\frac{R}{R - 0{,}25} \\Rightarrow \\frac{1{,}5}{1{,}0} = 1{,}5\\).\n\\(\\Rightarrow R = 1{,}5 (R - 0{,}25) \\Rightarrow 0{,}5 R = 0{,}375 \\Rightarrow R = 0{,}75\\text{ m}\\).\n3) Tốc độ góc: \\(\\omega = \\frac{v_M}{R} = \\frac{1{,}5}{0{,}75} = 2{,}0\\text{ rad/s}\\)."
+            },
+            {
+                id: 20,
+                level: "Vận dụng cao",
+                levelBadge: "bg-rose-100 text-rose-800 border-rose-300",
+                question: "Một chiếc đồng hồ có kim giờ dài \\(r_h = 3\\text{ cm}\\) và kim phút dài \\(r_m = 4\\text{ cm}\\). Coi các kim chuyển động tròn đều. Chọn mốc thời gian lúc \\(12\\text{ giờ}\\) đúng khi hai kim trùng nhau. Khoảng thời gian ngắn nhất \\(\\Delta t\\) để hai kim lại trùng nhau lần tiếp theo và tỉ số quãng đường đi được ở đầu kim phút và đầu kim giờ (\\(\\frac{s_m}{s_h}\\)) trong khoảng thời gian đó lần lượt là:",
+                options: [
+                    "A. \\(\\Delta t = \\frac{12}{11}\\text{ giờ}\\) và \\(\\frac{s_m}{s_h} = 16\\)",
+                    "B. \\(\\Delta t = 1\\text{ giờ}\\) và \\(\\frac{s_m}{s_h} = 12\\)",
+                    "C. \\(\\Delta t = \\frac{13}{12}\\text{ giờ}\\) và \\(\\frac{s_m}{s_h} = 14\\)",
+                    "D. \\(\\Delta t = \\frac{12}{11}\\text{ giờ}\\) và \\(\\frac{s_m}{s_h} = 12\\)"
+                ],
+                correct: 0,
+                explanation: "1) Tốc độ góc kim phút: \\(\\omega_m = 2\\pi\\text{ rad/h}\\); Tốc độ góc kim giờ: \\(\\omega_h = \\frac{2\\pi}{12} = \\frac{\\pi}{6}\\text{ rad/h}\\).\n2) Khi hai kim trùng nhau lần tiếp theo, kim phút quay hơn kim giờ đúng 1 vòng (\\(2\\pi\\text{ rad}\\)):\n\\((\\omega_m - \\omega_h) \\Delta t = 2\\pi \\Rightarrow \\left(2\\pi - \\frac{\\pi}{6}\\right) \\Delta t = 2\\pi \\Rightarrow \\frac{11\\pi}{6} \\Delta t = 2\\pi \\Rightarrow \\Delta t = \\frac{12}{11}\\text{ giờ}\\).\n3) Quãng đường đi được:\n- Kim giờ: \\(s_h = r_h \\cdot \\theta_h = 3 \\cdot \\left(\\frac{\\pi}{6} \\times \\frac{12}{11}\\right) = \\frac{6\\pi}{11}\\text{ cm}\\).\n- Kim phút: \\(s_m = r_m \\cdot \\theta_m = 4 \\cdot \\left(2\\pi \\times \\frac{12}{11}\\right) = \\frac{96\\pi}{11}\\text{ cm}\\).\n- Tỉ số quãng đường: \\(\\frac{s_m}{s_h} = \\frac{96\\pi / 11}{6\\pi / 11} = 16\\)."
+            }
+        ];
+
+        /* ==========================================================================
+           BIẾN TRẠNG THÁI ỨNG DỤNG (STATE MANAGEMENT)
+           ========================================================================== */
+        let currentQuestions = [];
+        let userAnswers = {};
+        let testMode = 'practice'; // 'practice' hoặc 'timed'
+        let timerInterval = null;
+        let timeRemaining = 20 * 60; // 20 phút = 1200 giây
+        let timeSpent = 0;
+
+        /* ==========================================================================
+           CÁC HÀM XỬ LÝ KHỞI TẠO VÀ BẮT ĐẦU BÀI TEST
+           ========================================================================== */
+        function startQuiz() {
+            // Đọc hình thức kiểm tra
+            const modeInput = document.querySelector('input[name="testMode"]:checked');
+            testMode = modeInput ? modeInput.value : 'practice';
+
+            // Reset dữ liệu
+            userAnswers = {};
+            timeSpent = 0;
+            clearInterval(timerInterval);
+
+            // Chuẩn bị câu hỏi
+            if (testMode === 'timed') {
+                // Xáo trộn thứ tự câu hỏi để rèn luyện thực lực
+                currentQuestions = [...rawQuestions].sort(() => Math.random() - 0.5);
+                timeRemaining = 20 * 60;
+                document.getElementById('timer-box').classList.remove('hidden');
+                document.getElementById('timer-box').classList.add('flex');
+                document.getElementById('mode-badge').innerText = 'Tính giờ (20 phút)';
+                document.getElementById('mode-badge').className = 'px-3 py-1 rounded-full text-xs font-bold bg-rose-100 text-rose-800';
+                startTimer();
+            } else {
+                currentQuestions = [...rawQuestions];
+                document.getElementById('timer-box').classList.add('hidden');
+                document.getElementById('timer-box').classList.remove('flex');
+                document.getElementById('mode-badge').innerText = 'Luyện tập';
+                document.getElementById('mode-badge').className = 'px-3 py-1 rounded-full text-xs font-bold bg-purple-100 text-purple-800';
+            }
+
+            // Chuyển màn hình
+            document.getElementById('screen-start').classList.add('hidden');
+            document.getElementById('screen-result').classList.add('hidden');
+            document.getElementById('screen-exam').classList.remove('hidden');
+
+            // Hiển thị danh sách câu hỏi và palette điều hướng
+            renderExamQuestions();
+            renderQuestionPalette();
+            updateAnsweredCount();
+
+            // Render lại công thức toán MathJax
+            if (window.MathJax) {
+                MathJax.typesetPromise();
+            }
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        /* ==========================================================================
+           HIỂN THỊ DANH SÁCH CÂU HỎI TRONG BÀI THI
+           ========================================================================== */
+        function renderExamQuestions() {
+            const container = document.getElementById('questions-container');
+            container.innerHTML = '';
+
+            currentQuestions.forEach((q, index) => {
+                const qNum = index + 1;
+                const card = document.createElement('div');
+                card.id = `q-card-${qNum}`;
+                card.className = 'bg-white rounded-xl shadow-md p-6 border border-purple-100 space-y-4 transition hover:border-purple-300';
+
+                card.innerHTML = `
+                    <div class="flex flex-wrap items-center justify-between gap-2 border-b pb-3">
+                        <div class="flex items-center gap-2">
+                            <span class="w-8 h-8 rounded-lg bg-purple-700 text-white font-bold flex items-center justify-center text-sm">
+                                ${qNum}
+                            </span>
+                            <span class="font-bold text-gray-800 text-base">Câu ${qNum}</span>
+                        </div>
+                        <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold border ${q.levelBadge}">
+                            ${q.level}
+                        </span>
+                    </div>
+
+                    <div class="text-gray-900 font-medium text-base leading-relaxed pt-1 whitespace-pre-line">
+                        ${q.question}
+                    </div>
+
+                    <div class="space-y-2.5 pt-2">
+                        ${q.options.map((opt, optIndex) => `
+                            <label class="flex items-start p-3 rounded-lg border border-gray-200 hover:bg-purple-50/60 cursor-pointer transition has-[:checked]:border-purple-600 has-[:checked]:bg-purple-50">
+                                <input type="radio" name="question_${q.id}" value="${optIndex}" class="custom-radio mt-1 mr-3" onchange="selectAnswer(${q.id}, ${optIndex}, ${qNum})">
+                                <span class="text-sm text-gray-800 font-normal">${opt}</span>
+                            </label>
+                        `).join('')}
+                    </div>
+                `;
+
+                container.appendChild(card);
+            });
+        }
+
+        /* ==========================================================================
+           HIỂN THỊ PALETTE ĐIỀU HƯỚNG NHANH CÂU HỎI
+           ========================================================================== */
+        function renderQuestionPalette() {
+            const palette = document.getElementById('question-palette');
+            palette.innerHTML = '';
+
+            currentQuestions.forEach((q, index) => {
+                const qNum = index + 1;
+                const btn = document.createElement('button');
+                btn.id = `btn-palette-${qNum}`;
+                btn.onclick = () => scrollToQuestion(qNum);
+                btn.className = 'w-9 h-9 rounded-lg font-bold text-xs transition border border-gray-300 bg-gray-100 text-gray-700 hover:bg-purple-200';
+                btn.innerText = qNum;
+                palette.appendChild(btn);
+            });
+        }
+
+        function scrollToQuestion(qNum) {
+            const el = document.getElementById(`q-card-${qNum}`);
+            if (el) {
+                el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+
+        function selectAnswer(qId, optIndex, qNum) {
+            userAnswers[qId] = optIndex;
+            updateAnsweredCount();
+
+            // Cập nhật giao diện nút palette
+            const paletteBtn = document.getElementById(`btn-palette-${qNum}`);
+            if (paletteBtn) {
+                paletteBtn.className = 'w-9 h-9 rounded-lg font-bold text-xs transition border border-purple-600 bg-purple-600 text-white shadow-sm';
+            }
+        }
+
+        function updateAnsweredCount() {
+            const count = Object.keys(userAnswers).length;
+            document.getElementById('answered-count').innerText = count;
+        }
+
+        /* ==========================================================================
+           ĐỒNG HỒ ĐẾM NGƯỢC (MODE TÍNH GIỜ)
+           ========================================================================== */
+        function startTimer() {
+            updateTimerDisplay();
+            timerInterval = setInterval(() => {
+                timeRemaining--;
+                timeSpent++;
+                updateTimerDisplay();
+
+                if (timeRemaining <= 0) {
+                    clearInterval(timerInterval);
+                    showModal(
+                        '<i class="fa-solid fa-clock-rotate-left"></i>',
+                        'Hết giờ làm bài!',
+                        'Thời gian 20 phút đã kết thúc. Hệ thống sẽ tự động nộp bài làm của bạn.',
+                        [{
+                            text: 'Xem kết quả',
+                            class: 'px-5 py-2 bg-purple-700 text-white rounded-lg font-bold',
+                            action: () => { closeModal(); finishQuiz(); }
+                        }]
+                    );
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timeRemaining / 60);
+            const seconds = timeRemaining % 60;
+            const formatted = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            document.getElementById('timer-display').innerText = formatted;
+        }
+
+        /* ==========================================================================
+           XÁC NHẬN NỘP BÀI VÀ TÍNH ĐIỂM
+           ========================================================================== */
+        function submitQuizConfirm() {
+            const answeredCount = Object.keys(userAnswers).length;
+            const total = currentQuestions.length;
+
+            let msg = `Bạn đã hoàn thành ${answeredCount}/${total} câu hỏi. Bạn có chắc chắn muốn kết thúc bài làm?`;
+            if (answeredCount < total) {
+                msg = `Bạn còn ${total - answeredCount} câu chưa trả lời! Bạn có chắc chắn muốn nộp bài ngay bây giờ?`;
+            }
+
+            showModal(
+                '<i class="fa-solid fa-circle-question text-purple-600"></i>',
+                'Xác nhận nộp bài',
+                msg,
+                [
+                    {
+                        text: 'Làm tiếp',
+                        class: 'px-4 py-2 bg-gray-200 text-gray-800 rounded-lg font-medium',
+                        action: closeModal
+                    },
+                    {
+                        text: 'Nộp bài ngay',
+                        class: 'px-4 py-2 bg-purple-700 text-white rounded-lg font-bold shadow',
+                        action: () => { closeModal(); finishQuiz(); }
+                    }
+                ]
+            );
+        }
+
+        function finishQuiz() {
+            clearInterval(timerInterval);
+
+            // Tính điểm số
+            let correctCount = 0;
+            currentQuestions.forEach(q => {
+                if (userAnswers[q.id] === q.correct) {
+                    correctCount++;
+                }
+            });
+
+            const score = ((correctCount / currentQuestions.length) * 10).toFixed(1);
+
+            // Tính thời gian làm bài
+            let minutesSpent = Math.floor(timeSpent / 60);
+            let secondsSpent = timeSpent % 60;
+
+            // Hiển thị kết quả tổng quan
+            document.getElementById('score-text').innerText = `${score} / 10`;
+            document.getElementById('correct-text').innerText = `${correctCount} / 20`;
+            document.getElementById('time-spent-text').innerText = testMode === 'timed' 
+                ? `${String(minutesSpent).padStart(2, '0')}:${String(secondsSpent).padStart(2, '0')}`
+                : 'Luyện tập';
+
+            // Nhận xét của Giáo viên
+            document.getElementById('teacher-feedback').innerHTML = generateTeacherFeedback(score, correctCount);
+
+            // Hiển thị chi tiết lời giải
+            renderSolutions();
+
+            // Chuyển màn hình sang Kết quả
+            document.getElementById('screen-exam').classList.add('hidden');
+            document.getElementById('screen-result').classList.remove('hidden');
+
+            if (window.MathJax) {
+                MathJax.typesetPromise();
+            }
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        /* ==========================================================================
+           TẠO LỜI NHẬN XÉT CỦA GIÁO VIÊN THEO ĐIỂM SỐ
+           ========================================================================== */
+        function generateTeacherFeedback(score, correctCount) {
+            const numScore = parseFloat(score);
+            if (numScore >= 9.0) {
+                return `<strong>Xuất sắc! (${score} điểm)</strong> - Em đã nắm vững hoàn toàn toàn bộ kiến thức Bài 31: Động học của chuyển động tròn đều. Khả năng quy đổi đơn vị góc rađian, tính toán chu kì \\(T\\), tần số \\(f\\), tốc độ góc \\(\\omega\\) và giải quyết các bài toán liên hệ nâng cao rất chuẩn xác. Cố gắng giữ vững phong độ này nhé!`;
+            } else if (numScore >= 8.0) {
+                return `<strong>Rất tốt! (${score} điểm)</strong> - Em làm tốt các câu kiến thức nền tảng và bài toán vận dụng thực tế kim đồng hồ, Trái Đất quay. Đã làm đúng ${correctCount}/20 câu. Hãy đọc thêm phần lời giải chi tiết của 2 câu Vận dụng cao về đĩa quay và chuyển động đuổi nhau để đạt điểm tuyệt đối!`;
+            } else if (numScore >= 6.5) {
+                return `<strong>Khá tốt! (${score} điểm)</strong> - Em đã hiểu bản chất khái niệm tốc độ góc, độ dịch chuyển góc và vectơ vận tốc tiếp tuyến. Tuy nhiên cần chú ý tránh nhầm lẫn giữa tốc độ góc \\(\\omega\\) và chu kì \\(T\\) khi tính toán tỉ số tốc độ các kim đồng hồ.`;
+            } else if (numScore >= 5.0) {
+                return `<strong>Đạt yêu cầu! (${score} điểm)</strong> - Em ghi nhớ được các định nghĩa căn bản (1 rad, công thức \\(\\theta = \\frac{s}{r}\\), đơn vị \\(\\text{rad/s}\\)). Em nên dành thời gian ôn lại mối quan hệ \\(v = \\omega \\cdot r\\) và xem kĩ lời giải chi tiết bên dưới.`;
+            } else {
+                return `<strong>Cần cố gắng nhiều hơn! (${score} điểm)</strong> - Em cần đọc lại kĩ nội dung Bài 31 trong SGK Kết Nối Tri Thức, đặc biệt là các công thức tính tốc độ góc \\(\\omega = \\frac{\\theta}{t} = \\frac{2\\pi}{T}\\) và vận tốc tiếp tuyến. Xem chi tiết phần hướng dẫn giải phía dưới để tự tin hơn ở lần làm tiếp theo!`;
+            }
+        }
+
+        /* ==========================================================================
+           HIỂN THỊ ĐÁP ÁN VÀ LỜI GIẢI CHI TIẾT
+           ========================================================================== */
+        function renderSolutions() {
+            const container = document.getElementById('solutions-container');
+            container.innerHTML = '';
+
+            currentQuestions.forEach((q, index) => {
+                const qNum = index + 1;
+                const userChoice = userAnswers[q.id];
+                const isCorrect = userChoice === q.correct;
+                const isUnanswered = userChoice === undefined;
+
+                const card = document.createElement('div');
+                card.className = `rounded-xl p-5 border-2 space-y-3 transition ${
+                    isCorrect 
+                        ? 'bg-emerald-50/50 border-emerald-300' 
+                        : (isUnanswered ? 'bg-amber-50/50 border-amber-300' : 'bg-rose-50/50 border-rose-300')
+                }`;
+
+                let statusBadge = '';
+                if (isCorrect) {
+                    statusBadge = '<span class="text-xs font-bold px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300"><i class="fa-solid fa-check mr-1"></i>Đúng</span>';
+                } else if (isUnanswered) {
+                    statusBadge = '<span class="text-xs font-bold px-2.5 py-1 rounded-full bg-amber-100 text-amber-800 border border-amber-300"><i class="fa-solid fa-minus mr-1"></i>Bỏ trống</span>';
+                } else {
+                    statusBadge = '<span class="text-xs font-bold px-2.5 py-1 rounded-full bg-rose-100 text-rose-800 border border-rose-300"><i class="fa-solid fa-xmark mr-1"></i>Sai</span>';
+                }
+
+                card.innerHTML = `
+                    <div class="flex flex-wrap items-center justify-between gap-2 border-b pb-2">
+                        <div class="flex items-center gap-2">
+                            <span class="font-bold text-gray-900">Câu ${qNum}</span>
+                            <span class="px-2 py-0.5 rounded text-xs font-medium border ${q.levelBadge}">${q.level}</span>
+                        </div>
+                        <div>${statusBadge}</div>
+                    </div>
+
+                    <div class="text-gray-900 font-medium text-sm leading-relaxed whitespace-pre-line">
+                        ${q.question}
+                    </div>
+
+                    <!-- Các lựa chọn đáp án -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs pt-1">
+                        ${q.options.map((opt, optIdx) => {
+                            let optStyle = 'bg-white border-gray-200 text-gray-700';
+                            if (optIdx === q.correct) {
+                                optStyle = 'bg-emerald-100 border-emerald-400 font-bold text-emerald-900 ring-1 ring-emerald-400';
+                            } else if (optIdx === userChoice && !isCorrect) {
+                                optStyle = 'bg-rose-100 border-rose-400 font-bold text-rose-900 line-through';
+                            }
+                            return `
+                                <div class="p-2.5 rounded-lg border ${optStyle} flex items-center justify-between">
+                                    <span>${opt}</span>
+                                    ${optIdx === q.correct ? '<i class="fa-solid fa-circle-check text-emerald-600 ml-1"></i>' : ''}
+                                    ${optIdx === userChoice && !isCorrect ? '<i class="fa-solid fa-circle-xmark text-rose-600 ml-1"></i>' : ''}
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+
+                    <!-- Lời giải chi tiết -->
+                    <div class="bg-white p-3.5 rounded-lg border border-gray-200 text-xs text-gray-800 space-y-1 mt-2">
+                        <div class="font-bold text-purple-900 flex items-center gap-1.5">
+                            <i class="fa-solid fa-lightbulb text-amber-500"></i> Lời giải chi tiết:
+                        </div>
+                        <div class="leading-relaxed text-gray-700 whitespace-pre-line pt-1">
+                            ${q.explanation}
+                        </div>
+                    </div>
+                `;
+
+                container.appendChild(card);
+            });
+        }
+
+        /* ==========================================================================
+           HÀM HỖ TRỢ HIỂN THỊ MODAL & RESTART
+           ========================================================================== */
+        function showModal(iconHtml, title, message, buttons) {
+            document.getElementById('modal-icon').innerHTML = iconHtml;
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-message').innerText = message;
+
+            const btnContainer = document.getElementById('modal-buttons');
+            btnContainer.innerHTML = '';
+
+            buttons.forEach(btn => {
+                const buttonEl = document.createElement('button');
+                buttonEl.className = btn.class;
+                buttonEl.innerText = btn.text;
+                buttonEl.onclick = btn.action;
+                btnContainer.appendChild(buttonEl);
+            });
+
+            document.getElementById('custom-modal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('custom-modal').classList.add('hidden');
+        }
+
+        function restartQuiz() {
+            document.getElementById('screen-result').classList.add('hidden');
+            document.getElementById('screen-exam').classList.add('hidden');
+            document.getElementById('screen-start').classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>

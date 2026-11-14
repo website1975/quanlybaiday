@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ôn luyện củng cố kiến thức - Bài 29: Định luật bảo toàn động lượng</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cream: '#FFFDD0',
+                        brandPurple: '#4c1d95',
+                        lightPurpleBg: '#f3e8ff',
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- MathJax Configuration -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)']],
+                displayMath: [['\\[', '\\]']],
+                processEscapes: true
+            },
+            options: {
+                ignoreHtmlClass: 'tex2jax_ignore',
+                processHtmlClass: 'tex2jax_process'
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        body {
+            background-color: #f3e8ff;
+            color: #1e1b4b;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+        .header-title {
+            color: #FFFDD0;
+        }
+        .option-card {
+            transition: all 0.2s ease-in-out;
+        }
+        .option-card:hover {
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <header class="bg-purple-900 text-white shadow-lg border-b-4 border-purple-600 sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center gap-3">
+            <div class="text-center md:text-left">
+                <h1 class="text-2xl md:text-3xl font-extrabold tracking-wide header-title">
+                    <i class="fa-solid fa-atom mr-2 text-yellow-300"></i>ÔN LUYỆN CỦNG CỐ KIẾN THỨC
+                </h1>
+                <p class="text-purple-200 text-sm md:text-base font-medium mt-1">
+                    Bài 29: Định luật bảo toàn động lượng (Vật lý 10)
+                </p>
+            </div>
+            <div id="header-stats" class="hidden flex items-center gap-4 bg-purple-950 px-4 py-2 rounded-xl border border-purple-700 shadow-inner">
+                <div id="timer-box" class="flex items-center text-yellow-300 font-bold text-lg">
+                    <i class="fa-regular fa-clock mr-2 text-xl animate-pulse"></i>
+                    <span id="timer-text">20:00</span>
+                </div>
+                <div class="text-sm text-purple-200 border-l border-purple-700 pl-4">
+                    Câu: <span id="current-q-num" class="font-bold text-white">1</span>/20
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-5xl w-full mx-auto p-4 md:p-6">
+
+        <!-- SCREEN 1: BẮT ĐẦU LÀM -->
+        <section id="start-screen" class="bg-white rounded-2xl shadow-xl p-6 md:p-10 border border-purple-100 mt-4">
+            <div class="text-center max-w-2xl mx-auto">
+                <div class="inline-block p-4 bg-purple-100 rounded-full text-purple-800 text-4xl mb-4">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                </div>
+                <h2 class="text-2xl md:text-3xl font-bold text-purple-950 mb-3">Bài Kiểm Tra Củng Cố Kiến Thức</h2>
+                <p class="text-gray-600 mb-6">
+                    Bộ câu hỏi gồm 20 câu chuẩn phân loại 4 mức độ (8 Biết, 7 Hiểu, 3 Vận dụng, 2 Vận dụng cao) bám sát nội dung học trong SGK Bài 29.
+                </p>
+
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-center mb-8">
+                    <div class="p-3 bg-purple-50 rounded-xl border border-purple-200">
+                        <span class="block text-xl font-bold text-purple-700">20 phút</span>
+                        <span class="text-xs text-gray-500 font-medium">Thời gian</span>
+                    </div>
+                    <div class="p-3 bg-purple-50 rounded-xl border border-purple-200">
+                        <span class="block text-xl font-bold text-purple-700">20 câu</span>
+                        <span class="text-xs text-gray-500 font-medium">Số lượng câu hỏi</span>
+                    </div>
+                    <div class="p-3 bg-purple-50 rounded-xl border border-purple-200">
+                        <span class="block text-xl font-bold text-purple-700">Trắc nghiệm</span>
+                        <span class="text-xs text-gray-500 font-medium">Hình thức</span>
+                    </div>
+                    <div class="p-3 bg-purple-50 rounded-xl border border-purple-200">
+                        <span class="block text-xl font-bold text-purple-700">10 điểm</span>
+                        <span class="text-xs text-gray-500 font-medium">Thang điểm</span>
+                    </div>
+                </div>
+
+                <div class="bg-purple-50 p-6 rounded-2xl border border-purple-200 mb-8 text-left">
+                    <h3 class="font-bold text-purple-900 text-lg mb-3 flex items-center">
+                        <i class="fa-solid fa-sliders text-purple-600 mr-2"></i>Chọn hình thức làm bài:
+                    </h3>
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <label class="relative flex p-4 bg-white rounded-xl border-2 cursor-pointer transition hover:border-purple-400 has-[:checked]:border-purple-600 has-[:checked]:bg-purple-50/50 shadow-sm">
+                            <input type="radio" name="test-mode" value="practice" checked class="mt-1 text-purple-600 focus:ring-purple-500">
+                            <div class="ml-3">
+                                <span class="block font-bold text-gray-900">1. Luyện tập</span>
+                                <span class="block text-xs text-gray-500 mt-1">Làm bài thoải mái không giới hạn thời gian. Xem đáp án và lời giải ngay khi nhấn Kết thúc.</span>
+                            </div>
+                        </label>
+
+                        <label class="relative flex p-4 bg-white rounded-xl border-2 cursor-pointer transition hover:border-purple-400 has-[:checked]:border-purple-600 has-[:checked]:bg-purple-50/50 shadow-sm">
+                            <input type="radio" name="test-mode" value="timed" class="mt-1 text-purple-600 focus:ring-purple-500">
+                            <div class="ml-3">
+                                <span class="block font-bold text-gray-900">2. Tính giờ (Kiểm tra)</span>
+                                <span class="block text-xs text-gray-500 mt-1">Đếm ngược 20 phút. Thứ tự câu hỏi được trộn ngẫu nhiên để đánh giá đúng năng lực thực tế.</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <button onclick="startQuiz()" class="w-full md:w-2/3 bg-purple-700 hover:bg-purple-800 text-white font-bold py-4 px-8 rounded-xl shadow-lg transition transform hover:-translate-y-0.5 active:translate-y-0 text-lg flex items-center justify-center mx-auto">
+                    <i class="fa-solid fa-play mr-3"></i> Bắt đầu làm bài
+                </button>
+            </div>
+        </section>
+
+        <!-- SCREEN 2: ĐANG LÀM BÀI -->
+        <section id="quiz-screen" class="hidden flex flex-col md:flex-row gap-6">
+            
+            <!-- Question Navigation Grid Sidebar / Top panel -->
+            <div class="w-full md:w-1/4 bg-white rounded-2xl shadow-lg p-5 border border-purple-100 flex flex-col order-2 md:order-1">
+                <h3 class="font-bold text-purple-900 text-sm uppercase tracking-wider mb-3 flex items-center justify-between">
+                    <span><i class="fa-solid fa-grid-2 text-purple-600 mr-1"></i> Danh sách câu hỏi</span>
+                    <span id="answered-count" class="text-xs bg-purple-100 text-purple-800 font-semibold px-2 py-0.5 rounded-full">0/20</span>
+                </h3>
+                <div id="question-grid" class="grid grid-cols-5 gap-2 my-auto">
+                    <!-- Dynamic Question Buttons -->
+                </div>
+                
+                <div class="mt-6 pt-4 border-t border-purple-100 flex flex-col gap-2">
+                    <button onclick="finishQuizConfirm()" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2.5 px-4 rounded-xl transition text-sm flex items-center justify-center">
+                        <i class="fa-solid fa-flag-checkered mr-2"></i> Kết thúc bài làm
+                    </button>
+                </div>
+            </div>
+
+            <!-- Active Question Box -->
+            <div class="w-full md:w-3/4 bg-white rounded-2xl shadow-lg p-6 md:p-8 border border-purple-100 flex flex-col justify-between order-1 md:order-2">
+                <div>
+                    <!-- Question Header & Level Tag -->
+                    <div class="flex justify-between items-center mb-4 pb-3 border-b border-gray-100">
+                        <span id="q-number-title" class="font-bold text-lg text-purple-900">Câu 1:</span>
+                        <span id="q-level-badge" class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-blue-100 text-blue-800">
+                            Nhận biết
+                        </span>
+                    </div>
+
+                    <!-- Question Content -->
+                    <div id="q-text" class="text-gray-900 font-medium text-base md:text-lg mb-6 leading-relaxed">
+                        <!-- MathJax question text -->
+                    </div>
+
+                    <!-- Options List -->
+                    <div id="options-container" class="space-y-3">
+                        <!-- Dynamic options generated by JS -->
+                    </div>
+                </div>
+
+                <!-- Navigation Controls -->
+                <div class="flex justify-between items-center mt-8 pt-4 border-t border-gray-100">
+                    <button id="btn-prev" onclick="prevQuestion()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-2.5 px-5 rounded-xl transition disabled:opacity-40 disabled:cursor-not-allowed flex items-center text-sm">
+                        <i class="fa-solid fa-arrow-left mr-2"></i> Câu trước
+                    </button>
+
+                    <button id="btn-next" onclick="nextQuestion()" class="bg-purple-700 hover:bg-purple-800 text-white font-bold py-2.5 px-6 rounded-xl transition flex items-center text-sm">
+                        Câu tiếp <i class="fa-solid fa-arrow-right ml-2"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- SCREEN 3: KẾT THÚC BÀI LÀM -->
+        <section id="result-screen" class="hidden space-y-6">
+            
+            <!-- Score Summary Card -->
+            <div class="bg-white rounded-2xl shadow-xl p-6 md:p-8 border border-purple-100 text-center">
+                <div class="inline-flex items-center justify-center p-3 bg-purple-100 text-purple-700 rounded-full text-3xl mb-3">
+                    <i class="fa-solid fa-trophy"></i>
+                </div>
+                <h2 class="text-2xl md:text-3xl font-extrabold text-purple-950">KẾT QUẢ BÀI KIỂM TRA</h2>
+                <p id="result-subtitle" class="text-sm text-gray-500 mt-1">Bài 29: Định luật bảo toàn động lượng</p>
+
+                <div class="my-6 flex flex-col md:flex-row items-center justify-center gap-6">
+                    <!-- Main Score -->
+                    <div class="bg-purple-50 border-2 border-purple-200 rounded-2xl p-6 w-full md:w-64 text-center">
+                        <span class="text-xs uppercase font-bold tracking-wider text-purple-600 block mb-1">Điểm Số Đạt Được</span>
+                        <div class="text-4xl md:text-5xl font-black text-purple-900" id="score-text">0.0 / 10</div>
+                        <span class="text-xs text-gray-500 mt-2 block" id="correct-count-text">Đúng 0 / 20 câu</span>
+                    </div>
+
+                    <!-- Evaluation Box -->
+                    <div class="bg-purple-900 text-white rounded-2xl p-6 flex-1 text-left w-full shadow-md">
+                        <h4 class="font-bold text-cream text-lg mb-2 flex items-center">
+                            <i class="fa-solid fa-comment-dots text-yellow-300 mr-2"></i> Đánh giá & Nhận xét của giáo viên:
+                        </h4>
+                        <p id="teacher-feedback" class="text-purple-100 text-sm leading-relaxed">
+                            <!-- Dynamic feedback based on score -->
+                        </p>
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap justify-center gap-4">
+                    <button onclick="restartQuiz()" class="bg-purple-700 hover:bg-purple-800 text-white font-bold py-3 px-6 rounded-xl shadow transition flex items-center text-sm">
+                        <i class="fa-solid fa-rotate-right mr-2"></i> Làm lại bài test
+                    </button>
+                </div>
+            </div>
+
+            <!-- Detailed Explanation Section -->
+            <div class="bg-white rounded-2xl shadow-xl p-6 md:p-8 border border-purple-100">
+                <h3 class="text-xl font-bold text-purple-950 mb-6 flex items-center pb-3 border-b border-gray-100">
+                    <i class="fa-solid fa-square-poll-vertical text-purple-600 mr-2"></i> Chi tiết đáp án & Lời giải chi tiết
+                </h3>
+
+                <div id="detailed-review-container" class="space-y-6">
+                    <!-- Dynamic review items generated here -->
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-purple-950 text-purple-300 text-center py-4 border-t border-purple-800 text-xs mt-auto">
+        <p>Hệ thống Ôn luyện & Củng cố Kiến thức Vật Lý 10 — Bài 29: Định luật bảo toàn động lượng</p>
+    </footer>
+
+    <script>
+        // QUESTION DATABASE - Strictly based on PDF "Bài 29: Định luật bảo toàn động lượng"
+        const questionBank = [
+            // --- MỨC ĐỘ 1: BIẾT (8 CÂU) ---
+            {
+                id: 1,
+                level: "Biết",
+                levelCode: "know",
+                question: "Căn cứ theo định nghĩa trong bài học, một hệ nhiều vật được gọi là hệ kín (hay hệ cô lập) khi nào?",
+                options: [
+                    "Không có ngoại lực tác dụng lên hệ hoặc nếu có thì các lực ấy cân bằng nhau.",
+                    "Không có bất kỳ lực nào tương tác giữa các vật trong hệ.",
+                    "Tổng các nội lực trong hệ có độ lớn lớn hơn tổng ngoại lực rất nhiều.",
+                    "Chỉ có ngoại lực tác dụng, còn các nội lực thì bằng không."
+                ],
+                correct: 0,
+                explanation: "Theo mục I.1.a trang 113 SGK: Một hệ nhiều vật được gọi là hệ kín khi không có ngoại lực tác dụng lên hệ hoặc nếu có thì các lực ấy cân bằng nhau."
+            },
+            {
+                id: 2,
+                level: "Biết",
+                levelCode: "know",
+                question: "Trong một hệ kín, các nội lực giữa các vật tương tác có đặc điểm nào sau đây?",
+                options: [
+                    "Cùng chiều và cùng độ lớn.",
+                    "Trực đối nhau từng đôi một theo định luật 3 Newton.",
+                    "Luôn luôn bằng 0.",
+                    "Có tổng vectơ khác 0."
+                ],
+                correct: 1,
+                explanation: "Theo mục I.1.a trang 113 SGK: Trong một hệ kín, chỉ có các nội lực tác dụng giữa các vật. Các nội lực này theo định luật 3 Newton trực đối nhau từng đôi một."
+            },
+            {
+                id: 3,
+                level: "Biết",
+                levelCode: "know",
+                question: "Trường hợp nào sau đây có thể bỏ qua các ngoại lực và coi hệ là kín?",
+                options: [
+                    "Các ngoại lực xuất hiện lớn hơn rất nhiều so với các nội lực.",
+                    "Quá trình tương tác diễn ra rất chậm trong thời gian kéo dài.",
+                    "Trong quá trình tương tác, các nội lực xuất hiện lớn hơn các ngoại lực rất nhiều (như va chạm, đạn nổ, pháo nổ...).",
+                    "Vật chuyển động thẳng đều dưới tác dụng của lực ma sát lớn."
+                ],
+                correct: 2,
+                explanation: "Theo mục I.1.b trang 113 SGK: Nếu trong quá trình tương tác, các nội lực xuất hiện lớn hơn các ngoại lực rất nhiều thì có thể bỏ qua các ngoại lực và coi hệ là kín. Ví dụ: va chạm, đạn nổ, pháo nổ..."
+            },
+            {
+                id: 4,
+                level: "Biết",
+                levelCode: "know",
+                question: "Phát biểu nào sau đây đúng với định luật bảo toàn động lượng?",
+                options: [
+                    "Động lượng của từng vật riêng lẻ trong hệ kín luôn luôn không đổi.",
+                    "Động lượng toàn phần của hệ kín là một đại lượng bảo toàn.",
+                    "Động lượng của hệ luôn thay đổi tỉ lệ thuận với thời gian.",
+                    "Tổng động năng và động lượng của hệ luôn là hằng số trong mọi loại va chạm."
+                ],
+                correct: 1,
+                explanation: "Theo mục I.2 trang 114 SGK: Định luật bảo toàn động lượng phát biểu rằng: \\(\\text{Động lượng toàn phần của hệ kín là một đại lượng bảo toàn}\\)."
+            },
+            {
+                id: 5,
+                level: "Biết",
+                levelCode: "know",
+                question: "Công thức nào sau đây thể hiện biểu thức bảo toàn động lượng toàn phần của hệ kín gồm hai vật?",
+                options: [
+                    "\\(\\vec{p} = \\vec{p}_1 + \\vec{p}_2 = \\text{không đổi}\\)",
+                    "\\(\\Delta \\vec{p} = \\vec{p}_1 - \\vec{p}_2 = \\vec{0}\\)",
+                    "\\(\\vec{p} = \\vec{p}_1 \\cdot \\vec{p}_2 = \\text{hằng số}\\)",
+                    "\\(\\vec{p}_1 + \\vec{p}_2 = \\vec{F} \\cdot \\Delta t\\)"
+                ],
+                correct: 0,
+                explanation: "Theo mục I.2 trang 113 SGK: Động lượng toàn phần của hệ kín là \\(\\vec{p} = \\vec{p}_1 + \\vec{p}_2 = \\text{không đổi}\\)."
+            },
+            {
+                id: 6,
+                level: "Biết",
+                levelCode: "know",
+                question: "Hiện tượng hai xe tương tác rồi dính vào nhau và cùng chuyển động với một vận tốc được gọi là kiểu va chạm gì?",
+                options: [
+                    "Va chạm đàn hồi.",
+                    "Va chạm dẻo.",
+                    "Va chạm mềm.",
+                    "Va chạm bộc phát."
+                ],
+                correct: 2,
+                explanation: "Theo mục II.2 trang 114 SGK: Sau va chạm, cả hai xe dính vào nhau và cùng chuyển động với vận tốc \\(v_{AB} = \\frac{v}{2}\\). Kiểu va chạm 'dính' này gọi là va chạm mềm."
+            },
+            {
+                id: 7,
+                level: "Biết",
+                levelCode: "know",
+                question: "Trong thí nghiệm va chạm đàn hồi giữa hai xe A và B giống nhau (Hình 29.1 SGK), khi xe A chuyển động với vận tốc \\(v_A = v\\) tới va chạm với xe B đang đứng yên (\\(v_B = 0\\)), kết quả ngay sau va chạm là gì?",
+                options: [
+                    "Xe A dính chặt vào xe B và cùng chuyển động với vận tốc \\(\\frac{v}{2}\\).",
+                    "Xe A đang chuyển động thì dừng lại (\\(v_A' = 0\\)), còn xe B đang đứng yên thì chuyển động với vận tốc \\(v_B' = v\\).",
+                    "Cả hai xe nảy ngược trở lại với vận tốc \\(-v\\).",
+                    "Xe B vẫn đứng yên, xe A nảy ngược lại với vận tốc \\(-v\\)."
+                ],
+                correct: 1,
+                explanation: "Theo mục II.1 trang 114 SGK: Cho xe A chuyển động với vận tốc \\(v_A = v\\) tới va chạm đàn hồi với xe B đang đứng yên. Kết quả va chạm làm xe A dừng lại (\\(v_A' = 0\\)), còn xe B chuyển động với vận tốc \\(v_B' = v\\)."
+            },
+            {
+                id: 8,
+                level: "Biết",
+                levelCode: "know",
+                question: "Trong thí nghiệm va chạm mềm giữa hai xe A và B giống nhau (mỗ xe khối lượng \\(m\\)), xe B đang đứng yên (\\(v_B = 0\\)), xe A chuyển động với vận tốc \\(v_A = v\\). Vận tốc của hệ hai xe sau va chạm dính vào nhau là:",
+                options: [
+                    "\\(v_{AB} = v\\)",
+                    "\\(v_{AB} = \\frac{v}{2}\\)",
+                    "\\(v_{AB} = 2v\\)",
+                    "\\(v_{AB} = 0\\)"
+                ],
+                correct: 1,
+                explanation: "Theo mục II.2 trang 114 SGK: Sau va chạm dính (va chạm mềm), hai xe giống nhau dính vào nhau và chuyển động với vận tốc bằng \\(v_{AB} = \\frac{v}{2}\\)."
+            },
+
+            // --- MỨC ĐỘ 2: HIỂU (7 CÂU) ---
+            {
+                id: 9,
+                level: "Hiểu",
+                levelCode: "understand",
+                question: "Tại sao một người đang ở trong chiếc thuyền nhỏ đứng yên, khi bước lên bờ thì chiếc thuyền lại bị lùi về phía sau?",
+                options: [
+                    "Vì nước biển đẩy chiếc thuyền lùi lại theo lực đẩy Ác-si-mét.",
+                    "Xét hệ người và thuyền coi là hệ kín theo phương ngang; ban đầu động lượng bằng 0, khi người bước về phía trước có động lượng hướng tới thì thuyền nhận động lượng hướng ngược lại để tổng động lượng của hệ bảo toàn.",
+                    "Vì khối lượng của thuyền nhỏ hơn khối lượng của người.",
+                    "Do trọng lực tác dụng lên người khi bước làm thuyền bập bềnh."
+                ],
+                correct: 1,
+                explanation: "Giải thích hiện tượng ở trang 113 SGK: Hệ (người + thuyền) ban đầu đứng yên (tổng động lượng bằng 0). Bỏ qua lực cản theo phương ngang, hệ là hệ kín. Khi người bước về phía trước thu động lượng \\(\\vec{p}_1\\), thuyền phải thu động lượng \\(\\vec{p}_2 = -\\vec{p}_1\\) lùi về phía sau sao cho tổng \\(\\vec{p}_1 + \\vec{p}_2 = \\vec{0}\\)."
+            },
+            {
+                id: 10,
+                level: "Hiểu",
+                levelCode: "understand",
+                question: "Hai người đang đứng yên trên sân băng nhẵn (coi như không ma sát). Khi họ dùng tay đẩy vào nhau (Hình 29.4 SGK), hiện tượng gì sẽ xảy ra?",
+                options: [
+                    "Chỉ có người dùng lực đẩy bị lùi ra xa.",
+                    "Cả hai người cùng bị lùi ra xa nhau về hai phía ngược nhau.",
+                    "Chỉ có người chịu lực đẩy mới chuyển động.",
+                    "Cả hai người vẫn đứng yên vì lực hai người đẩy nhau cân bằng nhau."
+                ],
+                correct: 1,
+                explanation: "Theo phần 'Em có thể' trang 115 SGK (Hình 29.4): Ban đầu hai người đứng yên trên sân băng không ma sát (hệ kín, động lượng bằng 0). Khi đẩy nhau, theo định luật 3 Newton và bảo toàn động lượng, hai người sẽ thu vận tốc ngược chiều và cùng lùi ra xa nhau."
+            },
+            {
+                id: 11,
+                level: "Hiểu",
+                levelCode: "understand",
+                question: "Dựa vào định luật bảo toàn động lượng, hãy so sánh tốc độ lùi \\(v_1\\) và \\(v_2\\) của hai người đứng trên sân băng có khối lượng khác nhau \\(m_1 > m_2\\) sau khi họ đẩy nhau từ trạng thái đứng yên:",
+                options: [
+                    "\\(v_1 > v_2\\) (người lớn tuổi/nặng hơn lùi nhanh hơn)",
+                    "\\(v_1 < v_2\\) (người có khối lượng lớn hơn sẽ lùi với tốc độ nhỏ hơn)",
+                    "\\(v_1 = v_2\\) (hai người lùi với tốc độ bằng nhau)",
+                    "Tốc độ lùi không phụ thuộc vào khối lượng của hai người."
+                ],
+                correct: 1,
+                explanation: "Áp dụng định luật bảo toàn động lượng: \\(m_1 \\vec{v}_1 + m_2 \\vec{v}_2 = \\vec{0} \\Rightarrow m_1 v_1 = m_2 v_2 \\Rightarrow \\frac{v_1}{v_2} = \\frac{m_2}{m_1}\\). Vì \\(m_1 > m_2\\) nên \\(v_1 < v_2\\). Người có khối lượng lớn hơn lùi chậm hơn."
+            },
+            {
+                id: 12,
+                level: "Hiểu",
+                levelCode: "understand",
+                question: "Trong thí nghiệm va chạm đàn hồi (Hình 29.1 SGK), nếu xe A chuyển động tới va chạm trực diện với xe B đang chuyển động ngược chiều với vận tốc \\(v_B = -v\\) (hai xe có cùng khối lượng). Vận tốc hai xe sau va chạm lần lượt là:",
+                options: [
+                    "\\(v_A' = 0\\) và \\(v_B' = 0\\)",
+                    "\\(v_A' = -v\\) và \\(v_B' = v\\) (hai xe đổi chiều vận tốc cho nhau)",
+                    "\\(v_A' = v\\) và \\(v_B' = -v\\)",
+                    "\\(v_A' = -\\frac{v}{2}\\) và \\(v_B' = \\frac{v}{2}\\)"
+                ],
+                correct: 1,
+                explanation: "Theo mục II.1 trang 114 SGK: 'Còn nếu xe A chuyển động đến va chạm trực diện với xe B có vận tốc \\(v_B = -v\\) thì sau va chạm cả hai xe đổi chiều vận tốc: \\(v_A' = -v\\) và \\(v_B' = v\\)'."
+            },
+            {
+                id: 13,
+                level: "Hiểu",
+                levelCode: "understand",
+                question: "So sánh tổng động năng của hệ hai xe trong va chạm mềm (hai xe dính vào nhau sau va chạm) trước và sau va chạm:",
+                options: [
+                    "Tổng động năng của hệ sau va chạm được bảo toàn bằng tổng động năng trước va chạm.",
+                    "Tổng động năng của hệ sau va chạm nhỏ hơn tổng động năng của hệ trước va chạm.",
+                    "Tổng động năng của hệ sau va chạm lớn hơn tổng động năng của hệ trước va chạm.",
+                    "Tổng động năng của hệ sau va chạm luôn bằng 0."
+                ],
+                correct: 1,
+                explanation: "Trong va chạm mềm, một phần động năng ban đầu đã chuyển hóa thành nhiệt năng và công làm biến dạng dính dính. Do đó tổng động năng của hệ sau va chạm giảm đi so với trước va chạm."
+            },
+            {
+                id: 14,
+                level: "Hiểu",
+                levelCode: "understand",
+                question: "Từ biểu thức \\(\\vec{F}_1 \\cdot \\Delta t = \\Delta \\vec{p}_1\\) và \\(\\vec{F}_2 \\cdot \\Delta t = \\Delta \\vec{p}_2\\), kết hợp định luật 3 Newton \\(\\vec{F}_1 = -\\vec{F}_2\\), suy ra \\(\\Delta \\vec{p}_1 + \\Delta \\vec{p}_2 = \\vec{0}\\). Điều này thể hiện ý nghĩa gì?",
+                options: [
+                    "Động lượng của từng vật không thay đổi.",
+                    "Độ biến thiên động lượng toàn phần của hệ kín trong khoảng thời gian tương tác bằng 0.",
+                    "Lực tác dụng luôn bằng 0.",
+                    "Thời gian tương tác rất ngắn nên động lượng triệt tiêu."
+                ],
+                correct: 1,
+                explanation: "Theo mục I.2 trang 113 SGK: \\(\\Delta \\vec{p} = \\Delta \\vec{p}_1 + \\Delta \\vec{p}_2 = \\vec{0}\\) có nghĩa là độ biến thiên động lượng toàn phần của hệ bằng 0, tức là động lượng toàn phần không đổi."
+            },
+            {
+                id: 15,
+                level: "Hiểu",
+                levelCode: "understand",
+                question: "Trong thí nghiệm mô hình con lắc Newton (Hình 29.3 SGK), kéo bi (1) lên cao một độ cao \\(h\\) rồi thả ra. Bi (1) va chạm đàn hồi với hai bi (2) và (3) đang đứng yên. Dự đoán hiện tượng xảy ra sau va chạm:",
+                options: [
+                    "Bi (1) truyền động lượng qua bi (2) làm bi (3) văng lên tới độ cao \\(h\\), bi (1) và (2) dừng lại.",
+                    "Cả 3 bi dính vào nhau và cùng nâng lên độ cao \\(\\frac{h}{3}\\).",
+                    "Cả bi (1) và bi (2) cùng văng ngược trở lại độ cao \\(\\frac{h}{2}\\).",
+                    "Tất cả các bi đứng yên tại vị trí cân bằng."
+                ],
+                correct: 0,
+                explanation: "Do đây là chuỗi va chạm đàn hồi giữa các quả cầu cùng khối lượng: Bi (1) va chạm đàn hồi truyền toàn bộ động lượng cho bi (2) rồi đứng yên, bi (2) tiếp tục truyền toàn bộ động lượng cho bi (3) rồi đứng yên, dẫn đến bi (3) văng ra lên đúng độ cao \\(h\\)."
+            },
+
+            // --- MỨC ĐỘ 3: VẬN DỤNG (3 CÂU) ---
+            {
+                id: 16,
+                level: "Vận dụng",
+                levelCode: "apply",
+                question: "Một người khối lượng \\(m_1 = 50\\text{ kg}\\) đứng trên một chiếc thuyền nhỏ khối lượng \\(m_2 = 100\\text{ kg}\\) đang đứng yên trên mặt nước lặng. Bỏ qua lực cản của nước. Khi người đó bước tiến về phía trước với vận tốc \\(v_1 = 1{,}5\\text{ m/s}\\) so với bờ, tốc độ lùi của chiếc thuyền so với bờ là bao nhiêu?",
+                options: [
+                    "\\(0{,}75\\text{ m/s}\\)",
+                    "\\(1{,}5\\text{ m/s}\\)",
+                    "\\(3{,}0\\text{ m/s}\\)",
+                    "\\(0{,}5\\text{ m/s}\\)"
+                ],
+                correct: 0,
+                explanation: "Áp dụng định luật bảo toàn động lượng cho hệ kín (người + thuyền) theo phương ngang:<br>\\(m_1 \\vec{v}_1 + m_2 \\vec{v}_2 = \\vec{0} \\Rightarrow m_1 v_1 + m_2 v_2 = 0\\)<br>\\(\\Rightarrow v_2 = -\\frac{m_1}{m_2} v_1 = -\\frac{50}{100} \\cdot 1{,}5 = -0{,}75\\text{ m/s}\\).<br>Tốc độ lùi của thuyền là \\(0{,}75\\text{ m/s}\\)."
+            },
+            {
+                id: 17,
+                level: "Vận dụng",
+                levelCode: "apply",
+                question: "Hai xe lăn có khối lượng \\(m_1 = 1\\text{ kg}\\) và \\(m_2 = 3\\text{ kg}\\) chuyển động trên mặt phẳng nằm ngang không ma sát. Xe 1 chuyển động với vận tốc \\(v_1 = 4\\text{ m/s}\\) tới va chạm mềm với xe 2 đang đứng yên (\\(v_2 = 0\\)). Vận tốc của hai xe sau va chạm là:",
+                options: [
+                    "\\(1\\text{ m/s}\\)",
+                    "\\(2\\text{ m/s}\\)",
+                    "\\(3\\text{ m/s}\\)",
+                    "\\(1{,}33\\text{ m/s}\\)"
+                ],
+                correct: 0,
+                explanation: "Va chạm mềm: \\(m_1 v_1 + m_2 v_2 = (m_1 + m_2) v_{AB}\\)<br>\\(1 \\cdot 4 + 3 \\cdot 0 = (1 + 3) v_{AB} \\Rightarrow 4 = 4 v_{AB} \\Rightarrow v_{AB} = 1\\text{ m/s}\\)."
+            },
+            {
+                id: 18,
+                level: "Vận dụng",
+                levelCode: "apply",
+                question: "Hai người A và B đứng trên sân băng nằm ngang không ma sát. Người A có khối lượng \\(60\\text{ kg}\\), người B có khối lượng \\(40\\text{ kg}\\). Ban đầu cả hai đứng yên. Người A đẩy người B làm người B lùi về phía sau với vận tốc \\(3\\text{ m/s}\\) so với sân băng. Vận tốc lùi của người A là:",
+                options: [
+                    "\\(-2\\text{ m/s}\\)",
+                    "\\(-3\\text{ m/s}\\)",
+                    "\\(-4{,}5\\text{ m/s}\\)",
+                    "\\(-1{,}5\\text{ m/s}\\)"
+                ],
+                correct: 0,
+                explanation: "Bảo toàn động lượng hệ hai người:<br>\\(m_A v_A + m_B v_B = 0 \\Rightarrow 60 \\cdot v_A + 40 \\cdot 3 = 0\\)<br>\\(\\Rightarrow v_A = -\\frac{120}{60} = -2\\text{ m/s}\\) (Dấu âm thể hiện hướng ngược chiều với người B)."
+            },
+
+            // --- MỨC ĐỘ 4: VẬN DỤNG CAO (2 CÂU) ---
+            {
+                id: 19,
+                level: "Vận dụng cao",
+                levelCode: "high",
+                question: "Một xe A khối lượng \\(m_1 = 200\\text{ g}\\) chuyển động với vận tốc \\(v_1 = 3\\text{ m/s}\\) va chạm mềm với xe B khối lượng \\(m_2 = 400\\text{ g}\\) đang đứng yên trên mặt sàn nằm ngang không ma sát. Tỉ số giữa tổng động năng của hệ sau va chạm (\\(W_d'\\)) và động năng ban đầu của xe A (\\(W_{d1}\\)) bằng bao nhiêu?",
+                options: [
+                    "\\(\\frac{1}{3}\\)",
+                    "\\(\\frac{2}{3}\\)",
+                    "\\(\\frac{1}{2}\\)",
+                    "\\(\\frac{1}{4}\\)"
+                ],
+                correct: 0,
+                explanation: "Động năng ban đầu xe A: \\(W_{d1} = \\frac{1}{2} m_1 v_1^2\\).<br>Vận tốc sau va chạm mềm: \\(v' = \\frac{m_1 v_1}{m_1 + m_2}\\).<br>Tổng động năng sau va chạm: \\(W_d' = \\frac{1}{2} (m_1 + m_2) v'^2 = \\frac{1}{2} (m_1 + m_2) \\left(\\frac{m_1 v_1}{m_1 + m_2}\\right)^2 = \\frac{1}{2} \\frac{m_1^2 v_1^2}{m_1 + m_2}\\).<br>Lập tỉ số: \\(\\frac{W_d'}{W_{d1}} = \\frac{m_1}{m_1 + m_2} = \\frac{0{,}2}{0{,}2 + 0{,}4} = \\frac{0{,}2}{0{,}6} = \\frac{1}{3}\\)."
+            },
+            {
+                id: 20,
+                level: "Vận dụng cao",
+                levelCode: "high",
+                question: "Hai xe lăn A và B có khối lượng \\(m_1\\) và \\(m_2 = 2m_1\\) chuyển động ngược chiều nhau trên cùng một đường thẳng không ma sát. Xe A chuyển động với tốc độ \\(v_1 = 6\\text{ m/s}\\), xe B chuyển động với tốc độ \\(v_2 = 1{,}5\\text{ m/s}\\). Sau khi xảy ra va chạm mềm dính vào nhau, hệ hai xe sẽ chuyển động như thế nào?",
+                options: [
+                    "Chuyển động theo chiều ban đầu của xe A với tốc độ \\(1\\text{ m/s}\\).",
+                    "Chuyển động theo chiều ban đầu của xe B với tốc độ \\(1\\text{ m/s}\\).",
+                    "Chuyển động theo chiều ban đầu của xe A với tốc độ \\(3\\text{ m/s}\\).",
+                    "Dừng lại đứng yên hoàn toàn."
+                ],
+                correct: 0,
+                explanation: "Chọn chiều dương là chiều chuyển động ban đầu của xe A.<br>Vận tốc xe A: \\(v_1 = +6\\text{ m/s}\\); Vận tốc xe B: \\(v_2 = -1{,}5\\text{ m/s}\\).<br>Áp dụng định luật bảo toàn động lượng:<br>\\(m_1 v_1 + m_2 v_2 = (m_1 + m_2) v_{AB}\\)<br>\\(\\Rightarrow m_1 (6) + (2m_1) (-1{,}5) = (m_1 + 2m_1) v_{AB}\\)<br>\\(\\Rightarrow 6m_1 - 3m_1 = 3m_1 v_{AB} \\Rightarrow 3m_1 = 3m_1 v_{AB} \\Rightarrow v_{AB} = +1\\text{ m/s}\\).<br>Do \\(v_{AB} > 0\\), hệ chuyển động theo chiều ban đầu của xe A với tốc độ \\(1\\text{ m/s}\\)."
+            }
+        ];
+
+        // STATE VARIABLES
+        let currentQuestions = [];
+        let userAnswers = new Array(20).fill(null);
+        let currentIndex = 0;
+        let testMode = 'practice'; // 'practice' | 'timed'
+        let timerSeconds = 20 * 60; // 20 minutes
+        let timerInterval = null;
+
+        // HELPER: Shuffle array
+        function shuffleArray(array) {
+            let arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        function startQuiz() {
+            const modeRadios = document.getElementsByName('test-mode');
+            for (const radio of modeRadios) {
+                if (radio.checked) {
+                    testMode = radio.value;
+                    break;
+                }
+            }
+
+            // Setup questions (if timed, shuffle order)
+            if (testMode === 'timed') {
+                currentQuestions = shuffleArray(questionBank);
+            } else {
+                currentQuestions = [...questionBank];
+            }
+
+            userAnswers = new Array(20).fill(null);
+            currentIndex = 0;
+
+            // UI Adjustments
+            document.getElementById('start-screen').classList.add('hidden');
+            document.getElementById('result-screen').classList.add('hidden');
+            document.getElementById('quiz-screen').classList.remove('hidden');
+            document.getElementById('header-stats').classList.remove('hidden');
+
+            const timerBox = document.getElementById('timer-box');
+            if (testMode === 'timed') {
+                timerBox.classList.remove('hidden');
+                timerSeconds = 20 * 60;
+                startTimer();
+            } else {
+                timerBox.classList.add('hidden');
+            }
+
+            renderQuestionGrid();
+            loadQuestion(0);
+        }
+
+        function startTimer() {
+            clearInterval(timerInterval);
+            updateTimerDisplay();
+            timerInterval = setInterval(() => {
+                timerSeconds--;
+                updateTimerDisplay();
+                if (timerSeconds <= 0) {
+                    clearInterval(timerInterval);
+                    alert("Thời gian làm bài đã hết! Hệ thống sẽ tự động chấm điểm bài làm của bạn.");
+                    finishQuiz();
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const mins = Math.floor(timerSeconds / 60);
+            const secs = timerSeconds % 60;
+            const timeStr = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+            document.getElementById('timer-text').innerText = timeStr;
+        }
+
+        function renderQuestionGrid() {
+            const gridContainer = document.getElementById('question-grid');
+            gridContainer.innerHTML = '';
+            
+            currentQuestions.forEach((q, idx) => {
+                const btn = document.createElement('button');
+                btn.id = `grid-btn-${idx}`;
+                btn.className = `h-10 w-full rounded-lg font-bold text-sm transition border ${getGridBtnClass(idx)}`;
+                btn.innerText = idx + 1;
+                btn.onclick = () => jumpToQuestion(idx);
+                gridContainer.appendChild(btn);
+            });
+            updateAnsweredCount();
+        }
+
+        function getGridBtnClass(idx) {
+            if (idx === currentIndex) {
+                return 'bg-purple-700 text-white border-purple-800 ring-2 ring-purple-300';
+            } else if (userAnswers[idx] !== null) {
+                return 'bg-purple-100 text-purple-900 border-purple-300 font-extrabold';
+            } else {
+                return 'bg-gray-50 text-gray-700 border-gray-200 hover:bg-gray-100';
+            }
+        }
+
+        function updateAnsweredCount() {
+            const count = userAnswers.filter(a => a !== null).length;
+            document.getElementById('answered-count').innerText = `${count}/20`;
+        }
+
+        function loadQuestion(index) {
+            currentIndex = index;
+            const q = currentQuestions[index];
+
+            // Header info
+            document.getElementById('current-q-num').innerText = index + 1;
+            document.getElementById('q-number-title').innerText = `Câu ${index + 1}:`;
+
+            // Badge Level
+            const badge = document.getElementById('q-level-badge');
+            badge.innerText = q.level;
+            if (q.levelCode === 'know') {
+                badge.className = 'px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-blue-100 text-blue-800';
+            } else if (q.levelCode === 'understand') {
+                badge.className = 'px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-green-100 text-green-800';
+            } else if (q.levelCode === 'apply') {
+                badge.className = 'px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-yellow-100 text-yellow-800';
+            } else {
+                badge.className = 'px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-red-100 text-red-800';
+            }
+
+            // Question Text
+            document.getElementById('q-text').innerHTML = q.question;
+
+            // Options
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = '';
+
+            const prefixes = ['A', 'B', 'C', 'D'];
+            q.options.forEach((opt, optIdx) => {
+                const isSelected = userAnswers[index] === optIdx;
+                const optCard = document.createElement('div');
+                optCard.className = `option-card p-4 rounded-xl border-2 cursor-pointer flex items-start gap-3 ${
+                    isSelected ? 'border-purple-600 bg-purple-50 text-purple-950 font-semibold shadow-sm' : 'border-gray-200 bg-white hover:border-purple-300 text-gray-800'
+                }`;
+                optCard.onclick = () => selectOption(optIdx);
+
+                optCard.innerHTML = `
+                    <div class="w-7 h-7 rounded-full flex items-center justify-center font-bold text-sm shrink-0 mt-0.5 ${
+                        isSelected ? 'bg-purple-700 text-white' : 'bg-gray-100 text-gray-600'
+                    }">
+                        ${prefixes[optIdx]}
+                    </div>
+                    <div class="text-base leading-snug flex-1">${opt}</div>
+                `;
+                optionsContainer.appendChild(optCard);
+            });
+
+            // Nav buttons state
+            document.getElementById('btn-prev').disabled = (index === 0);
+            if (index === currentQuestions.length - 1) {
+                document.getElementById('btn-next').innerHTML = `Kết thúc <i class="fa-solid fa-check ml-2"></i>`;
+            } else {
+                document.getElementById('btn-next').innerHTML = `Câu tiếp <i class="fa-solid fa-arrow-right ml-2"></i>`;
+            }
+
+            // Refresh grid buttons style
+            for (let i = 0; i < currentQuestions.length; i++) {
+                const btn = document.getElementById(`grid-btn-${i}`);
+                if (btn) btn.className = `h-10 w-full rounded-lg font-bold text-sm transition border ${getGridBtnClass(i)}`;
+            }
+
+            // Re-render MathJax
+            if (window.MathJax && MathJax.typesetPromise) {
+                MathJax.typesetPromise();
+            }
+        }
+
+        function selectOption(optIndex) {
+            userAnswers[currentIndex] = optIndex;
+            updateAnsweredCount();
+            loadQuestion(currentIndex);
+        }
+
+        function prevQuestion() {
+            if (currentIndex > 0) {
+                loadQuestion(currentIndex - 1);
+            }
+        }
+
+        function nextQuestion() {
+            if (currentIndex < currentQuestions.length - 1) {
+                loadQuestion(currentIndex + 1);
+            } else {
+                finishQuizConfirm();
+            }
+        }
+
+        function jumpToQuestion(index) {
+            loadQuestion(index);
+        }
+
+        function finishQuizConfirm() {
+            const unanswered = userAnswers.filter(a => a === null).length;
+            let msg = "Bạn có chắc chắn muốn nộp bài và kết thúc lượt làm này?";
+            if (unanswered > 0) {
+                msg = `Bạn còn ${unanswered} câu chưa trả lời. Bạn có chắc chắn muốn kết thúc bài làm không?`;
+            }
+            if (window.confirm(msg)) {
+                finishQuiz();
+            }
+        }
+
+        function finishQuiz() {
+            if (timerInterval) clearInterval(timerInterval);
+
+            // Calculate Score
+            let correctCount = 0;
+            currentQuestions.forEach((q, idx) => {
+                if (userAnswers[idx] === q.correct) {
+                    correctCount++;
+                }
+            });
+
+            const score = (correctCount / 20) * 10;
+
+            // Switch Screen
+            document.getElementById('quiz-screen').classList.add('hidden');
+            document.getElementById('header-stats').classList.add('hidden');
+            document.getElementById('result-screen').classList.remove('hidden');
+
+            // Render Score Summary
+            document.getElementById('score-text').innerText = `${score.toFixed(1)} / 10`;
+            document.getElementById('correct-count-text').innerText = `Đúng ${correctCount} / 20 câu`;
+
+            // Teacher Evaluation
+            const feedbackElem = document.getElementById('teacher-feedback');
+            if (score >= 9.0) {
+                feedbackElem.innerHTML = `🌟 <strong>Xuất sắc!</strong> Em nắm rất vững lý thuyết định luật bảo toàn động lượng, hiểu bản chất hệ kín và vận dụng linh hoạt vào giải bài toán va chạm. Hãy tiếp tục phát huy ở các bài học tiếp theo nhé!`;
+            } else if (score >= 7.0) {
+                feedbackElem.innerHTML = `👍 <strong>Khá tốt!</strong> Em hiểu rõ nội dung trọng tâm bài 29 và giải tốt các câu hỏi biết và hiểu. Cần rèn luyện thêm kỹ năng phân tích biểu thức vận tốc trong các bài toán vận dụng cao để đạt điểm tối đa!`;
+            } else if (score >= 5.0) {
+                feedbackElem.innerHTML = `📚 <strong>Đạt yêu cầu!</strong> Em đã nắm được các khái niệm cơ bản về hệ kín và va chạm mềm. Tuy nhiên cần xem lại kỹ lời giải chi tiết cho các câu hỏi vận dụng toán học bên dưới để hiểu sâu hơn.`;
+            } else {
+                feedbackElem.innerHTML = `💪 <strong>Cần cố gắng thêm!</strong> Kết quả chưa thực sự như mong muốn. Em hãy dành thời gian đọc lại lý thuyết SGK Bài 29 (trang 113-115) và xem kỹ phần giải thích chi tiết bên dưới để củng cố lại lỗ hổng kiến thức nhé!`;
+            }
+
+            // Render Detailed Review
+            renderDetailedReview();
+        }
+
+        function renderDetailedReview() {
+            const container = document.getElementById('detailed-review-container');
+            container.innerHTML = '';
+
+            const prefixes = ['A', 'B', 'C', 'D'];
+
+            currentQuestions.forEach((q, idx) => {
+                const userAns = userAnswers[idx];
+                const isCorrect = (userAns === q.correct);
+
+                const item = document.createElement('div');
+                item.className = `p-5 rounded-2xl border-2 ${
+                    isCorrect ? 'border-green-200 bg-green-50/40' : 'border-red-200 bg-red-50/40'
+                }`;
+
+                let optionsHtml = '';
+                q.options.forEach((opt, oIdx) => {
+                    let optClass = 'bg-white text-gray-700 border-gray-200';
+                    let icon = '';
+
+                    if (oIdx === q.correct) {
+                        optClass = 'bg-green-100 text-green-900 border-green-400 font-semibold';
+                        icon = `<i class="fa-solid fa-circle-check text-green-600 ml-auto"></i>`;
+                    }
+                    if (userAns === oIdx && !isCorrect) {
+                        optClass = 'bg-red-100 text-red-900 border-red-400 font-semibold';
+                        icon = `<i class="fa-solid fa-circle-xmark text-red-600 ml-auto"></i>`;
+                    }
+
+                    optionsHtml += `
+                        <div class="p-3 rounded-xl border flex items-center gap-3 text-sm ${optClass}">
+                            <span class="font-bold w-6 h-6 rounded-full bg-white/80 border text-center leading-6 shrink-0">${prefixes[oIdx]}</span>
+                            <span class="flex-1">${opt}</span>
+                            ${icon}
+                        </div>
+                    `;
+                });
+
+                item.innerHTML = `
+                    <div class="flex justify-between items-start gap-3 mb-3">
+                        <span class="font-bold text-purple-950 text-base">Câu ${idx + 1}: ${q.question}</span>
+                        <span class="px-2.5 py-1 rounded-full text-xs font-bold shrink-0 ${
+                            isCorrect ? 'bg-green-600 text-white' : 'bg-red-600 text-white'
+                        }">
+                            ${isCorrect ? 'Đúng' : 'Sai'}
+                        </span>
+                    </div>
+
+                    <div class="space-y-2 my-3">
+                        ${optionsHtml}
+                    </div>
+
+                    <div class="mt-4 pt-3 border-t border-gray-200/80 bg-white p-4 rounded-xl text-sm border">
+                        <div class="font-bold text-purple-900 mb-1 flex items-center">
+                            <i class="fa-solid fa-lightbulb text-yellow-500 mr-2"></i> Lời giải chi tiết:
+                        </div>
+                        <div class="text-gray-700 leading-relaxed">${q.explanation}</div>
+                    </div>
+                `;
+
+                container.appendChild(item);
+            });
+
+            // Re-render MathJax
+            if (window.MathJax && MathJax.typesetPromise) {
+                MathJax.typesetPromise();
+            }
+        }
+
+        function restartQuiz() {
+            document.getElementById('result-screen').classList.add('hidden');
+            document.getElementById('start-screen').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>

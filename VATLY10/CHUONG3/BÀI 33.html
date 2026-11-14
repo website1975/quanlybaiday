@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ôn luyện củng cố kiến thức - Bài 33: Biến dạng của vật rắn</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- MathJax Configuration -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)'], ['$', '$']],
+                displayMath: [['\\[', '\\]'], ['$$', '$$']]
+            },
+            svg: { fontCache: 'global' }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" id="MathJax-script" async></script>
+
+    <style>
+        body {
+            background-color: #f3e8ff; /* Soft purple background */
+            color: #111827; /* Dark text for contrast */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .cream-text {
+            color: #FFFDD0; /* Custom Cream color requested */
+        }
+
+        .header-bg {
+            background: linear-gradient(135deg, #4c1d95 0%, #6b21a8 100%);
+        }
+
+        /* Custom scrollbar for question palette */
+        .custom-scroll::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scroll::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 4px;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: #c084fc;
+            border-radius: 4px;
+        }
+
+        /* Radio button dynamic accent */
+        input[type="radio"]:checked + label {
+            border-color: #9333ea;
+            background-color: #faf5ff;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between">
+
+    <!-- Top Header -->
+    <header class="header-bg shadow-lg border-b-4 border-purple-400 py-6 px-4">
+        <div class="max-w-5xl mx-auto text-center">
+            <span class="bg-purple-300 text-purple-950 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider mb-2 inline-block">
+                Vật Lý 10 - Chương VII
+            </span>
+            <h1 class="text-2xl md:text-4xl font-extrabold cream-text tracking-wide mb-1">
+                ÔN LUYỆN CỦNG CỐ KIẾN THỨC
+            </h1>
+            <h2 class="text-lg md:text-xl font-medium cream-text opacity-90">
+                Bài 33: BIẾN DẠNG CỦA VẬT RẮN
+            </h2>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-5xl mx-auto w-full p-4 md:p-6 flex-grow">
+
+        <!-- ================= VIEW 1: BẮT ĐẦU LÀM (START VIEW) ================= -->
+        <section id="start-view" class="bg-white rounded-2xl shadow-xl border border-purple-200 p-6 md:p-8 my-4">
+            <div class="text-center max-w-2xl mx-auto">
+                <div class="w-20 h-20 bg-purple-100 text-purple-700 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl shadow-inner">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                </div>
+                
+                <h3 class="text-2xl font-bold text-gray-800 mb-2">Hệ Thống Luyện Tập & Kiểm Tra Online</h3>
+                <p class="text-gray-600 mb-6 text-sm md:text-base">
+                    Bộ câu hỏi trắc nghiệm gồm 20 câu được xây dựng chuẩn theo 4 mức độ nhận thức (8 Biết, 7 Hiểu, 3 Vận dụng, 2 Vận dụng cao) thuộc kiến thức Bài 33 - Vật lí 10.
+                </p>
+
+                <!-- Exam Overview Cards -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8 text-center">
+                    <div class="bg-purple-50 p-4 rounded-xl border border-purple-200">
+                        <i class="fa-solid fa-clock text-purple-600 text-xl mb-1"></i>
+                        <div class="text-xs text-gray-500 font-semibold uppercase">Thời gian</div>
+                        <div class="text-lg font-bold text-purple-900">20 Phút</div>
+                    </div>
+                    <div class="bg-purple-50 p-4 rounded-xl border border-purple-200">
+                        <i class="fa-solid fa-list-check text-purple-600 text-xl mb-1"></i>
+                        <div class="text-xs text-gray-500 font-semibold uppercase">Số lượng</div>
+                        <div class="text-lg font-bold text-purple-900">20 Câu hỏi</div>
+                    </div>
+                    <div class="bg-purple-50 p-4 rounded-xl border border-purple-200">
+                        <i class="fa-solid fa-layer-group text-purple-600 text-xl mb-1"></i>
+                        <div class="text-xs text-gray-500 font-semibold uppercase">Cấu trúc đề</div>
+                        <div class="text-xs font-semibold text-purple-800 mt-1">8B - 7H - 3VD - 2VDC</div>
+                    </div>
+                    <div class="bg-purple-50 p-4 rounded-xl border border-purple-200">
+                        <i class="fa-solid fa-file-signature text-purple-600 text-xl mb-1"></i>
+                        <div class="text-xs text-gray-500 font-semibold uppercase">Hình thức</div>
+                        <div class="text-xs font-semibold text-purple-800 mt-1">Trắc nghiệm 4 chọn 1</div>
+                    </div>
+                </div>
+
+                <div class="border-t border-purple-100 pt-6">
+                    <h4 class="text-sm font-bold text-gray-700 uppercase tracking-wider mb-4">Vui lòng chọn hình thức làm bài:</h4>
+                    
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                        <!-- Mode 1: Practice -->
+                        <button onclick="startQuiz('practice')" class="flex-1 max-w-xs bg-purple-600 hover:bg-purple-700 active:scale-95 text-white font-bold py-4 px-6 rounded-xl shadow-lg transition-all duration-200 flex items-center justify-center gap-3">
+                            <i class="fa-solid fa-book-open text-xl"></i>
+                            <div class="text-left">
+                                <div class="text-base">Chế độ Luyện Tập</div>
+                                <div class="text-xs font-normal opacity-80">Không tính giờ, chủ động rèn luyện</div>
+                            </div>
+                        </button>
+
+                        <!-- Mode 2: Timed Test -->
+                        <button onclick="startQuiz('timed')" class="flex-1 max-w-xs bg-amber-600 hover:bg-amber-700 active:scale-95 text-white font-bold py-4 px-6 rounded-xl shadow-lg transition-all duration-200 flex items-center justify-center gap-3">
+                            <i class="fa-solid fa-stopwatch text-xl"></i>
+                            <div class="text-left">
+                                <div class="text-base">Chế độ Tính Giờ</div>
+                                <div class="text-xs font-normal opacity-80">Đếm ngược 20 phút, xáo trộn đề</div>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= VIEW 2: ĐANG LÀM BÀI (QUIZ ACTIVE VIEW) ================= -->
+        <section id="quiz-view" class="hidden">
+            <!-- Test Info & Bar -->
+            <div class="bg-white rounded-xl shadow-md border border-purple-200 p-4 mb-4 flex flex-wrap items-center justify-between gap-4">
+                <div class="flex items-center gap-3">
+                    <span id="mode-badge" class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-purple-100 text-purple-800">
+                        Chế độ Luyện Tập
+                    </span>
+                    <span class="text-sm font-semibold text-gray-600">
+                        Tiến độ: <span id="answered-count" class="text-purple-700 font-bold">0</span>/20 câu
+                    </span>
+                </div>
+
+                <!-- Timer Display -->
+                <div id="timer-box" class="flex items-center gap-2 bg-amber-50 border border-amber-300 text-amber-800 px-4 py-1.5 rounded-lg font-mono font-bold text-lg">
+                    <i class="fa-regular fa-clock"></i>
+                    <span id="timer-display">20:00</span>
+                </div>
+            </div>
+
+            <!-- Question & Navigation Grid Layout -->
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+                <!-- Left Main Panel: Question Card -->
+                <div class="lg:col-span-3 bg-white rounded-2xl shadow-xl border border-purple-200 p-6 flex flex-col justify-between">
+                    <div>
+                        <!-- Question Header -->
+                        <div class="flex items-center justify-between border-b border-gray-100 pb-3 mb-4">
+                            <div class="flex items-center gap-2">
+                                <span class="bg-purple-700 text-white font-bold px-3 py-1 rounded-lg text-sm">
+                                    Câu <span id="current-q-num">1</span>
+                                </span>
+                                <span id="q-level-badge" class="text-xs font-semibold px-2.5 py-1 rounded-full">
+                                    Mức độ: Biết
+                                </span>
+                            </div>
+                            <span class="text-xs text-gray-400 font-medium">Lựa chọn 1 đáp án đúng nhất</span>
+                        </div>
+
+                        <!-- Question Content -->
+                        <div id="question-text" class="text-gray-900 font-medium text-base md:text-lg mb-6 leading-relaxed">
+                            <!-- Question text dynamically injected here -->
+                        </div>
+
+                        <!-- Options Container -->
+                        <div id="options-container" class="space-y-3 mb-6">
+                            <!-- Options dynamically injected here -->
+                        </div>
+                    </div>
+
+                    <!-- Question Control Buttons -->
+                    <div class="flex items-center justify-between border-t border-gray-100 pt-4 mt-4">
+                        <button id="btn-prev" onclick="navigateQuestion(-1)" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg font-semibold text-sm transition flex items-center gap-2">
+                            <i class="fa-solid fa-arrow-left"></i> Câu trước
+                        </button>
+
+                        <div class="flex gap-2">
+                            <button id="btn-next" onclick="navigateQuestion(1)" class="px-5 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-semibold text-sm transition flex items-center gap-2">
+                                Câu sau <i class="fa-solid fa-arrow-right"></i>
+                            </button>
+                            
+                            <button onclick="confirmSubmit()" class="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-bold text-sm shadow transition flex items-center gap-2">
+                                <i class="fa-solid fa-check-double"></i> Nộp Bài
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Sidebar: Question Palette -->
+                <div class="bg-white rounded-2xl shadow-xl border border-purple-200 p-5 h-fit">
+                    <h4 class="font-bold text-gray-800 text-sm mb-3 flex items-center justify-between">
+                        <span><i class="fa-solid fa-grid-2 text-purple-600 mr-1.5"></i> Danh sách câu hỏi</span>
+                    </h4>
+                    <p class="text-xs text-gray-500 mb-4">Nhấn vào số câu để di chuyển nhanh:</p>
+                    
+                    <div id="question-palette" class="grid grid-cols-5 gap-2 max-h-72 overflow-y-auto custom-scroll pr-1">
+                        <!-- Palette items dynamically generated -->
+                    </div>
+
+                    <div class="mt-6 border-t border-gray-100 pt-4 text-xs space-y-2 text-gray-600">
+                        <div class="flex items-center gap-2">
+                            <span class="w-3.5 h-3.5 rounded-md border border-purple-600 bg-purple-600 inline-block"></span>
+                            <span>Đang làm</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="w-3.5 h-3.5 rounded-md border border-emerald-500 bg-emerald-100 inline-block"></span>
+                            <span>Đã chọn đáp án</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="w-3.5 h-3.5 rounded-md border border-gray-300 bg-gray-50 inline-block"></span>
+                            <span>Chưa trả lời</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= VIEW 3: KẾT THÚC & LỜI GIẢI (RESULT VIEW) ================= -->
+        <section id="result-view" class="hidden my-4 space-y-6">
+            <!-- Score Card -->
+            <div class="bg-white rounded-2xl shadow-xl border border-purple-200 p-6 md:p-8">
+                <div class="text-center max-w-xl mx-auto">
+                    <span class="px-3 py-1 bg-purple-100 text-purple-800 text-xs font-bold rounded-full uppercase">
+                        Kết Quả Bài Kiểm Tra
+                    </span>
+                    <h3 class="text-2xl font-extrabold text-gray-800 mt-2 mb-4">BÁO CÁO NĂNG LỰC HỌC TẬP</h3>
+
+                    <div class="flex justify-center items-center gap-6 my-6">
+                        <!-- Score circle -->
+                        <div class="w-32 h-32 rounded-full border-4 border-purple-600 flex flex-col justify-center items-center bg-purple-50 shadow-inner">
+                            <span class="text-xs text-gray-500 uppercase font-semibold">Điểm số</span>
+                            <span id="score-display" class="text-3xl font-black text-purple-900">0.0</span>
+                            <span class="text-xs text-purple-600 font-bold">Thang điểm 10</span>
+                        </div>
+                        
+                        <div class="text-left space-y-2 text-sm">
+                            <div class="text-gray-700">
+                                <i class="fa-solid fa-circle-check text-emerald-500 mr-2"></i>Số câu đúng: 
+                                <strong id="correct-count-text" class="text-emerald-700 font-bold">0/20</strong>
+                            </div>
+                            <div class="text-gray-700">
+                                <i class="fa-solid fa-circle-xmark text-rose-500 mr-2"></i>Số câu sai: 
+                                <strong id="wrong-count-text" class="text-rose-700 font-bold">0/20</strong>
+                            </div>
+                            <div class="text-gray-700">
+                                <i class="fa-solid fa-hourglass-half text-amber-500 mr-2"></i>Thời gian làm: 
+                                <strong id="time-taken-text" class="text-amber-800 font-bold">00:00</strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Level Detailed Breakdown -->
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 my-6 text-xs text-center">
+                        <div class="p-3 bg-blue-50 rounded-lg border border-blue-200">
+                            <div class="font-bold text-blue-900">Biết (8 câu)</div>
+                            <div id="stat-biet" class="text-blue-700 font-semibold text-sm mt-1">0/8</div>
+                        </div>
+                        <div class="p-3 bg-emerald-50 rounded-lg border border-emerald-200">
+                            <div class="font-bold text-emerald-900">Hiểu (7 câu)</div>
+                            <div id="stat-hieu" class="text-emerald-700 font-semibold text-sm mt-1">0/7</div>
+                        </div>
+                        <div class="p-3 bg-amber-50 rounded-lg border border-amber-200">
+                            <div class="font-bold text-amber-900">Vận dụng (3 câu)</div>
+                            <div id="stat-vandung" class="text-amber-700 font-semibold text-sm mt-1">0/3</div>
+                        </div>
+                        <div class="p-3 bg-rose-50 rounded-lg border border-rose-200">
+                            <div class="font-bold text-rose-900">Vận dụng cao (2 câu)</div>
+                            <div id="stat-vdcao" class="text-rose-700 font-semibold text-sm mt-1">0/2</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Teacher Evaluation & Remarks -->
+                <div class="mt-6 p-5 bg-purple-50 rounded-xl border-l-4 border-purple-700 text-gray-800">
+                    <h4 class="font-bold text-purple-900 flex items-center gap-2 mb-2">
+                        <i class="fa-solid fa-user-tie text-purple-700"></i> ĐÁNH GIÁ & NHẬN XÉT CỦA GIÁO VIÊN:
+                    </h4>
+                    <p id="teacher-comment" class="text-sm leading-relaxed italic text-gray-700">
+                        <!-- Dynamic Teacher Advice -->
+                    </p>
+                </div>
+
+                <!-- Actions -->
+                <div class="mt-8 flex flex-wrap gap-4 justify-center">
+                    <button onclick="retakeQuiz('practice')" class="px-5 py-2.5 bg-purple-700 hover:bg-purple-800 text-white font-bold rounded-xl shadow transition flex items-center gap-2">
+                        <i class="fa-solid fa-rotate-left"></i> Làm lại (Luyện tập)
+                    </button>
+                    <button onclick="retakeQuiz('timed')" class="px-5 py-2.5 bg-amber-600 hover:bg-amber-700 text-white font-bold rounded-xl shadow transition flex items-center gap-2">
+                        <i class="fa-solid fa-stopwatch"></i> Làm lại (Tính giờ)
+                    </button>
+                </div>
+            </div>
+
+            <!-- Detailed Solutions List -->
+            <div class="bg-white rounded-2xl shadow-xl border border-purple-200 p-6 md:p-8">
+                <h3 class="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2 border-b border-gray-100 pb-3">
+                    <i class="fa-solid fa-square-poll-vertical text-purple-700"></i> ĐÁP ÁN VÀ LỜI GIẢI CHI TIẾT
+                </h3>
+
+                <div id="solutions-container" class="space-y-6">
+                    <!-- Dynamic Solutions Rendered Here -->
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-purple-950 text-purple-200 py-4 px-4 text-center text-xs border-t border-purple-800">
+        <p>© Hệ thống Ôn luyện & Củng cố Kiến thức Vật lí 10 - Bài 33: Biến dạng của vật rắn</p>
+    </footer>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        // ORIGINAL 20 QUESTIONS DATASET strictly based on PDF Bài 33
+        const originalQuestions = [
+            // LEVEL: BIẾT (8 CÂU)
+            {
+                id: 1,
+                level: "Biết",
+                levelCode: "biet",
+                question: "Khi không còn tác dụng của ngoại lực, nếu vật rắn lấy lại được hình dạng và kích thước ban đầu thì biến dạng của vật là loại biến dạng nào?",
+                options: [
+                    "A. Biến dạng dẻo",
+                    "B. Biến dạng đàn hồi",
+                    "C. Biến dạng gãy",
+                    "D. Biến dạng vĩnh viễn"
+                ],
+                correct: 1, // B
+                explanation: "Theo định nghĩa trong SGK: Khi không còn tác dụng của ngoại lực, nếu vật rắn lấy lại được hình dạng và kích thước ban đầu thì biến dạng của vật là biến dạng đàn hồi."
+            },
+            {
+                id: 2,
+                level: "Biết",
+                levelCode: "biet",
+                question: "Giới hạn mà trong đó vật rắn còn giữ được tính đàn hồi được gọi là gì?",
+                options: [
+                    "A. Giới hạn bền của vật",
+                    "B. Giới hạn dẻo của vật",
+                    "C. Giới hạn đàn hồi của vật rắn",
+                    "D. Giới hạn chịu lực tối đa"
+                ],
+                correct: 2, // C
+                explanation: "Giới hạn mà trong đó vật rắn còn giữ được tính đàn hồi được gọi là giới hạn đàn hồi của vật rắn."
+            },
+            {
+                id: 3,
+                level: "Biết",
+                levelCode: "biet",
+                question: "Trường hợp nào sau đây xảy ra biến dạng kéo?",
+                options: [
+                    "A. Cột chịu lực trong tòa nhà",
+                    "B. Vật chịu tác dụng của cặp lực nén hướng vào phía trong vật",
+                    "C. Quả bóng cao su bị ép vào bức tường",
+                    "D. Cánh cung khi người bắn tên kéo dây cung"
+                ],
+                correct: 3, // D
+                explanation: "Khi người bắn tên kéo dây cung, cánh cung bị uốn cong và dãn ra dưới tác dụng của lực kéo hướng ra ngoài, đó là biến dạng kéo."
+            },
+            {
+                id: 4,
+                level: "Biết",
+                levelCode: "biet",
+                question: "Khi vật chịu tác dụng của cặp lực nén ngược chiều nhau, vuông góc với bề mặt của vật và hướng vào phía trong vật, ta có loại biến dạng nào?",
+                options: [
+                    "A. Biến dạng kéo",
+                    "B. Biến dạng nén",
+                    "C. Biến dạng xoắn",
+                    "D. Biến dạng trượt"
+                ],
+                correct: 1, // B
+                explanation: "Cặp lực nén ngược chiều, vuông góc bề mặt và hướng vào phía trong vật gây ra biến dạng nén."
+            },
+            {
+                id: 5,
+                level: "Biết",
+                levelCode: "biet",
+                question: "Đơn vị của hệ số đàn hồi (độ cứng) \\(k\\) của lò xo trong hệ đơn vị SI là gì?",
+                options: [
+                    "A. N.m",
+                    "B. N/m",
+                    "C. N/m²",
+                    "D. kg/m"
+                ],
+                correct: 1, // B
+                explanation: "Trong hệ SI, hệ số đàn hồi hay độ cứng \\(k\\) có đơn vị là Newton trên mét (\\(\\text{N/m}\\))."
+            },
+            {
+                id: 6,
+                level: "Biết",
+                levelCode: "biet",
+                question: "Lực đàn hồi của lò xo có đặc điểm nào sau đây?",
+                options: [
+                    "A. Cùng chiều với lực làm lò xo biến dạng",
+                    "B. Chống lại nguyên nhân làm nó biến dạng và có xu hướng đưa nó về hình dạng, kích thước ban đầu",
+                    "C. Tăng lên khi lò xo mất tính đàn hồi",
+                    "D. Không phụ thuộc vào độ biến dạng của lò xo"
+                ],
+                correct: 1, // B
+                explanation: "Lực đàn hồi của lò xo chống lại nguyên nhân làm nó biến dạng và có xu hướng đưa nó về hình dạng và kích thước ban đầu."
+            },
+            {
+                id: 7,
+                level: "Biết",
+                levelCode: "biet",
+                question: "Theo định luật Hooke, trong giới hạn đàn hồi, độ lớn lực đàn hồi của lò xo có mối quan hệ như thế nào với độ biến dạng của lò xo?",
+                options: [
+                    "A. Tỉ lệ nghịch với độ biến dạng",
+                    "B. Tỉ lệ thuận với bình phương độ biến dạng",
+                    "C. Tỉ lệ thuận với độ biến dạng",
+                    "D. Tỉ lệ nghịch với bình phương độ biến dạng"
+                ],
+                correct: 2, // C
+                explanation: "Định luật Hooke phát biểu: Trong giới hạn đàn hồi, độ lớn lực đàn hồi của lò xo tỉ lệ thuận với độ biến dạng của lò xo: \\(F_{\\text{đh}} = k|\\Delta l|\\)."
+            },
+            {
+                id: 8,
+                level: "Biết",
+                levelCode: "biet",
+                question: "Trò chơi mạo hiểm Bungee được thực hiện dựa trên hiện tượng vật lý nào?",
+                options: [
+                    "A. Hiện tượng ma sát trượt",
+                    "B. Hiện tượng biến dạng đàn hồi của dây nhảy",
+                    "C. Hiện tượng áp suất chất lỏng",
+                    "D. Hiện tượng quán tính"
+                ],
+                correct: 1, // B
+                explanation: "Trò chơi mạo hiểm Bungee dựa trên hiện tượng biến dạng đàn hồi của sợi dây cao su tổng hợp đặc biệt."
+            },
+
+            // LEVEL: HIỂU (7 CÂU)
+            {
+                id: 9,
+                level: "Hiểu",
+                levelCode: "hieu",
+                question: "Trong các công trình xây dựng, cột chịu lực trong tòa nhà chịu loại biến dạng nào dưới đây?",
+                options: [
+                    "A. Biến dạng kéo",
+                    "B. Biến dạng nén",
+                    "C. Biến dạng uốn dẻo",
+                    "D. Không bị biến dạng"
+                ],
+                correct: 1, // B
+                explanation: "Cột chịu lực của tòa nhà đỡ trọng lượng của sàn và các tầng phía trên, trọng lực này ép xuống cột hướng vào trong vật nên cột chịu biến dạng nén."
+            },
+            {
+                id: 10,
+                level: "Hiểu",
+                levelCode: "hieu",
+                question: "Khi kéo hai đầu một lò xo trong giới hạn đàn hồi, nếu tăng độ lớn lực kéo lên 2 lần thì độ dãn \\(\\Delta l\\) của lò xo sẽ biến đổi như thế nào?",
+                options: [
+                    "A. Giảm đi 2 lần",
+                    "B. Không thay đổi",
+                    "C. Tăng lên 2 lần",
+                    "D. Tăng lên 4 lần"
+                ],
+                correct: 2, // C
+                explanation: "Vì trong giới hạn đàn hồi, lực đàn hồi tỉ lệ thuận với độ biến dạng \\(F = k \\cdot \\Delta l \\Rightarrow \\Delta l = \\frac{F}{k}\\). Khi lực kéo tăng 2 lần thì độ dãn \\(\\Delta l\\) cũng tăng 2 lần."
+            },
+            {
+                id: 11,
+                level: "Hiểu",
+                levelCode: "hieu",
+                question: "Hình 33.5 trong SGK thể hiện đồ thị phụ thuộc của lực đàn hồi \\(F\\) vào độ biến dạng \\(\\Delta l\\) của 3 lò xo A, B và C. Đồ thị lò xo C có độ dốc (góc nghiêng so với trục \\(\\Delta l\\)) lớn nhất. Khẳng định nào sau đây là đúng?",
+                options: [
+                    "A. Lò xo A có độ cứng lớn nhất",
+                    "B. Lò xo B có độ cứng lớn nhất",
+                    "C. Lò xo C có độ cứng lớn nhất",
+                    "D. Cả 3 lò xo có độ cứng bằng nhau"
+                ],
+                correct: 2, // C
+                explanation: "Độ dốc của đường biểu diễn \\(F\\) theo \\(\\Delta l\\) bằng \\(k = \\frac{F}{\\Delta l}\\). Đường biểu diễn lò xo C có độ dốc lớn nhất nên lò xo C có độ cứng lớn nhất."
+            },
+            {
+                id: 12,
+                level: "Hiểu",
+                levelCode: "hieu",
+                question: "Vì sao trong các thí nghiệm thực hành đo lực đàn hồi và độ dãn của lò xo, khối lượng của lò xo cần rất nhỏ so với khối lượng của các vật nặng treo vào nó?",
+                options: [
+                    "A. Để lò xo không bị đứt trong khi làm thí nghiệm",
+                    "B. Để có thể bỏ qua trọng lượng của lò xo, giúp phép đo chỉ phản ánh lực kéo của vật nặng",
+                    "C. Để làm tăng độ cứng \\(k\\) của lò xo",
+                    "D. Để mở rộng giới hạn đàn hồi của lò xo"
+                ],
+                correct: 1, // B
+                explanation: "Khối lượng lò xo rất nhỏ giúp ta có thể bỏ qua trọng lượng bản thân của các vòng lò xo, từ đó lực tác dụng làm lò xo biến dạng chính bằng trọng lượng các vật treo."
+            },
+            {
+                id: 13,
+                level: "Hiểu",
+                levelCode: "hieu",
+                question: "Điều gì sẽ xảy ra nếu tác dụng một lực kéo vào lò xo vượt quá giới hạn đàn hồi của nó?",
+                options: [
+                    "A. Độ cứng \\(k\\) của lò xo sẽ tăng gấp đôi",
+                    "B. Lò xo lấy lại chiều dài ban đầu nhanh hơn",
+                    "C. Tính đàn hồi bị phá hủy và lực đàn hồi không còn tỉ lệ thuận với độ biến dạng",
+                    "D. Lò xo lập tức bị đứt gãy ngay"
+                ],
+                correct: 2, // C
+                explanation: "Khi lực đặt vào vượt quá giới hạn đàn hồi (ứng với phần đường cong ngoài đoạn thẳng OA trên đồ thị), tính đàn hồi bị phá hủy, lực đàn hồi không còn tỉ lệ thuận với độ biến dạng nữa."
+            },
+            {
+                id: 14,
+                level: "Hiểu",
+                levelCode: "hieu",
+                question: "Một lò xo nhẹ có độ cứng \\(k\\) được treo thẳng đứng. Treo vào đầu dưới một vật nặng khối lượng \\(m\\). Tại vị trí cân bằng, độ dãn \\(\\Delta l\\) của lò xo được tính theo biểu thức nào? (Lấy gia tốc trọng trường là \\(g\\))",
+                options: [
+                    "A. \\(\\Delta l = \\frac{k}{m \\cdot g}\\)",
+                    "B. \\(\\Delta l = \\frac{m \\cdot g}{k}\\)",
+                    "C. \\(\\Delta l = m \\cdot g \\cdot k\\)",
+                    "D. \\(\\Delta l = \\frac{m}{k \\cdot g}\\)"
+                ],
+                correct: 1, // B
+                explanation: "Khi vật ở vị trí cân bằng, lực đàn hồi cân bằng với trọng lực: \\(F_{\\text{đh}} = P \\Leftrightarrow k \\cdot \\Delta l = m \\cdot g \\Rightarrow \\Delta l = \\frac{m \\cdot g}{k}\\)."
+            },
+            {
+                id: 15,
+                level: "Hiểu",
+                levelCode: "hieu",
+                question: "Độ cứng \\(k\\) của một lò xo xác định phụ thuộc vào những yếu tố nào sau đây?",
+                options: [
+                    "A. Khối lượng của vật nặng treo vào lò xo",
+                    "B. Độ lớn của lực nén hoặc lực kéo tác dụng lên lò xo",
+                    "C. Kích thước, hình dạng và vật liệu làm lò xo",
+                    "D. Gia tốc trọng trường tại nơi làm thí nghiệm"
+                ],
+                correct: 2, // C
+                explanation: "Hệ số đàn hồi hay độ cứng \\(k\\) là hằng số đối với một lò xo xác định, phụ thuộc vào kích thước, hình dạng và vật liệu chế tạo lò xo."
+            },
+
+            // LEVEL: VẬN DỤNG (3 CÂU)
+            {
+                id: 16,
+                level: "Vận dụng",
+                levelCode: "vandung",
+                question: "Một lò xo có chiều dài tự nhiên \\(l_0 = 20\\text{ cm}\\). Khi treo thẳng đứng một vật nặng khối lượng \\(m = 100\\text{ g}\\) thì khi cân bằng lò xo dài \\(l = 22\\text{ cm}\\). Lấy \\(g = 10\\text{ m/s}^2\\). Độ cứng \\(k\\) của lò xo bằng bao nhiêu?",
+                options: [
+                    "A. \\(20\\text{ N/m}\\)",
+                    "B. \\(50\\text{ N/m}\\)",
+                    "C. \\(100\\text{ N/m}\\)",
+                    "D. \\(500\\text{ N/m}\\)"
+                ],
+                correct: 1, // B
+                explanation: "Đổi \\(m = 100\\text{ g} = 0{,}1\\text{ kg}\\); độ dãn \\(\\Delta l = l - l_0 = 22 - 20 = 2\\text{ cm} = 0{,}02\\text{ m}\\).<br>Khi cân bằng: \\(F_{\\text{đh}} = P \\Leftrightarrow k \\cdot \\Delta l = m \\cdot g \\Rightarrow k = \\frac{m \\cdot g}{\\Delta l} = \\frac{0{,}1 \\cdot 10}{0{,}02} = 50\\text{ N/m}\\)."
+            },
+            {
+                id: 17,
+                level: "Vận dụng",
+                levelCode: "vandung",
+                question: "Một lò xo nhẹ có độ cứng \\(k = 100\\text{ N/m}\\) có chiều dài tự nhiên \\(l_0 = 15\\text{ cm}\\). Tác dụng một lực nén \\(F = 5\\text{ N}\\) dọc theo trục của lò xo. Chiều dài \\(l\\) của lò xo khi bị nén là bao nhiêu?",
+                options: [
+                    "A. \\(20\\text{ cm}\\)",
+                    "B. \\(10\\text{ cm}\\)",
+                    "C. \\(12\\text{ cm}\\)",
+                    "D. \\(5\\text{ cm}\\)"
+                ],
+                correct: 1, // B
+                explanation: "Độ nén của lò xo: \\(\\Delta l = \\frac{F}{k} = \\frac{5}{100} = 0{,}05\\text{ m} = 5\\text{ cm}\\).<br>Khi bị nén, chiều dài của lò xo là: \\(l = l_0 - \\Delta l = 15 - 5 = 10\\text{ cm}\\)."
+            },
+            {
+                id: 18,
+                level: "Vận dụng",
+                levelCode: "vandung",
+                question: "Một lò xo được treo thẳng đứng. Khi treo vật có khối lượng \\(m_1 = 200\\text{ g}\\) thì lò xo dài \\(l_1 = 25\\text{ cm}\\). Khi treo thêm vật \\(m_2 = 100\\text{ g}\\) thì lò xo dài \\(l_2 = 27\\text{ cm}\\). Lấy \\(g = 10\\text{ m/s}^2\\). Chiều dài tự nhiên \\(l_0\\) của lò xo là bao nhiêu?",
+                options: [
+                    "A. \\(20\\text{ cm}\\)",
+                    "B. \\(21\\text{ cm}\\)",
+                    "C. \\(22\\text{ cm}\\)",
+                    "D. \\(23\\text{ cm}\\)"
+                ],
+                correct: 1, // B
+                explanation: "Khi treo \\(m_1 = 200\\text{ g}\\): \\(k(l_1 - l_0) = m_1 \\cdot g = 2\\text{ N}\\) (1)<br>Khi treo thêm \\(m_2\\) thì tổng khối lượng \\(m = 300\\text{ g}\\): \\(k(l_2 - l_0) = (m_1 + m_2) \\cdot g = 3\\text{ N}\\) (2)<br>Lập tỉ số (1) và (2): \\(\\frac{l_1 - l_0}{l_2 - l_0} = \\frac{2}{3} \\Leftrightarrow \\frac{25 - l_0}{27 - l_0} = \\frac{2}{3} \\Rightarrow 3(25 - l_0) = 2(27 - l_0) \\Rightarrow 75 - 3l_0 = 54 - 2l_0 \\Rightarrow l_0 = 21\\text{ cm}\\)."
+            },
+
+            // LEVEL: VẬN DỤNG CAO (2 CÂU)
+            {
+                id: 19,
+                level: "Vận dụng cao",
+                levelCode: "vdcao",
+                question: "Một lò xo được bố trí theo phương thẳng đứng và có gắn vật nặng khối lượng \\(m = 200\\text{ g}\\). Khi vật treo ở dưới thì lò xo dài \\(l_1 = 17\\text{ cm}\\), khi vật đặt ở trên đầu lò xo thì lò xo dài \\(l_2 = 13\\text{ cm}\\). Lấy \\(g = 10\\text{ m/s}^2\\) và bỏ qua trọng lượng lò xo, giá đỡ. Chiều dài tự nhiên \\(l_0\\) và độ cứng \\(k\\) của lò xo là:",
+                options: [
+                    "A. \\(l_0 = 15\\text{ cm}; k = 100\\text{ N/m}\\)",
+                    "B. \\(l_0 = 15\\text{ cm}; k = 50\\text{ N/m}\\)",
+                    "C. \\(l_0 = 14\\text{ cm}; k = 100\\text{ N/m}\\)",
+                    "D. \\(l_0 = 16\\text{ cm}; k = 200\\text{ N/m}\\)"
+                ],
+                correct: 0, // A
+                explanation: "Trọng lượng vật \\(P = m \\cdot g = 0{,}2 \\cdot 10 = 2\\text{ N}\\).<br>Khi treo vật dưới (lò xo bị dãn): \\(F_{\\text{đh1}} = P \\Leftrightarrow k(0{,}17 - l_0) = 2\\) (1)<br>Khi đặt vật trên (lò xo bị nén): \\(F_{\\text{đh2}} = P \\Leftrightarrow k(l_0 - 0{,}13) = 2\\) (2)<br>Từ (1) và (2) suy ra: \\(0{,}17 - l_0 = l_0 - 0{,}13 \\Rightarrow 2l_0 = 0{,}30 \\Rightarrow l_0 = 0{,}15\\text{ m} = 15\\text{ cm}\\).<br>Thay \\(l_0 = 0{,}15\\text{ m}\\) vào (1): \\(k(0{,}17 - 0{,}15) = 2 \\Rightarrow k \\cdot 0{,}02 = 2 \\Rightarrow k = 100\\text{ N/m}\\)."
+            },
+            {
+                id: 20,
+                level: "Vận dụng cao",
+                levelCode: "vdcao",
+                question: "Một lò xo có chiều dài tự nhiên \\(l_0 = 20\\text{ cm}\\) và độ cứng \\(k = 80\\text{ N/m}\\) được treo thẳng đứng. Khi lò xo chịu lực kéo tại vị trí ban đầu, lực đàn hồi tác dụng vào điểm treo là \\(F_{\\text{đh1}} = 4\\text{ N}\\). Nếu tiếp tục kéo dãn lò xo thêm một đoạn \\(2\\text{ cm}\\) nữa thì lực đàn hồi tác dụng lên điểm treo có độ lớn bao nhiêu và chiều dài tổng cộng của lò xo lúc này là bao nhiêu?",
+                options: [
+                    "A. \\(5{,}6\\text{ N}\\) và \\(27\\text{ cm}\\)",
+                    "B. \\(5{,}6\\text{ N}\\) và \\(22\\text{ cm}\\)",
+                    "C. \\(1{,}6\\text{ N}\\) và \\(27\\text{ cm}\\)",
+                    "D. \\(6{,}0\\text{ N}\\) và \\(25\\text{ cm}\\)"
+                ],
+                correct: 0, // A
+                explanation: "Độ dãn ban đầu của lò xo: \\(\\Delta l_1 = \\frac{F_{\\text{đh1}}}{k} = \\frac{4}{80} = 0{,}05\\text{ m} = 5\\text{ cm}\\).<br>Khi kéo dãn thêm \\(2\\text{ cm}\\), độ dãn tổng cộng mới là: \\(\\Delta l_2 = 5 + 2 = 7\\text{ cm} = 0{,}07\\text{ m}\\).<br>Lực đàn hồi mới: \\(F_{\\text{đh2}} = k \\cdot \\Delta l_2 = 80 \\cdot 0{,}07 = 5{,}6\\text{ N}\\).<br>Chiều dài tổng cộng của lò xo lúc này: \\(l = l_0 + \\Delta l_2 = 20 + 7 = 27\\text{ cm}\\)."
+            }
+        ];
+
+        // State variables
+        let currentMode = 'practice'; // 'practice' or 'timed'
+        let questions = [];
+        let userAnswers = {};
+        let currentIndex = 0;
+        let timerInterval = null;
+        let timeRemaining = 1200; // 20 minutes in seconds
+        let timeElapsed = 0;
+
+        // Initialize application on DOM content load
+        document.addEventListener("DOMContentLoaded", () => {
+            // Setup initial state
+        });
+
+        // Helper: Shuffle Array (Fisher-Yates)
+        function shuffleArray(array) {
+            let shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        // Start Quiz Function
+        function startQuiz(mode) {
+            currentMode = mode;
+            userAnswers = {};
+            currentIndex = 0;
+            timeElapsed = 0;
+
+            if (mode === 'timed') {
+                // In Timed mode, shuffle question order
+                questions = shuffleArray(originalQuestions);
+                timeRemaining = 1200; // 20 mins
+                document.getElementById('timer-box').classList.remove('hidden');
+                document.getElementById('mode-badge').innerText = "Chế độ Tính Giờ";
+                document.getElementById('mode-badge').className = "px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-amber-100 text-amber-800";
+                startTimer();
+            } else {
+                // Practice mode: Original order
+                questions = [...originalQuestions];
+                document.getElementById('timer-box').classList.add('hidden');
+                document.getElementById('mode-badge').innerText = "Chế độ Luyện Tập";
+                document.getElementById('mode-badge').className = "px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-purple-100 text-purple-800";
+            }
+
+            // Switch Views
+            document.getElementById('start-view').classList.add('hidden');
+            document.getElementById('result-view').classList.add('hidden');
+            document.getElementById('quiz-view').classList.remove('hidden');
+
+            // Render Palette and first question
+            renderQuestionPalette();
+            renderQuestion(0);
+        }
+
+        // Timer Logic
+        function startTimer() {
+            clearInterval(timerInterval);
+            updateTimerDisplay();
+
+            timerInterval = setInterval(() => {
+                timeRemaining--;
+                timeElapsed++;
+                updateTimerDisplay();
+
+                if (timeRemaining <= 0) {
+                    clearInterval(timerInterval);
+                    alert("Đã hết thời gian làm bài! Hệ thống sẽ tự động nộp bài.");
+                    submitQuiz();
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timeRemaining / 60);
+            const seconds = timeRemaining % 60;
+            document.getElementById('timer-display').innerText = 
+                `${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+        }
+
+        // Render Question Palette on Right Sidebar
+        function renderQuestionPalette() {
+            const palette = document.getElementById('question-palette');
+            palette.innerHTML = '';
+
+            questions.forEach((q, idx) => {
+                const btn = document.createElement('button');
+                btn.id = `palette-btn-${idx}`;
+                btn.innerText = idx + 1;
+                btn.onclick = () => renderQuestion(idx);
+                
+                // Base classes
+                btn.className = "w-9 h-9 rounded-lg font-bold text-xs transition flex items-center justify-center border border-gray-200 bg-gray-50 text-gray-700 hover:bg-purple-100";
+                
+                palette.appendChild(btn);
+            });
+            updatePaletteStyles();
+        }
+
+        function updatePaletteStyles() {
+            questions.forEach((q, idx) => {
+                const btn = document.getElementById(`palette-btn-${idx}`);
+                if (!btn) return;
+
+                const isAnswered = userAnswers[idx] !== undefined;
+                const isCurrent = idx === currentIndex;
+
+                if (isCurrent) {
+                    btn.className = "w-9 h-9 rounded-lg font-bold text-xs transition flex items-center justify-center border-2 border-purple-700 bg-purple-700 text-white shadow";
+                } else if (isAnswered) {
+                    btn.className = "w-9 h-9 rounded-lg font-bold text-xs transition flex items-center justify-center border border-emerald-500 bg-emerald-100 text-emerald-800";
+                } else {
+                    btn.className = "w-9 h-9 rounded-lg font-bold text-xs transition flex items-center justify-center border border-gray-200 bg-gray-50 text-gray-700 hover:bg-purple-100";
+                }
+            });
+
+            // Update answered count
+            const answeredCount = Object.keys(userAnswers).length;
+            document.getElementById('answered-count').innerText = answeredCount;
+        }
+
+        // Render Current Question
+        function renderQuestion(index) {
+            currentIndex = index;
+            const q = questions[index];
+
+            document.getElementById('current-q-num').innerText = index + 1;
+            
+            // Level badge style
+            const levelBadge = document.getElementById('q-level-badge');
+            levelBadge.innerText = `Mức độ: ${q.level}`;
+            if (q.levelCode === 'biet') levelBadge.className = "text-xs font-semibold px-2.5 py-1 rounded-full bg-blue-100 text-blue-800 border border-blue-200";
+            else if (q.levelCode === 'hieu') levelBadge.className = "text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200";
+            else if (q.levelCode === 'vandung') levelBadge.className = "text-xs font-semibold px-2.5 py-1 rounded-full bg-amber-100 text-amber-800 border border-amber-200";
+            else levelBadge.className = "text-xs font-semibold px-2.5 py-1 rounded-full bg-rose-100 text-rose-800 border border-rose-200";
+
+            // Question Text
+            document.getElementById('question-text').innerHTML = q.question;
+
+            // Options
+            const container = document.getElementById('options-container');
+            container.innerHTML = '';
+
+            q.options.forEach((opt, optIdx) => {
+                const isSelected = userAnswers[index] === optIdx;
+                
+                const optDiv = document.createElement('div');
+                optDiv.className = "relative";
+                optDiv.innerHTML = `
+                    <input type="radio" id="opt-${optIdx}" name="option" value="${optIdx}" ${isSelected ? 'checked' : ''} class="hidden peer" onchange="selectOption(${optIdx})">
+                    <label for="opt-${optIdx}" class="flex items-center p-4 border-2 ${isSelected ? 'border-purple-600 bg-purple-50' : 'border-gray-200 bg-white'} rounded-xl cursor-pointer hover:border-purple-300 transition-all">
+                        <span class="w-6 h-6 rounded-full border-2 ${isSelected ? 'border-purple-600 bg-purple-600 text-white' : 'border-gray-300'} flex items-center justify-center mr-3 text-xs font-bold transition">
+                            ${isSelected ? '<i class="fa-solid fa-check"></i>' : String.fromCharCode(65 + optIdx)}
+                        </span>
+                        <span class="text-gray-800 font-medium text-sm md:text-base">${opt}</span>
+                    </label>
+                `;
+                container.appendChild(optDiv);
+            });
+
+            // Prev/Next buttons state
+            document.getElementById('btn-prev').disabled = index === 0;
+            document.getElementById('btn-prev').style.opacity = index === 0 ? "0.5" : "1";
+            document.getElementById('btn-next').disabled = index === questions.length - 1;
+            document.getElementById('btn-next').style.opacity = index === questions.length - 1 ? "0.5" : "1";
+
+            updatePaletteStyles();
+
+            // Trigger MathJax Typesetting
+            if (window.MathJax) {
+                MathJax.typesetPromise();
+            }
+        }
+
+        // Select Option Handler
+        function selectOption(optIndex) {
+            userAnswers[currentIndex] = optIndex;
+            updatePaletteStyles();
+        }
+
+        // Navigate Questions
+        function navigateQuestion(direction) {
+            const targetIndex = currentIndex + direction;
+            if (targetIndex >= 0 && targetIndex < questions.length) {
+                renderQuestion(targetIndex);
+            }
+        }
+
+        // Confirm Submit
+        function confirmSubmit() {
+            const answeredCount = Object.keys(userAnswers).length;
+            if (answeredCount < questions.length) {
+                if (!confirm(`Bạn mới trả lời ${answeredCount}/20 câu. Bạn có chắc chắn muốn nộp bài sớm không?`)) {
+                    return;
+                }
+            } else {
+                if (!confirm("Bạn có chắc chắn muốn kết thúc và nộp bài?")) {
+                    return;
+                }
+            }
+            submitQuiz();
+        }
+
+        // Submit Quiz & Show Detailed Results
+        function submitQuiz() {
+            clearInterval(timerInterval);
+
+            // Calculate Score and Breakdown
+            let correctCount = 0;
+            let levelStats = { biet: { correct: 0, total: 8 }, hieu: { correct: 0, total: 7 }, vandung: { correct: 0, total: 3 }, vdcao: { correct: 0, total: 2 } };
+
+            questions.forEach((q, idx) => {
+                if (userAnswers[idx] === q.correct) {
+                    correctCount++;
+                    if (levelStats[q.levelCode]) {
+                        levelStats[q.levelCode].correct++;
+                    }
+                }
+            });
+
+            const score = (correctCount / questions.length) * 10;
+            const wrongCount = questions.length - correctCount;
+
+            // Render Results Card Data
+            document.getElementById('score-display').innerText = score.toFixed(1);
+            document.getElementById('correct-count-text').innerText = `${correctCount}/${questions.length}`;
+            document.getElementById('wrong-count-text').innerText = `${wrongCount}/${questions.length}`;
+            
+            const minsSpent = Math.floor(timeElapsed / 60);
+            const secsSpent = timeElapsed % 60;
+            document.getElementById('time-taken-text').innerText = `${minsSpent} phút ${secsSpent} giây`;
+
+            // Breakdown stats
+            document.getElementById('stat-biet').innerText = `${levelStats.biet.correct}/${levelStats.biet.total}`;
+            document.getElementById('stat-hieu').innerText = `${levelStats.hieu.correct}/${levelStats.hieu.total}`;
+            document.getElementById('stat-vandung').innerText = `${levelStats.vandung.correct}/${levelStats.vandung.total}`;
+            document.getElementById('stat-vdcao').innerText = `${levelStats.vdcao.correct}/${levelStats.vdcao.total}`;
+
+            // Teacher Remarks Logic
+            const teacherCommentEl = document.getElementById('teacher-comment');
+            if (score >= 9.0) {
+                teacherCommentEl.innerHTML = `<strong>Xuất sắc!</strong> Em đã nắm vững toàn bộ lý thuyết và vận dụng thành thạo Định luật Hooke cũng như các dạng bài tập lực đàn hồi. Hãy tiếp tục phát huy ở các chương tiếp theo nhé!`;
+            } else if (score >= 7.0) {
+                teacherCommentEl.innerHTML = `<strong>Khá tốt!</strong> Em nắm chắc phần lớn kiến thức lý thuyết và bài toán cơ bản. Tuy nhiên, hãy chú ý cẩn thận hơn ở các câu Vận dụng cao (ví dụ: bài toán biến dạng dãn/nén lặp lại hoặc bài toán kéo/đặt vật hai đầu).`;
+            } else if (score >= 5.0) {
+                teacherCommentEl.innerHTML = `<strong>Trung bình - Đạt yêu cầu!</strong> Em đã thuộc các định nghĩa cơ bản nhưng phần bài tập tính toán và câu hỏi hiểu hiện tượng vật lý còn sai sót. Em nên ôn lại kỹ Biểu thức Định luật Hooke \\(F_{\\text{đh}} = k|\\Delta l|\\) và cách đổi đơn vị.`;
+            } else {
+                teacherCommentEl.innerHTML = `<strong>Cần cố gắng nhiều hơn!</strong> Kết quả cho thấy em chưa nắm rõ bản chất của biến dạng kéo, biến dạng nén và định luật Hooke. Em hãy đọc kỹ lại Bài 33 trong SGK, xem kỹ lời giải chi tiết bên dưới và làm lại bài kiểm tra nhé!`;
+            }
+
+            // Render Solutions Breakdown List
+            renderDetailedSolutions();
+
+            // Switch to Result View
+            document.getElementById('quiz-view').classList.add('hidden');
+            document.getElementById('result-view').classList.remove('hidden');
+
+            if (window.MathJax) {
+                MathJax.typesetPromise();
+            }
+        }
+
+        // Render Solutions
+        function renderDetailedSolutions() {
+            const container = document.getElementById('solutions-container');
+            container.innerHTML = '';
+
+            questions.forEach((q, idx) => {
+                const userAns = userAnswers[idx];
+                const isCorrect = userAns === q.correct;
+
+                const solBox = document.createElement('div');
+                solBox.className = `p-5 rounded-xl border ${isCorrect ? 'border-emerald-300 bg-emerald-50/40' : 'border-rose-300 bg-rose-50/40'}`;
+
+                let statusBadge = isCorrect 
+                    ? `<span class="px-2.5 py-1 rounded-md text-xs font-bold bg-emerald-600 text-white"><i class="fa-solid fa-check mr-1"></i> Đúng</span>`
+                    : `<span class="px-2.5 py-1 rounded-md text-xs font-bold bg-rose-600 text-white"><i class="fa-solid fa-xmark mr-1"></i> Sai</span>`;
+
+                let userChoiceText = userAns !== undefined ? q.options[userAns] : '<span class="italic text-gray-500">Bỏ trống (Chưa chọn)</span>';
+                let correctChoiceText = q.options[q.correct];
+
+                solBox.innerHTML = `
+                    <div class="flex items-center justify-between border-b border-gray-200 pb-2 mb-3">
+                        <div class="flex items-center gap-2">
+                            <span class="font-bold text-sm text-purple-900">Câu ${idx + 1}</span>
+                            <span class="text-xs px-2 py-0.5 rounded bg-purple-100 text-purple-800 font-semibold">${q.level}</span>
+                        </div>
+                        ${statusBadge}
+                    </div>
+
+                    <p class="text-gray-900 font-medium mb-3">${q.question}</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs md:text-sm mb-3">
+                        <div class="p-2.5 rounded-lg ${isCorrect ? 'bg-emerald-100/70 border border-emerald-300 text-emerald-900' : 'bg-rose-100/70 border border-rose-300 text-rose-900'}">
+                            <strong>Lựa chọn của em:</strong> ${userChoiceText}
+                        </div>
+                        <div class="p-2.5 rounded-lg bg-emerald-100/70 border border-emerald-300 text-emerald-900">
+                            <strong>Đáp án đúng:</strong> ${correctChoiceText}
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-3 rounded-lg border border-purple-100 text-xs md:text-sm text-gray-700">
+                        <strong class="text-purple-900 flex items-center gap-1 mb-1">
+                            <i class="fa-solid fa-lightbulb text-amber-500"></i> Hướng dẫn lời giải chi tiết:
+                        </strong>
+                        <div>${q.explanation}</div>
+                    </div>
+                `;
+
+                container.appendChild(solBox);
+            });
+        }
+
+        // Retake Quiz Handler
+        function retakeQuiz(mode) {
+            startQuiz(mode);
+        }
+    </script>
+</body>
+</html>
