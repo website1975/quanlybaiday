@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ôn Luyện Củng Cố Kiến Thức - Bài 3: Nhiệt Độ - Thang Nhiệt Độ - Nhiệt Kế</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0b1329;
+            color: #ffffff;
+        }
+        .text-cream {
+            color: #FFFDD0;
+        }
+        .bg-card {
+            background-color: #131f37;
+            border: 1px solid #223354;
+        }
+        .bg-card-hover:hover {
+            background-color: #1a2a4a;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0b1329;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #223354;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #334b79;
+        }
+    </style>
+
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)'], ['$', '$']],
+                displayMath: [['\\[', '\\]'], ['$$', '$$']]
+            },
+            svg: {
+                fontCache: 'global'
+            }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async></script>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-amber-500 selection:text-black">
+
+    <header class="bg-[#0e1830] border-b border-[#223354] sticky top-0 z-50 px-4 py-3 shadow-md">
+        <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-2">
+            <div class="flex items-center space-x-3">
+                <div class="p-2 bg-amber-500/10 rounded-lg border border-amber-500/30 text-amber-400">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-lg md:text-xl font-bold tracking-tight text-cream uppercase">ÔN LUYỆN CỦNG CỐ KIẾN THỨC</h1>
+                    <p class="text-xs text-slate-300">Bài 3: NHIỆT ĐỘ – THANG NHIỆT ĐỘ – NHIỆT KẾ (Vật lí 12 - Chương I: Vật lí nhiệt)</p>
+                </div>
+            </div>
+
+            <!-- Dynamic Header Info Badge -->
+            <div id="header-status" class="flex items-center space-x-2 bg-[#131f37] px-3 py-1.5 rounded-full border border-[#223354] text-xs font-medium text-amber-300">
+                <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+                <span id="mode-badge-text">Chưa chọn chế độ</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTAINER -->
+    <main class="flex-grow max-w-7xl w-full mx-auto p-4 md:p-6">
+
+        <section id="screen-start" class="block space-y-8 py-4">
+            <!-- Icon Check Circle -->
+            <div class="flex justify-center">
+                <div class="w-16 h-16 bg-amber-500/20 text-amber-400 rounded-full flex items-center justify-center border border-amber-500/40 shadow-lg shadow-amber-500/10">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Title Header -->
+            <div class="text-center max-w-3xl mx-auto space-y-2">
+                <h2 class="text-2xl md:text-4xl font-extrabold text-cream uppercase tracking-wide">BÀI KIỂM TRA TRẮC NGHIỆM KHÁCH QUAN</h2>
+                <p class="text-sm md:text-base text-slate-300">
+                    Bộ câu hỏi chuẩn hóa gồm <span class="text-amber-300 font-bold">20 câu hỏi</span> bám sát nội dung bài học <span class="font-semibold text-white">Nhiệt Độ - Thang Nhiệt Độ - Nhiệt Kế</span> với 4 mức độ tư duy chuẩn cấu trúc Bộ Giáo dục.
+                </p>
+            </div>
+
+            <!-- 4 Difficulty Cards Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="bg-card p-4 rounded-xl space-y-2 border-l-4 border-l-blue-500 shadow-md">
+                    <div class="inline-block px-2.5 py-1 rounded bg-blue-900/60 text-blue-300 text-xs font-bold uppercase">MỨC BIẾT (8 CÂU)</div>
+                    <p class="text-xs text-slate-300 leading-relaxed">Kiến thức lý thuyết, khái niệm nhiệt độ, chiều truyền nhiệt, các điểm mốc thang Celsius, Kelvin.</p>
+                </div>
+
+                <div class="bg-card p-4 rounded-xl space-y-2 border-l-4 border-l-emerald-500 shadow-md">
+                    <div class="inline-block px-2.5 py-1 rounded bg-emerald-900/60 text-emerald-300 text-xs font-bold uppercase">MỨC HIỂU (7 CÂU)</div>
+                    <p class="text-xs text-slate-300 leading-relaxed">Giải thích thí nghiệm truyền nhiệt, quy đổi nhiệt độ, đặc điểm độ không tuyệt đối và nhiệt kế.</p>
+                </div>
+
+                <div class="bg-card p-4 rounded-xl space-y-2 border-l-4 border-l-amber-500 shadow-md">
+                    <div class="inline-block px-2.5 py-1 rounded bg-amber-900/60 text-amber-300 text-xs font-bold uppercase">VẬN DỤNG (3 CÂU)</div>
+                    <p class="text-xs text-slate-300 leading-relaxed">Tính toán nhiệt độ Fahrenheit, sự biến thiên điện trở Platin theo nhiệt độ và nhiệt độ thiên thể.</p>
+                </div>
+
+                <div class="bg-card p-4 rounded-xl space-y-2 border-l-4 border-l-purple-500 shadow-md">
+                    <div class="inline-block px-2.5 py-1 rounded bg-purple-900/60 text-purple-300 text-xs font-bold uppercase">VD CAO (2 CÂU)</div>
+                    <p class="text-xs text-slate-300 leading-relaxed">Xử lý công thức định luật Wien bức xạ sóng điện từ và mạch cặp nhiệt điện theo độ K.</p>
+                </div>
+            </div>
+
+            <!-- Mode Selection Title -->
+            <div class="text-center pt-4">
+                <span class="text-xs font-bold uppercase tracking-wider text-slate-400 bg-[#131f37] px-4 py-1.5 rounded-full border border-[#223354]">VUI LÒNG CHỌN HÌNH THỨC KIỂM TRA:</span>
+            </div>
+
+            <!-- Mode Buttons Container -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+                <!-- Practice Mode Card -->
+                <div class="bg-card p-6 rounded-2xl flex flex-col justify-between hover:border-amber-500/50 transition-all duration-300 shadow-lg group">
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center">
+                            <h3 class="text-xl font-bold text-cream group-hover:text-amber-300 transition-colors">1. Chế độ Luyện Tập</h3>
+                            <span class="px-3 py-1 bg-blue-900/60 text-blue-300 text-xs font-bold rounded-full border border-blue-700/50">Không giới hạn</span>
+                        </div>
+                        <p class="text-xs text-slate-400 uppercase tracking-wide">Học tập & củng cố kiến thức không áp lực</p>
+                        <p class="text-sm text-slate-300 leading-relaxed">
+                            Làm bài không tính giờ. Giúp học sinh bình tĩnh suy ngẫm, củng cố kiến thức. Xem điểm và lời giải chi tiết ngay sau khi hoàn thành.
+                        </p>
+                    </div>
+                    <button onclick="startQuiz('practice')" class="mt-6 w-full py-3 px-4 bg-[#1a2a4a] hover:bg-amber-500 text-white hover:text-slate-950 font-bold rounded-xl transition-all duration-200 border border-blue-500/30 flex items-center justify-center space-x-2">
+                        <span>Bắt đầu Luyện Tập</span>
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                    </button>
+                </div>
+
+                <!-- Timed Mode Card -->
+                <div class="bg-card p-6 rounded-2xl flex flex-col justify-between hover:border-amber-500/50 transition-all duration-300 shadow-lg group">
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center">
+                            <h3 class="text-xl font-bold text-cream group-hover:text-amber-300 transition-colors">2. Chế độ Tính Giờ</h3>
+                            <span class="px-3 py-1 bg-amber-500/20 text-amber-300 text-xs font-bold rounded-full border border-amber-500/40">20 Phút</span>
+                        </div>
+                        <p class="text-xs text-slate-400 uppercase tracking-wide">Thử thách & kiểm tra đánh giá năng lực</p>
+                        <p class="text-sm text-slate-300 leading-relaxed">
+                            Có đồng hồ đếm ngược 20 phút. Trật tự câu hỏi và đáp án ngẫu nhiên giúp đánh giá chính xác thực lực, chống học vẹt hay chép đáp án.
+                        </p>
+                    </div>
+                    <button onclick="startQuiz('timed')" class="mt-6 w-full py-3 px-4 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-xl transition-all duration-200 shadow-md shadow-amber-500/20 flex items-center justify-center space-x-2">
+                        <span>Bắt đầu Tính Giờ (20 Phút)</span>
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <section id="screen-quiz" class="hidden grid-cols-1 lg:grid-cols-4 gap-6 py-2">
+            <!-- Left Panel: Question List Grid Navigation -->
+            <div class="lg:col-span-1 space-y-4">
+                <div class="bg-card p-4 rounded-xl space-y-4 shadow-lg sticky top-20">
+                    <div class="flex justify-between items-center border-b border-[#223354] pb-3">
+                        <h3 class="font-bold text-cream text-sm uppercase tracking-wide">DANH SÁCH CÂU HỎI</h3>
+                        <span id="answered-count-badge" class="px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 text-xs font-bold">0/20 đã làm</span>
+                    </div>
+
+                    <!-- Grid Buttons 1 to 20 -->
+                    <div id="question-grid" class="grid grid-cols-5 gap-2">
+                        <!-- Dynamic Buttons generated by JavaScript -->
+                    </div>
+
+                    <!-- Legend -->
+                    <div class="pt-3 border-t border-[#223354] space-y-2 text-xs text-slate-300">
+                        <div class="flex items-center space-x-2">
+                            <span class="w-3 h-3 rounded bg-[#1c2a48] border border-slate-700 inline-block"></span>
+                            <span>Chưa trả lời</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="w-3 h-3 rounded bg-amber-500 inline-block"></span>
+                            <span>Đã chọn đáp án</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="w-3 h-3 rounded bg-blue-600 ring-2 ring-blue-400 inline-block"></span>
+                            <span>Đang làm (Hiện tại)</span>
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button onclick="confirmSubmit()" class="w-full mt-4 py-3 px-4 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl transition-all shadow-md shadow-emerald-600/20 flex items-center justify-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+                        <span>Nộp Bài & Kết Thúc</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Right Main Area: Question Details & Answer Options -->
+            <div class="lg:col-span-3">
+                <div class="bg-card p-6 rounded-2xl shadow-xl space-y-6 min-h-[480px] flex flex-col justify-between">
+                    <div>
+                        <!-- Question Header Line -->
+                        <div class="flex justify-between items-center border-b border-[#223354] pb-4 mb-4">
+                            <div class="flex items-center space-x-3">
+                                <span id="current-question-num" class="text-xl md:text-2xl font-extrabold text-cream">Câu 1/20</span>
+                                <span id="current-question-level" class="px-2.5 py-1 rounded text-xs font-bold uppercase bg-blue-900 text-blue-300">Mức Biết</span>
+                            </div>
+                            <!-- Countdown timer inside quiz card if Timed mode -->
+                            <div id="quiz-timer-container" class="hidden items-center space-x-2 bg-amber-500/10 border border-amber-500/30 px-3 py-1 rounded-lg text-amber-300 text-sm font-bold">
+                                <svg class="w-4 h-4 animate-spin text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                <span id="quiz-timer-text">20:00</span>
+                            </div>
+                        </div>
+
+                        <!-- Question Content -->
+                        <div id="question-text" class="text-base md:text-lg font-medium text-white leading-relaxed mb-6">
+                            <!-- Question text content injected here -->
+                        </div>
+
+                        <!-- Options List -->
+                        <div id="options-container" class="space-y-3">
+                            <!-- Dynamic Options A, B, C, D -->
+                        </div>
+                    </div>
+
+                    <!-- Navigation Action Controls -->
+                    <div class="flex flex-wrap items-center justify-between gap-3 pt-6 border-t border-[#223354]">
+                        <button id="btn-prev" onclick="prevQuestion()" class="px-4 py-2.5 bg-[#1c2a48] hover:bg-[#283b63] text-slate-300 font-semibold rounded-xl text-sm transition-all flex items-center space-x-1 disabled:opacity-40 disabled:cursor-not-allowed">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                            <span>Câu Trước</span>
+                        </button>
+
+                        <button onclick="clearCurrentSelection()" class="text-xs text-slate-400 hover:text-rose-400 underline transition-colors px-2 py-1">
+                            Xóa lựa chọn câu này
+                        </button>
+
+                        <button id="btn-next" onclick="nextQuestion()" class="px-5 py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-xl text-sm transition-all flex items-center space-x-1 shadow-md shadow-amber-500/20">
+                            <span>Câu Tiếp</span>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="screen-result" class="hidden space-y-8 py-4">
+            <!-- Top Result Banner -->
+            <div class="bg-card p-6 md:p-8 rounded-2xl shadow-2xl text-center max-w-3xl mx-auto space-y-6 relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-amber-500 via-emerald-500 to-blue-500"></div>
+
+                <!-- Trophy Icon -->
+                <div class="w-20 h-20 bg-amber-500/20 border-2 border-amber-500/50 text-amber-400 rounded-full flex items-center justify-center mx-auto shadow-inner">
+                    <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2 0h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path></svg>
+                </div>
+
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-extrabold text-cream uppercase">KẾT QUẢ BÀI KIỂM TRA</h2>
+                    <p id="result-mode-subtitle" class="text-xs text-amber-300 font-semibold uppercase tracking-wider mt-1">Chế độ LUYỆN TẬP</p>
+                </div>
+
+                <!-- 3 Stats Metrics -->
+                <div class="grid grid-cols-3 gap-3 md:gap-4 max-w-lg mx-auto">
+                    <div class="bg-[#0e1830] p-3 md:p-4 rounded-xl border border-[#223354]">
+                        <p class="text-xs text-slate-400 font-medium">Điểm số</p>
+                        <p id="res-score" class="text-xl md:text-3xl font-black text-amber-400 mt-1">0.0 <span class="text-xs text-slate-400 font-normal">/ 10</span></p>
+                    </div>
+
+                    <div class="bg-[#0e1830] p-3 md:p-4 rounded-xl border border-[#223354]">
+                        <p class="text-xs text-slate-400 font-medium">Số câu đúng</p>
+                        <p id="res-correct" class="text-xl md:text-3xl font-black text-emerald-400 mt-1">0 <span class="text-xs text-slate-400 font-normal">/ 20</span></p>
+                    </div>
+
+                    <div class="bg-[#0e1830] p-3 md:p-4 rounded-xl border border-[#223354]">
+                        <p class="text-xs text-slate-400 font-medium">Thời gian làm</p>
+                        <p id="res-time" class="text-base md:text-xl font-bold text-blue-400 mt-2">--:--</p>
+                    </div>
+                </div>
+
+                <!-- Teacher Evaluation Box -->
+                <div class="bg-[#0e1830] p-4 md:p-5 rounded-xl border border-amber-500/30 text-left space-y-2">
+                    <div class="flex items-center space-x-2 text-amber-300 text-sm font-bold">
+                        <svg class="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"></path></svg>
+                        <span>Đánh giá & Nhận xét từ Giáo viên:</span>
+                    </div>
+                    <p id="teacher-comment" class="text-sm text-slate-200 leading-relaxed pl-7">
+                        Cần cố gắng nhiều hơn! Kết quả cho thấy em chưa nắm vững lý thuyết Bài 3: Nhiệt độ – Thang nhiệt độ – Nhiệt kế. Hãy xem kỹ lời giải từng câu và ôn lại bài học SGK để làm lại nhé!
+                    </p>
+                </div>
+
+                <!-- Action buttons -->
+                <div class="flex flex-wrap justify-center gap-4 pt-2">
+                    <button onclick="restartQuiz()" class="py-3 px-6 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-xl transition-all shadow-md shadow-amber-500/20 flex items-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                        <span>Làm lại bài kiểm tra</span>
+                    </button>
+                    <a href="#detailed-solutions" class="py-3 px-6 bg-[#1c2a48] hover:bg-[#283b63] text-cream font-bold rounded-xl transition-all border border-[#334b79] flex items-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+                        <span>Xem đáp án & Lời giải</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Detailed Solution Section -->
+            <div id="detailed-solutions" class="max-w-4xl mx-auto space-y-6 pt-6 border-t border-[#223354]">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-xl font-bold text-cream uppercase flex items-center space-x-2">
+                        <span class="w-3 h-3 bg-amber-400 rounded-full inline-block"></span>
+                        <span>ĐÁP ÁN & LỜI GIẢI CHI TIẾT</span>
+                    </h3>
+                    <span class="text-xs text-slate-400">20/20 câu hỏi</span>
+                </div>
+
+                <!-- Solutions Container injected dynamically -->
+                <div id="solutions-list" class="space-y-6">
+                    <!-- Cards for Question 1 to 20 -->
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-[#0e1830] border-t border-[#223354] py-4 px-4 text-center text-xs text-slate-400 mt-12">
+        <p>© Hệ thống Ôn Luyện Củng Cố Kiến Thức Vật Lí 12 - Bài 3: Nhiệt Độ - Thang Nhiệt Độ - Nhiệt Kế</p>
+    </footer>
+
+    <script>
+        const originalQuestions = [
+            // --- MỨC BIẾT (8 CÂU) ---
+            {
+                id: 1,
+                level: "Mức Biết",
+                levelClass: "bg-blue-900/80 text-blue-300 border border-blue-700",
+                question: "Hai vật tiếp xúc nhau ở trạng thái cân bằng nhiệt khi đại lượng nào sau đây của hai vật bằng nhau?",
+                options: [
+                    "Nhiệt độ của hai vật bằng nhau.",
+                    "Nội năng của hai vật bằng nhau.",
+                    "Khối lượng của hai vật bằng nhau.",
+                    "Thể tích của hai vật bằng nhau."
+                ],
+                answer: 0,
+                explanation: "Theo kết luận bài học SGK: Khi hai vật có nhiệt độ bằng nhau tiếp xúc nhau thì không có sự truyền nhiệt năng giữa chúng. Hai vật ở trạng thái cân bằng nhiệt."
+            },
+            {
+                id: 2,
+                level: "Mức Biết",
+                levelClass: "bg-blue-900/80 text-blue-300 border border-blue-700",
+                question: "Khi hai vật có nhiệt độ chênh lệch tiếp xúc nhau, chiều truyền nhiệt năng diễn ra như thế nào?",
+                options: [
+                    "Truyền từ vật có nội năng lớn hơn sang vật có nội năng nhỏ hơn.",
+                    "Truyền từ vật có nhiệt độ cao hơn sang vật có nhiệt độ thấp hơn.",
+                    "Truyền từ vật có khối lượng lớn hơn sang vật có khối lượng nhỏ hơn.",
+                    "Truyền từ vật ở thể lỏng sang vật ở thể rắn."
+                ],
+                answer: 1,
+                explanation: "SGK khẳng định: Khi hai vật có nhiệt độ chênh lệch tiếp xúc nhau thì nhiệt năng truyền từ vật có nhiệt độ cao hơn sang vật có nhiệt độ thấp hơn."
+            },
+            {
+                id: 3,
+                level: "Mức Biết",
+                levelClass: "bg-blue-900/80 text-blue-300 border border-blue-700",
+                question: "Trong thang nhiệt độ Celsius, hai nhiệt độ dùng làm mốc chuẩn ở áp suất tiêu chuẩn là:",
+                options: [
+                    "Nhiệt độ đóng băng \\(0\\,^{\\circ}\\text{C}\\) và nhiệt độ sôi \\(100\\,^{\\circ}\\text{C}\\) của nước tinh khiết.",
+                    "Độ không tuyệt đối \\(-273,15\\,^{\\circ}\\text{C}\\) và điểm ba của nước.",
+                    "Nhiệt độ cơ thể người \\(37\\,^{\\circ}\\text{C}\\) và nhiệt độ nước sôi \\(100\\,^{\\circ}\\text{C}\\).",
+                    "Nhiệt độ đá tan \\(32\\,^{\\circ}\\text{F}\\) và nước sôi \\(212\\,^{\\circ}\\text{F}\\)."
+                ],
+                answer: 0,
+                explanation: "Hai nhiệt độ dùng làm mốc của thang Celsius là nhiệt độ đóng băng (\\(0\\,^{\\circ}\\text{C}\\)) và nhiệt độ sôi (\\(100\\,^{\\circ}\\text{C}\\)) của nước tinh khiết ở áp suất tiêu chuẩn."
+            },
+            {
+                id: 4,
+                level: "Mức Biết",
+                levelClass: "bg-blue-900/80 text-blue-300 border border-blue-700",
+                question: "Nhiệt độ \"Độ không tuyệt đối\" có giá trị xác định bằng bao nhiêu trong thang nhiệt độ Celsius?",
+                options: [
+                    "\\(0\\,^{\\circ}\\text{C}\\)",
+                    "\\(-273,15\\,^{\\circ}\\text{C}\\)",
+                    "\\(273,15\\,^{\\circ}\\text{C}\\)",
+                    "\\(-100\\,^{\\circ}\\text{C}\\)"
+                ],
+                answer: 1,
+                explanation: "Người ta xác định được giá trị của độ không tuyệt đối (\\(0\\,\\text{K}\\)) trong thang Celsius là \\(-273,15\\,^{\\circ}\\text{C}\\)."
+            },
+            {
+                id: 5,
+                level: "Mức Biết",
+                levelClass: "bg-blue-900/80 text-blue-300 border border-blue-700",
+                question: "Khái niệm \"Điểm ba của nước\" là nhiệt độ mà nước tinh khiết có thể tồn tại đồng thời ở những thể nào trong trạng thái cân bằng nhiệt?",
+                options: [
+                    "Chỉ ở hai thể rắn và lỏng.",
+                    "Chỉ ở hai thể lỏng và hơi.",
+                    "Đồng thời ở cả ba thể: rắn, lỏng và hơi.",
+                    "Chỉ ở hai thể rắn và hơi."
+                ],
+                answer: 2,
+                explanation: "Điểm ba của nước là nhiệt độ mà nước tinh khiết có thể tồn tại đồng thời ở cả ba thể rắn, lỏng và hơi, trong trạng thái cân bằng nhiệt ở áp suất tiêu chuẩn (có độ lớn \\(0,01\\,^{\\circ}\\text{C}\\))."
+            },
+            {
+                id: 6,
+                level: "Mức Biết",
+                levelClass: "bg-blue-900/80 text-blue-300 border border-blue-700",
+                question: "Tính chất vật lí được sử dụng phổ biến nhất trong việc chế tạo các nhiệt kế thông thường (như nhiệt kế rượu, nhiệt kế thủy ngân) là:",
+                options: [
+                    "Sự thay đổi màu sắc của chất lỏng khi nhiệt độ tăng.",
+                    "Sự nở vì nhiệt của cột chất lỏng trong ống thủy tinh.",
+                    "Sự thay đổi điện trở của linh kiện điện tử.",
+                    "Sự phát xạ bước sóng sóng điện từ."
+                ],
+                answer: 1,
+                explanation: "SGK nêu rõ: Tính chất vật lí được sử dụng nhiều trong việc chế tạo nhiệt kế thông thường là sự nở vì nhiệt của cột chất lỏng trong ống thủy tinh."
+            },
+            {
+                id: 7,
+                level: "Mức Biết",
+                levelClass: "bg-blue-900/80 text-blue-300 border border-blue-700",
+                question: "Công thức làm tròn dùng để chuyển đổi nhiệt độ từ thang Celsius \\(t\\,(^{\\circ}\\text{C})\\) sang thang Kelvin \\(T\\,(\\text{K})\\) là:",
+                options: [
+                    "\\(T\\,(\\text{K}) = t\\,(^{\\circ}\\text{C}) - 273\\)",
+                    "\\(T\\,(\\text{K}) = t\\,(^{\\circ}\\text{C}) + 273\\)",
+                    "\\(T\\,(\\text{K}) = 273 - t\\,(^{\\circ}\\text{C})\\)",
+                    "\\(T\\,(\\text{K}) = 1,8 \\cdot t\\,(^{\\circ}\\text{C}) + 32\\)"
+                ],
+                answer: 1,
+                explanation: "Công thức chuyển nhiệt độ làm tròn từ thang Celsius sang thang Kelvin ghi trong SGK là: \\(T\\,(\\text{K}) = t\\,(^{\\circ}\\text{C}) + 273\\)."
+            },
+            {
+                id: 8,
+                level: "Mức Biết",
+                levelClass: "bg-blue-900/80 text-blue-300 border border-blue-700",
+                question: "Trong nhiệt động lực học, nhiệt độ là đại lượng đặc trưng cho yếu tố nào của các phân tử cấu tạo nên vật?",
+                options: [
+                    "Thế năng tương tác trung bình của các phân tử.",
+                    "Động năng trung bình của chuyển động nhiệt của phân tử.",
+                    "Tốc độ chuyển động cực đại của các phân tử.",
+                    "Khoảng cách trung bình giữa các phân tử."
+                ],
+                answer: 1,
+                explanation: "Trong nhiệt động lực học, người ta coi nhiệt độ là đại lượng đặc trưng cho động năng trung bình của chuyển động nhiệt của phân tử. Động năng trung bình càng lớn thì nhiệt độ càng cao."
+            },
+
+            // --- MỨC HIỂU (7 CÂU) ---
+            {
+                id: 9,
+                level: "Mức Hiểu",
+                levelClass: "bg-emerald-900/80 text-emerald-300 border border-emerald-700",
+                question: "Trong thí nghiệm Hình 3.1 SGK, khi đặt cốc nhôm đựng khoảng \\(200\\,\\text{mL}\\) nước ở \\(30\\,^{\\circ}\\text{C}\\) vào bình cách nhiệt đựng \\(500\\,\\text{mL}\\) nước ở \\(60\\,^{\\circ}\\text{C}\\), quá trình truyền nhiệt năng kết thúc khi nào?",
+                options: [
+                    "Khi toàn bộ nước trong bình cách nhiệt hạ xuống \\(0\\,^{\\circ}\\text{C}\\).",
+                    "Khi nước trong cốc nhôm sôi lên \\(100\\,^{\\circ}\\text{C}\\).",
+                    "Khi nhiệt độ của nước trong bình và trong cốc bằng nhau.",
+                    "Khi thể tích nước trong bình bằng thể tích nước trong cốc."
+                ],
+                answer: 2,
+                explanation: "Quá trình truyền nhiệt năng giữa nước trong bình và nước trong cốc diễn ra cho tới khi hai nhiệt độ này bằng nhau (đạt trạng thái cân bằng nhiệt)."
+            },
+            {
+                id: 10,
+                level: "Mức Hiểu",
+                levelClass: "bg-emerald-900/80 text-emerald-300 border border-emerald-700",
+                question: "Xét hai vật A và B tiếp xúc với nhau. Kết luận nào sau đây là **ĐÚNG** về chiều truyền nhiệt năng?",
+                options: [
+                    "Nhiệt năng luôn tự truyền từ vật có nội năng lớn hơn sang vật có nội năng nhỏ hơn.",
+                    "Nhiệt năng luôn tự truyền từ vật có khối lượng lớn hơn sang vật có khối lượng nhỏ hơn.",
+                    "Nhiệt năng luôn tự truyền từ vật có nhiệt độ cao hơn sang vật có nhiệt độ thấp hơn.",
+                    "Nhiệt năng truyền từ vật có thế năng lớn hơn sang vật có thế năng nhỏ hơn."
+                ],
+                answer: 2,
+                explanation: "Sự truyền nhiệt năng giữa hai vật chỉ phụ thuộc vào nhiệt độ của chúng (truyền từ nhiệt độ cao hơn sang nhiệt độ thấp hơn), không phụ thuộc vào độ lớn nội năng."
+            },
+            {
+                id: 11,
+                level: "Mức Hiểu",
+                levelClass: "bg-emerald-900/80 text-emerald-300 border border-emerald-700",
+                question: "Một vật được làm lạnh từ \\(100\\,^{\\circ}\\text{C}\\) xuống \\(0\\,^{\\circ}\\text{C}\\). Hỏi nhiệt độ của vật theo thang Kelvin giảm đi bao nhiêu độ (K)?",
+                options: [
+                    "\\(100\\,\\text{K}\\)",
+                    "\\(373\\,\\text{K}\\)",
+                    "\\(173\\,\\text{K}\\)",
+                    "\\(273\\,\\text{K}\\)"
+                ],
+                answer: 0,
+                explanation: "Vì mỗi độ chia (\\(1\\,^{\\circ}\\text{C}\\)) trong thang Celsius có độ lớn đúng bằng 1 độ chia (\\(1\\,\\text{K}\\)) trong thang Kelvin, nên khi giảm \\(100\\,^{\\circ}\\text{C}\\) thì theo thang Kelvin nhiệt độ cũng giảm đi đúng \\(100\\,\\text{K}\\)."
+            },
+            {
+                id: 12,
+                level: "Mức Hiểu",
+                levelClass: "bg-emerald-900/80 text-emerald-300 border border-emerald-700",
+                question: "Nhiệt kế hồng ngoại dùng trong y tế hoặc đo nhiệt độ thiên văn dựa trên tính chất vật lí nào?",
+                options: [
+                    "Sự giãn nở vì nhiệt của cột chất lỏng thuỷ ngân.",
+                    "Sự phụ thuộc của điện trở platin theo nhiệt độ.",
+                    "Sự phụ thuộc vào nhiệt độ của bước sóng của sóng điện từ theo hệ thức Wien \\(\\lambda_{\\text{max}} \\cdot T = 2900\\,\\mu\\text{m}\\cdot\\text{K}\\).",
+                    "Hiệu điện thế cặp nhiệt điện \\(U = k \\cdot t\\)."
+                ],
+                answer: 2,
+                explanation: "SGK mục Em có biết (trang 19) ghi rõ: Sự phụ thuộc vào nhiệt độ của bước sóng của sóng điện từ theo hệ thức Wien được dùng để chế tạo nhiệt kế hồng ngoại cũng như nhiệt kế thiên văn."
+            },
+            {
+                id: 13,
+                level: "Mức Hiểu",
+                levelClass: "bg-emerald-900/80 text-emerald-300 border border-emerald-700",
+                question: "Nhiệt độ sôi của rượu etylic là \\(79\\,^{\\circ}\\text{C}\\). Giá trị nhiệt độ này theo thang Kelvin (làm tròn) bằng bao nhiêu?",
+                options: [
+                    "\\(352\\,\\text{K}\\)",
+                    "\\(194\\,\\text{K}\\)",
+                    "\\(300\\,\\text{K}\\)",
+                    "\\(373\\,\\text{K}\\)"
+                ],
+                answer: 0,
+                explanation: "Áp dụng công thức chuyển đổi từ Celsius sang Kelvin: \\(T = t + 273 = 79 + 273 = 352\\,\\text{K}\\)."
+            },
+            {
+                id: 14,
+                level: "Mức Hiểu",
+                levelClass: "bg-emerald-900/80 text-emerald-300 border border-emerald-700",
+                question: "Điểm nóng chảy của thiếc là \\(505\\,\\text{K}\\) (theo Hình 3.3 SGK). Giá trị này tương ứng với bao nhiêu độ Celsius?",
+                options: [
+                    "\\(778\\,^{\\circ}\\text{C}\\)",
+                    "\\(232\\,^{\\circ}\\text{C}\\)",
+                    "\\(273\\,^{\\circ}\\text{C}\\)",
+                    "\\(505\\,^{\\circ}\\text{C}\\)"
+                ],
+                answer: 1,
+                explanation: "Áp dụng công thức đổi từ Kelvin sang Celsius: \\(t = T - 273 = 505 - 273 = 232\\,^{\\circ}\\text{C}\\)."
+            },
+            {
+                id: 15,
+                level: "Mức Hiểu",
+                levelClass: "bg-emerald-900/80 text-emerald-300 border border-emerald-700",
+                question: "Ưu điểm quan trọng của thang nhiệt độ Kelvin so với thang nhiệt độ Celsius trong các nghiên cứu khoa học vật lí là gì?",
+                options: [
+                    "Mọi nhiệt độ đều có giá trị dương và mốc \\(0\\,\\text{K}\\) tương ứng với trạng thái động năng phân tử bằng 0.",
+                    "Khoảng cách giữa nước đá tan và nước sôi được chia thành 212 phần.",
+                    "Dễ sử dụng hơn trong đời sống hằng ngày của người dân.",
+                    "Không phụ thuộc vào sự giãn nở của các chất lỏng."
+                ],
+                answer: 0,
+                explanation: "Thang Kelvin là thang nhiệt độ tuyệt đối, mọi nhiệt độ đều dương (\\(T \\ge 0\\,\\text{K}\\)). Tại độ không tuyệt đối (\\(0\\,\\text{K}\\)), tất cả các chất đều có động năng chuyển động nhiệt bằng 0."
+            },
+
+            // --- MỨC VẬN DỤNG (3 CÂU) ---
+            {
+                id: 16,
+                level: "Mức Vận Dụng",
+                levelClass: "bg-amber-900/80 text-amber-300 border border-amber-700",
+                question: "Thang Fahrenheit có công thức chuyển đổi sang Celsius là \\(t\\,(^{\\circ}\\text{F}) = 32 + 1,8 \\cdot t\\,(^{\\circ}\\text{C})\\). Nhiệt độ của cơ thể người khỏe mạnh khoảng \\(37\\,^{\\circ}\\text{C}\\) sẽ tương ứng với bao nhiêu \\(^{\\circ}\\text{F}\\)?",
+                options: [
+                    "\\(98,6\\,^{\\circ}\\text{F}\\)",
+                    "\\(68,6\\,^{\\circ}\\text{F}\\)",
+                    "\\(100\\,^{\\circ}\\text{F}\\)",
+                    "\\(37\\,^{\\circ}\\text{F}\\)"
+                ],
+                answer: 0,
+                explanation: "Thay \\(t = 37\\,^{\\circ}\\text{C}\\) vào công thức: \\(t\\,(^{\\circ}\\text{F}) = 32 + 1,8 \\cdot 37 = 32 + 66,6 = 98,6\\,^{\\circ}\\text{F}\\)."
+            },
+            {
+                id: 17,
+                level: "Mức Vận Dụng",
+                levelClass: "bg-amber-900/80 text-amber-300 border border-amber-700",
+                question: "Trong phạm vi từ \\(0\\,^{\\circ}\\text{C}\\) đến \\(600\\,^{\\circ}\\text{C}\\), điện trở dây platin phụ thuộc nhiệt độ theo hệ thức \\(R_t = R_0(1 + A \\cdot t + B \\cdot t^2)\\). Cho \\(R_0 = 100\\,\\Omega\\), \\(A = 3,92 \\times 10^{-3}\\,^{\\circ}\\text{C}^{-1}\\), \\(B = -5,8 \\times 10^{-7}\\,^{\\circ}\\text{C}^{-2}\\). Điện trở của dây platin ở \\(100\\,^{\\circ}\\text{C}\\) xấp xỉ bằng:",
+                options: [
+                    "\\(138,62\\,\\Omega\\)",
+                    "\\(139,20\\,\\Omega\\)",
+                    "\\(100,39\\,\\Omega\\)",
+                    "\\(150,00\\,\\Omega\\)"
+                ],
+                answer: 0,
+                explanation: "Thay \\(t = 100\\,^{\\circ}\\text{C}\\) vào hệ thức:\n\\(R_{100} = 100 \\cdot [1 + 3,92 \\cdot 10^{-3} \\cdot 100 + (-5,8 \\cdot 10^{-7}) \\cdot 100^2]\\)\n\\(= 100 \\cdot [1 + 0,392 - 0,0058] = 100 \\cdot 1,3862 = 138,62\\,\\Omega\\)."
+            },
+            {
+                id: 18,
+                level: "Mức Vận Dụng",
+                levelClass: "bg-amber-900/80 text-amber-300 border border-amber-700",
+                question: "Theo dữ liệu Hình 3.3 SGK, bề mặt của Mặt Trời có nhiệt độ khoảng \\(5772\\,\\text{K}\\). Giá trị nhiệt độ này tính theo thang Celsius chính xác (chưa làm tròn) là bao nhiêu?",
+                options: [
+                    "\\(5498,85\\,^{\\circ}\\text{C}\\)",
+                    "\\(6045,15\\,^{\\circ}\\text{C}\\)",
+                    "\\(5500,00\\,^{\\circ}\\text{C}\\)",
+                    "\\(5772,00\\,^{\\circ}\\text{C}\\)"
+                ],
+                answer: 0,
+                explanation: "Áp dụng công thức chuyển đổi chính xác từ thang Kelvin sang Celsius: \\(t\\,(^{\\circ}\\text{C}) = T\\,(\\text{K}) - 273,15 = 5772 - 273,15 = 5498,85\\,^{\\circ}\\text{C}\\)."
+            },
+
+            // --- MỨC VẬN DỤNG CAO (2 CÂU) ---
+            {
+                id: 19,
+                level: "Mức VD Cao",
+                levelClass: "bg-purple-900/80 text-purple-300 border border-purple-700",
+                question: "Một thiên thể xa xôi phát ra bức xạ sóng điện từ với bước sóng ứng với năng lượng bức xạ cực đại là \\(\\lambda_{\\text{max}} = 0,5\\,\\mu\\text{m}\\). Dựa vào hệ thức định luật Wien trong SGK: \\(\\lambda_{\\text{max}} \\cdot T = 2900\\,\\mu\\text{m}\\cdot\\text{K}\\), nhiệt độ bề mặt của thiên thể này theo thang Celsius là:",
+                options: [
+                    "\\(5526,85\\,^{\\circ}\\text{C}\\)",
+                    "\\(5800,00\\,^{\\circ}\\text{C}\\)",
+                    "\\(6073,15\\,^{\\circ}\\text{C}\\)",
+                    "\\(1450,00\\,^{\\circ}\\text{C}\\)"
+                ],
+                answer: 0,
+                explanation: "1. Tính nhiệt độ tuyệt đối theo thang Kelvin:\n\\(T = \\frac{2900}{\\lambda_{\\text{max}}} = \\frac{2900}{0,5} = 5800\\,\\text{K}\\).\n2. Đổi sang nhiệt độ Celsius:\n\\(t\\,(^{\\circ}\\text{C}) = T - 273,15 = 5800 - 273,15 = 5526,85\\,^{\\circ}\\text{C}\\)."
+            },
+            {
+                id: 20,
+                level: "Mức VD Cao",
+                levelClass: "bg-purple-900/80 text-purple-300 border border-purple-700",
+                question: "Nhiệt kế cặp nhiệt điện có hiệu điện thế tuân theo tỉ lệ \\(U = k \\cdot t\\) (trong đó \\(U\\) tính bằng \\(\\text{mV}\\), \\(t\\) tính bằng \\(^{\\circ}\\text{C}\\)). Nhúng một đầu cặp nhiệt điện vào môi trường ở nhiệt độ điểm ba của nước (\\(0,01\\,^{\\circ}\\text{C}\\)) và đầu còn lại ở \\(0\\,^{\\circ}\\text{C}\\) thì đo được hiệu điện thế \\(U_1 = 0,0004\\,\\text{mV}\\). Nếu nhúng đầu đó vào môi trường có nhiệt độ tuyệt đối \\(T_2 = 373,15\\,\\text{K}\\) thì hiệu điện thế \\(U_2\\) đo được là bao nhiêu?",
+                options: [
+                    "\\(4,0\\,\\text{mV}\\)",
+                    "\\(14,926\\,\\text{mV}\\)",
+                    "\\(1,492\\,\\text{mV}\\)",
+                    "\\(0,04\\,\\text{mV}\\)"
+                ],
+                answer: 0,
+                explanation: "1. Tính hệ số tỉ lệ \\(k\\):\n\\(k = \\frac{U_1}{t_1} = \\frac{0,0004}{0,01} = 0,04\\,\\text{mV}/^{\\circ}\\text{C}\\).\n2. Chuyển đổi nhiệt độ tuyệt đối \\(T_2 = 373,15\\,\\text{K}\\) sang Celsius:\n\\(t_2 = 373,15 - 273,15 = 100\\,^{\\circ}\\text{C}\\).\n3. Hiệu điện thế đo được khi đó:\n\\(U_2 = k \\cdot t_2 = 0,04 \\cdot 100 = 4,0\\,\\text{mV}\\)."
+            }
+        ];
+
+        let currentQuestions = [];
+        let userAnswers = new Array(20).fill(null);
+        let currentIdx = 0;
+        let quizMode = 'practice'; // 'practice' or 'timed'
+        let timerInterval = null;
+        let timeRemaining = 1200; // 20 mins in seconds
+        let secondsSpent = 0;
+
+        // Helper function for MathJax re-render
+        function triggerMathRender() {
+            if (window.MathJax && window.MathJax.typesetPromise) {
+                window.MathJax.typesetPromise().catch(err => console.log(err));
+            }
+        }
+
+        function startQuiz(mode) {
+            quizMode = mode;
+            userAnswers = new Array(20).fill(null);
+            currentIdx = 0;
+            secondsSpent = 0;
+
+            if (mode === 'practice') {
+                currentQuestions = JSON.parse(JSON.stringify(originalQuestions));
+                document.getElementById('mode-badge-text').innerText = "Chế độ LUYỆN TẬP";
+                document.getElementById('quiz-timer-container').classList.add('hidden');
+            } else {
+                // Timed mode: Shuffle questions and options to avoid memorization
+                currentQuestions = JSON.parse(JSON.stringify(originalQuestions));
+                // Fisher-Yates shuffle
+                for (let i = currentQuestions.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [currentQuestions[i], currentQuestions[j]] = [currentQuestions[j], currentQuestions[i]];
+                }
+
+                document.getElementById('mode-badge-text').innerText = "Chế độ TÍNH GIỜ (20 Phút)";
+                document.getElementById('quiz-timer-container').classList.remove('hidden');
+                document.getElementById('quiz-timer-container').classList.add('flex');
+
+                // Start Timer
+                timeRemaining = 1200; // 20 mins
+                updateTimerDisplay();
+                if (timerInterval) clearInterval(timerInterval);
+                timerInterval = setInterval(() => {
+                    timeRemaining--;
+                    secondsSpent++;
+                    updateTimerDisplay();
+                    if (timeRemaining <= 0) {
+                        clearInterval(timerInterval);
+                        alert("Đã hết thời gian 20 phút! Hệ thống sẽ tự động nộp bài.");
+                        processSubmission();
+                    }
+                }, 1000);
+            }
+
+            // Track time spent in practice mode
+            if (mode === 'practice') {
+                if (timerInterval) clearInterval(timerInterval);
+                timerInterval = setInterval(() => {
+                    secondsSpent++;
+                }, 1000);
+            }
+
+            // Render Screen Switch
+            document.getElementById('screen-start').classList.add('hidden');
+            document.getElementById('screen-result').classList.add('hidden');
+            document.getElementById('screen-quiz').classList.remove('hidden');
+            document.getElementById('screen-quiz').classList.add('grid');
+
+            renderQuestionGrid();
+            loadQuestion(0);
+        }
+
+        function updateTimerDisplay() {
+            const m = Math.floor(timeRemaining / 60);
+            const s = timeRemaining % 60;
+            document.getElementById('quiz-timer-text').innerText = 
+                `${m < 10 ? '0' + m : m}:${s < 10 ? '0' + s : s}`;
+        }
+
+        function renderQuestionGrid() {
+            const gridContainer = document.getElementById('question-grid');
+            gridContainer.innerHTML = '';
+
+            let answeredCount = 0;
+
+            currentQuestions.forEach((q, idx) => {
+                const btn = document.createElement('button');
+                btn.id = `grid-btn-${idx}`;
+                btn.className = `h-10 text-xs font-bold rounded-lg border transition-all flex items-center justify-center `;
+
+                const isAnswered = userAnswers[idx] !== null;
+                const isCurrent = currentIdx === idx;
+
+                if (isAnswered) answeredCount++;
+
+                if (isCurrent) {
+                    btn.className += "bg-blue-600 border-blue-400 text-white ring-2 ring-blue-400 ";
+                } else if (isAnswered) {
+                    btn.className += "bg-amber-500 border-amber-400 text-slate-950 ";
+                } else {
+                    btn.className += "bg-[#1c2a48] border-slate-700 text-slate-300 hover:bg-[#283b63] ";
+                }
+
+                btn.innerText = idx + 1;
+                btn.onclick = () => loadQuestion(idx);
+                gridContainer.appendChild(btn);
+            });
+
+            document.getElementById('answered-count-badge').innerText = `${answeredCount}/20 đã làm`;
+        }
+
+        function loadQuestion(idx) {
+            currentIdx = idx;
+            const q = currentQuestions[idx];
+
+            document.getElementById('current-question-num').innerText = `Câu ${idx + 1}/20`;
+            
+            const levelBadge = document.getElementById('current-question-level');
+            levelBadge.innerText = q.level;
+            levelBadge.className = `px-2.5 py-1 rounded text-xs font-bold uppercase ${q.levelClass}`;
+
+            document.getElementById('question-text').innerHTML = q.question;
+
+            // Render 4 Options A, B, C, D
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = '';
+
+            const prefixes = ['A', 'B', 'C', 'D'];
+            q.options.forEach((optText, optIdx) => {
+                const isSelected = userAnswers[idx] === optIdx;
+
+                const optCard = document.createElement('div');
+                optCard.onclick = () => selectOption(optIdx);
+                optCard.className = `p-4 rounded-xl border transition-all cursor-pointer flex items-center space-x-3 ${
+                    isSelected 
+                    ? 'bg-amber-500/15 border-amber-400 text-cream ring-1 ring-amber-400' 
+                    : 'bg-[#182642] border-[#2a3d66] hover:bg-[#213357] text-slate-200'
+                }`;
+
+                optCard.innerHTML = `
+                    <div class="w-8 h-8 rounded-lg flex items-center justify-center font-bold text-sm shrink-0 ${
+                        isSelected ? 'bg-amber-500 text-slate-950' : 'bg-[#223354] text-slate-300'
+                    }">${prefixes[optIdx]}</div>
+                    <div class="text-sm md:text-base leading-relaxed flex-grow">${optText}</div>
+                `;
+
+                optionsContainer.appendChild(optCard);
+            });
+
+            // Handle Prev/Next buttons status
+            document.getElementById('btn-prev').disabled = idx === 0;
+            document.getElementById('btn-next').disabled = idx === 19;
+
+            renderQuestionGrid();
+            triggerMathRender();
+        }
+
+        function selectOption(optIdx) {
+            userAnswers[currentIdx] = optIdx;
+            loadQuestion(currentIdx);
+        }
+
+        function clearCurrentSelection() {
+            userAnswers[currentIdx] = null;
+            loadQuestion(currentIdx);
+        }
+
+        function prevQuestion() {
+            if (currentIdx > 0) loadQuestion(currentIdx - 1);
+        }
+
+        function nextQuestion() {
+            if (currentIdx < 19) loadQuestion(currentIdx + 1);
+        }
+
+        function confirmSubmit() {
+            const unanswered = userAnswers.filter(a => a === null).length;
+            let msg = "Bạn có chắc chắn muốn nộp bài?";
+            if (unanswered > 0) {
+                msg = `Bạn còn ${unanswered} câu chưa trả lời. Bạn vẫn muốn nộp bài?`;
+            }
+            if (window.confirm(msg)) {
+                processSubmission();
+            }
+        }
+
+        function processSubmission() {
+            if (timerInterval) clearInterval(timerInterval);
+
+            let correctCount = 0;
+            currentQuestions.forEach((q, idx) => {
+                if (userAnswers[idx] === q.answer) {
+                    correctCount++;
+                }
+            });
+
+            const rawScore = (correctCount / 20) * 10;
+            const finalScoreStr = rawScore.toFixed(1);
+
+            // Time calculation
+            const minSpent = Math.floor(secondsSpent / 60);
+            const secSpent = secondsSpent % 60;
+            const timeStr = quizMode === 'practice' 
+                ? `${minSpent} phút ${secSpent} giây` 
+                : `${minSpent}m ${secSpent}s / 20m`;
+
+            // UI Update Result Screen
+            document.getElementById('result-mode-subtitle').innerText = 
+                quizMode === 'practice' ? "Chế độ LUYỆN TẬP" : "Chế độ TÍNH GIỜ";
+
+            document.getElementById('res-score').innerHTML = `${finalScoreStr} <span class="text-xs text-slate-400 font-normal">/ 10</span>`;
+            document.getElementById('res-correct').innerHTML = `${correctCount} <span class="text-xs text-slate-400 font-normal">/ 20</span>`;
+            document.getElementById('res-time').innerText = timeStr;
+
+            // Teacher Evaluation Text Logic
+            const commentEl = document.getElementById('teacher-comment');
+            if (rawScore >= 9.0) {
+                commentEl.innerText = "Xuất sắc! Em đã nắm rất vững kiến thức lý thuyết và bài tập về Nhiệt Độ, Thang Nhiệt Độ và Nhiệt Kế. Hãy tiếp tục duy trì phong độ này nhé!";
+            } else if (rawScore >= 7.0) {
+                commentEl.innerText = "Kết quả Khá tốt! Em đã nắm được trọng tâm kiến thức SGK. Hãy xem lại kỹ các câu làm sai ở mức Vận Dụng Cao để hoàn thiện kĩ năng!";
+            } else if (rawScore >= 5.0) {
+                commentEl.innerText = "Đạt mức Trung Bình. Em cần đọc lại các khái niệm về điểm mốc thang Kelvin, điểm ba của nước và nguyên lý các loại nhiệt kế để làm bài tốt hơn.";
+            } else {
+                commentEl.innerText = "Cần cố gắng nhiều hơn! Kết quả cho thấy em chưa nắm vững lý thuyết Bài 3. Hãy xem kỹ lời giải từng câu bên dưới và ôn lại bài học SGK để làm lại nhé!";
+            }
+
+            // Render Detailed Solutions List
+            renderDetailedSolutions();
+
+            // Switch Screen
+            document.getElementById('screen-quiz').classList.add('hidden');
+            document.getElementById('screen-quiz').classList.remove('grid');
+            document.getElementById('screen-result').classList.remove('hidden');
+
+            triggerMathRender();
+        }
+
+        function renderDetailedSolutions() {
+            const listContainer = document.getElementById('solutions-list');
+            listContainer.innerHTML = '';
+
+            const prefixes = ['A', 'B', 'C', 'D'];
+
+            currentQuestions.forEach((q, idx) => {
+                const userAns = userAnswers[idx];
+                const isCorrect = userAns === q.answer;
+                const isUnanswered = userAns === null;
+
+                const card = document.createElement('div');
+                card.className = "bg-card p-5 rounded-2xl space-y-4 border border-[#223354]";
+
+                // Card Header
+                let statusBadgeHTML = '';
+                if (isCorrect) {
+                    statusBadgeHTML = `<span class="px-2.5 py-1 rounded bg-emerald-900/80 text-emerald-300 text-xs font-bold border border-emerald-600 flex items-center space-x-1"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg><span>Chính xác</span></span>`;
+                } else if (isUnanswered) {
+                    statusBadgeHTML = `<span class="px-2.5 py-1 rounded bg-slate-800 text-slate-300 text-xs font-bold border border-slate-600">Chưa trả lời</span>`;
+                } else {
+                    statusBadgeHTML = `<span class="px-2.5 py-1 rounded bg-rose-900/80 text-rose-300 text-xs font-bold border border-rose-600 flex items-center space-x-1"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg><span>Sai</span></span>`;
+                }
+
+                card.innerHTML = `
+                    <div class="flex justify-between items-center border-b border-[#223354] pb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="font-extrabold text-cream text-base">Câu ${idx + 1}</span>
+                            <span class="px-2 py-0.5 rounded text-xs font-semibold ${q.levelClass}">${q.level}</span>
+                        </div>
+                        ${statusBadgeHTML}
+                    </div>
+
+                    <!-- Question Text -->
+                    <div class="text-sm md:text-base font-medium text-white leading-relaxed">${q.question}</div>
+
+                    <!-- Options Grid -->
+                    <div class="space-y-2 pt-1">
+                        ${q.options.map((opt, oIdx) => {
+                            let optStyle = "bg-[#182642] border-[#2a3d66] text-slate-300";
+                            let icon = `<span class="w-6 h-6 rounded bg-[#223354] text-slate-300 flex items-center justify-center text-xs font-bold shrink-0">${prefixes[oIdx]}</span>`;
+
+                            if (oIdx === q.answer) {
+                                optStyle = "bg-emerald-950/80 border-emerald-500 text-emerald-200 font-semibold";
+                                icon = `<span class="w-6 h-6 rounded bg-emerald-500 text-slate-950 flex items-center justify-center text-xs font-bold shrink-0">✓</span>`;
+                            } else if (oIdx === userAns && !isCorrect) {
+                                optStyle = "bg-rose-950/80 border-rose-500 text-rose-200 line-through opacity-90";
+                                icon = `<span class="w-6 h-6 rounded bg-rose-500 text-white flex items-center justify-center text-xs font-bold shrink-0">✕</span>`;
+                            }
+
+                            return `
+                                <div class="p-3 rounded-xl border text-xs md:text-sm flex items-center space-x-3 ${optStyle}">
+                                    ${icon}
+                                    <div class="leading-relaxed">${opt}</div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+
+                    <!-- Detailed Explanation Box -->
+                    <div class="p-4 rounded-xl bg-[#0e1830] border border-amber-500/20 text-xs md:text-sm text-slate-300 space-y-1 mt-3">
+                        <div class="flex items-center space-x-2 text-amber-300 font-bold mb-1">
+                            <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            <span>Lời giải chi tiết:</span>
+                        </div>
+                        <div class="leading-relaxed whitespace-pre-line pl-6">${q.explanation}</div>
+                    </div>
+                `;
+
+                listContainer.appendChild(card);
+            });
+        }
+
+        function restartQuiz() {
+            document.getElementById('screen-result').classList.add('hidden');
+            document.getElementById('screen-start').classList.remove('hidden');
+            document.getElementById('mode-badge-text').innerText = "Chưa chọn chế độ";
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
