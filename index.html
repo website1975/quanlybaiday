@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hệ thống Quản lý và Upload Đề Thi HTML</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f6f9; margin: 0; padding: 20px; color: #333; }
+        .container { max-width: 650px; margin: 40px auto; background: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
+        h2 { color: #000080; margin-top: 0; text-align: center; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-weight: 600; }
+        input[type="text"], input[type="password"], input[type="file"] { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-size: 14px; }
+        button { background-color: #000080; color: white; border: none; padding: 12px 20px; font-size: 16px; border-radius: 6px; cursor: pointer; width: 100%; font-weight: 600; transition: background 0.3s; }
+        button:hover { background-color: #000050; }
+        #result { margin-top: 25px; padding: 15px; background: #eef2f7; border-radius: 6px; display: none; word-break: break-all; border-left: 4px solid #000080; }
+        .loading { text-align: center; color: #666; font-style: italic; display: none; margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Upload Đề Thi HTML lên GitHub</h2>
+    
+    <div class="form-group">
+        <label>GitHub Username:</label>
+        <input type="text" id="username" placeholder="Ví dụ: thantvphysics">
+    </div>
+
+    <div class="form-group">
+        <label>Tên Repository:</label>
+        <input type="text" id="repo" placeholder="Ví dụ: ngan-hang-de-thi">
+    </div>
+
+    <div class="form-group">
+        <label>GitHub Personal Access Token (PAT):</label>
+        <input type="password" id="token" placeholder="Dán mã Token ghp_... vào đây">
+    </div>
+
+    <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
+
+    <div class="form-group">
+        <label>Tên file trên GitHub (bao gồm đuôi .html):</label>
+        <input type="text" id="filename" placeholder="Ví dụ: de-kiem-tra-chuong-1.html">
+    </div>
+
+    <div class="form-group">
+        <label>Chọn file HTML bài trắc nghiệm từ máy tính:</label>
+        <input type="file" id="fileInput" accept=".html">
+    </div>
+
+    <button onclick="uploadToGitHub()">Tải Lên và Lấy Link</button>
+    <div class="loading" id="loadingText">Đang tải file lên GitHub, vui lòng đợi trong giây lát...</div>
+
+    <div id="result">
+        <strong>Thành công! Đường dẫn (URL) chạy trực tiếp:</strong><br>
+        <a id="fileUrl" href="#" target="_blank" style="color: #000080; font-weight: bold; text-decoration: underline;"></a>
+    </div>
+</div>
+
+<script>
+function uploadToGitHub() {
+    const username = document.getElementById('username').value.trim();
+    const repo = document.getElementById('repo').value.trim();
+    const token = document.getElementById('token').value.trim();
+    let filename = document.getElementById('filename').value.trim();
+    const fileInput = document.getElementById('fileInput');
+    const loadingText = document.getElementById('loadingText');
+    const resultDiv = document.getElementById('result');
+    const fileUrlTag = document.getElementById('fileUrl');
+
+    if (!username || !repo || !token || !filename || fileInput.files.length === 0) {
+        alert("Vui lòng điền đầy đủ thông tin cấu hình, tên file và chọn file HTML!");
+        return;
+    }
+
+    // Tự động làm sạch tên file (bỏ khoảng trắng)
+    filename = filename.replace(/\s+/g, '-');
+
+    const file = fileInput.files[0];
+    const reader = new FileReader();
+
+    loadingText.style.display = 'block';
+    resultDiv.style.display = 'none';
+
+    reader.onload = function(e) {
+        // Lấy nội dung file dưới dạng Base64
+        const contentBase64 = e.target.result.split(',')[1];
+
+        // API URL của GitHub để tạo hoặc cập nhật file
+        const apiUrl = `https://api.github.com/repos/${username}/${repo}/contents/${filename}`;
+
+        // Kiểm tra xem file đã tồn tại trên repo chưa (để lấy sha nếu cần update)
+        fetch(apiUrl, {
+            method: 'GET',
+            headers: {
+                'Authorization': `token ${token}`,
+                'Accept': 'application/vnd.github.v3+json'
+            }
+        })
+        .then(response => {
+            if (response.ok) {
+                return response.json();
+            }
+            return null;
+        })
+        .then(existingFile => {
+            let bodyData = {
+                message: `Upload ${filename} via Web Interface`,
+                content: contentBase64
+            };
+
+            if (existingFile && existingFile.sha) {
+                bodyData.sha = existingFile.sha; // Bắt buộc phải có sha nếu file đã tồn tại để ghi đè
+            }
+
+            // Gửi request PUT lên GitHub API
+            return fetch(apiUrl, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `token ${token}`,
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/vnd.github.v3+json'
+                },
+                body: JSON.stringify(bodyData)
+            });
+        })
+        .then(response => {
+            loadingText.style.display = 'none';
+            if (response && response.ok) {
+                // Tạo link GitHub Pages trực tiếp
+                // Cấu trúc chuẩn: https://<username>.github.io/<repo>/<filename>
+                const liveUrl = `https://${username}.github.io/${repo}/${filename}`;
+                
+                fileUrlTag.href = liveUrl;
+                fileUrlTag.innerText = liveUrl;
+                resultDiv.style.display = 'block';
+            } else {
+                alert("Upload thất bại! Vui lòng kiểm tra lại Token hoặc quyền của Repository.");
+            }
+        })
+        .catch(error => {
+            loadingText.style.display = 'none';
+            console.error(error);
+            alert("Đã xảy ra lỗi kết nối!");
+        });
+    };
+
+    reader.readAsDataURL(file);
+}
+</script>
+
+</body>
+</html>
