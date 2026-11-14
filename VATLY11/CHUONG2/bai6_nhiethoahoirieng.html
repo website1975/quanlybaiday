@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ôn Luyện Củng Cố Kiến Thức - Bài 6: Nhiệt Hóa Hơi Riêng</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cream: '#FFFDD0',
+                        navyDark: '#0b1329',
+                        navyCard: '#131e3a',
+                        navyBorder: '#1e2d54',
+                        accentBlue: '#3b82f6',
+                        accentGreen: '#10b981',
+                        accentYellow: '#f59e0b',
+                        accentRed: '#ef4444',
+                        accentPurple: '#8b5cf6'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- MathJax for rendering physics formulas -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)'], ['$', '$']],
+                displayMath: [['\\[', '\\]'], ['$$', '$$']]
+            },
+            svg: {
+                fontCache: 'global'
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #0b1329;
+            color: #ffffff;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+        .text-cream {
+            color: #FFFDD0;
+        }
+        .bg-navy-card {
+            background-color: #131e3a;
+        }
+        .border-navy-custom {
+            border-color: #1e2d54;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0b1329;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1e2d54;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #3b82f6;
+        }
+        .radio-custom:checked + label {
+            border-color: #3b82f6;
+            background-color: rgba(59, 130, 246, 0.15);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-blue-600 selection:text-white">
+
+    <!-- Top Header -->
+    <header class="bg-navyCard border-b border-navyBorder py-3 px-4 sm:px-8 flex justify-between items-center sticky top-0 z-40 shadow-lg">
+        <div class="flex items-center space-x-3">
+            <div class="bg-amber-500/20 text-amber-300 p-2 rounded-lg border border-amber-500/30">
+                <i class="fa-solid font-bold fa-book-open text-xl"></i>
+            </div>
+            <div>
+                <h1 class="text-cream text-lg sm:text-xl font-bold tracking-wide uppercase">ÔN LUYỆN CỦNG CỐ KIẾN THỨC</h1>
+                <p class="text-xs text-slate-400">Bài 6: NHIỆT HÓA HƠI RIÊNG (Vật lí 12 - Chương I: Vật lí nhiệt)</p>
+            </div>
+        </div>
+        <div id="header-mode-badge" class="hidden md:flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-slate-800 text-slate-300 border border-slate-700">
+            <span class="w-2 h-2 rounded-full bg-amber-400 mr-2 animate-pulse"></span>
+            <span id="mode-text">Chưa chọn chế độ</span>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="flex-grow p-4 sm:p-6 md:p-8 max-w-7xl w-full mx-auto">
+
+        <!-- SCREEN 1: MODE SELECTION -->
+        <div id="screen-welcome" class="space-y-8 my-auto py-4">
+            <div class="text-center space-y-4 max-w-3xl mx-auto">
+                <div class="inline-flex items-center justify-center p-3 bg-amber-500/10 text-amber-400 rounded-full border border-amber-500/20 mb-2">
+                    <i class="fa-solid fa-circle-check text-3xl"></i>
+                </div>
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-cream tracking-tight">BÀI KIỂM TRA TRẮC NGHIỆM KHÁCH QUAN</h2>
+                <p class="text-slate-300 text-base sm:text-lg leading-relaxed">
+                    Bộ câu hỏi chuẩn hóa gồm <span class="text-amber-300 font-bold">20 câu hỏi</span> bám sát nội dung bài học <span class="text-cream font-semibold">Nhiệt Hóa Hơi Riêng</span> với 4 mức độ tư duy (8 Biết, 7 Hiểu, 3 Vận dụng, 2 Vận dụng cao).
+                </p>
+            </div>
+
+            <!-- Matrix Breakdown Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-5xl mx-auto">
+                <div class="bg-navyCard p-4 rounded-xl border border-blue-500/30 hover:border-blue-500/60 transition-all shadow-md">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-xs uppercase font-bold text-blue-400 tracking-wider">Mức Biết (8 câu)</span>
+                        <span class="bg-blue-500/20 text-blue-300 text-xs px-2 py-0.5 rounded font-mono">40%</span>
+                    </div>
+                    <p class="text-xs text-slate-300">Kiến thức lý thuyết, định nghĩa, đơn vị, công thức $Q = Lm$, khái niệm ẩn nhiệt riêng.</p>
+                </div>
+                <div class="bg-navyCard p-4 rounded-xl border border-emerald-500/30 hover:border-emerald-500/60 transition-all shadow-md">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-xs uppercase font-bold text-emerald-400 tracking-wider">Mức Hiểu (7 câu)</span>
+                        <span class="bg-emerald-500/20 text-emerald-300 text-xs px-2 py-0.5 rounded font-mono">35%</span>
+                    </div>
+                    <p class="text-xs text-slate-300">Giải thích hiện tượng mồ hôi, nguyên lý thiết bị làm lạnh, bài toán 1 bước tính $Q$ hoặc $L$.</p>
+                </div>
+                <div class="bg-navyCard p-4 rounded-xl border border-amber-500/30 hover:border-amber-500/60 transition-all shadow-md">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-xs uppercase font-bold text-amber-400 tracking-wider">Vận dụng (3 câu)</span>
+                        <span class="bg-amber-500/20 text-amber-300 text-xs px-2 py-0.5 rounded font-mono">15%</span>
+                    </div>
+                    <p class="text-xs text-slate-300">Tính toán đun nóng từ $t_1$ đến khi hóa hơi hoàn toàn, thời gian ấm điện, đồ thị thực nghiệm $m(\tau)$.</p>
+                </div>
+                <div class="bg-navyCard p-4 rounded-xl border border-rose-500/30 hover:border-rose-500/60 transition-all shadow-md">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-xs uppercase font-bold text-rose-400 tracking-wider">VD Cao (2 câu)</span>
+                        <span class="bg-rose-500/20 text-rose-300 text-xs px-2 py-0.5 rounded font-mono">10%</span>
+                    </div>
+                    <p class="text-xs text-slate-300">Bài toán VĐV Marathon bay hơi mồ hôi thải nhiệt và xử lý tổn hao nhiệt thực tế khi đun.</p>
+                </div>
+            </div>
+
+            <!-- Mode Selection Cards -->
+            <div class="max-w-3xl mx-auto space-y-4">
+                <h3 class="text-center text-sm font-semibold text-slate-400 uppercase tracking-widest">Vui lòng chọn hình thức kiểm tra:</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Practice Mode -->
+                    <button onclick="startQuiz('practice')" class="group text-left bg-navyCard p-6 rounded-2xl border-2 border-navyBorder hover:border-blue-500 transition-all hover:shadow-xl hover:shadow-blue-500/10 flex flex-col justify-between space-y-4">
+                        <div>
+                            <div class="flex justify-between items-center mb-3">
+                                <h4 class="text-xl font-bold text-cream group-hover:text-blue-400 transition-colors">1. Chế độ Luyện Tập</h4>
+                                <span class="bg-blue-500/20 text-blue-300 text-xs px-2.5 py-1 rounded-full font-medium">Không giới hạn</span>
+                            </div>
+                            <p class="text-sm text-slate-300 leading-relaxed">
+                                Làm bài không tính giờ. Giúp học sinh bình tĩnh suy ngẫm, củng cố kiến thức. Xem điểm và lời giải chi tiết sau khi hoàn thành.
+                            </p>
+                        </div>
+                        <div class="flex items-center text-blue-400 text-sm font-semibold group-hover:translate-x-1 transition-transform">
+                            <span>Bắt đầu Luyện tập</span>
+                            <i class="fa-solid fa-arrow-right ml-2"></i>
+                        </div>
+                    </button>
+
+                    <!-- Timed Mode -->
+                    <button onclick="startQuiz('timed')" class="group text-left bg-navyCard p-6 rounded-2xl border-2 border-navyBorder hover:border-amber-500 transition-all hover:shadow-xl hover:shadow-amber-500/10 flex flex-col justify-between space-y-4">
+                        <div>
+                            <div class="flex justify-between items-center mb-3">
+                                <h4 class="text-xl font-bold text-cream group-hover:text-amber-400 transition-colors">2. Chế độ Tính Giờ</h4>
+                                <span class="bg-amber-500/20 text-amber-300 text-xs px-2.5 py-1 rounded-full font-medium">20 Phút</span>
+                            </div>
+                            <p class="text-sm text-slate-300 leading-relaxed">
+                                Có đồng hồ đếm ngược 20 phút. Thứ tự câu hỏi ngẫu nhiên giúp đánh giá chính xác thực lực, chống học vẹt hay chép đáp án.
+                            </p>
+                        </div>
+                        <div class="flex items-center text-amber-400 text-sm font-semibold group-hover:translate-x-1 transition-transform">
+                            <span>Bắt đầu Tính giờ</span>
+                            <i class="fa-solid fa-arrow-right ml-2"></i>
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- SCREEN 2: QUIZ TESTING INTERFACE -->
+        <div id="screen-quiz" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-6">
+            
+            <!-- Left Sidebar: Question Navigation Grid -->
+            <div class="lg:col-span-4 bg-navyCard p-5 rounded-2xl border border-navyBorder h-fit space-y-5">
+                <div class="flex justify-between items-center border-b border-navyBorder pb-3">
+                    <div>
+                        <h3 class="font-bold text-cream text-sm uppercase tracking-wider">DANH SÁCH CÂU HỎI</h3>
+                        <p id="progress-text" class="text-xs text-slate-400 mt-0.5">0 / 20 đã làm</p>
+                    </div>
+                    <!-- Timer Widget -->
+                    <div id="timer-box" class="hidden bg-slate-900 border border-amber-500/50 px-3 py-1.5 rounded-lg flex items-center space-x-2">
+                        <i class="fa-regular fa-clock text-amber-400 animate-spin" style="animation-duration: 4s;"></i>
+                        <span id="timer-display" class="font-mono text-amber-400 font-bold text-base">20:00</span>
+                    </div>
+                </div>
+
+                <!-- Grid Buttons -->
+                <div id="question-grid" class="grid grid-cols-5 gap-2.5">
+                    <!-- Buttons generated dynamically -->
+                </div>
+
+                <!-- Legend -->
+                <div class="text-xs text-slate-400 space-y-2 pt-2 border-t border-navyBorder">
+                    <div class="flex items-center space-x-2">
+                        <span class="w-3 h-3 rounded bg-slate-800 border border-slate-600 inline-block"></span>
+                        <span>Chưa trả lời</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <span class="w-3 h-3 rounded bg-amber-500 inline-block"></span>
+                        <span>Đã chọn đáp án</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <span class="w-3 h-3 rounded bg-blue-600 ring-2 ring-blue-400 inline-block"></span>
+                        <span>Đang làm (hiện tại)</span>
+                    </div>
+                </div>
+
+                <!-- Action Button -->
+                <button onclick="confirmSubmitQuiz()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 px-4 rounded-xl transition-all shadow-lg shadow-emerald-600/20 flex items-center justify-center space-x-2">
+                    <i class="fa-solid fa-paper-plane"></i>
+                    <span>Nộp Bài & Kết Thúc</span>
+                </button>
+            </div>
+
+            <!-- Right Main Area: Question Display -->
+            <div class="lg:col-span-8 bg-navyCard p-6 sm:p-8 rounded-2xl border border-navyBorder flex flex-col justify-between space-y-6">
+                <div>
+                    <!-- Question Header Info -->
+                    <div class="flex justify-between items-center mb-4 border-b border-navyBorder pb-3">
+                        <div class="flex items-center space-x-3">
+                            <span id="current-question-title" class="text-xl font-bold text-cream">Câu 1 / 20</span>
+                            <span id="question-level-badge" class="px-2.5 py-0.5 rounded-md text-xs font-semibold bg-blue-500/20 text-blue-300 border border-blue-500/30">Biết</span>
+                        </div>
+                        <span class="text-xs text-slate-400 font-mono">Thang điểm: <strong class="text-slate-200">0,5 điểm / câu</strong></span>
+                    </div>
+
+                    <!-- Question Content -->
+                    <div id="question-text" class="text-base sm:text-lg text-slate-100 font-medium leading-relaxed mb-6">
+                        <!-- Loaded dynamically -->
+                    </div>
+
+                    <!-- Options List -->
+                    <div id="options-container" class="space-y-3">
+                        <!-- Loaded dynamically -->
+                    </div>
+                </div>
+
+                <!-- Navigation Controls -->
+                <div class="flex justify-between items-center pt-4 border-t border-navyBorder">
+                    <button id="btn-prev" onclick="navigateQuestion(-1)" class="px-4 py-2.5 rounded-xl border border-navyBorder bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white transition-all text-sm font-semibold flex items-center space-x-2 disabled:opacity-40 disabled:cursor-not-allowed">
+                        <i class="fa-solid fa-chevron-left"></i>
+                        <span>Câu Trước</span>
+                    </button>
+
+                    <button onclick="clearCurrentSelection()" class="text-xs text-slate-400 hover:text-amber-400 transition-colors underline">
+                        Xóa lựa chọn câu này
+                    </button>
+
+                    <button id="btn-next" onclick="navigateQuestion(1)" class="px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold transition-all text-sm flex items-center space-x-2 shadow-lg shadow-amber-500/20">
+                        <span>Câu Tiếp</span>
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- SCREEN 3: RESULTS & DETAILED REVIEW -->
+        <div id="screen-result" class="hidden space-y-8">
+            <!-- Score Summary Card -->
+            <div class="bg-navyCard p-6 sm:p-8 rounded-2xl border border-navyBorder space-y-6 shadow-2xl">
+                <div class="flex flex-col md:flex-row justify-between items-center gap-6 pb-6 border-b border-navyBorder">
+                    <div class="text-center md:text-left space-y-2">
+                        <span class="text-xs font-bold uppercase tracking-widest text-amber-400">KẾT QUẢ BÀI KIỂM TRA</span>
+                        <h2 class="text-2xl sm:text-3xl font-extrabold text-cream">TỔNG QUAN NĂNG LỰC</h2>
+                        <p class="text-xs text-slate-400" id="result-time-taken">Thời gian hoàn thành: --</p>
+                    </div>
+
+                    <!-- Big Score Display -->
+                    <div class="flex items-center space-x-4 bg-slate-900/80 px-6 py-4 rounded-2xl border border-slate-700">
+                        <div class="text-center">
+                            <span id="final-score" class="text-4xl sm:text-5xl font-black text-amber-400 font-mono">0.0</span>
+                            <span class="text-xs text-slate-400 block font-sans uppercase">Điểm số / 10</span>
+                        </div>
+                        <div class="h-10 w-px bg-slate-700"></div>
+                        <div class="text-center">
+                            <span id="correct-count" class="text-2xl sm:text-3xl font-bold text-emerald-400 font-mono">0/20</span>
+                            <span class="text-xs text-slate-400 block font-sans uppercase">Số câu đúng</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Teacher's Evaluation Box -->
+                <div class="bg-slate-900/60 p-5 rounded-xl border border-slate-800 space-y-3">
+                    <div class="flex items-center space-x-3 text-amber-300 font-bold text-sm">
+                        <i class="fa-solid fa-comment-dots text-lg"></i>
+                        <span>ĐÁNH GIÁ & NHẬN XÉT CỦA GIÁO VIÊN:</span>
+                    </div>
+                    <p id="teacher-feedback" class="text-sm text-slate-200 leading-relaxed italic">
+                        <!-- Loaded dynamically -->
+                    </p>
+                </div>
+
+                <!-- Action Bar -->
+                <div class="flex flex-wrap gap-4 justify-between items-center pt-2">
+                    <button onclick="location.reload()" class="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm transition-all shadow-md flex items-center space-x-2">
+                        <i class="fa-solid fa-rotate-right"></i>
+                        <span>Làm lại đề thi</span>
+                    </button>
+                    <a href="#detailed-review" class="text-xs text-slate-400 hover:text-cream transition-colors flex items-center space-x-1">
+                        <span>Cuộn xuống xem lời giải chi tiết</span>
+                        <i class="fa-solid fa-arrow-down"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Detailed Explanation Section -->
+            <div id="detailed-review" class="space-y-6">
+                <h3 class="text-xl font-bold text-cream flex items-center space-x-2">
+                    <i class="fa-solid fa-list-check text-amber-400"></i>
+                    <span>CHI TIẾT LỜI GIẢI & ĐÁP ÁN 20 CÂU HỎI</span>
+                </h3>
+
+                <div id="review-list-container" class="space-y-6">
+                    <!-- Dynamic review list generated here -->
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Custom Modal Dialog (replacing browser alert/confirm) -->
+    <div id="custom-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4">
+        <div class="bg-navyCard border border-navyBorder rounded-2xl p-6 max-w-md w-full shadow-2xl space-y-4 transform transition-all">
+            <h3 id="modal-title" class="text-lg font-bold text-cream">Thông báo</h3>
+            <p id="modal-message" class="text-sm text-slate-300 leading-relaxed"></p>
+            <div id="modal-actions" class="flex justify-end space-x-3 pt-2">
+                <button id="modal-cancel-btn" onclick="closeModal()" class="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 text-sm font-semibold hover:bg-slate-700">Hủy</button>
+                <button id="modal-confirm-btn" class="px-4 py-2 rounded-xl bg-amber-500 text-slate-950 font-bold text-sm hover:bg-amber-400">Đồng ý</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-navyCard border-t border-navyBorder py-4 text-center text-xs text-slate-400 mt-auto">
+        <p>Hệ thống trắc nghiệm Vật lí 12 - Bộ sách Kết nối tri thức với cuộc sống</p>
+    </footer>
+
+    <script>
+        // 20 STANDARD QUESTIONS BASED STRICTLY ON BÀI 6: NHIỆT HÓA HƠI RIÊNG
+        const ORIGINAL_QUESTIONS = [
+            // --- 8 CÂU BIẾT (Level 1) ---
+            {
+                id: 1,
+                level: "Biết",
+                levelCode: "know",
+                question: "Đơn vị của nhiệt hóa hơi riêng \\(L\\) trong hệ SI là:",
+                options: [
+                    "A. \\(J\\)",
+                    "B. \\(J/kg\\)",
+                    "C. \\(J/kg.K\\)",
+                    "D. \\(W/kg\\)"
+                ],
+                correct: 1,
+                explain: "Theo SGK Bài 6 - Mục I.1, hệ thức tính nhiệt hóa hơi riêng là \\(L = \\frac{Q}{m}\\). Do nhiệt lượng \\(Q\\) có đơn vị là Joule (J) và khối lượng \\(m\\) có đơn vị là kilôgam (kg) nên đơn vị của nhiệt hóa hơi riêng \\(L\\) là **J/kg**."
+            },
+            {
+                id: 2,
+                level: "Biết",
+                levelCode: "know",
+                question: "Hệ thức nào sau đây dùng để tính nhiệt lượng \\(Q\\) cần cung cấp cho một lượng chất lỏng hóa hơi hoàn toàn ở nhiệt độ không đổi?",
+                options: [
+                    "A. \\(Q = \\frac{L}{m}\\)",
+                    "B. \\(Q = L . m\\)",
+                    "C. \\(Q = m . c . \\Delta t\\)",
+                    "D. \\(Q = L . m . \\Delta t\\)"
+                ],
+                correct: 1,
+                explain: "Hệ thức (6.3) SGK nêu rõ: \\(Q = Lm\\). Trong đó \\(Q\\) là nhiệt lượng truyền cho chất lỏng (J), \\(L\\) là nhiệt hóa hơi riêng (J/kg), \\(m\\) là khối lượng chất lỏng (kg)."
+            },
+            {
+                id: 3,
+                level: "Biết",
+                levelCode: "know",
+                question: "Phát biểu nào sau đây ĐÚNG về định nghĩa nhiệt hóa hơi riêng của một chất lỏng?",
+                options: [
+                    "A. Là nhiệt lượng cần để làm cho 1 kg chất lỏng tăng nhiệt độ thêm \\(1^\\circ C\\).",
+                    "B. Là nhiệt lượng cần để làm cho một kilôgam chất lỏng đó hóa hơi hoàn toàn ở nhiệt độ xác định.",
+                    "C. Là nhiệt lượng tỏa ra khi 1 kg chất lỏng ngưng tụ ở nhiệt độ phòng.",
+                    "D. Là nhiệt lượng cần để đun sôi toàn bộ chất lỏng từ nhiệt độ ban đầu."
+                ],
+                correct: 1,
+                explain: "Theo Mục I.2 SGK: Nhiệt hóa hơi riêng của một chất lỏng là nhiệt lượng cần để làm cho một kilôgam chất lỏng đó hóa hơi hoàn toàn ở nhiệt độ xác định."
+            },
+            {
+                id: 4,
+                level: "Biết",
+                levelCode: "know",
+                question: "Dựa vào Bảng 6.1 SGK, ở nhiệt độ sôi dưới áp suất tiêu chuẩn, chất lỏng nào sau đây có nhiệt hóa hơi riêng LỚN NHẤT?",
+                options: [
+                    "A. Nước (\\(2,26.10^6\\text{ J/kg}\\))",
+                    "B. Rượu (\\(8,57.10^5\\text{ J/kg}\\))",
+                    "C. Thủy ngân (\\(2,85.10^5\\text{ J/kg}\\))",
+                    "D. Ether (\\(0,40.10^6\\text{ J/kg}\\))"
+                ],
+                correct: 0,
+                explain: "So sánh giá trị Bảng 6.1: Nước có \\(L = 2,26.10^6\\text{ J/kg}\\); Rượu có \\(0,857.10^6\\text{ J/kg}\\); Thủy ngân có \\(0,285.10^6\\text{ J/kg}\\); Ether có \\(0,40.10^6\\text{ J/kg}\\). Vậy Nước có nhiệt hóa hơi riêng lớn nhất."
+            },
+            {
+                id: 5,
+                level: "Biết",
+                levelCode: "know",
+                question: "Tại sao người ta gọi nhiệt nóng chảy riêng và nhiệt hóa hơi riêng là \"ẩn nhiệt riêng\"?",
+                options: [
+                    "A. Vì sự truyền nhiệt trong các trường hợp này không thể đo bằng oát kế.",
+                    "B. Vì sự truyền nhiệt trong các trường hợp này không được biểu hiện bằng sự thay đổi nhiệt độ.",
+                    "C. Vì năng lượng nhiệt bị tiêu tan hoàn toàn vào môi trường xung quanh.",
+                    "D. Vì các đại lượng này không phụ thuộc vào khối lượng chất."
+                ],
+                correct: 1,
+                explain: "Mục \"Em có biết\" (Trang 29 SGK): Người ta gọi nhiệt nóng chảy riêng và nhiệt hóa hơi riêng là \"ẩn nhiệt riêng\" vì sự truyền nhiệt trong các trường hợp này không được biểu hiện bằng sự thay đổi nhiệt độ (nhiệt độ giữ nguyên trong quá trình chuyển thể)."
+            },
+            {
+                id: 6,
+                level: "Biết",
+                levelCode: "know",
+                question: "Trong bài thực hành đo nhiệt hóa hơi riêng của nước (Mục II.5 SGK), công thức dùng để xác định nhiệt hóa hơi riêng từ đồ thị \\(m\\) theo \\(\\tau\\) là:",
+                options: [
+                    "A. \\(L = \\frac{\\overline{\\mathcal{P}}(\\tau_Q - \\tau_P)}{m_P - m_Q}\\)",
+                    "B. \\(L = \\frac{m_P - m_Q}{\\overline{\\mathcal{P}}(\\tau_Q - \\tau_P)}\\)",
+                    "C. \\(L = \\overline{\\mathcal{P}} . (\\tau_Q - \\tau_P) . (m_P - m_Q)\\)",
+                    "D. \\(L = \\frac{\\overline{\\mathcal{P}}}{(m_P - m_Q)(\\tau_Q - \tau_P)}\\)"
+                ],
+                correct: 0,
+                explain: "Theo SGK Trang 29, công thức thực nghiệm: \\(L = \\frac{\\overline{\\mathcal{P}}(\\tau_Q - \\tau_P)}{m_P - m_Q}\\), với \\(\\overline{\\mathcal{P}}(\\tau_Q - \\tau_P)\\) là nhiệt lượng điện tỏa ra và \\((m_P - m_Q)\\) là khối lượng nước đã hóa hơi."
+            },
+            {
+                id: 7,
+                level: "Biết",
+                levelCode: "know",
+                question: "Thông tin về nhiệt hóa hơi riêng KHÔNG phải là ứng dụng trực tiếp trong thiết kế, chế tạo thiết bị nào sau đây?",
+                options: [
+                    "A. Các thiết bị làm lạnh (máy điều hòa nhiệt độ, dàn lạnh, dàn bay hơi).",
+                    "B. Nồi hấp tiệt trùng trong y học.",
+                    "C. Thiết bị xử lý rác thải ứng dụng công nghệ nhiệt hóa hơi.",
+                    "D. Thước kẹp vi kế và nhiệt kế kim loại."
+                ],
+                correct: 3,
+                explain: "Mục I.2 SGK nêu rõ ứng dụng của nhiệt hóa hơi riêng trong máy điều hòa, dàn lạnh, nồi hấp tiệt trùng, thiết bị xử lý rác thải. Thước kẹp vi kế không ứng dụng nhiệt hóa hơi riêng."
+            },
+            {
+                id: 8,
+                level: "Biết",
+                levelCode: "know",
+                question: "Cho biết nhiệt hóa hơi riêng của nước ở \\(100^\\circ C\\) là \\(2,26.10^6\\text{ J/kg}\\), còn ở \\(50^\\circ C\\) là \\(2,39.10^6\\text{ J/kg}\\). Kết luận nào sau đây là ĐÚNG?",
+                options: [
+                    "A. Nhiệt hóa hơi riêng của chất lỏng luôn không đổi ở mọi nhiệt độ.",
+                    "B. Nhiệt hóa hơi riêng của một chất lỏng thường tăng khi nhiệt độ giảm.",
+                    "C. Nhiệt hóa hơi riêng của một chất lỏng luôn giảm khi nhiệt độ giảm.",
+                    "D. Nhiệt hóa hơi riêng chỉ phụ thuộc vào áp suất khí quyển."
+                ],
+                correct: 1,
+                explain: "SGK Trang 27 nhấn mạnh: \"Chất lỏng có thể hóa hơi ở các nhiệt độ khác nhau. Thường thì nhiệt hóa hơi riêng của một chất tăng khi nhiệt độ giảm.\""
+            },
+
+            // --- 7 CÂU HIỂU (Level 2) ---
+            {
+                id: 9,
+                level: "Hiểu",
+                levelCode: "understand",
+                question: "Tính nhiệt lượng cần cung cấp để làm cho \\(2\\text{ kg}\\) nước ở nhiệt độ sôi \\(100^\\circ C\\) hóa hơi hoàn toàn. Cho nhiệt hóa hơi riêng của nước ở \\(100^\\circ C\\) là \\(L = 2,26.10^6\\text{ J/kg}\\).",
+                options: [
+                    "A. \\(4,52.10^6\\text{ J}\\)",
+                    "B. \\(1,13.10^6\\text{ J}\\)",
+                    "C. \\(2,26.10^6\\text{ J}\\)",
+                    "D. \\(4,52.10^5\\text{ J}\\)"
+                ],
+                correct: 0,
+                explain: "Áp dụng hệ thức: \\(Q = L . m = 2,26.10^6 \\times 2 = 4,52.10^6\\text{ J}\\)."
+            },
+            {
+                id: 10,
+                level: "Hiểu",
+                levelCode: "understand",
+                question: "Tại sao trong suốt quá trình nước đang sôi ở \\(100^\\circ C\\) dưới áp suất tiêu chuẩn, dù tiếp tục cung cấp nhiệt lượng lớn thì nhiệt độ của nước vẫn không thay đổi?",
+                options: [
+                    "A. Vì nhiệt lượng cung cấp được dùng để làm tăng động năng trung bình của phân tử.",
+                    "B. Vì nhiệt lượng cung cấp được dùng để thắng lực liên kết giữa các phân tử chất lỏng và thực hiện công giúp phân tử thoát ra thể hơi.",
+                    "C. Vì toàn bộ nhiệt lượng bị thất thoát hoàn toàn ra môi trường không khí xung quanh.",
+                    "D. Vì công suất của bếp đun tự động hạ về 0."
+                ],
+                correct: 1,
+                explain: "Trong quá trình hóa hơi ở nhiệt độ sôi, nhiệt lượng thu vào không làm tăng động năng phân tử (nên nhiệt độ không tăng) mà dùng để phá vỡ liên kết phân tử lỏng và thực hiện công mở rộng thể tích chuyển sang thể hơi."
+            },
+            {
+                id: 11,
+                level: "Hiểu",
+                levelCode: "understand",
+                question: "Tính nhiệt lượng cần cung cấp để làm hóa hơi hoàn toàn \\(0,5\\text{ kg}\\) rượu ở đúng nhiệt độ sôi \\(78^\\circ C\\). Cho nhiệt hóa hơi riêng của rượu từ Bảng 6.1 là \\(L = 8,57.10^5\\text{ J/kg}\\).",
+                options: [
+                    "A. \\(4,285.10^5\\text{ J}\\)",
+                    "B. \\(1,714.10^6\\text{ J}\\)",
+                    "C. \\(8,57.10^5\\text{ J}\\)",
+                    "D. \\(4,285.10^6\\text{ J}\\)"
+                ],
+                correct: 0,
+                explain: "Áp dụng công thức: \\(Q = L . m = 8,57.10^5 \\times 0,5 = 4,285.10^5\\text{ J}\\)."
+            },
+            {
+                id: 12,
+                level: "Hiểu",
+                levelCode: "understand",
+                question: "Trong thí nghiệm đo nhiệt hóa hơi riêng của nước (Mục II SGK), việc đặt cả bình nhiệt lượng kế lên cân điện tử trong suốt quá trình đun sôi nhằm mục đích chính là gì?",
+                options: [
+                    "A. Để đo công suất tỏa nhiệt của dây điện trở.",
+                    "B. Để xác định khối lượng nước giảm đi (đã hóa hơi) theo các khoảng thời gian.",
+                    "C. Để giữ cho nhiệt độ của nước luôn cố định ở \\(100^\\circ C\\).",
+                    "D. Để kiểm tra sự giãn nở nhiệt của vỏ bình."
+                ],
+                correct: 1,
+                explain: "Đổ nước nóng vào nhiệt lượng kế và đặt trên cân giúp theo dõi sự giảm bớt khối lượng \\(m\\) của nước khi hóa hơi thoát ra ngoài theo thời gian đun \\(\\tau\\)."
+            },
+            {
+                id: 13,
+                level: "Hiểu",
+                levelCode: "understand",
+                question: "Một bếp điện cung cấp nhiệt lượng \\(Q = 452\\text{ kJ}\\) để làm hóa hơi hoàn toàn \\(0,2\\text{ kg}\\) nước ở nhiệt độ sôi. Giá trị nhiệt hóa hơi riêng của nước thu được là:",
+                options: [
+                    "A. \\(2,26.10^6\\text{ J/kg}\\)",
+                    "B. \\(90,4.10^3\\text{ J/kg}\\)",
+                    "C. \\(2,26.10^5\\text{ J/kg}\\)",
+                    "D. \\(4,52.10^6\\text{ J/kg}\\)"
+                ],
+                correct: 0,
+                explain: "Đổi \\(Q = 452\\text{ kJ} = 452\\,000\\text{ J}\\). Nhiệt hóa hơi riêng: \\(L = \\frac{Q}{m} = \\frac{452\\,000}{0,2} = 2\\,260\\,000\\text{ J/kg} = 2,26.10^6\\text{ J/kg}\\)."
+            },
+            {
+                id: 14,
+                level: "Hiểu",
+                levelCode: "understand",
+                question: "Cơ thể người xả nhiệt chủ yếu thông qua việc bay hơi mồ hôi trên da và hô hấp. Hiện tượng này làm mát cơ thể nhờ nguyên lý vật lý nào?",
+                options: [
+                    "A. Sự bay hơi của nước mồ hôi cần thu nhiệt lượng lớn từ cơ thể (nhiệt hóa hơi riêng của nước rất cao).",
+                    "B. Nước mồ hôi tỏa nhiệt lượng lớn vào cơ thể khi bay hơi.",
+                    "C. Sự bay hơi làm tăng nhiệt độ bề mặt da.",
+                    "D. Mồ hôi hóa hơi tạo ra áp suất ép bớt nhiệt lượng ra ngoài."
+                ],
+                correct: 0,
+                explain: "Vì nước có nhiệt hóa hơi riêng rất lớn (\\(L \\approx 2,45.10^6\\text{ J/kg}\\) ở nhiệt độ cơ thể), nên khi mồ hôi bay hơi, nó thu một lượng nhiệt lớn từ cơ thể, giúp hạ nhiệt và duy trì thân nhiệt ổn định."
+            },
+            {
+                id: 15,
+                level: "Hiểu",
+                levelCode: "understand",
+                question: "Trong hệ thống máy điều hòa nhiệt độ hoặc tủ lạnh, chất làm lạnh (gas lạnh) khi chảy qua dàn bay hơi thực hiện nhiệm vụ gì?",
+                options: [
+                    "A. Tỏa nhiệt ra không khí xung quanh để hóa hơi.",
+                    "B. Thu nhiệt từ môi trường bên trong phòng/tủ lạnh để hóa hơi, làm hạ nhiệt độ môi trường đó.",
+                    "C. Ngưng tụ thành chất lỏng và giải phóng nhiệt.",
+                    "D. Làm đông lạnh không khí xung quanh dàn lạnh."
+                ],
+                correct: 1,
+                explain: "Tại dàn bay hơi (dàn lạnh), chất làm lạnh ở thể lỏng thu nhiệt năng từ không khí xung quanh để hóa hơi, làm không khí bên trong phòng/tủ lạnh nguội đi nhanh chóng."
+            },
+
+            // --- 3 CÂU VẬN DỤNG (Level 3) ---
+            {
+                id: 16,
+                level: "Vận dụng",
+                levelCode: "apply",
+                question: "Tính nhiệt lượng tổng cộng cần thiết để làm cho \\(10\\text{ kg}\\) nước ở \\(25^\\circ C\\) chuyển hoàn toàn thành hơi ở \\(100^\\circ C\\). Cho nhiệt dung riêng của nước \\(c = 4200\\text{ J/kg.K}\\); nhiệt hóa hơi riêng của nước ở \\(100^\\circ C\\) là \\(L = 2,26.10^6\\text{ J/kg}\\). (Bài tập 1 - Trang 28 SGK)",
+                options: [
+                    "A. \\(25,75.10^6\\text{ J}\\)",
+                    "B. \\(3,15.10^6\\text{ J}\\)",
+                    "C. \\(22,60.10^6\\text{ J}\\)",
+                    "D. \\(25,75.10^5\\text{ J}\\)"
+                ],
+                correct: 0,
+                explain: "1. Nhiệt lượng cần đun \\(10\\text{ kg}\\) nước từ \\(25^\\circ C\\) lên \\(100^\\circ C\\):\n\\(Q_1 = m . c . (t_2 - t_1) = 10 \\times 4200 \\times (100 - 25) = 3\\,150\\,000\\text{ J} = 3,15.10^6\\text{ J}\\).\n2. Nhiệt lượng cần làm \\(10\\text{ kg}\\) nước hóa hơi hoàn toàn ở \\(100^\\circ C\\):\n\\(Q_2 = L . m = 2,26.10^6 \\times 10 = 22\\,60.10^6\\text{ J}\\).\n3. Tổng nhiệt lượng cần thiết: \\(Q = Q_1 + Q_2 = 3,15.10^6 + 22,60.10^6 = 25,75.10^6\\text{ J}\\)."
+            },
+            {
+                id: 17,
+                level: "Vận dụng",
+                levelCode: "apply",
+                question: "Dùng một ấm điện có công suất \\(\\mathcal{P} = 1500\\text{ W}\\) để làm hóa hơi hoàn toàn \\(1\\text{ kg}\\) nước đang ở nhiệt độ sôi \\(100^\\circ C\\). Bỏ qua sự mất nhiệt ra môi trường. Cho nhiệt hóa hơi riêng của nước ở \\(100^\\circ C\\) là \\(L = 2,25.10^6\\text{ J/kg}\\). Thời gian cần thiết để hóa hơi hoàn toàn lượng nước trên là:",
+                options: [
+                    "A. \\(1500\\text{ giây}\\) (25 phút)",
+                    "B. \\(750\\text{ giây}\\) (12,5 phút)",
+                    "C. \\(3000\\text{ giây}\\) (50 phút)",
+                    "D. \\(2250\\text{ giây}\\) (37,5 phút)"
+                ],
+                correct: 0,
+                explain: "1. Nhiệt lượng cần hóa hơi hoàn toàn \\(1\\text{ kg}\\) nước:\n\\(Q = L . m = 2,25.10^6 \\times 1 = 2\\,250\\,000\\text{ J}\\).\n2. Vì bỏ qua tổn hao nhiệt nên điện năng cung cấp \\(A = Q = 2\\,250\\,000\\text{ J}\\).\n3. Thời gian đun: \\(\\tau = \\frac{A}{\\mathcal{P}} = \\frac{2\\,250\\,000}{1500} = 1500\\text{ s}\\) (tương ứng 25 phút)."
+            },
+            {
+                id: 18,
+                level: "Vận dụng",
+                levelCode: "apply",
+                question: "Dựa vào đồ thị Hình 6.1 và Bảng 6.2 SGK: Chọn hai điểm \\(P(\\tau_P = 200\\text{ s}, m_P = 0,1187\\text{ kg})\\) và \\(Q(\\tau_Q = 700\\text{ s}, m_Q = 0,1153\\text{ kg})\\). Biết công suất trung bình của dây điện trở \\(\\overline{\\mathcal{P}} = 15,20\\text{ W}\\). Giá trị nhiệt hóa hơi riêng của nước \\(L\\) xác định từ đồ thị thực nghiệm này xấp xỉ bằng:",
+                options: [
+                    "A. \\(2,235.10^6\\text{ J/kg}\\)",
+                    "B. \\(2,260.10^6\\text{ J/kg}\\)",
+                    "C. \\(2,450.10^6\\text{ J/kg}\\)",
+                    "D. \\(1,800.10^6\\text{ J/kg}\\)"
+                ],
+                correct: 0,
+                explain: "1. Khoảng thời gian: \\(\\Delta \\tau = \\tau_Q - \\tau_P = 700 - 200 = 500\\text{ s}\\).\n2. Khối lượng nước đã hóa hơi: \\(\\Delta m = m_P - m_Q = 0,1187 - 0,1153 = 0,0034\\text{ kg}\\).\n3. Nhiệt lượng điện tỏa ra: \\(Q = \\overline{\\mathcal{P}} . \\Delta \\tau = 15,20 \\times 500 = 7600\\text{ J}\\).\n4. Nhiệt hóa hơi riêng tính được: \\(L = \\frac{Q}{\\Delta m} = \\frac{7600}{0,0034} \\approx 2\\,235\\,294\\text{ J/kg} \\approx 2,235.10^6\\text{ J/kg}\\)."
+            },
+
+            // --- 2 CÂU VẬN DỤNG CAO (Level 4) ---
+            {
+                id: 19,
+                level: "VD Cao",
+                levelCode: "high",
+                question: "Vận động viên Marathon tiêu tốn tổng năng lượng \\(11\\,000\\text{ kJ}\\) trong cuộc thi. Vận động viên chỉ chuyển hóa khoảng \\(20\\%\\) năng lượng thành cơ năng chạy, \\(80\\%\\) năng lượng còn lại chuyển thành nhiệt thải ra ngoài nhờ sự bay hơi của mồ hôi qua da và hô hấp. Coi nhiệt hóa hơi riêng của nước trong cơ thể là \\(L = 2,45.10^6\\text{ J/kg}\\) và khối lượng riêng của nước mồ hôi là \\(D = 1\\text{ kg/lít}\\). Thể tích nước mồ hôi đã thoát ra khỏi cơ thể là khoảng: (Bài tập 2 - Trang 28 SGK)",
+                options: [
+                    "A. \\(3,59\\text{ lít}\\)",
+                    "B. \\(0,90\\text{ lít}\\)",
+                    "C. \\(4,49\\text{ lít}\\)",
+                    "D. \\(2,87\\text{ lít}\\)"
+                ],
+                correct: 0,
+                explain: "1. Tổng năng lượng tiêu tốn: \\(E = 11\\,000\\text{ kJ} = 11.10^6\\text{ J}\\).\n2. Nhiệt thải cần giải phóng qua mồ hôi (80%): \\(Q_{\\text{thải}} = 0,80 \\times 11.10^6 = 8,8.10^6\\text{ J}\\).\n3. Khối lượng nước mồ hôi thoát ra: \\(m = \\frac{Q_{\\text{thải}}}{L} = \\frac{8,8.10^6}{2,45.10^6} \\approx 3,5918\\text{ kg}\\).\n4. Vì \\(D = 1\\text{ kg/lít}\\) nên thể tích nước thoát ra là khoảng **3,59 lít**."
+            },
+            {
+                id: 20,
+                level: "VD Cao",
+                levelCode: "high",
+                question: "Trong thí nghiệm đun sôi \\(0,120\\text{ kg}\\) nước ở \\(100^\\circ C\\) bằng điện trở có công suất đun trung bình \\(\\overline{\\mathcal{P}} = 15,20\\text{ W}\\). Sau thời gian đun \\(840\\text{ s}\\), khối lượng nước còn lại là \\(0,1141\\text{ kg}\\) (theo Bảng 6.2 SGK). Tuy nhiên, đo đạc thực tế cho thấy có \\(5\\%\\) nhiệt lượng tỏa ra bị thất thoát ra môi trường xung quanh. Giá trị nhiệt hóa hơi riêng của nước \\(L_{\\text{thực}}\\) thu được sau khi đã hiệu chỉnh trừ tổn hao nhiệt là:",
+                options: [
+                    "A. \\(2,056.10^6\\text{ J/kg}\\)",
+                    "B. \\(2,163.10^6\\text{ J/kg}\\)",
+                    "C. \\(2,260.10^6\\text{ J/kg}\\)",
+                    "D. \\(2,382.10^6\\text{ J/kg}\\)"
+                ],
+                correct: 0,
+                explain: "1. Khối lượng nước đã hóa hơi: \\(\\Delta m = 0,1200 - 0,1141 = 0,0059\\text{ kg}\\).\n2. Tổng điện năng tỏa ra: \\(Q_{\\text{điện}} = \\overline{\\mathcal{P}} . \\tau = 15,20 \\times 840 = 12\\,768\\text{ J}\\).\n3. Do mất nhiệt 5%, nhiệt lượng có ích truyền vào nước để hóa hơi là:\n\\(Q_{\\text{thực}} = Q_{\\text{điện}} \\times (100\\% - 5\\%) = 12\\,768 \\times 0,95 = 12\\,129,6\\text{ J}\\).\n4. Nhiệt hóa hơi riêng thực tế: \\(L_{\\text{thực}} = \\frac{Q_{\\text{thực}}}{\\Delta m} = \\frac{12\\,129,6}{0,0059} \\approx 2\\,055\\,864\\text{ J/kg} \\approx 2,056.10^6\\text{ J/kg}\\)."
+            }
+        ];
+
+        // Global State Variables
+        let currentQuestions = [];
+        let userAnswers = {};
+        let currentIdx = 0;
+        let quizMode = 'practice'; // 'practice' or 'timed'
+        let timerInterval = null;
+        let timeRemaining = 20 * 60; // 20 minutes in seconds
+
+        // Custom Modal Logic
+        function showModal(title, message, onConfirm = null) {
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-message').innerText = message;
+            const cancelBtn = document.getElementById('modal-cancel-btn');
+            const confirmBtn = document.getElementById('modal-confirm-btn');
+
+            if (onConfirm) {
+                cancelBtn.classList.remove('hidden');
+                confirmBtn.innerText = "Đồng ý";
+                confirmBtn.onclick = () => {
+                    closeModal();
+                    onConfirm();
+                };
+            } else {
+                cancelBtn.classList.add('hidden');
+                confirmBtn.innerText = "Đóng";
+                confirmBtn.onclick = closeModal;
+            }
+            document.getElementById('custom-modal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('custom-modal').classList.add('hidden');
+        }
+
+        function shuffleArray(array) {
+            let arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        function startQuiz(mode) {
+            quizMode = mode;
+            userAnswers = {};
+            currentIdx = 0;
+
+            if (mode === 'timed') {
+                // Shuffle questions for test mode
+                currentQuestions = shuffleArray(ORIGINAL_QUESTIONS);
+                document.getElementById('timer-box').classList.remove('hidden');
+                document.getElementById('mode-text').innerText = "Chế độ: TÍNH GIỜ (20 phút)";
+                startTimer();
+            } else {
+                currentQuestions = [...ORIGINAL_QUESTIONS];
+                document.getElementById('timer-box').classList.add('hidden');
+                document.getElementById('mode-text').innerText = "Chế độ: LUYỆN TẬP (Tự do)";
+            }
+
+            document.getElementById('header-mode-badge').classList.remove('hidden');
+            document.getElementById('screen-welcome').classList.add('hidden');
+            document.getElementById('screen-quiz').classList.remove('hidden');
+
+            renderQuestionGrid();
+            loadQuestion(0);
+        }
+
+        function startTimer() {
+            timeRemaining = 20 * 60;
+            updateTimerDisplay();
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                timeRemaining--;
+                updateTimerDisplay();
+                if (timeRemaining <= 0) {
+                    clearInterval(timerInterval);
+                    showModal("Hết giờ làm bài", "Đã hết thời gian 20 phút! Hệ thống sẽ tự động nộp bài và chấm điểm.", () => {
+                        submitQuiz();
+                    });
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const mins = Math.floor(timeRemaining / 60);
+            const secs = timeRemaining % 60;
+            document.getElementById('timer-display').innerText = 
+                `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        function renderQuestionGrid() {
+            const gridContainer = document.getElementById('question-grid');
+            gridContainer.innerHTML = '';
+
+            currentQuestions.forEach((q, idx) => {
+                const btn = document.createElement('button');
+                btn.id = `grid-btn-${idx}`;
+                btn.onclick = () => loadQuestion(idx);
+                btn.className = getGridBtnClass(idx);
+                btn.innerText = idx + 1;
+                gridContainer.appendChild(btn);
+            });
+            updateProgressText();
+        }
+
+        function getGridBtnClass(idx) {
+            const isAnswered = userAnswers[idx] !== undefined;
+            const isCurrent = idx === currentIdx;
+
+            let base = "h-10 w-full rounded-lg font-bold text-sm transition-all flex items-center justify-center ";
+
+            if (isCurrent) {
+                return base + "bg-blue-600 text-white ring-2 ring-blue-400 font-extrabold shadow-lg";
+            } else if (isAnswered) {
+                return base + "bg-amber-500 text-slate-950 hover:bg-amber-400";
+            } else {
+                return base + "bg-slate-800 text-slate-300 border border-slate-700 hover:bg-slate-700";
+            }
+        }
+
+        function updateProgressText() {
+            const count = Object.keys(userAnswers).length;
+            document.getElementById('progress-text').innerText = `${count} / 20 đã làm`;
+        }
+
+        function loadQuestion(idx) {
+            currentIdx = idx;
+            const q = currentQuestions[idx];
+
+            // Update Header & Badge
+            document.getElementById('current-question-title').innerText = `Câu ${idx + 1} / 20`;
+            const badge = document.getElementById('question-level-badge');
+            badge.innerText = q.level;
+
+            if (q.levelCode === 'know') {
+                badge.className = "px-2.5 py-0.5 rounded-md text-xs font-semibold bg-blue-500/20 text-blue-300 border border-blue-500/30";
+            } else if (q.levelCode === 'understand') {
+                badge.className = "px-2.5 py-0.5 rounded-md text-xs font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30";
+            } else if (q.levelCode === 'apply') {
+                badge.className = "px-2.5 py-0.5 rounded-md text-xs font-semibold bg-amber-500/20 text-amber-300 border border-amber-500/30";
+            } else {
+                badge.className = "px-2.5 py-0.5 rounded-md text-xs font-semibold bg-rose-500/20 text-rose-300 border border-rose-500/30";
+            }
+
+            // Render Question Text
+            document.getElementById('question-text').innerHTML = q.question;
+
+            // Render Options
+            const container = document.getElementById('options-container');
+            container.innerHTML = '';
+
+            q.options.forEach((opt, optIdx) => {
+                const isSelected = userAnswers[idx] === optIdx;
+                const optDiv = document.createElement('div');
+                optDiv.className = "relative";
+                optDiv.innerHTML = `
+                    <input type="radio" id="opt-${optIdx}" name="question-opt" value="${optIdx}" 
+                        class="hidden radio-custom" ${isSelected ? 'checked' : ''} onchange="selectOption(${optIdx})">
+                    <label for="opt-${optIdx}" 
+                        class="flex items-center p-4 rounded-xl border border-navyBorder bg-slate-900/60 hover:bg-slate-800/80 hover:border-slate-600 cursor-pointer transition-all text-sm sm:text-base text-slate-200">
+                        <span class="w-5 h-5 rounded-full border border-slate-500 mr-3 flex items-center justify-center flex-shrink-0 font-bold text-xs ${isSelected ? 'bg-blue-500 border-blue-400 text-white' : ''}">
+                            ${String.fromCharCode(65 + optIdx)}
+                        </span>
+                        <span class="flex-grow">${opt}</span>
+                    </label>
+                `;
+                container.appendChild(optDiv);
+            });
+
+            // Update Navigation Buttons
+            document.getElementById('btn-prev').disabled = (idx === 0);
+            if (idx === currentQuestions.length - 1) {
+                document.getElementById('btn-next').innerHTML = `<span>Xem lại</span> <i class="fa-solid fa-sync"></i>`;
+            } else {
+                document.getElementById('btn-next').innerHTML = `<span>Câu Tiếp</span> <i class="fa-solid fa-chevron-right"></i>`;
+            }
+
+            // Refresh Grid Styles
+            currentQuestions.forEach((_, i) => {
+                const btn = document.getElementById(`grid-btn-${i}`);
+                if (btn) btn.className = getGridBtnClass(i);
+            });
+
+            // Re-render MathJax formula
+            if (window.MathJax) {
+                MathJax.typesetPromise();
+            }
+        }
+
+        function selectOption(optIdx) {
+            userAnswers[currentIdx] = optIdx;
+            renderQuestionGrid();
+            loadQuestion(currentIdx);
+        }
+
+        function clearCurrentSelection() {
+            delete userAnswers[currentIdx];
+            renderQuestionGrid();
+            loadQuestion(currentIdx);
+        }
+
+        function navigateQuestion(step) {
+            let nextIdx = currentIdx + step;
+            if (nextIdx >= 0 && nextIdx < currentQuestions.length) {
+                loadQuestion(nextIdx);
+            }
+        }
+
+        function confirmSubmitQuiz() {
+            const answeredCount = Object.keys(userAnswers).length;
+            if (answeredCount < currentQuestions.length) {
+                showModal(
+                    "Xác nhận nộp bài",
+                    `Bạn mới hoàn thành ${answeredCount}/20 câu hỏi. Bạn có chắc chắn muốn nộp bài sớm không?`,
+                    () => submitQuiz()
+                );
+            } else {
+                showModal(
+                    "Xác nhận nộp bài",
+                    "Bạn đã hoàn thành tất cả 20 câu hỏi. Bạn có muốn nộp bài và xem kết quả ngay?",
+                    () => submitQuiz()
+                );
+            }
+        }
+
+        function submitQuiz() {
+            if (timerInterval) clearInterval(timerInterval);
+
+            // Calculate Score
+            let correctNum = 0;
+            currentQuestions.forEach((q, idx) => {
+                if (userAnswers[idx] === q.correct) {
+                    correctNum++;
+                }
+            });
+
+            const score = (correctNum * 0.5).toFixed(1);
+
+            // Hide Quiz Screen, Show Results Screen
+            document.getElementById('screen-quiz').classList.add('hidden');
+            document.getElementById('screen-result').classList.remove('hidden');
+
+            document.getElementById('final-score').innerText = score;
+            document.getElementById('correct-count').innerText = `${correctNum}/20`;
+
+            // Calculate Time Taken
+            let timeText = "Chế độ luyện tập (Không tính thời gian)";
+            if (quizMode === 'timed') {
+                const spentSecs = (20 * 60) - timeRemaining;
+                const m = Math.floor(spentSecs / 60);
+                const s = spentSecs % 60;
+                timeText = `Thời gian làm bài: ${m} phút ${s} giây`;
+            }
+            document.getElementById('result-time-taken').innerText = timeText;
+
+            // Generate Teacher Feedback
+            generateTeacherFeedback(parseFloat(score), correctNum);
+
+            // Render Detailed Explanations
+            renderDetailedReview();
+        }
+
+        function generateTeacherFeedback(score, correctNum) {
+            const feedbackEl = document.getElementById('teacher-feedback');
+            let feedback = "";
+
+            if (score >= 9.0) {
+                feedback = `🌟 **Xuất sắc (${score}/10 điểm)!** Em đã nắm rất vững kiến thức Bài 6: Nhiệt hóa hơi riêng. Khả năng vận dụng linh hoạt từ định nghĩa, hệ thức $Q = Lm$, bài toán VĐV Marathon cho đến việc phân tích xử lý sai số tổn hao nhiệt thực nghiệm vô cùng chính xác!`;
+            } else if (score >= 7.0) {
+                feedback = `👍 **Khá giỏi (${score}/10 điểm)!** Em nắm chắc các câu hỏi ở mức độ Biết và Hiểu. Để đạt điểm 10 tuyệt đối, em hãy chú ý rèn luyện thêm kĩ năng biến đổi công thức tính thời gian đun ấm điện và bài toán hiệu chỉnh tổn hao nhiệt thực tế nhé!`;
+            } else if (score >= 5.0) {
+                feedback = `⚠️ **Đạt yêu cầu (${score}/10 điểm).** Em đã ghi nhớ được định nghĩa và công thức cơ bản $Q = Lm$. Tuy nhiên vẫn còn nhầm lẫn ở một số câu giải thích nguyên lý máy điều hòa, bay hơi mồ hôi và đọc đồ thị $m(\\tau)$. Em hãy đọc kĩ phần lời giải bên dưới để củng cố nhé.`;
+            } else {
+                feedback = `📚 **Cần cố gắng nhiều hơn (${score}/10 điểm).** Em chưa nắm chắc kiến thức Bài 6: Nhiệt hóa hơi riêng. Em nên xem lại kĩ SGK, ghi nhớ đơn vị ($J/kg$), bảng giá trị nhiệt hóa hơi riêng và học kĩ các bước giải bài tập trước khi thực hiện lại đề thi này.`;
+            }
+
+            feedbackEl.innerText = feedback;
+        }
+
+        function renderDetailedReview() {
+            const container = document.getElementById('review-list-container');
+            container.innerHTML = '';
+
+            currentQuestions.forEach((q, idx) => {
+                const userChoice = userAnswers[idx];
+                const isCorrect = (userChoice === q.correct);
+
+                const card = document.createElement('div');
+                card.className = `p-6 rounded-2xl border ${isCorrect ? 'border-emerald-500/40 bg-emerald-950/10' : 'border-rose-500/40 bg-rose-950/10'} space-y-4`;
+
+                let statusBadge = isCorrect 
+                    ? `<span class="bg-emerald-500/20 text-emerald-300 text-xs px-3 py-1 rounded-full font-bold border border-emerald-500/30"><i class="fa-solid fa-check mr-1"></i> Đúng (+0,5 đ)</span>`
+                    : `<span class="bg-rose-500/20 text-rose-300 text-xs px-3 py-1 rounded-full font-bold border border-rose-500/30"><i class="fa-solid fa-xmark mr-1"></i> Sai (0 đ)</span>`;
+
+                let optionsHtml = q.options.map((opt, oIdx) => {
+                    let optStyle = "text-slate-300 bg-slate-900/40 border-slate-800";
+                    let icon = "";
+
+                    if (oIdx === q.correct) {
+                        optStyle = "text-emerald-300 bg-emerald-900/30 border-emerald-500/50 font-semibold";
+                        icon = `<i class="fa-solid fa-circle-check text-emerald-400 ml-auto"></i>`;
+                    } else if (oIdx === userChoice && !isCorrect) {
+                        optStyle = "text-rose-300 bg-rose-900/30 border-rose-500/50 line-through";
+                        icon = `<i class="fa-solid fa-circle-xmark text-rose-400 ml-auto"></i>`;
+                    }
+
+                    return `
+                        <div class="p-3 rounded-xl border text-sm flex items-center justify-between ${optStyle}">
+                            <span>${opt}</span>
+                            ${icon}
+                        </div>
+                    `;
+                }).join('');
+
+                card.innerHTML = `
+                    <div class="flex justify-between items-start gap-4 border-b border-slate-800 pb-3">
+                        <div class="space-y-1">
+                            <span class="text-xs font-bold text-amber-400 uppercase tracking-wider">Câu ${idx + 1} (${q.level})</span>
+                            <div class="text-base text-cream font-medium">${q.question}</div>
+                        </div>
+                        <div>${statusBadge}</div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                        ${optionsHtml}
+                    </div>
+
+                    <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-800 space-y-2 text-xs sm:text-sm">
+                        <div class="font-bold text-amber-300 flex items-center space-x-2">
+                            <i class="fa-solid fa-lightbulb"></i>
+                            <span>Lời giải chi tiết:</span>
+                        </div>
+                        <div class="text-slate-300 leading-relaxed font-sans">${q.explain}</div>
+                    </div>
+                `;
+
+                container.appendChild(card);
+            });
+
+            // Re-render MathJax in review section
+            if (window.MathJax) {
+                MathJax.typesetPromise();
+            }
+        }
+    </script>
+</body>
+</html>
