@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hệ thống Quản lý Đề Thi - Giao diện 2 Panel</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; margin: 0; padding: 0; height: 100vh; display: flex; flex-direction: column; }
+        
+        /* Header cấu hình */
+        header { background: #000080; color: white; padding: 10px 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+        header h2 { margin: 0; font-size: 18px; }
+        .config-box { display: flex; gap: 10px; align-items: center; }
+        .config-box input { padding: 6px 10px; border-radius: 4px; border: none; font-size: 13px; }
+        .config-box button { background: #28a745; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        .config-box button:hover { background: #218838; }
+
+        /* Bố cục 2 Panel chính */
+        .main-container { display: flex; flex: 1; overflow: hidden; }
+        
+        /* Panel Trái: Cây thư mục & Upload */
+        .left-panel { width: 350px; background: #fff; border-right: 1px solid #ddd; display: flex; flex-direction: column; padding: 15px; overflow-y: auto; }
+        .left-panel h3 { font-size: 15px; color: #000080; margin-top: 0; border-bottom: 2px solid #000080; padding-bottom: 5px; }
+        
+        /* Panel Phải: Hiển thị nội dung bài học */
+        .right-panel { flex: 1; background: #fff; display: flex; flex-direction: column; padding: 0; position: relative; }
+        .right-header { background: #f8f9fa; padding: 10px 20px; border-bottom: 1px solid #ddd; font-weight: bold; color: #333; display: flex; justify-content: space-between; align-items: center; }
+        #previewFrame { width: 100%; height: 100%; border: none; flex: 1; background: #fff; }
+        .welcome-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: #666; text-align: center; padding: 20px; }
+
+        /* Khung Cây thư mục (Tree View) */
+        .tree-container { flex: 1; overflow-y: auto; background: #fdfdfd; border: 1px solid #e1e4e8; border-radius: 6px; padding: 10px; margin-top: 10px; font-size: 14px; }
+        ul.tree, ul.tree ul { list-style-type: none; margin: 0; padding-left: 15px; }
+        ul.tree li { margin: 4px 0; position: relative; }
+        .folder-toggle { cursor: pointer; font-weight: bold; color: #d73a49; user-select: none; }
+        .folder-toggle:hover { color: #b31d28; }
+        .file-item { cursor: pointer; color: #0366d6; text-decoration: none; display: inline-block; padding: 2px 4px; border-radius: 3px; }
+        .file-item:hover { background-color: #f1f8ff; text-decoration: underline; }
+
+        /* Khu vực Upload nhanh */
+        .upload-section { margin-top: 15px; padding-top: 15px; border-top: 1px dashed #ccc; }
+        .upload-section label { display: block; font-size: 12px; font-weight: bold; margin-bottom: 4px; }
+        .upload-section input[type="text"], .upload-section input[type="file"] { width: 100%; padding: 6px; margin-bottom: 8px; font-size: 13px; border: 1px solid #ccc; border-radius: 4px; }
+        .upload-section button { width: 100%; background: #000080; color: white; border: none; padding: 8px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        .upload-section button:hover { background: #000050; }
+        .loading { font-size: 12px; color: #666; font-style: italic; text-align: center; margin-top: 5px; display: none; }
+    </style>
+</head>
+<body>
+
+    <!-- Header nhập cấu hình -->
+    <header>
+        <h2>Quản lý Kho Đề Thi</h2>
+        <div class="config-box">
+            <input type="text" id="username" placeholder="Username GitHub">
+            <input type="text" id="repo" placeholder="Tên Repo">
+            <input type="password" id="token" placeholder="GitHub Token (ghp_...)">
+            <button onclick="loadRepoTree()">Kết nối & Quét</button>
+        </div>
+    </header>
+
+    <!-- Giao diện 2 Panel -->
+    <div class="main-container">
+        
+        <!-- PANEL TRÁI: Menu cây & Upload -->
+        <div class="left-panel">
+            <h3>📂 Cây Thư Mục Đề Thi</h3>
+            <div class="tree-container" id="treeView">
+                <div style="color: #888; text-align: center; margin-top: 20px;">Nhập thông tin kết nối ở trên và bấm "Kết nối & Quét"</div>
+            </div>
+
+            <!-- Upload nhanh file mới -->
+            <div class="upload-section">
+                <h3>⬆️ Tải Lên File Nhanh</h3>
+                <label>Đường dẫn thư mục & Tên file:</label>
+                <input type="text" id="uploadPath" placeholder="vd: chuong1/de-01.html">
+                <label>Chọn file HTML:</label>
+                <input type="file" id="fileInput" accept=".html">
+                <button onclick="uploadFile()">Đẩy lên GitHub</button>
+                <div class="loading" id="uploadStatus">Đang tải lên...</div>
+            </div>
+        </div>
+
+        <!-- PANEL PHẢI: Xem trước nội dung bài -->
+        <div class="right-panel">
+            <div class="right-header" id="previewHeader">
+                <span>Trình xem trước bài trắc nghiệm</span>
+                <a id="externalLink" href="#" target="_blank" style="font-size: 13px; color: #0366d6; display: none;">Mở tab mới ↗</a>
+            </div>
+            <div id="welcomeScreen" class="welcome-screen">
+                <h3>Chưa chọn bài tập nào</h3>
+                <p>Hãy bấm vào một file `.html` ở cây thư mục bên trái để xem và làm bài trực tiếp tại đây.</p>
+            </div>
+            <iframe id="previewFrame" style="display: none;" title="Trình xem trước"></iframe>
+        </div>
+
+    </div>
+
+<script>
+// Tự động khôi phục cấu hình từ localStorage
+['username', 'repo', 'token'].forEach(id => {
+    const el = document.getElementById(id);
+    if(localStorage.getItem(id)) el.value = localStorage.getItem(id);
+    el.addEventListener('input', () => localStorage.setItem(id, el.value));
+});
+
+// Tự động quét khi vừa mở trang nếu đã có đủ thông tin
+window.onload = function() {
+    if(document.getElementById('username').value && document.getElementById('repo').value && document.getElementById('token').value) {
+        loadRepoTree();
+    }
+};
+
+function loadRepoTree() {
+    const username = document.getElementById('username').value.trim();
+    const repo = document.getElementById('repo').value.trim();
+    const token = document.getElementById('token').value.trim();
+    const treeView = document.getElementById('treeView');
+
+    if (!username || !repo || !token) {
+        alert("Vui lòng nhập đầy đủ Username, Tên Repo và Token!");
+        return;
+    }
+
+    treeView.innerHTML = '<div style="text-align:center; color:#666; padding:20px;">Đang quét cây thư mục từ GitHub...</div>';
+
+    const apiUrl = `https://api.github.com/repos/${username}/${repo}/git/trees/main?recursive=1`;
+
+    fetch(apiUrl, {
+        headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json' }
+    })
+    .then(res => {
+        if (!res.ok) {
+            return fetch(`https://api.github.com/repos/${username}/${repo}/git/trees/master?recursive=1`, {
+                headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json' }
+            });
+        }
+        return res;
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.tree) {
+            const root = buildTreeStructure(data.tree);
+            treeView.innerHTML = '';
+            treeView.appendChild(renderTreeHTML(root, username, repo));
+        } else {
+            treeView.innerHTML = '<div style="color:red; text-align:center;">Không tìm thấy dữ liệu hoặc repo trống.</div>';
+        }
+    })
+    .catch(err => {
+        treeView.innerHTML = '<div style="color:red; text-align:center;">Lỗi kết nối GitHub API!</div>';
+    });
+}
+
+function buildTreeStructure(flatList) {
+    let root = {};
+    flatList.forEach(item => {
+        let parts = item.path.split('/');
+        let current = root;
+        parts.forEach((part, index) => {
+            if (!current[part]) {
+                current[part] = (index === parts.length - 1 && item.type === 'blob') ? {__is_file: true, path: item.path} : {};
+            }
+            current = current[part];
+        });
+    });
+    return root;
+}
+
+function renderTreeHTML(node, username, repo) {
+    let ul = document.createElement('ul');
+    ul.className = 'tree';
+    for (let key in node) {
+        if (key === '__is_file') continue;
+        let li = document.createElement('li');
+        let val = node[key];
+
+        if (val.__is_file) {
+            // Nếu là file HTML, tạo sự kiện click để hiển thị ở panel bên phải
+            let liveUrl = `https://${username}.github.io/${repo}/${val.path}`;
+            li.innerHTML = `📄 <span class="file-item" onclick="openPreview('${liveUrl}', '${key}')">${key}</span>`;
+        } else {
+            // Nếu là thư mục (có thể click để thu gọn/mở rộng)
+            li.innerHTML = `<span class="folder-toggle" onclick="toggleFolder(this)">📁 <b>${key}</b></span>`;
+            let subUl = renderTreeHTML(val, username, repo);
+            li.appendChild(subUl);
+        }
+        ul.appendChild(li);
+    }
+    return ul;
+}
+
+// Hiệu ứng thu gọn / mở rộng thư mục
+function toggleFolder(element) {
+    let nextUl = element.nextElementSibling;
+    if (nextUl && nextUl.tagName === 'UL') {
+        nextUl.style.display = nextUl.style.display === 'none' ? 'block' : 'none';
+    }
+}
+
+// Hàm mở file ở panel bên phải
+function openPreview(url, fileName) {
+    document.getElementById('welcomeScreen').style.display = 'none';
+    const iframe = document.getElementById('previewFrame');
+    iframe.style.display = 'block';
+    iframe.src = url;
+
+    document.getElementById('previewHeader').querySelector('span').innerText = `Đang xem: ${fileName}`;
+    const extLink = document.getElementById('externalLink');
+    extLink.href = url;
+    extLink.style.display = 'inline';
+}
+
+// Hàm upload file nhanh
+function uploadFile() {
+    const username = document.getElementById('username').value.trim();
+    const repo = document.getElementById('repo').value.trim();
+    const token = document.getElementById('token').value.trim();
+    let uploadPath = document.getElementById('uploadPath').value.trim();
+    const fileInput = document.getElementById('fileInput');
+    const statusDiv = document.getElementById('uploadStatus');
+
+    if (!username || !repo || !token || !uploadPath || fileInput.files.length === 0) {
+        alert("Vui lòng điền đủ thông tin, đường dẫn và chọn file HTML cần upload!");
+        return;
+    }
+
+    const file = fileInput.files[0];
+    const reader = new FileReader();
+    statusDiv.style.display = 'block';
+
+    reader.onload = function(e) {
+        const contentBase64 = e.target.result.split(',')[1];
+        const apiUrl = `https://api.github.com/repos/${username}/${repo}/contents/${uploadPath}`;
+
+        fetch(apiUrl, {
+            method: 'GET',
+            headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json' }
+        })
+        .then(res => res.ok ? res.json() : null)
+        .then(existingFile => {
+            let bodyData = { message: `Upload ${uploadPath} via 2-Panel App`, content: contentBase64 };
+            if (existingFile && existingFile.sha) bodyData.sha = existingFile.sha;
+
+            return fetch(apiUrl, {
+                method: 'PUT',
+                headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json', 'Accept': 'application/vnd.github.v3+json' },
+                body: JSON.stringify(bodyData)
+            });
+        })
+        .then(res => {
+            statusDiv.style.display = 'none';
+            if (res && res.ok) {
+                alert("Upload thành công!");
+                loadRepoTree(); // Tự động quét lại cây thư mục bên trái
+            } else {
+                alert("Upload thất bại! Kiểm tra lại đường dẫn thư mục hoặc Token.");
+            }
+        })
+        .catch(err => {
+            statusDiv.style.display = 'none';
+            alert("Lỗi kết nối khi upload!");
+        });
+    };
+    reader.readAsDataURL(file);
+}
+</script>
+
+</body>
+</html>
