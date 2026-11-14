@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ôn Luyện Củng Cố Kiến Thức - Bài 10: Sự Rơi Tự Do</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cream: '#FFFDD0',
+                        bgDark: '#0d0f1d',
+                        cardDark: '#16192e',
+                        borderDark: '#2a2e4a',
+                        accentGold: '#f59e0b',
+                        accentBlue: '#3b82f6',
+                        accentGreen: '#10b981',
+                        accentRed: '#ef4444'
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Font Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- MathJax Configuration & Library -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)'], ['$', '$']],
+                displayMath: [['\\[', '\\]'], ['$$', '$$']]
+            },
+            svg: {
+                fontCache: 'global'
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0d0f1d;
+            color: #f3f4f6;
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #16192e;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #2a2e4a;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #3b82f6;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-indigo-500 selection:text-white">
+
+    <!-- Header -->
+    <header class="bg-[#111325] border-b border-borderDark px-4 py-3 sticky top-0 z-50 shadow-md">
+        <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-2">
+            <div class="flex items-center space-x-3">
+                <div class="bg-amber-500/20 text-amber-400 p-2 rounded-lg border border-amber-500/30">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold tracking-wide text-cream" style="color: #FFFDD0;">ÔN LUYỆN CỦNG CỐ KIẾN THỨC</h1>
+                    <p class="text-xs text-indigo-300 font-medium">Bài 10: SỰ RƠI TỰ DO <span class="text-gray-400">(Vật lí 10 - Chương II: Động học)</span></p>
+                </div>
+            </div>
+            <!-- Mode Status Badge -->
+            <div id="mode-badge" class="flex items-center space-x-2 bg-indigo-900/40 text-indigo-300 border border-indigo-700/50 px-3 py-1.5 rounded-full text-xs font-semibold">
+                <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+                <span id="mode-badge-text">Chưa chọn chế độ</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- SCREEN 1: INTRO & MODE SELECTION -->
+    <main id="screen-intro" class="max-w-6xl mx-auto px-4 py-8 flex-grow w-full">
+        <!-- Check icon banner -->
+        <div class="flex justify-center mb-6">
+            <div class="w-14 h-14 bg-amber-500/20 text-amber-400 rounded-full flex items-center justify-center border border-amber-500/40 shadow-lg shadow-amber-500/10">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+            </div>
+        </div>
+
+        <h2 class="text-3xl md:text-4xl font-extrabold text-center text-white mb-2 uppercase tracking-tight">BÀI KIỂM TRA TRẮC NGHIỆM KHÁCH QUAN</h2>
+        <p class="text-center text-gray-300 text-sm md:text-base max-w-2xl mx-auto mb-8 leading-relaxed">
+            Bộ câu hỏi chuẩn hóa gồm <span class="text-amber-400 font-bold">20 câu hỏi</span> bám sát nội dung bài học <span class="font-semibold text-white">Sự rơi tự do</span> với 4 mức độ tư duy chuẩn cấu trúc Bộ Giáo dục & Đào tạo.
+        </p>
+
+        <!-- Level Stats Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
+            <!-- Mức Biết -->
+            <div class="bg-cardDark border border-indigo-900/50 rounded-xl p-4 shadow-lg hover:border-indigo-500/50 transition">
+                <div class="text-xs font-bold text-blue-400 uppercase tracking-wider mb-1">MỨC BIẾT (8 CÂU)</div>
+                <p class="text-xs text-gray-400 leading-snug">Định nghĩa sự rơi tự do, điều kiện bỏ qua lực cản, phương & chiều, công thức $v = gt$, $s = \frac{1}{2}gt^2$, $v^2 = 2gs$, đặc điểm gia tốc $g$.</p>
+            </div>
+            <!-- Mức Hiểu -->
+            <div class="bg-cardDark border border-indigo-900/50 rounded-xl p-4 shadow-lg hover:border-indigo-500/50 transition">
+                <div class="text-xs font-bold text-emerald-400 uppercase tracking-wider mb-1">MỨC HIỂU (7 CÂU)</div>
+                <p class="text-xs text-gray-400 leading-snug">Giải thích thí nghiệm lực cản không khí (TN1, 2, 3), thí nghiệm ống Niutơn trong chân không, tính toán vận tốc & độ cao cơ bản, nhận biết chuyển động rơi tự do.</p>
+            </div>
+            <!-- Vận Dụng -->
+            <div class="bg-cardDark border border-indigo-900/50 rounded-xl p-4 shadow-lg hover:border-indigo-500/50 transition">
+                <div class="text-xs font-bold text-amber-400 uppercase tracking-wider mb-1">VẬN DỤNG (3 CÂU)</div>
+                <p class="text-xs text-gray-400 leading-snug">Bài toán hòn đá rơi từ tháp, quãng đường trong giây cuối cùng trước khi chạm đất, hiện tượng David Scott thả lông chim & búa trên Mặt Trăng.</p>
+            </div>
+            <!-- VD Cao -->
+            <div class="bg-cardDark border border-indigo-900/50 rounded-xl p-4 shadow-lg hover:border-indigo-500/50 transition">
+                <div class="text-xs font-bold text-rose-400 uppercase tracking-wider mb-1">VD CAO (2 CÂU)</div>
+                <p class="text-xs text-gray-400 leading-snug">Bài toán các giọt nước rơi liên tiếp từ mái nhà, bài toán tỉ số thời gian rơi 1m đầu tiên và 1m cuối cùng từ độ cao $h$.</p>
+            </div>
+        </div>
+
+        <!-- Mode Selection Prompt -->
+        <div class="text-center text-xs font-semibold text-indigo-300 tracking-widest uppercase mb-6">VUI LÒNG CHỌN HÌNH THỨC KIỂM TRA:</div>
+
+        <!-- Mode Option Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+            <!-- Mode 1: Luyện Tập -->
+            <div onclick="startExam('practice')" class="group cursor-pointer bg-cardDark border border-indigo-900/70 hover:border-amber-400/80 rounded-2xl p-6 shadow-xl transition-all duration-300 hover:-translate-y-1 relative overflow-hidden">
+                <div class="flex justify-between items-start mb-3">
+                    <h3 class="text-xl font-bold text-white group-hover:text-amber-400 transition">1. Chế độ Luyện Tập</h3>
+                    <span class="bg-indigo-900/60 text-indigo-300 text-xs px-3 py-1 rounded-full border border-indigo-700/50 font-medium">Không giới hạn</span>
+                </div>
+                <p class="text-xs text-indigo-300 font-medium mb-3">Học tập & củng cố kiến thức không áp lực</p>
+                <p class="text-xs text-gray-300 leading-relaxed mb-4">
+                    Làm bài không tính giờ. Giúp học sinh bình tĩnh suy ngẫm, củng cố kiến thức. Xem điểm và lời giải chi tiết ngay sau khi hoàn thành.
+                </p>
+                <div class="flex items-center text-amber-400 text-xs font-semibold group-hover:translate-x-1 transition-transform">
+                    Bắt đầu Luyện Tập &rarr;
+                </div>
+            </div>
+
+            <!-- Mode 2: Tính Giờ -->
+            <div onclick="startExam('timed')" class="group cursor-pointer bg-cardDark border border-indigo-900/70 hover:border-amber-400/80 rounded-2xl p-6 shadow-xl transition-all duration-300 hover:-translate-y-1 relative overflow-hidden">
+                <div class="flex justify-between items-start mb-3">
+                    <h3 class="text-xl font-bold text-white group-hover:text-amber-400 transition">2. Chế độ Tính Giờ</h3>
+                    <span class="bg-amber-900/50 text-amber-300 text-xs px-3 py-1 rounded-full border border-amber-700/50 font-medium">20 Phút</span>
+                </div>
+                <p class="text-xs text-amber-300 font-medium mb-3">Thử thách & kiểm tra đánh giá năng lực</p>
+                <p class="text-xs text-gray-300 leading-relaxed mb-4">
+                    Có đồng hồ đếm ngược 20 phút. Trật tự câu hỏi và đáp án ngẫu nhiên giúp đánh giá chính xác thực lực, chống học vẹt hay chép đáp án.
+                </p>
+                <div class="flex items-center text-amber-400 text-xs font-semibold group-hover:translate-x-1 transition-transform">
+                    Bắt đầu Tính Giờ &rarr;
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- SCREEN 2: DOING TEST INTERFACE -->
+    <main id="screen-test" class="hidden max-w-7xl mx-auto px-4 py-6 flex-grow w-full">
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            
+            <!-- Sidebar: Question Grid & Control -->
+            <div class="lg:col-span-1 bg-cardDark border border-borderDark rounded-2xl p-5 shadow-xl flex flex-col justify-between h-fit">
+                <div>
+                    <div class="flex items-center justify-between border-b border-borderDark pb-3 mb-4">
+                        <span class="text-xs font-bold text-gray-300 uppercase tracking-wider">DANH SÁCH CÂU HỎI</span>
+                        <span id="answered-counter" class="text-xs font-bold bg-indigo-900/80 text-indigo-200 px-2.5 py-1 rounded-lg border border-indigo-700/50">0 / 20 đã làm</span>
+                    </div>
+
+                    <!-- Countdown Timer (Only visible in Timed Mode) -->
+                    <div id="timer-box" class="hidden mb-4 bg-amber-950/40 border border-amber-500/40 rounded-xl p-3 flex items-center justify-between">
+                        <div class="flex items-center space-x-2 text-amber-400">
+                            <svg class="w-5 h-5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            <span class="text-xs font-semibold">Thời gian còn lại:</span>
+                        </div>
+                        <span id="timer-display" class="font-mono text-lg font-bold text-amber-300 tracking-wider">20:00</span>
+                    </div>
+
+                    <!-- Question Number Buttons Grid (1-20) -->
+                    <div id="question-grid" class="grid grid-cols-5 gap-2.5 mb-6">
+                        <!-- Rendered dynamically -->
+                    </div>
+
+                    <!-- Legend -->
+                    <div class="space-y-1.5 text-xs text-gray-400 border-t border-borderDark pt-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="w-3 h-3 rounded bg-slate-800 border border-slate-600 inline-block"></span>
+                            <span>Chưa trả lời</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="w-3 h-3 rounded bg-amber-500 inline-block"></span>
+                            <span>Đã chọn đáp án</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="w-3 h-3 rounded bg-indigo-600 ring-2 ring-indigo-400 inline-block"></span>
+                            <span>Đang làm (Hiện tại)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Finish Exam Button -->
+                <button onclick="confirmFinishExam()" class="w-full mt-6 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 px-4 rounded-xl shadow-lg shadow-emerald-900/30 transition flex items-center justify-center space-x-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                    </svg>
+                    <span>Nộp Bài & Kết Thúc</span>
+                </button>
+            </div>
+
+            <!-- Main Question Area -->
+            <div class="lg:col-span-3 bg-cardDark border border-borderDark rounded-2xl p-6 shadow-xl flex flex-col justify-between min-h-[500px]">
+                <div>
+                    <!-- Header of Question -->
+                    <div class="flex items-center justify-between border-b border-borderDark pb-4 mb-6">
+                        <div class="flex items-center space-x-3">
+                            <h3 id="question-title" class="text-xl font-extrabold text-white">Câu 1 / 20</h3>
+                            <span id="question-level-badge" class="text-xs px-2.5 py-1 rounded-full font-bold uppercase tracking-wider bg-blue-900/60 text-blue-300 border border-blue-700/50">Mức Biết</span>
+                        </div>
+                        <button onclick="clearSelection()" class="text-xs text-gray-400 hover:text-rose-400 underline transition">Xóa lựa chọn câu này</button>
+                    </div>
+
+                    <!-- Question Text -->
+                    <div id="question-text" class="text-base md:text-lg font-medium text-gray-100 leading-relaxed mb-6">
+                        <!-- Dynamic text -->
+                    </div>
+
+                    <!-- Answer Options List -->
+                    <div id="options-container" class="space-y-3 mb-8">
+                        <!-- Dynamic options -->
+                    </div>
+                </div>
+
+                <!-- Footer Navigation Buttons -->
+                <div class="flex justify-between items-center border-t border-borderDark pt-4 mt-auto">
+                    <button id="btn-prev" onclick="navigateQuestion(-1)" class="bg-slate-800 hover:bg-slate-700 text-gray-300 font-semibold px-5 py-2.5 rounded-xl border border-slate-600/60 transition disabled:opacity-40 disabled:cursor-not-allowed flex items-center space-x-2">
+                        <span>&larr; Câu Trước</span>
+                    </button>
+                    
+                    <button id="btn-next" onclick="navigateQuestion(1)" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-6 py-2.5 rounded-xl shadow-lg shadow-amber-500/20 transition flex items-center space-x-2">
+                        <span>Câu Tiếp &rarr;</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- SCREEN 3: TEST RESULT & SOLUTION VIEW -->
+    <main id="screen-result" class="hidden max-w-5xl mx-auto px-4 py-8 flex-grow w-full">
+        <!-- Results Card -->
+        <div class="bg-cardDark border border-borderDark rounded-2xl p-6 md:p-8 shadow-2xl mb-8 text-center relative overflow-hidden">
+            <!-- Trophy Icon -->
+            <div class="w-16 h-16 bg-amber-500/20 text-amber-400 rounded-full flex items-center justify-center mx-auto mb-3 border border-amber-500/40 shadow-lg shadow-amber-500/10">
+                <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1.323l1.954.586a3 3 0 012.015 2.122l.628 2.513a3 3 0 01-.643 2.658l-1.002 1.102A5.002 5.002 0 0110 16a5.002 5.002 0 01-3.952-2.702l-1.002-1.102a3 3 0 01-.643-2.658l.628-2.513a3 3 0 012.015-2.122L9 4.323V3a1 1 0 011-1zm-5 6.208l-.403 1.613a1 1 0 00.214.886l.888.977a6.966 6.966 0 00.916-2.023l-1.615-1.453zm10 0l-1.615 1.453a6.966 6.966 0 01.916 2.023l.888-.977a1 1 0 00.214-.886L15 8.208z" clip-rule="evenodd"></path>
+                </svg>
+            </div>
+
+            <h2 class="text-2xl md:text-3xl font-extrabold text-white tracking-wide uppercase mb-1">KẾT QUẢ BÀI KIỂM TRA</h2>
+            <p id="result-mode-title" class="text-xs text-indigo-300 font-semibold uppercase tracking-wider mb-6">Chế độ LUYỆN TẬP</p>
+
+            <!-- Score Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-2xl mx-auto mb-6">
+                <div class="bg-slate-900/80 border border-slate-700/60 rounded-xl p-4">
+                    <span class="text-xs text-gray-400 font-medium block mb-1">Điểm số</span>
+                    <span id="score-text" class="text-3xl font-black text-amber-400">0.0 <span class="text-sm font-normal text-gray-400">/ 10.0</span></span>
+                </div>
+                <div class="bg-slate-900/80 border border-slate-700/60 rounded-xl p-4">
+                    <span class="text-xs text-gray-400 font-medium block mb-1">Số câu đúng</span>
+                    <span id="correct-count-text" class="text-3xl font-black text-emerald-400">0 <span class="text-sm font-normal text-gray-400">/ 20 câu</span></span>
+                </div>
+                <div class="bg-slate-900/80 border border-slate-700/60 rounded-xl p-4">
+                    <span class="text-xs text-gray-400 font-medium block mb-1">Thời gian làm bài</span>
+                    <span id="time-spent-text" class="text-2xl font-black text-indigo-300">Không giới hạn</span>
+                </div>
+            </div>
+
+            <!-- Teacher Feedback Box -->
+            <div class="bg-amber-950/30 border border-amber-500/40 rounded-xl p-4 text-left max-w-3xl mx-auto mb-6">
+                <div class="flex items-center space-x-2 text-amber-400 text-sm font-bold mb-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path>
+                    </svg>
+                    <span>Đánh giá & Nhận xét từ Giáo viên:</span>
+                </div>
+                <p id="teacher-feedback" class="text-xs md:text-sm text-gray-200 leading-relaxed">
+                    <!-- Dynamic comment -->
+                </p>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex flex-wrap justify-center gap-4">
+                <button onclick="resetToHome()" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-6 py-3 rounded-xl shadow-lg transition flex items-center space-x-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                    </svg>
+                    <span>Làm lại bài kiểm tra</span>
+                </button>
+                <button onclick="scrollToSolution()" class="bg-slate-800 hover:bg-slate-700 text-gray-200 font-bold px-6 py-3 rounded-xl border border-slate-600/60 shadow-lg transition flex items-center space-x-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                    <span>Xem đáp án & Lời giải</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Detailed Solutions Section -->
+        <div id="solution-section" class="space-y-6">
+            <div class="flex items-center justify-between border-b border-borderDark pb-3">
+                <h3 class="text-xl font-bold text-white uppercase tracking-wide">ĐÁP ÁN & LỜI GIẢI CHI TIẾT</h3>
+                <span class="text-xs text-gray-400">20/20 câu hỏi</span>
+            </div>
+
+            <div id="solutions-container" class="space-y-6">
+                <!-- Rendered dynamically -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-[#0a0b16] border-t border-borderDark py-4 text-center text-xs text-gray-400">
+        <p>© 2026 Hệ thống Trắc nghiệm Củng cố Kiến thức Vật lí 10 - Chương II: Động học (Bài 10: Sự Rơi Tự Do)</p>
+    </footer>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        
+        // Inline SVG Diagrams for Lesson 10 (Hình 10.1: Thí nghiệm ống Niutơn, Thí nghiệm rơi giấy/bi, Dây dọi)
+        const SVG_HINH_10_1 = `
+        <div class="my-4 p-4 bg-slate-900/90 rounded-xl border border-indigo-900/60 text-center overflow-x-auto">
+            <span class="text-xs font-bold text-amber-400 uppercase tracking-wider block mb-3">HÌNH 10.1: THÍ NGHIỆM ỐNG NIUTƠN VỀ SỰ RƠI TỰ DO</span>
+            <div class="flex flex-wrap justify-center items-center gap-8">
+                <!-- Tube A: With air -->
+                <div class="text-center bg-slate-950/60 p-3 rounded-lg border border-slate-800">
+                    <svg viewBox="0 0 120 200" class="w-32 h-48 mx-auto">
+                        <!-- Glass Tube -->
+                        <rect x="35" y="15" width="50" height="170" rx="25" fill="rgba(56, 189, 248, 0.05)" stroke="#38bdf8" stroke-width="2"/>
+                        <!-- Valve at bottom -->
+                        <rect x="50" y="180" width="20" height="12" fill="#64748b"/>
+                        <circle cx="60" cy="186" r="3" fill="#f59e0b"/>
+                        <!-- Air particles dots -->
+                        <g fill="#94a3b8" opacity="0.4">
+                            <circle cx="45" cy="40" r="1.5"/><circle cx="75" cy="60" r="1.5"/>
+                            <circle cx="50" cy="90" r="1.5"/><circle cx="70" cy="120" r="1.5"/>
+                            <circle cx="48" cy="150" r="1.5"/><circle cx="65" cy="165" r="1.5"/>
+                        </g>
+                        <!-- Lead sphere (falls fast) -->
+                        <circle cx="60" cy="150" r="7" fill="#cbd5e1" stroke="#475569" stroke-width="1.5"/>
+                        <path d="M 60 125 L 60 140" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="2,2"/>
+                        <!-- Feather (falls slow) -->
+                        <path d="M 60 50 Q 55 40 60 30 Q 65 40 60 50 Z" fill="#f43f5e" opacity="0.8"/>
+                        <line x1="60" y1="30" x2="60" y2="52" stroke="#fda4af" stroke-width="1"/>
+                        <text x="60" y="197" fill="#94a3b8" font-size="9" text-anchor="middle">Van mở</text>
+                    </svg>
+                    <span class="text-xs text-rose-300 font-semibold block mt-1">a) Trong ống có không khí</span>
+                    <span class="text-[10px] text-gray-400 block">(Bi rơi nhanh hơn lông chim)</span>
+                </div>
+
+                <!-- Tube B: Vacuum -->
+                <div class="text-center bg-slate-950/60 p-3 rounded-lg border border-slate-800">
+                    <svg viewBox="0 0 120 200" class="w-32 h-48 mx-auto">
+                        <!-- Glass Tube -->
+                        <rect x="35" y="15" width="50" height="170" rx="25" fill="rgba(16, 185, 129, 0.08)" stroke="#10b981" stroke-width="2"/>
+                        <!-- Valve closed -->
+                        <rect x="50" y="180" width="20" height="12" fill="#1e293b" stroke="#10b981" stroke-width="1"/>
+                        <circle cx="60" cy="186" r="3" fill="#10b981"/>
+                        <!-- Vacuum text badge -->
+                        <rect x="42" y="25" width="36" height="14" rx="3" fill="#10b981" opacity="0.2"/>
+                        <text x="60" y="35" fill="#34d399" font-size="8" font-weight="bold" text-anchor="middle">CHÂN KHÔNG</text>
+                        <!-- Both falling together at same height -->
+                        <g transform="translate(0, 90)">
+                            <!-- Lead sphere -->
+                            <circle cx="48" cy="40" r="7" fill="#cbd5e1" stroke="#475569" stroke-width="1.5"/>
+                            <path d="M 48 10 L 48 30" stroke="#10b981" stroke-width="1.5" stroke-dasharray="2,2"/>
+                            <!-- Feather -->
+                            <g transform="translate(72, 35)">
+                                <path d="M 0 10 Q -5 0 0 -10 Q 5 0 0 10 Z" fill="#f43f5e"/>
+                                <line x1="0" y1="-10" x2="0" y2="12" stroke="#fda4af" stroke-width="1"/>
+                            </g>
+                            <path d="M 72 10 L 72 30" stroke="#10b981" stroke-width="1.5" stroke-dasharray="2,2"/>
+                        </g>
+                        <text x="60" y="197" fill="#10b981" font-size="9" text-anchor="middle">Van khóa kín</text>
+                    </svg>
+                    <span class="text-xs text-emerald-300 font-semibold block mt-1">b) Không có không khí</span>
+                    <span class="text-[10px] text-gray-400 block">(Cả hai rơi nhanh như nhau)</span>
+                </div>
+            </div>
+        </div>`;
+
+        const SVG_TN_PAPER = `
+        <div class="my-4 p-3 bg-slate-900/90 rounded-xl border border-indigo-900/60 text-center overflow-x-auto">
+            <span class="text-xs font-bold text-amber-400 uppercase tracking-wider block mb-2">THÍ NGHIỆM 2: HAI TỜ GIẤY GIỐNG NHAU (VO TRÒN VÀ ĐỂ NGUYÊN)</span>
+            <svg viewBox="0 0 380 140" class="w-full max-w-md mx-auto">
+                <!-- Left: Flat paper -->
+                <g transform="translate(40, 20)">
+                    <rect x="0" y="0" width="80" height="15" fill="#f8fafc" rx="2" stroke="#cbd5e1" stroke-width="1"/>
+                    <text x="40" y="10" fill="#0f172a" font-size="8" font-weight="bold" text-anchor="middle">Tờ giấy phẳng</text>
+                    <!-- Air resistance upward arrows -->
+                    <path d="M 15 45 L 15 22 M 15 22 L 10 28 M 15 22 L 20 28" stroke="#ef4444" stroke-width="2"/>
+                    <path d="M 40 45 L 40 22 M 40 22 L 35 28 M 40 22 L 45 28" stroke="#ef4444" stroke-width="2"/>
+                    <path d="M 65 45 L 65 22 M 65 22 L 60 28 M 65 22 L 70 28" stroke="#ef4444" stroke-width="2"/>
+                    <text x="40" y="60" fill="#f87171" font-size="10" font-weight="bold" text-anchor="middle">F_cản LỚN</text>
+                    <text x="40" y="95" fill="#f87171" font-size="11" font-weight="bold" text-anchor="middle">Rơi CHẬM</text>
+                </g>
+
+                <!-- Divider -->
+                <line x1="190" y1="15" x2="190" y2="120" stroke="#334155" stroke-width="2" stroke-dasharray="4,4"/>
+
+                <!-- Right: Crumpled paper ball -->
+                <g transform="translate(260, 20)">
+                    <circle cx="20" cy="15" r="14" fill="#cbd5e1" stroke="#64748b" stroke-width="1.5"/>
+                    <path d="M 12 10 Q 20 18 28 12 M 15 22 Q 22 14 26 22" stroke="#475569" stroke-width="1"/>
+                    <!-- Small upward air resistance arrow -->
+                    <path d="M 20 45 L 20 33 M 20 33 L 16 38 M 20 33 L 24 38" stroke="#10b981" stroke-width="2"/>
+                    <text x="20" y="60" fill="#34d399" font-size="10" font-weight="bold" text-anchor="middle">F_cản NHỎ</text>
+                    <text x="20" y="95" fill="#34d399" font-size="11" font-weight="bold" text-anchor="middle">Rơi NHANH</text>
+                </g>
+            </svg>
+        </div>`;
+
+        const SVG_PLUMB_LINE = `
+        <div class="my-4 p-3 bg-slate-900/90 rounded-xl border border-indigo-900/60 text-center overflow-x-auto">
+            <span class="text-xs font-bold text-amber-400 uppercase tracking-wider block mb-2">HÌNH 10.2: DÂY DỌI KIỂM TRA PHƯƠNG THẲNG ĐỨNG CỦA SỰ RƠI TỰ DO</span>
+            <svg viewBox="0 0 320 160" class="w-full max-w-sm mx-auto">
+                <!-- Wall/Stand -->
+                <line x1="60" y1="15" x2="260" y2="15" stroke="#64748b" stroke-width="4"/>
+                <!-- Vertical plumb line -->
+                <line x1="160" y1="15" x2="160" y2="115" stroke="#f59e0b" stroke-width="2" stroke-dasharray="3,3"/>
+                <!-- Weight bob -->
+                <path d="M 160 115 L 152 135 L 168 135 Z" fill="#38bdf8" stroke="#0284c7" stroke-width="1"/>
+                <circle cx="160" cy="115" r="2" fill="#fff"/>
+                <!-- Arrow showing gravity -->
+                <path d="M 190 60 L 190 90 M 190 90 L 186 84 M 190 90 L 194 84" stroke="#10b981" stroke-width="2"/>
+                <text x="200" y="80" fill="#34d399" font-size="11" font-weight="bold">Trọng lực P</text>
+                <text x="160" y="152" fill="#cbd5e1" font-size="10" font-weight="bold" text-anchor="middle">Phương thẳng đứng (chiều từ trên xuống)</text>
+            </svg>
+        </div>`;
+
+        // Question Database strictly for Lesson 10: SỰ RƠI TỰ DO
+        const rawQuestions = [
+            // --- MỨC BIẾT (8 CÂU) ---
+            {
+                id: 1,
+                level: "Biết",
+                levelBadge: "Mức Biết",
+                levelClass: "bg-blue-900/60 text-blue-300 border-blue-700/50",
+                text: "Sự rơi tự do là gì?",
+                options: [
+                    "Sự rơi của các vật trong không khí dưới tác dụng của lực cản.",
+                    "Sự rơi của vật chỉ chịu tác dụng của trọng lực.",
+                    "Chuyển động của vật khi được ném thẳng đứng từ dưới lên.",
+                    "Sự chuyển động của vật dưới tác dụng của lực nâng không khí."
+                ],
+                correct: 1,
+                explanation: "SGK Vật lí 10 Trang 45 định nghĩa: Sự rơi tự do là sự rơi chỉ dưới tác dụng của trọng lực."
+            },
+            {
+                id: 2,
+                level: "Biết",
+                levelBadge: "Mức Biết",
+                levelClass: "bg-blue-900/60 text-blue-300 border-blue-700/50",
+                text: "Trong trường hợp nào sau đây, sự rơi của vật trong không khí có thể được coi là **sự rơi tự do**?",
+                options: [
+                    "Khi lực cản của không khí rất nhỏ không đáng kể so với trọng lượng của vật.",
+                    "Khi lực cản của không khí cân bằng với trọng lượng của vật.",
+                    "Khi vật có khối lượng cực kỳ nhẹ như lông chim hay chiếc lá.",
+                    "Khi vật chuyển động thẳng đều từ trên cao xuống."
+                ],
+                correct: 0,
+                explanation: "SGK Trang 45 ghi rõ: Nếu vật rơi trong không khí mà độ lớn của lực cản không khí không đáng kể so với trọng lượng của vật thì cũng được coi là rơi tự do."
+            },
+            {
+                id: 3,
+                level: "Biết",
+                levelBadge: "Mức Biết",
+                levelClass: "bg-blue-900/60 text-blue-300 border-blue-700/50",
+                text: "Chuyển động rơi tự do có phương và chiều như thế nào?",
+                options: [
+                    "Phương nằm ngang, chiều từ trái sang phải.",
+                    "Phương thẳng đứng, chiều từ trên xuống dưới.",
+                    "Phương thẳng đứng, chiều từ dưới lên trên.",
+                    "Phương xiên góc, chiều hướng vào tâm Trái Đất."
+                ],
+                correct: 1,
+                explanation: "Vì trọng lực $\\vec{P}$ có phương thẳng đứng và chiều hướng từ trên xuống dưới, nên chuyển động rơi tự do cũng có phương thẳng đứng và chiều từ trên xuống dưới."
+            },
+            {
+                id: 4,
+                level: "Biết",
+                levelBadge: "Mức Biết",
+                levelClass: "bg-blue-900/60 text-blue-300 border-blue-700/50",
+                text: "Tính chất chuyển động của vật rơi tự do (thả rơi không vận tốc đầu) thuộc dạng chuyển động nào?",
+                options: [
+                    "Chuyển động thẳng đều.",
+                    "Chuyển động thẳng nhanh dần đều.",
+                    "Chuyển động thẳng chậm dần đều.",
+                    "Chuyển động biến đổi phức tạp không gia tốc."
+                ],
+                correct: 1,
+                explanation: "Sự rơi tự do (không vận tốc đầu $v_0 = 0$) là chuyển động thẳng nhanh dần đều với gia tốc rơi tự do $g$ không đổi."
+            },
+            {
+                id: 5,
+                level: "Biết",
+                levelBadge: "Mức Biết",
+                levelClass: "bg-blue-900/60 text-blue-300 border-blue-700/50",
+                text: "Công thức tính **vận tốc** $v$ của vật rơi tự do sau thời gian $t$ (khi thả không vận tốc đầu $v_0 = 0$) tại nơi có gia tốc rơi tự do $g$ là:",
+                options: [
+                    "\\(v = g \\cdot t\\)",
+                    "\\(v = \\frac{1}{2} g \\cdot t^2\\)",
+                    "\\(v = g \\cdot t^2\\)",
+                    "\\(v = 2g \\cdot t\\)"
+                ],
+                correct: 0,
+                explanation: "Chuyển động nhanh dần đều với $v_0 = 0$ và gia tốc $a = g \\implies v = g \\cdot t$."
+            },
+            {
+                id: 6,
+                level: "Biết",
+                levelBadge: "Mức Biết",
+                levelClass: "bg-blue-900/60 text-blue-300 border-blue-700/50",
+                text: "Công thức tính **quãng đường đi được** $s$ (hoặc độ cao $h$) của vật rơi tự do sau thời gian $t$ là:",
+                options: [
+                    "\\(s = g \\cdot t\\)",
+                    "\\(s = \\frac{1}{2} g \\cdot t^2\\)",
+                    "\\(s = 2 g \\cdot t^2\\)",
+                    "\\(s = g \\cdot t^2\\)"
+                ],
+                correct: 1,
+                explanation: "Áp dụng công thức $s = v_0t + \\frac{1}{2}at^2$ với $v_0 = 0$ và $a = g \\implies s = \\frac{1}{2} g \\cdot t^2$."
+            },
+            {
+                id: 7,
+                level: "Biết",
+                levelBadge: "Mức Biết",
+                levelClass: "bg-blue-900/60 text-blue-300 border-blue-700/50",
+                text: "Công thức liên hệ giữa vận tốc $v$, gia tốc rơi tự do $g$ và quãng đường rơi $s$ **không phụ thuộc trực tiếp vào thời gian $t$** là:",
+                options: [
+                    "\\(v^2 = g \\cdot s\\)",
+                    "\\(v^2 = 2g \\cdot s\\)",
+                    "\\(v = 2g \\cdot s\\)",
+                    "\\(v^2 = \\frac{1}{2} g \\cdot s\\)"
+                ],
+                correct: 1,
+                explanation: "Áp dụng công thức $v^2 - v_0^2 = 2as$ với $v_0 = 0$ và $a = g \\implies v^2 = 2g \\cdot s$."
+            },
+            {
+                id: 8,
+                level: "Biết",
+                levelBadge: "Mức Biết",
+                levelClass: "bg-blue-900/60 text-blue-300 border-blue-700/50",
+                text: "Nhận xét nào sau đây về **gia tốc rơi tự do $g$** tại các nơi trên bề mặt Trái Đất là **ĐÚNG**?",
+                options: [
+                    "Tại mọi nơi trên Trái Đất, gia tốc rơi tự do luôn có giá trị bằng nhau tuyệt đối.",
+                    "Tại cùng một nơi địa lý và ở cùng độ cao, các vật rơi tự do với cùng một gia tốc $g$.",
+                    "Gia tốc $g$ ở Xích đạo lớn hơn gia tốc $g$ ở hai Cực.",
+                    "Gia tốc $g$ tăng dần khi độ cao so với mặt nước biển tăng lên."
+                ],
+                correct: 1,
+                explanation: "Tại cùng một vị trí địa lý và ở cùng độ cao, mọi vật rơi tự do với cùng gia tốc $g$. Giá trị $g$ phụ thuộc vĩ độ (lớn nhất ở 2 Cực $\\approx 9,83\\,\\text{m/s}^2$, nhỏ nhất ở Xích đạo $\\approx 9,78\\,\\text{m/s}^2$) và giảm dần khi lên cao."
+            },
+
+            // --- MỨC HIỂU (7 CÂU) ---
+            {
+                id: 9,
+                level: "Hiểu",
+                levelBadge: "Mức Hiểu",
+                levelClass: "bg-emerald-900/60 text-emerald-300 border-emerald-700/50",
+                text: `Thí nghiệm với ống Niutơn rút hết không khí (chân không) chứa một hòn bi chì và một chiếc lông chim (Hình 10.1) chứng tỏ điều gì?` + SVG_HINH_10_1,
+                options: [
+                    "Trong chân không, vật nặng rơi nhanh hơn vật nhẹ.",
+                    "Trong chân không, lực cản không khí làm chiếc lông chim rơi chậm lại.",
+                    "Trong chân không (khi không có lực cản không khí), mọi vật rơi nhanh như nhau.",
+                    "Trọng lực không tác dụng lên các vật đặt trong chân không."
+                ],
+                correct: 2,
+                explanation: "Thí nghiệm ống Niutơn chứng minh rằng khi loại bỏ sức cản không khí (môi trường chân không), mọi vật dù nặng hay nhẹ đều rơi tự do nhanh như nhau."
+            },
+            {
+                id: 10,
+                level: "Hiểu",
+                levelBadge: "Mức Hiểu",
+                levelClass: "bg-emerald-900/60 text-emerald-300 border-emerald-700/50",
+                text: `Thả hai tờ giấy giống nhau về khối lượng và kích thước, nhưng một tờ vo tròn nén chặt còn một tờ để phẳng trong không khí (Thí nghiệm 2). Tại sao tờ giấy vo tròn lại rơi nhanh hơn hẳn tờ giấy để nguyên?` + SVG_TN_PAPER,
+                options: [
+                    "Vì tờ giấy vo tròn có trọng lượng lớn hơn tờ giấy để nguyên.",
+                    "Vì tờ giấy vo tròn có diện tích cản gió nhỏ hơn nên độ lớn lực cản không khí tác dụng lên nó nhỏ hơn nhiều so với tờ giấy để phẳng.",
+                    "Vì trọng lực tác dụng lên tờ giấy phẳng bị triệt tiêu hoàn toàn.",
+                    "Vì tờ giấy phẳng bị ma sát với không khí sinh ra điện tích đẩy nó lên."
+                ],
+                correct: 1,
+                explanation: "Hai tờ giấy nặng như nhau ($P_1 = P_2$). Tờ vo tròn có diện tích tiếp xúc với không khí nhỏ hơn rất nhiều nên lực cản không khí $F_c$ nhỏ hơn đáng kể, làm nó rơi nhanh hơn."
+            },
+            {
+                id: 11,
+                level: "Hiểu",
+                levelBadge: "Mức Hiểu",
+                levelClass: "bg-emerald-900/60 text-emerald-300 border-emerald-700/50",
+                text: "Một vật rơi tự do từ độ cao $h$ xuống mặt đất hết thời gian $t = 2\\,\\text{giây}$. Lấy $g = 10\\,\\text{m/s}^2$. Độ cao $h$ và vận tốc $v$ của vật khi vừa chạm đất lần lượt là:",
+                options: [
+                    "\\(h = 20\\,\\text{m}\\) và \\(v = 20\\,\\text{m/s}\\)",
+                    "\\(h = 10\\,\\text{m}\\) và \\(v = 20\\,\\text{m/s}\\)",
+                    "\\(h = 20\\,\\text{m}\\) và \\(v = 10\\,\\text{m/s}\\)",
+                    "\\(h = 40\\,\\text{m}\\) và \\(v = 20\\,\\text{m/s}\\)"
+                ],
+                correct: 0,
+                explanation: "- Độ cao: $h = \\frac{1}{2} g \\cdot t^2 = \\frac{1}{2} \\times 10 \\times 2^2 = 20\\,\\text{m}$.\n- Vận tốc khi chạm đất: $v = g \\cdot t = 10 \\times 2 = 20\\,\\text{m/s}$."
+            },
+            {
+                id: 12,
+                level: "Hiểu",
+                levelBadge: "Mức Hiểu",
+                levelClass: "bg-emerald-900/60 text-emerald-300 border-emerald-700/50",
+                text: `Để kiểm tra phương thẳng đứng của sự rơi tự do và kiểm tra xem bức tường trong lớp học có thẳng đứng hay không, người ta thường dùng dụng cụ đơn giản nào (Hình 10.2)?` + SVG_PLUMB_LINE,
+                options: [
+                    "Dùng thước dây chia độ.",
+                    "Dùng dây dọi (gồm một sợi dây nhẹ buộc một quả nặng).",
+                    "Dùng lực kế lò xo.",
+                    "Dùng nhiệt kế thủy ngân."
+                ],
+                correct: 1,
+                explanation: "Trọng lực luôn hướng thẳng đứng xuống dưới. Khi treo quả nặng vào dây dọi, sợi dây sẽ duỗi thẳng theo phương trùng với phương của trọng lực (phương thẳng đứng của sự rơi tự do)."
+            },
+            {
+                id: 13,
+                level: "Hiểu",
+                levelBadge: "Mức Hiểu",
+                levelClass: "bg-emerald-900/60 text-emerald-300 border-emerald-700/50",
+                text: "Trong các chuyển động sau đây, chuyển động nào **được coi là sự rơi tự do**?",
+                options: [
+                    "Một chiếc lá cây ngô đồng đang rụng rơi trong gió.",
+                    "Hạt bụi mịn chuyển động lơ lửng trong không khí.",
+                    "Quả tạ bằng sắt rơi từ trên cao xuống đất trong không khí.",
+                    "Vận động viên nhảy dù đang mở dù bay trong không trung."
+                ],
+                correct: 2,
+                explanation: "Quả tạ sắt có trọng lượng $P$ rất lớn so với lực cản không khí $F_c$ không đáng kể $\\implies$ coi là rơi tự do. Chiếc lá, hạt bụi hay dù mở có lực cản không khí rất lớn so với trọng lượng nên không được coi là rơi tự do."
+            },
+            {
+                id: 14,
+                level: "Hiểu",
+                levelBadge: "Mức Hiểu",
+                levelClass: "bg-emerald-900/60 text-emerald-300 border-emerald-700/50",
+                text: "Một vật rơi tự do tại nơi có gia tốc $g = 9,8\\,\\text{m/s}^2$. Ý nghĩa vật lý của giá trị gia tốc này là gì?",
+                options: [
+                    "Sau mỗi giây, quãng đường vật đi được luôn tăng thêm $9,8\\,\\text{m}$.",
+                    "Sau mỗi giây, vận tốc của vật tăng thêm một lượng $9,8\\,\\text{m/s}$.",
+                    "Vật đi được quãng đường $9,8\\,\\text{m}$ trong giây đầu tiên.",
+                    "Vận tốc của vật không đổi và bằng $9,8\\,\\text{m/s}$ trong suốt quá trình rơi."
+                ],
+                correct: 1,
+                explanation: "Gia tốc $g = \\frac{\\Delta v}{\\Delta t} = 9,8\\,\\text{m/s}^2$ cho biết sau mỗi khoảng thời gian 1 giây, vận tốc của vật rơi tự do tăng thêm đúng $9,8\\,\\text{m/s}$."
+            },
+            {
+                id: 15,
+                level: "Hiểu",
+                levelBadge: "Mức Hiểu",
+                levelClass: "bg-emerald-900/60 text-emerald-300 border-emerald-700/50",
+                text: "Một hòn đá thả rơi tự do từ một cây cầu cao xuống mặt nước. Biết vận tốc của hòn đá ngay trước khi chạm nước là $15\\,\\text{m/s}$. Lấy $g = 10\\,\\text{m/s}^2$. Thời gian rơi và độ cao của cây cầu so với mặt nước là:",
+                options: [
+                    "\\(t = 1,5\\,\\text{s}\\) và \\(h = 11,25\\,\\text{m}\\)",
+                    "\\(t = 1,5\\,\\text{s}\\) và \\(h = 22,5\\,\\text{m}\\)",
+                    "\\(t = 3,0\\,\\text{s}\\) và \\(h = 11,25\\,\\text{m}\\)",
+                    "\\(t = 2,0\\,\\text{s}\\) và \\(h = 20,0\\,\\text{m}\\)"
+                ],
+                correct: 0,
+                explanation: "- Thời gian rơi: $t = \\frac{v}{g} = \\frac{15}{10} = 1,5\\,\\text{s}$.\n- Độ cao cây cầu: $h = \\frac{v^2}{2g} = \\frac{15^2}{2 \\times 10} = \\frac{225}{20} = 11,25\\,\\text{m}$."
+            },
+
+            // --- VẬN DỤNG (3 CÂU) ---
+            {
+                id: 16,
+                level: "Vận dụng",
+                levelBadge: "Vận dụng",
+                levelClass: "bg-amber-900/60 text-amber-300 border-amber-700/50",
+                text: "Một hòn đá rơi tự do từ đỉnh một tòa tháp cao $45\\,\\text{m}$ xuống đất ($g = 10\\,\\text{m/s}^2$). Thời gian hòn đá rơi hết toàn bộ tháp và quãng đường hòn đá rơi được trong **giây cuối cùng** trước khi chạm đất lần lượt là:",
+                options: [
+                    "Thời gian rơi \\(t = 3\\,\\text{s}\\); Quãng đường giây cuối \\(s_{\\text{cuối}} = 25\\,\\text{m}\\)",
+                    "Thời gian rơi \\(t = 3\\,\\text{s}\\); Quãng đường giây cuối \\(s_{\\text{cuối}} = 15\\,\\text{m}\\)",
+                    "Thời gian rơi \\(t = 4,5\\,\\text{s}\\); Quãng đường giây cuối \\(s_{\\text{cuối}} = 25\\,\\text{m}\\)",
+                    "Thời gian rơi \\(t = 3\\,\\text{s}\\); Quãng đường giây cuối \\(s_{\\text{cuối}} = 20\\,\\text{m}\\)"
+                ],
+                correct: 0,
+                explanation: "1. Tổng thời gian rơi: $t = \\sqrt{\\frac{2h}{g}} = \\sqrt{\\frac{2 \\times 45}{10}} = 3\\,\\text{s}$.\n2. Quãng đường rơi trong 2 giây đầu: $s_2 = \\frac{1}{2} g t_2^2 = \\frac{1}{2} \\times 10 \\times 2^2 = 20\\,\\text{m}$.\n3. Quãng đường đi trong giây cuối cùng (giây thứ 3): $s_{\\text{cuối}} = h - s_2 = 45 - 20 = 25\\,\\text{m}$."
+            },
+            {
+                id: 17,
+                level: "Vận dụng",
+                levelBadge: "Vận dụng",
+                levelClass: "bg-amber-900/60 text-amber-300 border-amber-700/50",
+                text: "Thả rơi tự do một vật từ độ cao $h$ so với mặt đất. Biết rằng trong giây cuối cùng trước khi chạm đất, vật đi được quãng đường $35\\,\\text{m}$. Lấy $g = 10\\,\\text{m/s}^2$. Tổng thời gian rơi $t$ và độ cao $h$ ban đầu của vật là:",
+                options: [
+                    "\\(t = 4\\,\\text{s}\\) và \\(h = 80\\,\\text{m}\\)",
+                    "\\(t = 3\\,\\text{s}\\) và \\(h = 45\\,\\text{m}\\)",
+                    "\\(t = 5\\,\\text{s}\\) và \\(h = 125\\,\\text{m}\\)",
+                    "\\(t = 4\\,\\text{s}\\) và \\(h = 60\\,\\text{m}\\)"
+                ],
+                correct: 0,
+                explanation: "1. Quãng đường rơi trong $t$ giây: $s(t) = \\frac{1}{2} g t^2 = 5t^2$.\n2. Quãng đường rơi trong $(t-1)$ giây đầu: $s(t-1) = 5(t-1)^2$.\n3. Quãng đường trong giây cuối:\n   $$\\Delta s = 5t^2 - 5(t-1)^2 = 35 \\iff 5(2t - 1) = 35 \\iff 2t - 1 = 7 \\implies t = 4\\,\\text{s}$$.\n4. Độ cao ban đầu: $h = 5 \\times 4^2 = 80\\,\\text{m}$."
+            },
+            {
+                id: 18,
+                level: "Vận dụng",
+                levelBadge: "Vận dụng",
+                levelClass: "bg-amber-900/60 text-amber-300 border-amber-700/50",
+                text: "Năm 1971, nhà du hành vũ trụ người Mỹ David Scott đã thực hiện thí nghiệm đồng thời thả rơi một chiếc lông chim và một chiếc búa ở cùng độ cao trên Mặt Trăng. Ông nhận thấy cả hai vật đều chạm bề mặt Mặt Trăng cùng một lúc. Giải thích nào sau đây là đúng nhất?",
+                options: [
+                    "Vì trên Mặt Trăng không có không khí (môi trường chân không), chiếc lông chim không chịu lực cản nên cả hai vật rơi tự do với cùng gia tốc trọng trường Mặt Trăng.",
+                    "Vì trọng lực của Mặt Trăng hút chiếc lông chim mạnh hơn chiếc búa.",
+                    "Vì chiếc búa và chiếc lông chim có khối lượng bằng nhau khi đưa lên Mặt Trăng.",
+                    "Vì Mặt Trăng không có lực hấp dẫn nên hai vật lơ lửng rồi tự rơi xuống."
+                ],
+                correct: 0,
+                explanation: "Trên Mặt Trăng không có khí quyển (chân không), do đó không có lực cản không khí. Cả chiếc lông chim và chiếc búa đều rơi tự do chỉ dưới tác dụng của trọng lực Mặt Trăng, thu được cùng một gia tốc $g_{\\text{MT}} \\approx 1,62\\,\\text{m/s}^2$ nên rơi chạm đất cùng lúc."
+            },
+
+            // --- VẬN DỤNG CAO (2 CÂU) ---
+            {
+                id: 19,
+                level: "VD Cao",
+                levelBadge: "VD Cao",
+                levelClass: "bg-rose-900/60 text-rose-300 border-rose-700/50",
+                text: "Các giọt nước mưa nhỏ rơi từ mái nhà xuống đất sau những khoảng thời gian bằng nhau $\\Delta t$. Khi giọt thứ nhất vừa chạm đất thì giọt thứ tư bắt đầu tách ra khỏi mái nhà. Tại thời điểm giọt thứ nhất chạm đất, khoảng cách từ giọt thứ hai và giọt thứ ba đến mái nhà lần lượt là bao nhiêu nếu mái nhà cao $h = 9\\,\\text{m}$? (Lấy $g = 10\\,\\text{m/s}^2$).",
+                options: [
+                    "Giọt thứ hai cách mái nhà \\(4\\,\\text{m}\\); Giọt thứ ba cách mái nhà \\(1\\,\\text{m}\\)",
+                    "Giọt thứ hai cách mái nhà \\(6\\,\\text{m}\\); Giọt thứ ba cách mái nhà \\(3\\,\\text{m}\\)",
+                    "Giọt thứ hai cách mái nhà \\(4,5\\,\\text{m}\\); Giọt thứ ba cách mái nhà \\(2,25\\,\\text{m}\\)",
+                    "Giọt thứ hai cách mái nhà \\(5\\,\\text{m}\\); Giọt thứ ba cách mái nhà \\(2\\,\\text{m}\\)"
+                ],
+                correct: 0,
+                explanation: "1. Giọt 4 bắt đầu rơi ứng với thời điểm $t = 0$.\n   - Giọt 3 đã rơi thời gian $t_3 = 1\\Delta t$.\n   - Giọt 2 đã rơi thời gian $t_2 = 2\\Delta t$.\n   - Giọt 1 đã rơi thời gian $t_1 = 3\\Delta t$.\n2. Quãng đường giọt 1 rơi chạm đất:\n   $$h = \\frac{1}{2} g (3\\Delta t)^2 = 9 \\times \\left(\\frac{1}{2} g \\Delta t^2\\right) = 9\\,\\text{m} \\implies \\frac{1}{2} g \\Delta t^2 = 1\\,\\text{m}$$.\n3. Khoảng cách giọt thứ hai đến mái nhà: $h_2 = \\frac{1}{2} g (2\\Delta t)^2 = 4 \\times \\left(\\frac{1}{2} g \\Delta t^2\\right) = 4 \\times 1 = 4\\,\\text{m}$.\n4. Khoảng cách giọt thứ ba đến mái nhà: $h_3 = \\frac{1}{2} g (1\\Delta t)^2 = 1 \\times \\left(\\frac{1}{2} g \\Delta t^2\\right) = 1 \\times 1 = 1\\,\\text{m}$."
+            },
+            {
+                id: 20,
+                level: "VD Cao",
+                levelBadge: "VD Cao",
+                levelClass: "bg-rose-900/60 text-rose-300 border-rose-700/50",
+                text: "Thả rơi tự do một vật từ độ cao $h = 20\\,\\text{m}$ so với mặt đất ($g = 10\\,\\text{m/s}^2$). Gọi $t_1$ là thời gian vật rơi trong $1\\,\\text{m}$ đầu tiên và $t_2$ là thời gian vật rơi trong $1\\,\\text{m}$ cuối cùng trước khi chạm đất. Tỉ số $\\frac{t_1}{t_2}$ gần bằng giá trị nào nhất sau đây?",
+                options: [
+                    "\\(8,84\\)",
+                    "\\(4,42\\)",
+                    "\\(10,0\\)",
+                    "\\(6,25\\)"
+                ],
+                correct: 0,
+                explanation: "1. Thời gian rơi $1\\,\\text{m}$ đầu tiên:\n   $$s_1 = \\frac{1}{2} g t_1^2 \\iff 1 = 5 t_1^2 \\implies t_1 = \\frac{1}{\\sqrt{5}} \\approx 0,4472\\,\\text{s}$$.\n2. Tổng thời gian rơi từ độ cao $20\\,\\text{m}$ chạm đất:\n   $$t = \\sqrt{\\frac{2h}{g}} = \\sqrt{\\frac{2 \\times 20}{10}} = 2\\,\\text{s}$$.\n3. Thời gian rơi $19\\,\\text{m}$ đầu tiên:\n   $$t_{19} = \\sqrt{\\frac{2 \\times 19}{10}} = \\sqrt{3,8} \\approx 1,9494\\,\\text{s}$$.\n4. Thời gian rơi $1\\,\\text{m}$ cuối cùng:\n   $$t_2 = t - t_{19} = 2 - 1,9494 = 0,0506\\,\\text{s}$$.\n5. Tỉ số $\\frac{t_1}{t_2} = \\frac{0,4472}{0,0506} \\approx 8,84$."
+            }
+        ];
+
+        let currentQuestions = [];
+        let userAnswers = new Array(20).fill(null);
+        let currentIndex = 0;
+        let examMode = 'practice'; // 'practice' or 'timed'
+        let timerInterval = null;
+        let timeRemaining = 1200; // 20 minutes in seconds
+        let secondsSpent = 0;
+
+        // Utility to Shuffle Array (Fisher-Yates)
+        function shuffleArray(array) {
+            let arr = JSON.parse(JSON.stringify(array));
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        // Start Exam Function
+        function startExam(mode) {
+            examMode = mode;
+            userAnswers = new Array(20).fill(null);
+            currentIndex = 0;
+            secondsSpent = 0;
+
+            // Update badge in header
+            const badgeText = document.getElementById('mode-badge-text');
+            if (mode === 'practice') {
+                badgeText.textContent = 'Chế độ LUYỆN TẬP';
+                document.getElementById('timer-box').classList.add('hidden');
+                currentQuestions = JSON.parse(JSON.stringify(rawQuestions));
+            } else {
+                badgeText.textContent = 'Chế độ TÍNH GIỜ (20 phút)';
+                document.getElementById('timer-box').classList.remove('hidden');
+                timeRemaining = 1200; // 20 mins
+                
+                // Shuffle questions and options for Timed mode
+                let shuffled = shuffleArray(rawQuestions);
+                shuffled.forEach(q => {
+                    let correctOptText = q.options[q.correct];
+                    q.options = shuffleArray(q.options);
+                    q.correct = q.options.indexOf(correctOptText);
+                });
+                currentQuestions = shuffled;
+
+                startTimer();
+            }
+
+            // Switch screens
+            document.getElementById('screen-intro').classList.add('hidden');
+            document.getElementById('screen-result').classList.add('hidden');
+            document.getElementById('screen-test').classList.remove('hidden');
+
+            renderQuestionGrid();
+            loadQuestion(0);
+        }
+
+        // Timer Logic
+        function startTimer() {
+            clearInterval(timerInterval);
+            const timerDisplay = document.getElementById('timer-display');
+            
+            timerInterval = setInterval(() => {
+                timeRemaining--;
+                secondsSpent++;
+
+                let m = Math.floor(timeRemaining / 60);
+                let s = timeRemaining % 60;
+                timerDisplay.textContent = `${m < 10 ? '0' : ''}${m}:${s < 10 ? '0' : ''}${s}`;
+
+                if (timeRemaining <= 0) {
+                    clearInterval(timerInterval);
+                    alert("Đã hết thời gian làm bài 20 phút! Hệ thống sẽ tự động nộp bài.");
+                    finishExam();
+                }
+            }, 1000);
+        }
+
+        // Render Left Question Navigation Grid
+        function renderQuestionGrid() {
+            const gridContainer = document.getElementById('question-grid');
+            gridContainer.innerHTML = '';
+
+            currentQuestions.forEach((q, idx) => {
+                const btn = document.createElement('button');
+                btn.id = `grid-btn-${idx}`;
+                btn.onclick = () => loadQuestion(idx);
+                btn.className = `h-10 text-xs font-bold rounded-lg border transition-all flex items-center justify-center ${getGridBtnClass(idx)}`;
+                btn.textContent = idx + 1;
+                gridContainer.appendChild(btn);
+            });
+
+            updateAnsweredCounter();
+        }
+
+        function getGridBtnClass(idx) {
+            if (idx === currentIndex) {
+                return 'bg-indigo-600 border-indigo-400 text-white ring-2 ring-indigo-400 shadow-md';
+            }
+            if (userAnswers[idx] !== null) {
+                return 'bg-amber-500 border-amber-400 text-slate-950 font-extrabold';
+            }
+            return 'bg-slate-800/80 border-slate-700 text-gray-300 hover:bg-slate-700';
+        }
+
+        function updateAnsweredCounter() {
+            const answeredCount = userAnswers.filter(a => a !== null).length;
+            document.getElementById('answered-counter').textContent = `${answeredCount} / 20 đã làm`;
+        }
+
+        // Load specific question into view
+        function loadQuestion(index) {
+            currentIndex = index;
+
+            // Update Grid highlight
+            currentQuestions.forEach((_, idx) => {
+                const btn = document.getElementById(`grid-btn-${idx}`);
+                if (btn) btn.className = `h-10 text-xs font-bold rounded-lg border transition-all flex items-center justify-center ${getGridBtnClass(idx)}`;
+            });
+
+            const q = currentQuestions[index];
+
+            // Render Header & Badges
+            document.getElementById('question-title').textContent = `Câu ${index + 1} / 20`;
+            const badgeEl = document.getElementById('question-level-badge');
+            badgeEl.textContent = q.levelBadge;
+            badgeEl.className = `text-xs px-2.5 py-1 rounded-full font-bold uppercase tracking-wider border ${q.levelClass}`;
+
+            // Render Question Text
+            document.getElementById('question-text').innerHTML = q.text;
+
+            // Render Options
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = '';
+
+            const optionLetters = ['A', 'B', 'C', 'D'];
+            q.options.forEach((optText, optIdx) => {
+                const isSelected = userAnswers[index] === optIdx;
+                
+                const optBox = document.createElement('div');
+                optBox.onclick = () => selectOption(optIdx);
+                optBox.className = `group cursor-pointer p-4 rounded-xl border transition-all duration-200 flex items-start space-x-3.5 ${
+                    isSelected 
+                    ? 'bg-amber-500/15 border-amber-400 ring-1 ring-amber-400/50' 
+                    : 'bg-slate-900/60 border-slate-800 hover:border-indigo-500/50 hover:bg-slate-800/50'
+                }`;
+
+                optBox.innerHTML = `
+                    <div class="w-7 h-7 rounded-lg flex items-center justify-center font-bold text-xs shrink-0 transition ${
+                        isSelected 
+                        ? 'bg-amber-400 text-slate-950' 
+                        : 'bg-slate-800 text-gray-400 group-hover:bg-indigo-600 group-hover:text-white'
+                    }">
+                        ${optionLetters[optIdx]}
+                    </div>
+                    <div class="text-sm md:text-base font-normal text-gray-200 pt-0.5 leading-snug">
+                        ${optText}
+                    </div>
+                `;
+                optionsContainer.appendChild(optBox);
+            });
+
+            // Update Nav Buttons
+            document.getElementById('btn-prev').disabled = index === 0;
+            const btnNext = document.getElementById('btn-next');
+            if (index === currentQuestions.length - 1) {
+                btnNext.innerHTML = `<span>Nộp Bài</span>`;
+            } else {
+                btnNext.innerHTML = `<span>Câu Tiếp &rarr;</span>`;
+            }
+
+            // Typeset MathJax
+            if (window.MathJax && window.MathJax.typesetPromise) {
+                MathJax.typesetPromise();
+            }
+        }
+
+        // Option Selection
+        function selectOption(optIdx) {
+            userAnswers[currentIndex] = optIdx;
+            updateAnsweredCounter();
+            loadQuestion(currentIndex);
+        }
+
+        // Clear Selection
+        function clearSelection() {
+            userAnswers[currentIndex] = null;
+            updateAnsweredCounter();
+            loadQuestion(currentIndex);
+        }
+
+        // Navigation Next / Prev
+        function navigateQuestion(step) {
+            const newIndex = currentIndex + step;
+            if (newIndex >= 0 && newIndex < currentQuestions.length) {
+                loadQuestion(newIndex);
+            } else if (newIndex >= currentQuestions.length) {
+                confirmFinishExam();
+            }
+        }
+
+        // Confirm Finish
+        function confirmFinishExam() {
+            const answeredCount = userAnswers.filter(a => a !== null).length;
+            if (answeredCount < 20) {
+                if (!confirm(`Bạn mới trả lời ${answeredCount}/20 câu hỏi. Bạn có chắc chắn muốn nộp bài sớm không?`)) {
+                    return;
+                }
+            }
+            finishExam();
+        }
+
+        // Finish Exam & Process Results
+        function finishExam() {
+            if (examMode === 'timed') {
+                clearInterval(timerInterval);
+            }
+
+            let correctCount = 0;
+            currentQuestions.forEach((q, idx) => {
+                if (userAnswers[idx] === q.correct) {
+                    correctCount++;
+                }
+            });
+
+            const score = ((correctCount / 20) * 10).toFixed(1);
+
+            // Display Results
+            document.getElementById('screen-test').classList.add('hidden');
+            document.getElementById('screen-result').classList.remove('hidden');
+
+            document.getElementById('result-mode-title').textContent = examMode === 'practice' ? 'Chế độ LUYỆN TẬP' : 'Chế độ TÍNH GIỜ';
+            document.getElementById('score-text').innerHTML = `${score} <span class="text-sm font-normal text-gray-400">/ 10.0</span>`;
+            document.getElementById('correct-count-text').innerHTML = `${correctCount} <span class="text-sm font-normal text-gray-400">/ 20 câu</span>`;
+
+            // Time spent text
+            if (examMode === 'practice') {
+                document.getElementById('time-spent-text').textContent = 'Không giới hạn';
+            } else {
+                let m = Math.floor(secondsSpent / 60);
+                let s = secondsSpent % 60;
+                document.getElementById('time-spent-text').textContent = `${m} phút ${s} giây`;
+            }
+
+            // Teacher Feedback logic for Lesson 10
+            const feedbackEl = document.getElementById('teacher-feedback');
+            if (score >= 9.0) {
+                feedbackEl.innerHTML = `<strong>Xuất sắc!</strong> Em đã làm chủ hoàn toàn lý thuyết Sự rơi tự do, thí nghiệm ống Niutơn trong chân không và các công thức $v = gt$, $s = \\frac{1}{2}gt^2$, $v^2 = 2gs$. Khả năng giải các bài toán vận dụng cao như giọt nước mưa rơi liên tiếp và tỉ số thời gian rơi $1\\text{m}$ cuối rất ấn tượng!`;
+            } else if (score >= 7.0) {
+                feedbackEl.innerHTML = `<strong>Khá tốt!</strong> Em nắm chắc định nghĩa sự rơi tự do, điều kiện coi lực cản không đáng kể và áp dụng thành thạo các công thức tính $v, s, h$. Cần rèn luyện thêm bài toán tính quãng đường trong giây cuối cùng để đạt điểm 10 tuyệt đối!`;
+            } else if (score >= 5.0) {
+                feedbackEl.innerHTML = `<strong>Đạt yêu cầu!</strong> Em đã biết cách áp dụng các công thức rơi tự do cơ bản. Tuy nhiên em còn nhầm lẫn khi giải thích thí nghiệm sự rơi trong không khí hoặc nhầm lẫn công thức liên hệ không phụ thuộc thời gian. Hãy xem kĩ lời giải chi tiết bên dưới.`;
+            } else {
+                feedbackEl.innerHTML = `<strong>Cần cố gắng nhiều hơn!</strong> Kết quả cho thấy em chưa nắm vững lý thuyết Bài 10 (Sự rơi tự do). Hãy đọc kỹ từng lời giải chi tiết, xem lại bài học SGK và bấm "Làm lại bài kiểm tra" để cải thiện điểm số nhé!`;
+            }
+
+            renderSolutions();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Render Solution Key
+        function renderSolutions() {
+            const container = document.getElementById('solutions-container');
+            container.innerHTML = '';
+
+            const optionLetters = ['A', 'B', 'C', 'D'];
+
+            currentQuestions.forEach((q, idx) => {
+                const userAns = userAnswers[idx];
+                const isCorrect = userAns === q.correct;
+
+                const card = document.createElement('div');
+                card.className = `bg-cardDark border ${isCorrect ? 'border-emerald-500/40' : 'border-rose-500/40'} rounded-2xl p-5 md:p-6 shadow-xl`;
+
+                let optionsHTML = '';
+                q.options.forEach((optText, optIdx) => {
+                    let optStyle = 'bg-slate-900/50 border-slate-800 text-gray-300';
+                    let badgeHTML = '';
+
+                    if (optIdx === q.correct) {
+                        optStyle = 'bg-emerald-950/40 border-emerald-500/60 text-emerald-200 font-semibold';
+                        badgeHTML = `<span class="ml-auto text-xs bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 px-2 py-0.5 rounded font-bold">Đáp án đúng</span>`;
+                    } else if (optIdx === userAns && !isCorrect) {
+                        optStyle = 'bg-rose-950/40 border-rose-500/60 text-rose-200 font-semibold';
+                        badgeHTML = `<span class="ml-auto text-xs bg-rose-500/20 text-rose-400 border border-rose-500/40 px-2 py-0.5 rounded font-bold">Lựa chọn của bạn</span>`;
+                    }
+
+                    optionsHTML += `
+                        <div class="p-3 rounded-xl border flex items-center space-x-3 text-sm ${optStyle}">
+                            <span class="font-bold text-xs px-2 py-1 bg-slate-800 rounded text-gray-300">${optionLetters[optIdx]}</span>
+                            <span>${optText}</span>
+                            ${badgeHTML}
+                        </div>
+                    `;
+                });
+
+                card.innerHTML = `
+                    <div class="flex items-center justify-between border-b border-borderDark pb-3 mb-4">
+                        <div class="flex items-center space-x-3">
+                            <span class="text-base font-bold text-white">Câu ${idx + 1}</span>
+                            <span class="text-xs px-2.5 py-0.5 rounded-full font-bold uppercase tracking-wider border ${q.levelClass}">${q.levelBadge}</span>
+                        </div>
+                        <span class="text-xs font-bold px-3 py-1 rounded-full border ${
+                            isCorrect 
+                            ? 'bg-emerald-900/60 text-emerald-300 border-emerald-700/50' 
+                            : 'bg-rose-900/60 text-rose-300 border-rose-700/50'
+                        }">
+                            ${isCorrect ? '✓ Đúng' : '✕ Sai'}
+                        </span>
+                    </div>
+
+                    <p class="text-base font-medium text-gray-100 mb-4">${q.text}</p>
+
+                    <div class="space-y-2 mb-4">
+                        ${optionsHTML}
+                    </div>
+
+                    <!-- Explanation Box -->
+                    <div class="bg-slate-900/80 border border-indigo-900/50 rounded-xl p-4 text-xs md:text-sm text-indigo-100 leading-relaxed">
+                        <span class="font-bold text-amber-400 block mb-1">💡 Lời giải chi tiết:</span>
+                        <div class="whitespace-pre-line text-gray-300">${q.explanation}</div>
+                    </div>
+                `;
+
+                container.appendChild(card);
+            });
+
+            if (window.MathJax && window.MathJax.typesetPromise) {
+                MathJax.typesetPromise();
+            }
+        }
+
+        // Scroll to Solution
+        function scrollToSolution() {
+            document.getElementById('solution-section').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Reset App to Home Screen
+        function resetToHome() {
+            clearInterval(timerInterval);
+            document.getElementById('mode-badge-text').textContent = 'Chưa chọn chế độ';
+            document.getElementById('screen-result').classList.add('hidden');
+            document.getElementById('screen-test').classList.add('hidden');
+            document.getElementById('screen-intro').classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
