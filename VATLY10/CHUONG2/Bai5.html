@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ôn Luyện Củng Cố Kiến Thức - Bài 5: Tốc Độ Và Vận Tốc</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cream: '#FFFDD0',
+                        bgDark: '#0d0f1d',
+                        cardDark: '#16192e',
+                        borderDark: '#2a2e4a',
+                        accentGold: '#f59e0b',
+                        accentBlue: '#3b82f6',
+                        accentGreen: '#10b981',
+                        accentRed: '#ef4444'
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Font Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- MathJax Configuration & Library -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)'], ['$', '$']],
+                displayMath: [['\\[', '\\]'], ['$$', '$$']]
+            },
+            svg: {
+                fontCache: 'global'
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0d0f1d;
+            color: #f3f4f6;
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #16192e;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #2a2e4a;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #3b82f6;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-indigo-500 selection:text-white">
+
+    <!-- Header -->
+    <header class="bg-[#111325] border-b border-borderDark px-4 py-3 sticky top-0 z-50 shadow-md">
+        <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-2">
+            <div class="flex items-center space-x-3">
+                <div class="bg-amber-500/20 text-amber-400 p-2 rounded-lg border border-amber-500/30">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold tracking-wide text-cream" style="color: #FFFDD0;">ÔN LUYỆN CỦNG CỐ KIẾN THỨC</h1>
+                    <p class="text-xs text-indigo-300 font-medium">Bài 5: TỐC ĐỘ VÀ VẬN TỐC <span class="text-gray-400">(Vật lí 10 - Chương II: Động học)</span></p>
+                </div>
+            </div>
+            <!-- Mode Status Badge -->
+            <div id="mode-badge" class="flex items-center space-x-2 bg-indigo-900/40 text-indigo-300 border border-indigo-700/50 px-3 py-1.5 rounded-full text-xs font-semibold">
+                <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+                <span id="mode-badge-text">Chưa chọn chế độ</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- SCREEN 1: INTRO & MODE SELECTION -->
+    <main id="screen-intro" class="max-w-6xl mx-auto px-4 py-8 flex-grow w-full">
+        <!-- Check icon banner -->
+        <div class="flex justify-center mb-6">
+            <div class="w-14 h-14 bg-amber-500/20 text-amber-400 rounded-full flex items-center justify-center border border-amber-500/40 shadow-lg shadow-amber-500/10">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
+                </svg>
+            </div>
+        </div>
+
+        <h2 class="text-3xl md:text-4xl font-extrabold text-center text-white mb-2 uppercase tracking-tight">BÀI KIỂM TRA TRẮC NGHIỆM KHÁCH QUAN</h2>
+        <p class="text-center text-gray-300 text-sm md:text-base max-w-2xl mx-auto mb-8 leading-relaxed">
+            Bộ câu hỏi chuẩn hóa gồm <span class="text-amber-400 font-bold">20 câu hỏi</span> bám sát nội dung bài học <span class="font-semibold text-white">Tốc độ và Vận tốc</span> với 4 mức độ tư duy chuẩn cấu trúc Bộ Giáo dục.
+        </p>
+
+        <!-- Level Stats Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
+            <!-- Mức Biết -->
+            <div class="bg-cardDark border border-indigo-900/50 rounded-xl p-4 shadow-lg hover:border-indigo-500/50 transition">
+                <div class="text-xs font-bold text-blue-400 uppercase tracking-wider mb-1">MỨC BIẾT (8 CÂU)</div>
+                <p class="text-xs text-gray-400 leading-snug">Kiểm tra các kiến thức lý thuyết, công thức, đơn vị trực tiếp trong bài học.</p>
+            </div>
+            <!-- Mức Hiểu -->
+            <div class="bg-cardDark border border-indigo-900/50 rounded-xl p-4 shadow-lg hover:border-indigo-500/50 transition">
+                <div class="text-xs font-bold text-emerald-400 uppercase tracking-wider mb-1">MỨC HIỂU (7 CÂU)</div>
+                <p class="text-xs text-gray-400 leading-snug">Giải thích hiện tượng vật lý, vận dụng giải bài toán đơn giản 1 bước tính.</p>
+            </div>
+            <!-- Vận Dụng -->
+            <div class="bg-cardDark border border-indigo-900/50 rounded-xl p-4 shadow-lg hover:border-indigo-500/50 transition">
+                <div class="text-xs font-bold text-amber-400 uppercase tracking-wider mb-1">VẬN DỤNG (3 CÂU)</div>
+                <p class="text-xs text-gray-400 leading-snug">Phối hợp kiến thức nhiều phần, bài toán thực tế, rèn tư duy & phân tích.</p>
+            </div>
+            <!-- VD Cao -->
+            <div class="bg-cardDark border border-indigo-900/50 rounded-xl p-4 shadow-lg hover:border-indigo-500/50 transition">
+                <div class="text-xs font-bold text-rose-400 uppercase tracking-wider mb-1">VD CAO (2 CÂU)</div>
+                <p class="text-xs text-gray-400 leading-snug">Lồng ghép các kiến thức, bài toán tổng hợp vận tốc phức tạp.</p>
+            </div>
+        </div>
+
+        <!-- Mode Selection Prompt -->
+        <div class="text-center text-xs font-semibold text-indigo-300 tracking-widest uppercase mb-6">VUI LÒNG CHỌN HÌNH THỨC KIỂM TRA:</div>
+
+        <!-- Mode Option Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+            <!-- Mode 1: Luyện Tập -->
+            <div onclick="startExam('practice')" class="group cursor-pointer bg-cardDark border border-indigo-900/70 hover:border-amber-400/80 rounded-2xl p-6 shadow-xl transition-all duration-300 hover:-translate-y-1 relative overflow-hidden">
+                <div class="flex justify-between items-start mb-3">
+                    <h3 class="text-xl font-bold text-white group-hover:text-amber-400 transition">1. Chế độ Luyện Tập</h3>
+                    <span class="bg-indigo-900/60 text-indigo-300 text-xs px-3 py-1 rounded-full border border-indigo-700/50 font-medium">Không giới hạn</span>
+                </div>
+                <p class="text-xs text-indigo-300 font-medium mb-3">Học tập & củng cố kiến thức không áp lực</p>
+                <p class="text-xs text-gray-300 leading-relaxed mb-4">
+                    Làm bài không tính giờ. Giúp học sinh bình tĩnh suy ngẫm, củng cố kiến thức. Xem điểm và lời giải chi tiết ngay sau khi hoàn thành.
+                </p>
+                <div class="flex items-center text-amber-400 text-xs font-semibold group-hover:translate-x-1 transition-transform">
+                    Bắt đầu Luyện Tập &rarr;
+                </div>
+            </div>
+
+            <!-- Mode 2: Tính Giờ -->
+            <div onclick="startExam('timed')" class="group cursor-pointer bg-cardDark border border-indigo-900/70 hover:border-amber-400/80 rounded-2xl p-6 shadow-xl transition-all duration-300 hover:-translate-y-1 relative overflow-hidden">
+                <div class="flex justify-between items-start mb-3">
+                    <h3 class="text-xl font-bold text-white group-hover:text-amber-400 transition">2. Chế độ Tính Giờ</h3>
+                    <span class="bg-amber-900/50 text-amber-300 text-xs px-3 py-1 rounded-full border border-amber-700/50 font-medium">20 Phút</span>
+                </div>
+                <p class="text-xs text-amber-300 font-medium mb-3">Thử thách & kiểm tra đánh giá năng lực</p>
+                <p class="text-xs text-gray-300 leading-relaxed mb-4">
+                    Có đồng hồ đếm ngược 20 phút. Trật tự câu hỏi và đáp án ngẫu nhiên giúp đánh giá chính xác thực lực, chống học vẹt hay chép đáp án.
+                </p>
+                <div class="flex items-center text-amber-400 text-xs font-semibold group-hover:translate-x-1 transition-transform">
+                    Bắt đầu Tính Giờ &rarr;
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- SCREEN 2: DOING TEST INTERFACE -->
+    <main id="screen-test" class="hidden max-w-7xl mx-auto px-4 py-6 flex-grow w-full">
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            
+            <!-- Sidebar: Question Grid & Control -->
+            <div class="lg:col-span-1 bg-cardDark border border-borderDark rounded-2xl p-5 shadow-xl flex flex-col justify-between h-fit">
+                <div>
+                    <div class="flex items-center justify-between border-b border-borderDark pb-3 mb-4">
+                        <span class="text-xs font-bold text-gray-300 uppercase tracking-wider">DANH SÁCH CÂU HỎI</span>
+                        <span id="answered-counter" class="text-xs font-bold bg-indigo-900/80 text-indigo-200 px-2.5 py-1 rounded-lg border border-indigo-700/50">0 / 20 đã làm</span>
+                    </div>
+
+                    <!-- Countdown Timer (Only visible in Timed Mode) -->
+                    <div id="timer-box" class="hidden mb-4 bg-amber-950/40 border border-amber-500/40 rounded-xl p-3 flex items-center justify-between">
+                        <div class="flex items-center space-x-2 text-amber-400">
+                            <svg class="w-5 h-5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            <span class="text-xs font-semibold">Thời gian còn lại:</span>
+                        </div>
+                        <span id="timer-display" class="font-mono text-lg font-bold text-amber-300 tracking-wider">20:00</span>
+                    </div>
+
+                    <!-- Question Number Buttons Grid (1-20) -->
+                    <div id="question-grid" class="grid grid-cols-5 gap-2.5 mb-6">
+                        <!-- Rendered dynamically -->
+                    </div>
+
+                    <!-- Legend -->
+                    <div class="space-y-1.5 text-xs text-gray-400 border-t border-borderDark pt-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="w-3 h-3 rounded bg-slate-800 border border-slate-600 inline-block"></span>
+                            <span>Chưa trả lời</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="w-3 h-3 rounded bg-amber-500 inline-block"></span>
+                            <span>Đã chọn đáp án</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="w-3 h-3 rounded bg-indigo-600 ring-2 ring-indigo-400 inline-block"></span>
+                            <span>Đang làm (Hiện tại)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Finish Exam Button -->
+                <button onclick="confirmFinishExam()" class="w-full mt-6 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 px-4 rounded-xl shadow-lg shadow-emerald-900/30 transition flex items-center justify-center space-x-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                    </svg>
+                    <span>Nộp Bài & Kết Thúc</span>
+                </button>
+            </div>
+
+            <!-- Main Question Area -->
+            <div class="lg:col-span-3 bg-cardDark border border-borderDark rounded-2xl p-6 shadow-xl flex flex-col justify-between min-h-[500px]">
+                <div>
+                    <!-- Header of Question -->
+                    <div class="flex items-center justify-between border-b border-borderDark pb-4 mb-6">
+                        <div class="flex items-center space-x-3">
+                            <h3 id="question-title" class="text-xl font-extrabold text-white">Câu 1 / 20</h3>
+                            <span id="question-level-badge" class="text-xs px-2.5 py-1 rounded-full font-bold uppercase tracking-wider bg-blue-900/60 text-blue-300 border border-blue-700/50">Mức Biết</span>
+                        </div>
+                        <button onclick="clearSelection()" class="text-xs text-gray-400 hover:text-rose-400 underline transition">Xóa lựa chọn câu này</button>
+                    </div>
+
+                    <!-- Question Text -->
+                    <div id="question-text" class="text-base md:text-lg font-medium text-gray-100 leading-relaxed mb-6">
+                        <!-- Dynamic text -->
+                    </div>
+
+                    <!-- Answer Options List -->
+                    <div id="options-container" class="space-y-3 mb-8">
+                        <!-- Dynamic options -->
+                    </div>
+                </div>
+
+                <!-- Footer Navigation Buttons -->
+                <div class="flex justify-between items-center border-t border-borderDark pt-4 mt-auto">
+                    <button id="btn-prev" onclick="navigateQuestion(-1)" class="bg-slate-800 hover:bg-slate-700 text-gray-300 font-semibold px-5 py-2.5 rounded-xl border border-slate-600/60 transition disabled:opacity-40 disabled:cursor-not-allowed flex items-center space-x-2">
+                        <span>&larr; Câu Trước</span>
+                    </button>
+                    
+                    <button id="btn-next" onclick="navigateQuestion(1)" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-6 py-2.5 rounded-xl shadow-lg shadow-amber-500/20 transition flex items-center space-x-2">
+                        <span>Câu Tiếp &rarr;</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- SCREEN 3: TEST RESULT & SOLUTION VIEW -->
+    <main id="screen-result" class="hidden max-w-5xl mx-auto px-4 py-8 flex-grow w-full">
+        <!-- Results Card -->
+        <div class="bg-cardDark border border-borderDark rounded-2xl p-6 md:p-8 shadow-2xl mb-8 text-center relative overflow-hidden">
+            <!-- Trophy Icon -->
+            <div class="w-16 h-16 bg-amber-500/20 text-amber-400 rounded-full flex items-center justify-center mx-auto mb-3 border border-amber-500/40 shadow-lg shadow-amber-500/10">
+                <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1.323l1.954.586a3 3 0 012.015 2.122l.628 2.513a3 3 0 01-.643 2.658l-1.002 1.102A5.002 5.002 0 0110 16a5.002 5.002 0 01-3.952-2.702l-1.002-1.102a3 3 0 01-.643-2.658l.628-2.513a3 3 0 012.015-2.122L9 4.323V3a1 1 0 011-1zm-5 6.208l-.403 1.613a1 1 0 00.214.886l.888.977a6.966 6.966 0 00.916-2.023l-1.615-1.453zm10 0l-1.615 1.453a6.966 6.966 0 01.916 2.023l.888-.977a1 1 0 00.214-.886L15 8.208z" clip-rule="evenodd"></path>
+                </svg>
+            </div>
+
+            <h2 class="text-2xl md:text-3xl font-extrabold text-white tracking-wide uppercase mb-1">KẾT QUẢ BÀI KIỂM TRA</h2>
+            <p id="result-mode-title" class="text-xs text-indigo-300 font-semibold uppercase tracking-wider mb-6">Chế độ LUYỆN TẬP</p>
+
+            <!-- Score Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-2xl mx-auto mb-6">
+                <div class="bg-slate-900/80 border border-slate-700/60 rounded-xl p-4">
+                    <span class="text-xs text-gray-400 font-medium block mb-1">Điểm số</span>
+                    <span id="score-text" class="text-3xl font-black text-amber-400">0.0 <span class="text-sm font-normal text-gray-400">/ 10.0</span></span>
+                </div>
+                <div class="bg-slate-900/80 border border-slate-700/60 rounded-xl p-4">
+                    <span class="text-xs text-gray-400 font-medium block mb-1">Số câu đúng</span>
+                    <span id="correct-count-text" class="text-3xl font-black text-emerald-400">0 <span class="text-sm font-normal text-gray-400">/ 20 câu</span></span>
+                </div>
+                <div class="bg-slate-900/80 border border-slate-700/60 rounded-xl p-4">
+                    <span class="text-xs text-gray-400 font-medium block mb-1">Thời gian làm bài</span>
+                    <span id="time-spent-text" class="text-2xl font-black text-indigo-300">Không giới hạn</span>
+                </div>
+            </div>
+
+            <!-- Teacher Feedback Box -->
+            <div class="bg-amber-950/30 border border-amber-500/40 rounded-xl p-4 text-left max-w-3xl mx-auto mb-6">
+                <div class="flex items-center space-x-2 text-amber-400 text-sm font-bold mb-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path>
+                    </svg>
+                    <span>Đánh giá & Nhận xét từ Giáo viên:</span>
+                </div>
+                <p id="teacher-feedback" class="text-xs md:text-sm text-gray-200 leading-relaxed">
+                    <!-- Dynamic comment -->
+                </p>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex flex-wrap justify-center gap-4">
+                <button onclick="resetToHome()" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-6 py-3 rounded-xl shadow-lg transition flex items-center space-x-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                    </svg>
+                    <span>Làm lại bài kiểm tra</span>
+                </button>
+                <button onclick="scrollToSolution()" class="bg-slate-800 hover:bg-slate-700 text-gray-200 font-bold px-6 py-3 rounded-xl border border-slate-600/60 shadow-lg transition flex items-center space-x-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                    <span>Xem đáp án & Lời giải</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Detailed Solutions Section -->
+        <div id="solution-section" class="space-y-6">
+            <div class="flex items-center justify-between border-b border-borderDark pb-3">
+                <h3 class="text-xl font-bold text-white uppercase tracking-wide">ĐÁP ÁN & LỜI GIẢI CHI TIẾT</h3>
+                <span class="text-xs text-gray-400">20/20 câu hỏi</span>
+            </div>
+
+            <div id="solutions-container" class="space-y-6">
+                <!-- Rendered dynamically -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-[#0a0b16] border-t border-borderDark py-4 text-center text-xs text-gray-400">
+        <p>© 2026 Hệ thống Trắc nghiệm Củng cố Kiến thức Vật lí 10 - Chương II: Động học</p>
+    </footer>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // Core Question Database strictly following 'bai 5.pdf'
+        const rawQuestions = [
+            // --- MỨC BIẾT (8 CÂU) ---
+            {
+                id: 1,
+                level: "Biết",
+                levelBadge: "Mức Biết",
+                levelClass: "bg-blue-900/60 text-blue-300 border-blue-700/50",
+                text: "Đại lượng nào sau đây được xác định bằng thương số giữa quãng đường đi được và khoảng thời gian để đi hết quãng đường đó?",
+                options: [
+                    "Vận tốc trung bình.",
+                    "Tốc độ trung bình.",
+                    "Vận tốc tức thời.",
+                    "Độ dịch chuyển."
+                ],
+                correct: 1,
+                explanation: "Theo định nghĩa trong SGK (Trang 26), thương số giữa quãng đường đi được và thời gian đi được xác định độ nhanh, chậm của chuyển động gọi là tốc độ trung bình: \\(v = \\frac{s}{t}\\)."
+            },
+            {
+                id: 2,
+                level: "Biết",
+                levelBadge: "Mức Biết",
+                levelClass: "bg-blue-900/60 text-blue-300 border-blue-700/50",
+                text: "Đồng hồ tốc độ (tốc kế) đặt trên bảng điều khiển của xe máy hoặc ô tô khi đang chạy chỉ đại lượng nào dưới đây?",
+                options: [
+                    "Tốc độ trung bình của xe.",
+                    "Vận tốc trung bình của xe.",
+                    "Tốc độ tức thời của xe.",
+                    "Vận tốc tức thời của xe."
+                ],
+                correct: 2,
+                explanation: "Tốc kế đặt trước mặt người lái xe chỉ tốc độ mà xe đang chạy vào thời điểm người lái xe đọc số chỉ của tốc kế. Tốc độ này gọi là tốc độ tức thời (SGK Trang 27)."
+            },
+            {
+                id: 3,
+                level: "Biết",
+                levelBadge: "Mức Biết",
+                levelClass: "bg-blue-900/60 text-blue-300 border-blue-700/50",
+                text: "Vận tốc trung bình là đại lượng được xác định bằng thương số giữa đại lượng nào và thời gian dịch chuyển?",
+                options: [
+                    "Quãng đường đi được.",
+                    "Độ dịch chuyển.",
+                    "Tốc độ tức thời.",
+                    "Tọa độ ban đầu."
+                ],
+                correct: 1,
+                explanation: "Trong Vật lí, thương số giữa độ dịch chuyển và thời gian dịch chuyển để xác định độ nhanh, chậm của chuyển động theo một hướng xác định được gọi là vận tốc trung bình: \\(\\vec{v} = \\frac{\\vec{d}}{t}\\) (SGK Trang 27)."
+            },
+            {
+                id: 4,
+                level: "Biết",
+                levelBadge: "Mức Biết",
+                levelClass: "bg-blue-900/60 text-blue-300 border-blue-700/50",
+                text: "Phát biểu nào sau đây là **SAI** khi nói về vectơ vận tốc trung bình \\(\\vec{v}\\)?",
+                options: [
+                    "Gốc của vectơ vận tốc nằm trên vật chuyển động.",
+                    "Hướng của vectơ vận tốc là hướng của độ dịch chuyển.",
+                    "Độ dài của vectơ vận tốc tỉ lệ với độ lớn của vận tốc.",
+                    "Hướng của vectơ vận tốc luôn luôn cùng hướng với hướng chuyển động của vật trong mọi trường hợp đường cong."
+                ],
+                correct: 3,
+                explanation: "Vectơ vận tốc trung bình có gốc nằm trên vật chuyển động, hướng là hướng của độ dịch chuyển (chứ không nhất thiết trùng với hướng chuyển động tức thời tại mọi điểm nếu đường đi cong phức tạp), độ dài tỉ lệ với độ lớn vận tốc (SGK Trang 28)."
+            },
+            {
+                id: 5,
+                level: "Biết",
+                levelBadge: "Mức Biết",
+                levelClass: "bg-blue-900/60 text-blue-300 border-blue-700/50",
+                text: "Khi nào thì tốc độ trung bình và độ lớn vận tốc trung bình của một vật chuyển động có giá trị **bằng nhau**?",
+                options: [
+                    "Khi vật chuyển động tròn đều.",
+                    "Khi vật chuyển động thẳng và không đổi chiều.",
+                    "Khi vật chuyển động thẳng và có đổi chiều chuyển động.",
+                    "Trong mọi trường hợp chuyển động."
+                ],
+                correct: 1,
+                explanation: "Khi vật chuyển động thẳng theo một hướng (không đổi chiều) thì quãng đường đi được bằng độ lớn độ dịch chuyển (\\(s = d\\)), do đó tốc độ và vận tốc có độ lớn bằng nhau: \\(v = v\\) (SGK Trang 29)."
+            },
+            {
+                id: 6,
+                level: "Biết",
+                levelBadge: "Mức Biết",
+                levelClass: "bg-blue-900/60 text-blue-300 border-blue-700/50",
+                text: "Gọi \\(\\vec{v}_{1,2}\\) là vận tốc của vật (1) đối với vật (2), \\(\\vec{v}_{2,3}\\) là vận tốc của vật (2) đối với vật (3), \\(\\vec{v}_{1,3}\\) là vận tốc của vật (1) đối với vật (3). Công thức cộng vận tốc đúng là:",
+                options: [
+                    "\\(\\vec{v}_{1,3} = \\vec{v}_{1,2} + \\vec{v}_{2,3}\\)",
+                    "\\(\\vec{v}_{1,2} = \\vec{v}_{1,3} + \\vec{v}_{2,3}\\)",
+                    "\\(\\vec{v}_{1,3} = \\vec{v}_{1,2} - \\vec{v}_{2,3}\\)",
+                    "\\(v_{1,3} = v_{1,2} + v_{2,3}\\) trong mọi trường hợp."
+                ],
+                correct: 0,
+                explanation: "Công thức cộng vận tốc dạng vectơ chuẩn là: \\(\\vec{v}_{1,3} = \\vec{v}_{1,2} + \\vec{v}_{2,3}\\) (SGK Trang 29)."
+            },
+            {
+                id: 7,
+                level: "Biết",
+                levelBadge: "Mức Biết",
+                levelClass: "bg-blue-900/60 text-blue-300 border-blue-700/50",
+                text: "Khái niệm tốc độ tức thời liên quan trực tiếp đến khái niệm nào trong Toán học lớp 11?",
+                options: [
+                    "Tích phân.",
+                    "Đạo hàm.",
+                    "Hình học không gian.",
+                    "Cấp số cộng."
+                ],
+                correct: 1,
+                explanation: "SGK Trang 27 mục 'EM CÓ BIẾT?' nêu rõ: Khái niệm tốc độ tức thời liên quan đến phép tính đạo hàm của môn Toán học. Có thể coi tốc độ tức thời là tốc độ trung bình trong khoảng thời gian rất ngắn."
+            },
+            {
+                id: 8,
+                level: "Biết",
+                levelBadge: "Mức Biết",
+                levelClass: "bg-blue-900/60 text-blue-300 border-blue-700/50",
+                text: "Điểm khác biệt cơ bản nhất giữa tốc độ và vận tốc là gì?",
+                options: [
+                    "Tốc độ có đơn vị là \\(\\text{m/s}\\), còn vận tốc có đơn vị là \\(\\text{km/h}\\).",
+                    "Tốc độ là đại lượng vô hướng, còn vận tốc là đại lượng vectơ thể hiện cả độ lớn và hướng.",
+                    "Tốc độ dùng cho chuyển động thẳng, vận tốc dùng cho chuyển động cong.",
+                    "Tốc độ luôn thay đổi, vận tốc luôn hằng số."
+                ],
+                correct: 1,
+                explanation: "Tốc độ \\(v = s/t\\) là đại lượng vô hướng (chỉ có độ lớn), còn vận tốc \\(\\vec{v} = \\vec{d}/t\\) là đại lượng vectơ có cả độ lớn và hướng dịch chuyển."
+            },
+
+            // --- MỨC HIỂU (7 CÂU) ---
+            {
+                id: 9,
+                level: "Hiểu",
+                levelBadge: "Mức Hiểu",
+                levelClass: "bg-emerald-900/60 text-emerald-300 border-emerald-700/50",
+                text: "Một vận động viên chạy từ điểm xuất phát A đến điểm B trên đường thẳng dài \\(100\\,\\text{m}\\), sau đó quay ngược trở lại về đúng vị trí xuất phát A. Vận tốc trung bình của người đó trong cả quá trình chạy là:",
+                options: [
+                    "Cực đại.",
+                    "Bằng 0.",
+                    "Bằng tốc độ trung bình.",
+                    "Bằng \\(100\\,\\text{m/s}\\)."
+                ],
+                correct: 1,
+                explanation: "Vì điểm đầu và điểm cuối trùng nhau (về lại A) nên độ dịch chuyển \\(d = 0\\). Vận tốc trung bình \\(v = \\frac{d}{t} = 0\\)."
+            },
+            {
+                id: 10,
+                level: "Hiểu",
+                levelBadge: "Mức Hiểu",
+                levelClass: "bg-emerald-900/60 text-emerald-300 border-emerald-700/50",
+                text: "Một người đi xe máy từ ngã tư O (Hình 5.1 trong bài) đi theo hướng Bắc với tốc độ trung bình \\(30\\,\\text{km/h}\\). Biết mỗi khoảng chia trên trục giao thông dài \\(0,5\\,\\text{km}\\). Sau thời gian \\(3\\,\\text{phút}\\), người đó đến vị trí điểm nào?",
+                options: [
+                    "Điểm C.",
+                    "Điểm D.",
+                    "Điểm E.",
+                    "Điểm H."
+                ],
+                correct: 0,
+                explanation: "Đổi thời gian \\(t = 3\\,\\text{phút} = \\frac{3}{60}\\,\\text{h} = 0,05\\,\\text{h}\\). Quãng đường đi được \\(s = v \\cdot t = 30 \\times 0,05 = 1,5\\,\\text{km}\\). Vì mỗi đoạn là \\(0,5\\,\\text{km}\\) nên \\(1,5\\,\\text{km}\\) ứng với 3 đoạn về hướng Bắc (từ O qua H/ngược hướng, hướng Bắc là O đến C vì \\(3 \\times 0,5 = 1,5\\,\\text{km}\\)). Tương ứng vị trí điểm C."
+            },
+            {
+                id: 11,
+                level: "Hiểu",
+                levelBadge: "Mức Hiểu",
+                levelClass: "bg-emerald-900/60 text-emerald-300 border-emerald-700/50",
+                text: "Bố đưa bạn A đi học từ nhà lúc 7 giờ. Sau 5 phút xe đạt tốc độ \\(30\\,\\text{km/h}\\). Sau 10 phút nữa xe tăng tốc độ lên \\(45\\,\\text{km/h}\\). Đến trường xe dừng lúc 7 giờ 30 phút. Giá trị \\(45\\,\\text{km/h}\\) ghi nhận ở thời điểm 7 giờ 15 phút là đại lượng nào?",
+                options: [
+                    "Tốc độ trung bình cả chuyến đi.",
+                    "Vận tốc trung bình cả chuyến đi.",
+                    "Tốc độ tức thời của xe máy.",
+                    "Quãng đường xe đi được."
+                ],
+                correct: 2,
+                explanation: "Tốc độ ghi nhận tại một thời điểm xác định (lúc 7h15min) là tốc độ tức thời của xe máy vào thời điểm đó."
+            },
+            {
+                id: 12,
+                level: "Hiểu",
+                levelBadge: "Mức Hiểu",
+                levelClass: "bg-emerald-900/60 text-emerald-300 border-emerald-700/50",
+                text: "Một đoàn tàu đang chạy thẳng với vận tốc \\(36\\,\\text{km/h}\\) so với mặt đường. Một hành khách đi về phía **cuối tàu** với vận tốc \\(1\\,\\text{m/s}\\) so với sàn tàu. Vận tốc của hành khách đối với mặt đường có độ lớn là bao nhiêu?",
+                options: [
+                    "\\(11\\,\\text{m/s}\\)",
+                    "\\(9\\,\\text{m/s}\\)",
+                    "\\(37\\,\\text{m/s}\\)",
+                    "\\(35\\,\\text{m/s}\\)"
+                ],
+                correct: 1,
+                explanation: "Đổi vận tốc tàu so với đường: \\(v_{2,3} = 36\\,\\text{km/h} = 10\\,\\text{m/s}\\) theo hướng tàu chạy. Vận tốc người so với tàu: \\(v_{1,2} = 1\\,\\text{m/s}\\) ngược hướng tàu chạy. Vì chuyển động ngược chiều: \\(v_{1,3} = v_{2,3} - v_{1,2} = 10 - 1 = 9\\,\\text{m/s}\\)."
+            },
+            {
+                id: 13,
+                level: "Hiểu",
+                levelBadge: "Mức Hiểu",
+                levelClass: "bg-emerald-900/60 text-emerald-300 border-emerald-700/50",
+                text: "Một người bơi trong bể bơi yên lặng có thể đạt vận tốc tối đa \\(1\\,\\text{m/s}\\). Nếu người này bơi **xuôi dòng** sông có vận tốc dòng chảy là \\(1\\,\\text{m/s}\\) thì vận tốc tối đa của người đó so với bờ sông có thể đạt là bao nhiêu?",
+                options: [
+                    "\\(0\\,\\text{m/s}\\)",
+                    "\\(1\\,\\text{m/s}\\)",
+                    "\\(2\\,\\text{m/s}\\)",
+                    "\\(1,41\\,\\text{m/s}\\)"
+                ],
+                correct: 2,
+                explanation: "Khi bơi xuôi dòng, vận tốc bơi và vận tốc dòng nước cùng phương cùng chiều: \\(v_{1,3} = v_{1,2} + v_{2,3} = 1 + 1 = 2\\,\\text{m/s}\\)."
+            },
+            {
+                id: 14,
+                level: "Hiểu",
+                levelBadge: "Mức Hiểu",
+                levelClass: "bg-emerald-900/60 text-emerald-300 border-emerald-700/50",
+                text: "Dựa vào Bảng 5.2 (Thành tích của nữ vận động viên Việt Nam chạy cự li \\(100\\,\\text{m}\\)): Điền kinh QG 2016 (\\(11,64\\,\\text{s}\\)), SEA Games 29 năm 2017 (\\(11,56\\,\\text{s}\\)), SEA Games 30 năm 2019 (\\(11,54\\,\\text{s}\\)). Phát biểu nào đúng?",
+                options: [
+                    "Tốc độ trung bình tại SEA Games 30 là lớn nhất.",
+                    "Tốc độ trung bình tại Điền kinh QG 2016 là lớn nhất.",
+                    "Tốc độ trung bình cả 3 giải là bằng nhau.",
+                    "Không thể so sánh tốc độ vì khác giải đấu."
+                ],
+                correct: 0,
+                explanation: "Cùng cự li chạy \\(s = 100\\,\\text{m}\\), giải SEA Games 30 có thời gian chạy ngắn nhất (\\(11,54\\,\\text{s}\\)), do đó tốc độ trung bình \\(v = s/t\\) đạt giá trị lớn nhất."
+            },
+            {
+                id: 15,
+                level: "Hiểu",
+                levelBadge: "Mức Hiểu",
+                levelClass: "bg-emerald-900/60 text-emerald-300 border-emerald-700/50",
+                text: "Nếu hai vận tốc thành phần \\(\\vec{v}_{1,2}\\) và \\(\\vec{v}_{2,3}\\) vuông góc với nhau thì độ lớn của vận tốc tổng hợp \\(v_{1,3}\\) được tính bằng công thức nào?",
+                options: [
+                    "\\(v_{1,3} = v_{1,2} + v_{2,3}\\)",
+                    "\\(v_{1,3} = |v_{1,2} - v_{2,3}|\\)",
+                    "\\(v_{1,3} = \\sqrt{v_{1,2}^2 + v_{2,3}^2}\\)",
+                    "\\(v_{1,3} = \\frac{v_{1,2} + v_{2,3}}{2}\\)"
+                ],
+                correct: 2,
+                explanation: "Khi \\(\\vec{v}_{1,2} \\perp \\vec{v}_{2,3}\\), theo quy tắc hình bình hành (tam giác vuông), độ lớn vận tốc tổng hợp là: \\(v_{1,3} = \\sqrt{v_{1,2}^2 + v_{2,3}^2}\\) (SGK Trang 29)."
+            },
+
+            // --- VẬN DỤNG (3 CÂU) ---
+            {
+                id: 16,
+                level: "Vận dụng",
+                levelBadge: "Vận dụng",
+                levelClass: "bg-amber-900/60 text-amber-300 border-amber-700/50",
+                text: "Bạn A đi học từ nhà đến trường theo lộ trình \\(A \\to B \\to C\\) (Hình 5.2). Đoạn đường \\(AB = 400\\,\\text{m}\\) hết \\(6\\,\\text{phút}\\), đoạn đường \\(BC = 300\\,\\text{m}\\) hết \\(4\\,\\text{phút}\\) (với \\(AB \\perp BC\\)). Tốc độ trung bình và độ lớn vận tốc trung bình của bạn A khi đi từ A đến C lần lượt là:",
+                options: [
+                    "\\(1,17\\,\\text{m/s}\\) và \\(0,83\\,\\text{m/s}\\)",
+                    "\\(0,83\\,\\text{m/s}\\) và \\(1,17\\,\\text{m/s}\\)",
+                    "\\(1,00\\,\\text{m/s}\\) và \\(1,00\\,\\text{m/s}\\)",
+                    "\\(0,70\\,\\text{m/s}\\) và \\(0,50\\,\\text{m/s}\\)"
+                ],
+                correct: 0,
+                explanation: "Tổng quãng đường \\(s = 400 + 300 = 700\\,\\text{m}\\). Tổng thời gian \\(t = 6\\,\\text{phút} + 4\\,\\text{phút} = 10\\,\\text{phút} = 600\\,\\text{s}\\).\n- Tốc độ trung bình: \\(v = \\frac{s}{t} = \\frac{700}{600} \\approx 1,17\\,\\text{m/s}\\).\n- Độ dịch chuyển \\(d = AC = \\sqrt{400^2 + 300^2} = 500\\,\\text{m}\\).\n- Độ lớn vận tốc trung bình: \\(v = \\frac{d}{t} = \\frac{500}{600} \\approx 0,83\\,\\text{m/s}\\)."
+            },
+            {
+                id: 17,
+                level: "Vận dụng",
+                levelBadge: "Vận dụng",
+                levelClass: "bg-amber-900/60 text-amber-300 border-amber-700/50",
+                text: "Một ca nô chạy trong hồ nước yên lặng có vận tốc tối đa \\(18\\,\\text{km/h}\\). Khi ca nô chạy hướng vuông góc với bờ sang một con sông có dòng chảy theo hướng Bắc - Nam với vận tốc \\(5\\,\\text{m/s}\\) thì vận tốc tối đa ca nô đạt được so với bờ sông là bao nhiêu?",
+                options: [
+                    "\\(5,00\\,\\text{m/s}\\)",
+                    "\\(7,07\\,\\text{m/s}\\)",
+                    "\\(10,0\\,\\text{m/s}\\)",
+                    "\\(23,0\\,\\text{km/h}\\)"
+                ],
+                correct: 1,
+                explanation: "Đổi vận tốc ca nô đối với nước: \\(v_{1,2} = 18\\,\\text{km/h} = 5\\,\\text{m/s}\\). Vận tốc nước chảy so với bờ: \\(v_{2,3} = 5\\,\\text{m/s}\\). Vì hai vận tốc vuông góc nhau nên: \\(v_{1,3} = \\sqrt{v_{1,2}^2 + v_{2,3}^2} = \\sqrt{5^2 + 5^2} = 5\\sqrt{2} \\approx 7,07\\,\\text{m/s}\\) (SGK Trang 29)."
+            },
+            {
+                id: 18,
+                level: "Vận dụng",
+                levelBadge: "Vận dụng",
+                levelClass: "bg-amber-900/60 text-amber-300 border-amber-700/50",
+                text: "Một máy bay đang bay theo hướng Bắc với vận tốc \\(200\\,\\text{m/s}\\) đối với không khí thì bị gió thổi từ hướng Tây sang Đông với vận tốc \\(20\\,\\text{m/s}\\). Độ lớn vận tốc tổng hợp của máy bay lúc này so với mặt đất xấp xỉ bằng:",
+                options: [
+                    "\\(220,0\\,\\text{m/s}\\)",
+                    "\\(180,0\\,\\text{m/s}\\)",
+                    "\\(201,0\\,\\text{m/s}\\)",
+                    "\\(205,5\\,\\text{m/s}\\)"
+                ],
+                correct: 2,
+                explanation: "Hướng Bắc và hướng Đông vuông góc với nhau. Áp dụng công thức tổng hợp hai vận tốc vuông góc:\n\\(v = \\sqrt{v_{\\text{máy bay}}^2 + v_{\\text{gió}}^2} = \\sqrt{200^2 + 20^2} = \\sqrt{40000 + 400} = \\sqrt{40400} \\approx 201,0\\,\\text{m/s}\\)."
+            },
+
+            // --- VẬN DỤNG CAO (2 CÂU) ---
+            {
+                id: 19,
+                level: "VD Cao",
+                levelBadge: "VD Cao",
+                levelClass: "bg-rose-900/60 text-rose-300 border-rose-700/50",
+                text: "Một ca nô chạy hết tốc lực trên mặt nước yên lặng có thể đạt \\(21,5\\,\\text{km/h}\\). Ca nô này chạy xuôi dòng sông từ A đến B mất thời gian \\(1\\,\\text{giờ}\\), rồi lập tức quay ngược dòng từ B về A thì phải mất \\(2\\,\\text{giờ}\\) nữa mới về tới A. Vận tốc chảy của dòng nước là bao nhiêu?",
+                options: [
+                    "\\(7,17\\,\\text{km/h}\\)",
+                    "\\(5,38\\,\\text{km/h}\\)",
+                    "\\(3,58\\,\\text{km/h}\\)",
+                    "\\(4,30\\,\\text{km/h}\\)"
+                ],
+                correct: 0,
+                explanation: "Gọi \\(v_1 = 21,5\\,\\text{km/h}\\) là vận tốc ca nô đối với nước, \\(v_n\\) là vận tốc dòng nước.\n- Khi xuôi dòng từ A đến B: \\(s = (v_1 + v_n) \\cdot t_1 = (21,5 + v_n) \\cdot 1\\).\n- Khi ngược dòng từ B về A: \\(s = (v_1 - v_n) \\cdot t_2 = (21,5 - v_n) \\cdot 2\\).\nCho hai biểu thức quãng đường bằng nhau:\n\\(21,5 + v_n = 2 \\cdot (21,5 - v_n) \\iff 21,5 + v_n = 43 - 2v_n \\iff 3v_n = 21,5 \\implies v_n = \\frac{21,5}{3} \\approx 7,17\\,\\text{km/h}\\)."
+            },
+            {
+                id: 20,
+                level: "VD Cao",
+                levelBadge: "VD Cao",
+                levelClass: "bg-rose-900/60 text-rose-300 border-rose-700/50",
+                text: "Một con thuyền đi từ bờ A sang bờ B của một con sông rộng \\(400\\,\\text{m}\\). Vận tốc chảy của dòng nước là \\(3\\,\\text{m/s}\\). Thuyền di chuyển với tốc độ \\(5\\,\\text{m/s}\\) so với nước. Để thuyền cập bến tại điểm B đối diện trực diện với A theo đường thẳng vuông góc với bờ sông, người lái phải hướng mũi thuyền hợp với bờ sông phía thượng nguồn một góc \\(\\alpha\\) và thời gian qua sông \\(t\\) bằng:",
+                options: [
+                    "\\(\\alpha \\approx 53,13^\\circ\\); \\(t = 100\\,\\text{s}\\)",
+                    "\\(\\alpha \\approx 36,87^\\circ\\); \\(t = 100\\,\\text{s}\\)",
+                    "\\(\\alpha \\approx 53,13^\\circ\\); \\(t = 80\\,\\text{s}\\)",
+                    "\\(\\alpha \\approx 60,00^\\circ\\); \\(t = 133,3\\,\\text{s}\\)"
+                ],
+                correct: 0,
+                explanation: "Để thuyền đi theo đường thẳng vuông góc bờ sông, vectơ vận tốc tổng hợp \\(\\vec{v}\\) phải vuông góc với bờ.\n- Thành phần vận tốc thuyền ngược dòng phải triệt tiêu vận tốc dòng nước: \\(v_{\\text{thuyền}} \\cdot \\cos\\alpha = v_{\\text{nước}} \\implies \\cos\\alpha = \\frac{3}{5} = 0,6 \\implies \\alpha \\approx 53,13^\\circ\\) so với bờ sông phía thượng nguồn.\n- Vận tốc tổng hợp theo phương vuông góc với bờ: \\(v = \\sqrt{v_{\\text{thuyền}}^2 - v_{\\text{nước}}^2} = \\sqrt{5^2 - 3^2} = 4\\,\\text{m/s}\\).\n- Thời gian qua sông: \\(t = \\frac{d}{v} = \\frac{400}{4} = 100\\,\\text{s}\\)."
+            }
+        ];
+
+        let currentQuestions = [];
+        let userAnswers = new Array(20).fill(null);
+        let currentIndex = 0;
+        let examMode = 'practice'; // 'practice' or 'timed'
+        let timerInterval = null;
+        let timeRemaining = 1200; // 20 minutes in seconds
+        let secondsSpent = 0;
+
+        // Utility to Shuffle Array (Fisher-Yates)
+        function shuffleArray(array) {
+            let arr = JSON.parse(JSON.stringify(array));
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        // Start Exam Function
+        function startExam(mode) {
+            examMode = mode;
+            userAnswers = new Array(20).fill(null);
+            currentIndex = 0;
+            secondsSpent = 0;
+
+            // Update badge in header
+            const badgeText = document.getElementById('mode-badge-text');
+            if (mode === 'practice') {
+                badgeText.textContent = 'Chế độ LUYỆN TẬP';
+                document.getElementById('timer-box').classList.add('hidden');
+                currentQuestions = JSON.parse(JSON.stringify(rawQuestions));
+            } else {
+                badgeText.textContent = 'Chế độ TÍNH GIỜ (20 phút)';
+                document.getElementById('timer-box').classList.remove('hidden');
+                timeRemaining = 1200; // 20 mins
+                
+                // Shuffle questions and options for Timed mode
+                let shuffled = shuffleArray(rawQuestions);
+                shuffled.forEach(q => {
+                    let correctOptText = q.options[q.correct];
+                    q.options = shuffleArray(q.options);
+                    q.correct = q.options.indexOf(correctOptText);
+                });
+                currentQuestions = shuffled;
+
+                startTimer();
+            }
+
+            // Switch screens
+            document.getElementById('screen-intro').classList.add('hidden');
+            document.getElementById('screen-result').classList.add('hidden');
+            document.getElementById('screen-test').classList.remove('hidden');
+
+            renderQuestionGrid();
+            loadQuestion(0);
+        }
+
+        // Timer Logic
+        function startTimer() {
+            clearInterval(timerInterval);
+            const timerDisplay = document.getElementById('timer-display');
+            
+            timerInterval = setInterval(() => {
+                timeRemaining--;
+                secondsSpent++;
+
+                let m = Math.floor(timeRemaining / 60);
+                let s = timeRemaining % 60;
+                timerDisplay.textContent = `${m < 10 ? '0' : ''}${m}:${s < 10 ? '0' : ''}${s}`;
+
+                if (timeRemaining <= 0) {
+                    clearInterval(timerInterval);
+                    alert("Đã hết thời gian làm bài 20 phút! Hệ thống sẽ tự động nộp bài.");
+                    finishExam();
+                }
+            }, 1000);
+        }
+
+        // Render Left Question Navigation Grid
+        function renderQuestionGrid() {
+            const gridContainer = document.getElementById('question-grid');
+            gridContainer.innerHTML = '';
+
+            currentQuestions.forEach((q, idx) => {
+                const btn = document.createElement('button');
+                btn.id = `grid-btn-${idx}`;
+                btn.onclick = () => loadQuestion(idx);
+                btn.className = `h-10 text-xs font-bold rounded-lg border transition-all flex items-center justify-center ${getGridBtnClass(idx)}`;
+                btn.textContent = idx + 1;
+                gridContainer.appendChild(btn);
+            });
+
+            updateAnsweredCounter();
+        }
+
+        function getGridBtnClass(idx) {
+            if (idx === currentIndex) {
+                return 'bg-indigo-600 border-indigo-400 text-white ring-2 ring-indigo-400 shadow-md';
+            }
+            if (userAnswers[idx] !== null) {
+                return 'bg-amber-500 border-amber-400 text-slate-950 font-extrabold';
+            }
+            return 'bg-slate-800/80 border-slate-700 text-gray-300 hover:bg-slate-700';
+        }
+
+        function updateAnsweredCounter() {
+            const answeredCount = userAnswers.filter(a => a !== null).length;
+            document.getElementById('answered-counter').textContent = `${answeredCount} / 20 đã làm`;
+        }
+
+        // Load specific question into view
+        function loadQuestion(index) {
+            currentIndex = index;
+
+            // Update Grid highlight
+            currentQuestions.forEach((_, idx) => {
+                const btn = document.getElementById(`grid-btn-${idx}`);
+                if (btn) btn.className = `h-10 text-xs font-bold rounded-lg border transition-all flex items-center justify-center ${getGridBtnClass(idx)}`;
+            });
+
+            const q = currentQuestions[index];
+
+            // Render Header & Badges
+            document.getElementById('question-title').textContent = `Câu ${index + 1} / 20`;
+            const badgeEl = document.getElementById('question-level-badge');
+            badgeEl.textContent = q.levelBadge;
+            badgeEl.className = `text-xs px-2.5 py-1 rounded-full font-bold uppercase tracking-wider border ${q.levelClass}`;
+
+            // Render Question Text
+            document.getElementById('question-text').innerHTML = q.text;
+
+            // Render Options
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = '';
+
+            const optionLetters = ['A', 'B', 'C', 'D'];
+            q.options.forEach((optText, optIdx) => {
+                const isSelected = userAnswers[index] === optIdx;
+                
+                const optBox = document.createElement('div');
+                optBox.onclick = () => selectOption(optIdx);
+                optBox.className = `group cursor-pointer p-4 rounded-xl border transition-all duration-200 flex items-start space-x-3.5 ${
+                    isSelected 
+                    ? 'bg-amber-500/15 border-amber-400 ring-1 ring-amber-400/50' 
+                    : 'bg-slate-900/60 border-slate-800 hover:border-indigo-500/50 hover:bg-slate-800/50'
+                }`;
+
+                optBox.innerHTML = `
+                    <div class="w-7 h-7 rounded-lg flex items-center justify-center font-bold text-xs shrink-0 transition ${
+                        isSelected 
+                        ? 'bg-amber-400 text-slate-950' 
+                        : 'bg-slate-800 text-gray-400 group-hover:bg-indigo-600 group-hover:text-white'
+                    }">
+                        ${optionLetters[optIdx]}
+                    </div>
+                    <div class="text-sm md:text-base font-normal text-gray-200 pt-0.5 leading-snug">
+                        ${optText}
+                    </div>
+                `;
+                optionsContainer.appendChild(optBox);
+            });
+
+            // Update Nav Buttons
+            document.getElementById('btn-prev').disabled = index === 0;
+            const btnNext = document.getElementById('btn-next');
+            if (index === currentQuestions.length - 1) {
+                btnNext.innerHTML = `<span>Nộp Bài</span>`;
+            } else {
+                btnNext.innerHTML = `<span>Câu Tiếp &rarr;</span>`;
+            }
+
+            // Typeset MathJax
+            if (window.MathJax && window.MathJax.typesetPromise) {
+                MathJax.typesetPromise();
+            }
+        }
+
+        // Option Selection
+        function selectOption(optIdx) {
+            userAnswers[currentIndex] = optIdx;
+            updateAnsweredCounter();
+            loadQuestion(currentIndex);
+        }
+
+        // Clear Selection
+        function clearSelection() {
+            userAnswers[currentIndex] = null;
+            updateAnsweredCounter();
+            loadQuestion(currentIndex);
+        }
+
+        // Navigation Next / Prev
+        function navigateQuestion(step) {
+            const newIndex = currentIndex + step;
+            if (newIndex >= 0 && newIndex < currentQuestions.length) {
+                loadQuestion(newIndex);
+            } else if (newIndex >= currentQuestions.length) {
+                confirmFinishExam();
+            }
+        }
+
+        // Confirm Finish
+        function confirmFinishExam() {
+            const answeredCount = userAnswers.filter(a => a !== null).length;
+            if (answeredCount < 20) {
+                if (!confirm(`Bạn mới trả lời ${answeredCount}/20 câu hỏi. Bạn có chắc chắn muốn nộp bài sớm không?`)) {
+                    return;
+                }
+            }
+            finishExam();
+        }
+
+        // Finish Exam & Process Results
+        function finishExam() {
+            if (examMode === 'timed') {
+                clearInterval(timerInterval);
+            }
+
+            let correctCount = 0;
+            currentQuestions.forEach((q, idx) => {
+                if (userAnswers[idx] === q.correct) {
+                    correctCount++;
+                }
+            });
+
+            const score = ((correctCount / 20) * 10).toFixed(1);
+
+            // Display Results
+            document.getElementById('screen-test').classList.add('hidden');
+            document.getElementById('screen-result').classList.remove('hidden');
+
+            document.getElementById('result-mode-title').textContent = examMode === 'practice' ? 'Chế độ LUYỆN TẬP' : 'Chế độ TÍNH GIỜ';
+            document.getElementById('score-text').innerHTML = `${score} <span class="text-sm font-normal text-gray-400">/ 10.0</span>`;
+            document.getElementById('correct-count-text').innerHTML = `${correctCount} <span class="text-sm font-normal text-gray-400">/ 20 câu</span>`;
+
+            // Time spent text
+            if (examMode === 'practice') {
+                document.getElementById('time-spent-text').textContent = 'Không giới hạn';
+            } else {
+                let m = Math.floor(secondsSpent / 60);
+                let s = secondsSpent % 60;
+                document.getElementById('time-spent-text').textContent = `${m} phút ${s} giây`;
+            }
+
+            // Teacher Feedback logic
+            const feedbackEl = document.getElementById('teacher-feedback');
+            if (score >= 9.0) {
+                feedbackEl.innerHTML = `<strong>Xuất sắc!</strong> Em đã nắm vững toàn bộ kiến thức lý thuyết và các dạng bài tập tổng hợp vận tốc của Bài 5. Hãy tiếp tục phát huy khả năng tư duy cao này ở các bài học tiếp theo nhé!`;
+            } else if (score >= 7.0) {
+                feedbackEl.innerHTML = `<strong>Khá tốt!</strong> Em nắm chắc lý thuyết và các bài toán cơ bản. Cần rèn luyện thêm kĩ năng tính toán phân tích ở các câu hỏi Vận dụng cao (bài toán ca nô, máy bay, góc nghiêng) để đạt điểm tối đa.`;
+            } else if (score >= 5.0) {
+                feedbackEl.innerHTML = `<strong>Đạt yêu cầu!</strong> Em đã hiểu các khái niệm cơ bản về Tốc độ và Vận tốc. Tuy nhiên em vẫn nhầm lẫn ở một số câu trắc nghiệm định tính hoặc bài toán cộng vận tốc. Hãy xem kĩ lời giải chi tiết bên dưới.`;
+            } else {
+                feedbackEl.innerHTML = `<strong>Cần cố gắng nhiều hơn!</strong> Kết quả cho thấy em chưa nắm vững lý thuyết Bài 5: Tốc độ và Vận tốc. Hãy xem kỹ lời giải từng câu và ôn lại bài học SGK để làm lại bài nhé!`;
+            }
+
+            renderSolutions();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Render Solution Key
+        function renderSolutions() {
+            const container = document.getElementById('solutions-container');
+            container.innerHTML = '';
+
+            const optionLetters = ['A', 'B', 'C', 'D'];
+
+            currentQuestions.forEach((q, idx) => {
+                const userAns = userAnswers[idx];
+                const isCorrect = userAns === q.correct;
+
+                const card = document.createElement('div');
+                card.className = `bg-cardDark border ${isCorrect ? 'border-emerald-500/40' : 'border-rose-500/40'} rounded-2xl p-5 md:p-6 shadow-xl`;
+
+                let optionsHTML = '';
+                q.options.forEach((optText, optIdx) => {
+                    let optStyle = 'bg-slate-900/50 border-slate-800 text-gray-300';
+                    let badgeHTML = '';
+
+                    if (optIdx === q.correct) {
+                        optStyle = 'bg-emerald-950/40 border-emerald-500/60 text-emerald-200 font-semibold';
+                        badgeHTML = `<span class="ml-auto text-xs bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 px-2 py-0.5 rounded font-bold">Đáp án đúng</span>`;
+                    } else if (optIdx === userAns && !isCorrect) {
+                        optStyle = 'bg-rose-950/40 border-rose-500/60 text-rose-200 font-semibold';
+                        badgeHTML = `<span class="ml-auto text-xs bg-rose-500/20 text-rose-400 border border-rose-500/40 px-2 py-0.5 rounded font-bold">Lựa chọn của bạn</span>`;
+                    }
+
+                    optionsHTML += `
+                        <div class="p-3 rounded-xl border flex items-center space-x-3 text-sm ${optStyle}">
+                            <span class="font-bold text-xs px-2 py-1 bg-slate-800 rounded text-gray-300">${optionLetters[optIdx]}</span>
+                            <span>${optText}</span>
+                            ${badgeHTML}
+                        </div>
+                    `;
+                });
+
+                card.innerHTML = `
+                    <div class="flex items-center justify-between border-b border-borderDark pb-3 mb-4">
+                        <div class="flex items-center space-x-3">
+                            <span class="text-base font-bold text-white">Câu ${idx + 1}</span>
+                            <span class="text-xs px-2.5 py-0.5 rounded-full font-bold uppercase tracking-wider border ${q.levelClass}">${q.levelBadge}</span>
+                        </div>
+                        <span class="text-xs font-bold px-3 py-1 rounded-full border ${
+                            isCorrect 
+                            ? 'bg-emerald-900/60 text-emerald-300 border-emerald-700/50' 
+                            : 'bg-rose-900/60 text-rose-300 border-rose-700/50'
+                        }">
+                            ${isCorrect ? '✓ Đúng' : '✕ Sai'}
+                        </span>
+                    </div>
+
+                    <p class="text-base font-medium text-gray-100 mb-4">${q.text}</p>
+
+                    <div class="space-y-2 mb-4">
+                        ${optionsHTML}
+                    </div>
+
+                    <!-- Explanation Box -->
+                    <div class="bg-slate-900/80 border border-indigo-900/50 rounded-xl p-4 text-xs md:text-sm text-indigo-100 leading-relaxed">
+                        <span class="font-bold text-amber-400 block mb-1">💡 Lời giải chi tiết:</span>
+                        <div class="whitespace-pre-line text-gray-300">${q.explanation}</div>
+                    </div>
+                `;
+
+                container.appendChild(card);
+            });
+
+            if (window.MathJax && window.MathJax.typesetPromise) {
+                MathJax.typesetPromise();
+            }
+        }
+
+        // Scroll to Solution
+        function scrollToSolution() {
+            document.getElementById('solution-section').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Reset App to Home Screen
+        function resetToHome() {
+            clearInterval(timerInterval);
+            document.getElementById('mode-badge-text').textContent = 'Chưa chọn chế độ';
+            document.getElementById('screen-result').classList.add('hidden');
+            document.getElementById('screen-test').classList.add('hidden');
+            document.getElementById('screen-intro').classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
