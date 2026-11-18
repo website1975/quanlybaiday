@@ -158,12 +158,10 @@ function loadRepoTree() {
     .then(res => res.json())
     .then(data => {
         if (data.tree) {
-            // LỌC CHỈ LẤY THƯ MỤC VÀ CÁC FILE CÓ ĐUÔI .HTML HOẶC .PDF
             const filteredTree = data.tree.filter(item => {
-                if (item.type === 'tree') return true; // Giữ lại thư mục
+                if (item.type === 'tree') return true;
                 if (item.type === 'blob') {
                     const lowerPath = item.path.toLowerCase();
-                    // Chỉ lấy file .html hoặc .pdf, đồng thời bỏ qua file index.html chính nó
                     const isHtmlOrPdf = lowerPath.endsWith('.html') || lowerPath.endsWith('.pdf');
                     const isNotRootIndex = lowerPath !== 'index.html';
                     return isHtmlOrPdf && isNotRootIndex;
@@ -402,7 +400,7 @@ function uploadFile() {
             });
         })
         .then(res => {
-            statusDiv.style.display: 'none';
+            statusDiv.style.display = 'none';
             if (res && res.ok) {
                 alert("Upload thành công!");
                 loadRepoTree();
