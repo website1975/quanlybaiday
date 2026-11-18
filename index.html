@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hệ thống Quản lý Bài Học </title>
+    <title>Hệ thống Quản lý Bài Học</title>
     <style>
         * { box-sizing: border-box; }
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; margin: 0; padding: 0; height: 100vh; display: flex; flex-direction: column; }
@@ -67,7 +67,7 @@
 <body>
 
     <header>
-        <h2>Quản lý Kho Bài Học </h2>
+        <h2>Quản lý Kho Bài Học</h2>
         <div class="config-box">
             <input type="text" id="username" placeholder="Username GitHub">
             <input type="text" id="repo" placeholder="Tên Repo">
@@ -79,7 +79,7 @@
     <div class="main-container">
         <!-- PANEL TRÁI -->
         <div class="left-panel">
-            <h3>📂 Cây Thư Mục Bài Học </h3>
+            <h3>📂 Cây Thư Mục Bài Học</h3>
             <div class="tree-container" id="treeView">
                 <div style="color: #888; text-align: center; margin-top: 20px;">Nhập thông tin kết nối và bấm "Kết nối & Quét"</div>
             </div>
@@ -89,11 +89,11 @@
                 <h3>⬆️ Tải Lên File Mới</h3>
                 <div class="current-path-badge">Thư mục đích: <b id="selectedFolderDisplay" style="color:#000080;">(Thư mục gốc)</b></div>
                 
-                <label>Chọn file HTML từ máy tính:</label>
-                <input type="file" id="fileInput" accept=".html" onchange="handleFileSelect(this)">
+                <label>Chọn file (.html hoặc .pdf) từ máy tính:</label>
+                <input type="file" id="fileInput" accept=".html,.pdf" onchange="handleFileSelect(this)">
                 
                 <label>Đường dẫn lưu trên GitHub:</label>
-                <input type="text" id="uploadPath" placeholder="vd: chuong1/Bai05.html">
+                <input type="text" id="uploadPath" placeholder="vd: chuong1/Bai05.pdf">
                 
                 <button onclick="uploadFile()">Đẩy lên GitHub</button>
                 <div class="loading" id="uploadStatus">Đang tải lên...</div>
@@ -103,12 +103,12 @@
         <!-- PANEL PHẢI -->
         <div class="right-panel">
             <div class="right-header" id="previewHeader">
-                <span>Trình xem trước bài trắc nghiệm</span>
+                <span>Trình xem trước tài liệu</span>
                 <a id="externalLink" href="#" target="_blank" style="font-size: 13px; color: #0366d6; display: none;">Mở tab mới ↗</a>
             </div>
             <div id="welcomeScreen" class="welcome-screen">
-                <h3>Chưa chọn bài tập nào</h3>
-                <p>Hãy bấm vào một file `.html` ở cây thư mục bên trái để xem và làm bài trực tiếp tại đây.</p>
+                <h3>Chưa chọn tài liệu nào</h3>
+                <p>Hãy bấm vào một file `.html` hoặc `.pdf` ở cây thư mục bên trái để xem trực tiếp tại đây.</p>
             </div>
             <iframe id="previewFrame" style="display: none;" title="Trình xem trước"></iframe>
         </div>
@@ -158,7 +158,20 @@ function loadRepoTree() {
     .then(res => res.json())
     .then(data => {
         if (data.tree) {
-            const root = buildTreeStructure(data.tree);
+            // LỌC CHỈ LẤY THƯ MỤC VÀ CÁC FILE CÓ ĐUÔI .HTML HOẶC .PDF
+            const filteredTree = data.tree.filter(item => {
+                if (item.type === 'tree') return true; // Giữ lại thư mục
+                if (item.type === 'blob') {
+                    const lowerPath = item.path.toLowerCase();
+                    // Chỉ lấy file .html hoặc .pdf, đồng thời bỏ qua file index.html chính nó
+                    const isHtmlOrPdf = lowerPath.endsWith('.html') || lowerPath.endsWith('.pdf');
+                    const isNotRootIndex = lowerPath !== 'index.html';
+                    return isHtmlOrPdf && isNotRootIndex;
+                }
+                return false;
+            });
+
+            const root = buildTreeStructure(filteredTree);
             treeView.innerHTML = '';
             treeView.appendChild(renderTreeHTML(root, username, repo, ""));
         } else {
@@ -196,9 +209,10 @@ function renderTreeHTML(node, username, repo, currentPath) {
 
         if (val.__is_file) {
             let liveUrl = `https://${username}.github.io/${repo}/${val.path}`;
+            let icon = val.path.toLowerCase().endsWith('.pdf') ? '📕' : '📄';
             li.innerHTML = `
                 <div class="file-row">
-                    <span class="file-item" onclick="openPreview('${liveUrl}', '${key}')" title="${val.path}">📄 ${key}</span>
+                    <span class="file-item" onclick="openPreview('${liveUrl}', '${key}')" title="${val.path}">${icon} ${key}</span>
                     <div class="action-btns">
                         <button class="btn-sm btn-copy" onclick="copyLink('${liveUrl}', '${key}')" title="Copy link gửi học sinh">Copy</button>
                         <button class="btn-sm btn-rename" onclick="renameFile('${val.path}', '${key}')" title="Đổi tên file">Sửa</button>
@@ -306,7 +320,7 @@ function deleteFile(filePath) {
 }
 
 function renameFile(oldPath, oldName) {
-    let newName = prompt(`Nhập tên mới cho file (.html):`, oldName);
+    let newName = prompt(`Nhập tên mới cho file:`, oldName);
     if (!newName || newName === oldName) return;
     
     let pathArr = oldPath.split('/');
@@ -388,7 +402,7 @@ function uploadFile() {
             });
         })
         .then(res => {
-            statusDiv.style.display = 'none';
+            statusDiv.style.display: 'none';
             if (res && res.ok) {
                 alert("Upload thành công!");
                 loadRepoTree();
