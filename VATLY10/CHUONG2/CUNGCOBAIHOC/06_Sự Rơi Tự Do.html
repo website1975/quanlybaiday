@@ -1,0 +1,1154 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sự Rơi Tự Do</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true
+      },
+      options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre'] }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --border: #e2e8f0;
+      --text: #0f172a;
+      --muted: #64748b;
+      --accent: #1d4ed8;
+      --accent-hover: #1e40af;
+      --accent-soft: #eff6ff;
+      --ok: #047857;
+      --ok-bg: #ecfdf5;
+      --ok-border: #6ee7b7;
+      --bad: #dc2626;
+      --bad-bg: #fef2f2;
+      --bad-border: #fca5a5;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.55;
+    }
+    .mono { font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace; font-variant-numeric: tabular-nums; }
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+    }
+    .topbar-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .exam-title { font-size: 16px; font-weight: 700; margin: 0; color: var(--text); }
+    .exam-meta { font-size: 12px; color: var(--muted); margin-top: 2px; }
+    .topbar-actions { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+    .timer-box {
+      padding: 6px 12px;
+      border-radius: 8px;
+      background: #f1f5f9;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .timer-box.urgent {
+      background: var(--bad-bg);
+      color: var(--bad);
+      border: 1px solid var(--bad-border);
+    }
+    .btn {
+      border: 1px solid transparent;
+      border-radius: 8px;
+      padding: 8px 16px;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background-color 0.15s ease, border-color 0.15s ease;
+    }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-primary:hover { background: var(--accent-hover); }
+    .btn-secondary { background: #fff; border-color: #cbd5e1; color: #334155; }
+    .btn-secondary:hover { background: #f8fafc; }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 280px;
+      gap: 20px;
+      align-items: start;
+    }
+    @media (max-width: 960px) {
+      .container { grid-template-columns: 1fr; }
+    }
+    .main-col { display: flex; flex-direction: column; gap: 18px; }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+    }
+    .result-card {
+      background: var(--ok-bg);
+      border: 1px solid var(--ok-border);
+      border-radius: 12px;
+      padding: 20px;
+      display: none;
+    }
+    .result-card.visible { display: block; }
+    .result-score { font-size: 26px; font-weight: 700; color: var(--ok); margin: 4px 0; }
+    .result-sub { font-size: 13px; color: #065f46; }
+    .confirm-bar {
+      display: none;
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      border-radius: 10px;
+      padding: 14px 16px;
+      margin-bottom: 4px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      font-size: 13px;
+      color: #92400e;
+    }
+    .confirm-bar.visible { display: flex; }
+    .context-group {
+      background: var(--surface);
+      border: 1px solid #cbd5e1;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .context-header {
+      background: #f1f5f9;
+      border-bottom: 1px solid var(--border);
+      padding: 16px 20px;
+    }
+    .context-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 6px;
+    }
+    .context-body { font-size: 14px; color: #1e293b; }
+    .context-questions {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      background: #f8fafc;
+    }
+    .q-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 18px;
+      scroll-margin-top: 84px;
+    }
+    .q-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding-bottom: 10px;
+      margin-bottom: 12px;
+      border-bottom: 1px solid #f1f5f9;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .q-num { font-size: 14px; font-weight: 700; color: var(--text); }
+    .q-status { font-weight: 600; }
+    .q-status.ok { color: var(--ok); }
+    .q-status.bad { color: var(--bad); }
+    .q-text { font-size: 15px; font-weight: 500; color: var(--text); margin-bottom: 14px; }
+    .q-figure {
+      margin: 12px 0;
+      text-align: center;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px;
+    }
+    .q-figure img { max-width: 100%; max-height: 360px; height: auto; border-radius: 4px; }
+    .options-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+    @media (max-width: 640px) {
+      .options-grid { grid-template-columns: 1fr; }
+    }
+    .opt-btn {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      text-align: left;
+      padding: 11px 13px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #fff;
+      font-family: inherit;
+      font-size: 14px;
+      color: #1e293b;
+      cursor: pointer;
+      transition: border-color 0.15s ease, background-color 0.15s ease;
+    }
+    .opt-btn:hover:not(:disabled) { border-color: #94a3b8; background: #f8fafc; }
+    .opt-btn.selected { border-color: var(--accent); background: var(--accent-soft); color: #1e3a8a; font-weight: 500; }
+    .opt-btn.correct { border-color: var(--ok-border); background: var(--ok-bg); color: #064e3b; font-weight: 600; }
+    .opt-btn.wrong { border-color: var(--bad-border); background: var(--bad-bg); color: #7f1d1d; }
+    .opt-letter {
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      border: 1px solid #cbd5e1;
+      background: #fff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .opt-btn.selected .opt-letter { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .tf-list { display: flex; flex-direction: column; gap: 10px; }
+    .tf-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #fff;
+    }
+    .tf-row.ok { border-color: var(--ok-border); background: var(--ok-bg); }
+    .tf-row.bad { border-color: var(--bad-border); background: var(--bad-bg); }
+    .tf-text { font-size: 14px; flex: 1; }
+    .tf-actions { display: flex; gap: 6px; flex-shrink: 0; }
+    .tf-choice {
+      padding: 6px 12px;
+      border-radius: 6px;
+      border: 1px solid #cbd5e1;
+      background: #fff;
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .tf-choice.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .tf-choice.right-ans { border-color: var(--ok); color: var(--ok); }
+    .short-box { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+    .short-input {
+      width: 240px;
+      max-width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px;
+    }
+    .short-input:focus { outline: 2px solid var(--accent); border-color: var(--accent); }
+    .short-feedback { font-size: 13px; font-weight: 600; }
+    .solution-box {
+      display: none;
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: 8px;
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      font-size: 13px;
+      color: #334155;
+    }
+    .solution-box.visible { display: block; }
+    .sidebar {
+      position: sticky;
+      top: 76px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+    }
+    .palette-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 6px;
+      margin: 12px 0 16px;
+    }
+    .p-btn {
+      height: 34px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: #f8fafc;
+      font-size: 12px;
+      font-weight: 700;
+      color: #334155;
+      cursor: pointer;
+    }
+    .p-btn.done { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .p-btn.ok { background: var(--ok); color: #fff; border-color: var(--ok); }
+    .p-btn.bad { background: var(--bad); color: #fff; border-color: var(--bad); }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div>
+        <h1 class="exam-title">Sự Rơi Tự Do</h1>
+        <div class="exam-meta">Vật Lý · Khối 10 · CHƯƠNG 2: ĐỘNG HỌC · 20 câu · Thang 10 điểm</div>
+      </div>
+      <div class="topbar-actions">
+        <span id="progressLabel" class="exam-meta mono">0/20</span>
+        <div id="timerBox" class="timer-box mono">00:00</div>
+        <button id="topSubmitBtn" type="button" class="btn btn-primary">Nộp bài</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <main class="main-col">
+      <div id="confirmBar" class="confirm-bar">
+        <span id="confirmMsg">Bạn vẫn còn câu chưa trả lời. Xác nhận nộp bài ngay?</span>
+        <div style="display:flex;gap:8px;">
+          <button id="confirmCancelBtn" type="button" class="btn btn-secondary">Làm tiếp</button>
+          <button id="confirmYesBtn" type="button" class="btn btn-primary">Xác nhận nộp</button>
+        </div>
+      </div>
+
+      <section id="resultScreen" class="result-card">
+        <div style="font-size:12px;font-weight:700;color:#047857;">KẾT QUẢ BÀI LÀM</div>
+        <div id="scoreText" class="result-score mono">0 / 10</div>
+        <div id="correctText" class="result-sub mono">0 / 20</div>
+        <div id="explanationsSection" class="result-sub" style="margin-top:6px;">
+          Xem lại từng câu và lời giải chi tiết ở bên dưới.
+        </div>
+      </section>
+
+      <div id="questionsRoot" class="main-col"></div>
+    </main>
+
+    <aside class="sidebar">
+      <div style="font-size:14px;font-weight:700;">Bảng câu hỏi</div>
+      <div id="sidebarCount" class="exam-meta mono">Đã làm 0/20</div>
+      <div id="paletteRoot" class="palette-grid"></div>
+      <button id="sideSubmitBtn" type="button" class="btn btn-primary" style="width:100%;">Nộp bài &amp; Chấm điểm</button>
+    </aside>
+  </div>
+
+  <script type="application/json" id="edusync-exam-json">{
+  "id": "6065397c-15e3-43a5-89e3-dfd97bd808af",
+  "title": "Sự Rơi Tự Do",
+  "subject": "Vật Lý",
+  "grade": "10",
+  "type": "test",
+  "category": "CHƯƠNG 2: ĐỘNG HỌC",
+  "durationMinutes": 20,
+  "shuffleQuestions": false,
+  "shuffleOptions": false,
+  "questionCount": 20,
+  "questions": [
+    {
+      "id": "63cb239a-127d-4294-8267-05873f4505e1",
+      "index": 1,
+      "type": "mcq",
+      "level": "B",
+      "text": "Sự rơi tự do là gì?",
+      "options": [
+        "Sự rơi của các vật trong không khí dưới tác dụng của lực cản.",
+        "Sự rơi của vật chỉ chịu tác dụng của trọng lực.",
+        "Chuyển động của vật khi được ném thẳng đứng từ dưới lên.",
+        "Sự chuyển động của vật dưới tác dụng của lực nâng không khí."
+      ],
+      "correctAnswer": "Sự rơi của vật chỉ chịu tác dụng của trọng lực.",
+      "solution": "SGK Vật lí 10 Trang 45 định nghĩa: Sự rơi tự do là sự rơi chỉ dưới tác dụng của trọng lực.",
+      "points": 0.5
+    },
+    {
+      "id": "8a236984-ce3c-419b-90c4-622926ad3989",
+      "index": 2,
+      "type": "mcq",
+      "level": "B",
+      "text": "Trong trường hợp nào sau đây, sự rơi của vật trong không khí có thể được coi là **sự rơi tự do**?",
+      "options": [
+        "Khi lực cản của không khí rất nhỏ không đáng kể so với trọng lượng của vật.",
+        "Khi lực cản của không khí cân bằng với trọng lượng của vật.",
+        "Khi vật có khối lượng cực kỳ nhẹ như lông chim hay chiếc lá.",
+        "Khi vật chuyển động thẳng đều từ trên cao xuống."
+      ],
+      "correctAnswer": "Khi lực cản của không khí rất nhỏ không đáng kể so với trọng lượng của vật.",
+      "solution": "SGK Trang 45 ghi rõ: Nếu vật rơi trong không khí mà độ lớn của lực cản không khí không đáng kể so với trọng lượng của vật thì cũng được coi là rơi tự do.",
+      "points": 0.5
+    },
+    {
+      "id": "1c651c9a-431d-4127-a59b-8350f815ef81",
+      "index": 3,
+      "type": "mcq",
+      "level": "B",
+      "text": "Chuyển động rơi tự do có phương và chiều như thế nào?",
+      "options": [
+        "Phương nằm ngang, chiều từ trái sang phải.",
+        "Phương thẳng đứng, chiều từ trên xuống dưới.",
+        "Phương thẳng đứng, chiều từ dưới lên trên.",
+        "Phương xiên góc, chiều hướng vào tâm Trái Đất."
+      ],
+      "correctAnswer": "Phương thẳng đứng, chiều từ trên xuống dưới.",
+      "solution": "Vì trọng lực $\\vec{P}$ có phương thẳng đứng và chiều hướng từ trên xuống dưới, nên chuyển động rơi tự do cũng có phương thẳng đứng và chiều từ trên xuống dưới.",
+      "points": 0.5
+    },
+    {
+      "id": "c53f3cb3-bbd8-48b4-a694-b7dbe886dcef",
+      "index": 4,
+      "type": "mcq",
+      "level": "B",
+      "text": "Tính chất chuyển động của vật rơi tự do (thả rơi không vận tốc đầu) thuộc dạng chuyển động nào?",
+      "options": [
+        "Chuyển động thẳng đều.",
+        "Chuyển động thẳng nhanh dần đều.",
+        "Chuyển động thẳng chậm dần đều.",
+        "Chuyển động biến đổi phức tạp không gia tốc."
+      ],
+      "correctAnswer": "Chuyển động thẳng nhanh dần đều.",
+      "solution": "Sự rơi tự do (không vận tốc đầu $v_0 = 0$) là chuyển động thẳng nhanh dần đều với gia tốc rơi tự do $g$ không đổi.",
+      "points": 0.5
+    },
+    {
+      "id": "89a64ee6-5e6d-4e75-a74c-11ad78d5c80a",
+      "index": 5,
+      "type": "mcq",
+      "level": "B",
+      "text": "Công thức tính **vận tốc** $v$ của vật rơi tự do sau thời gian $t$ (khi thả không vận tốc đầu $v_0 = 0$) tại nơi có gia tốc rơi tự do $g$ là:",
+      "options": [
+        "$v = g \\cdot t$",
+        "$v = \\frac{1}{2} g \\cdot t^2$",
+        "$v = g \\cdot t^2$",
+        "$v = 2g \\cdot t$"
+      ],
+      "correctAnswer": "$v = g \\cdot t$",
+      "solution": "Chuyển động nhanh dần đều với $v_0 = 0$ và gia tốc $a = g \\implies v = g \\cdot t$.",
+      "points": 0.5
+    },
+    {
+      "id": "e59d1ea6-9766-49f4-94d0-d0da76d25d95",
+      "index": 6,
+      "type": "mcq",
+      "level": "B",
+      "text": "Công thức tính **quãng đường đi được** $s$ (hoặc độ cao $h$) của vật rơi tự do sau thời gian $t$ là:",
+      "options": [
+        "$s = g \\cdot t$",
+        "$s = \\frac{1}{2} g \\cdot t^2$",
+        "$s = 2 g \\cdot t^2$",
+        "$s = g \\cdot t^2$"
+      ],
+      "correctAnswer": "$s = \\frac{1}{2} g \\cdot t^2$",
+      "solution": "Áp dụng công thức $s = v_0t + \\frac{1}{2}at^2$ với $v_0 = 0$ và $a = g \\implies s = \\frac{1}{2} g \\cdot t^2$.",
+      "points": 0.5
+    },
+    {
+      "id": "5254ba2c-432d-43fe-b878-a621d9b3fc8c",
+      "index": 7,
+      "type": "mcq",
+      "level": "B",
+      "text": "Công thức liên hệ giữa vận tốc $v$, gia tốc rơi tự do $g$ và quãng đường rơi $s$ **không phụ thuộc trực tiếp vào thời gian $t$** là:",
+      "options": [
+        "$v^2 = g \\cdot s$",
+        "$v^2 = 2g \\cdot s$",
+        "$v = 2g \\cdot s$",
+        "$v^2 = \\frac{1}{2} g \\cdot s$"
+      ],
+      "correctAnswer": "$v^2 = 2g \\cdot s$",
+      "solution": "Áp dụng công thức $v^2 - v_0^2 = 2as$ với $v_0 = 0$ và $a = g \\implies v^2 = 2g \\cdot s$.",
+      "points": 0.5
+    },
+    {
+      "id": "30a24f69-a359-4522-8ad1-c97547e7427a",
+      "index": 8,
+      "type": "mcq",
+      "level": "B",
+      "text": "Nhận xét nào sau đây về **gia tốc rơi tự do $g$** tại các nơi trên bề mặt Trái Đất là **ĐÚNG**?",
+      "options": [
+        "Tại mọi nơi trên Trái Đất, gia tốc rơi tự do luôn có giá trị bằng nhau tuyệt đối.",
+        "Tại cùng một nơi địa lý và ở cùng độ cao, các vật rơi tự do với cùng một gia tốc $g$.",
+        "Gia tốc $g$ ở Xích đạo lớn hơn gia tốc $g$ ở hai Cực.",
+        "Gia tốc $g$ tăng dần khi độ cao so với mặt nước biển tăng lên."
+      ],
+      "correctAnswer": "Tại cùng một nơi địa lý và ở cùng độ cao, các vật rơi tự do với cùng một gia tốc $g$.",
+      "solution": "Tại cùng một vị trí địa lý và ở cùng độ cao, mọi vật rơi tự do với cùng gia tốc $g$. Giá trị $g$ phụ thuộc vĩ độ và giảm dần khi lên cao.",
+      "points": 0.5
+    },
+    {
+      "id": "ee17287f-ac17-4dfa-aca8-7bff9b1d580f",
+      "index": 9,
+      "type": "mcq",
+      "level": "H",
+      "text": "Thí nghiệm với ống Niutơn rút hết không khí (chân không) chứa một hòn bi chì và một chiếc lông chim chứng tỏ điều gì?",
+      "options": [
+        "Trong chân không, vật nặng rơi nhanh hơn vật nhẹ.",
+        "Trong chân không, lực cản không khí làm chiếc lông chim rơi chậm lại.",
+        "Trong chân không (khi không có lực cản không khí), mọi vật rơi nhanh như nhau.",
+        "Trọng lực không tác dụng lên các vật đặt trong chân không."
+      ],
+      "correctAnswer": "Trong chân không (khi không có lực cản không khí), mọi vật rơi nhanh như nhau.",
+      "solution": "Thí nghiệm ống Niutơn chứng minh rằng khi loại bỏ sức cản không khí (môi trường chân không), mọi vật dù nặng hay nhẹ đều rơi tự do nhanh như nhau.",
+      "points": 0.5
+    },
+    {
+      "id": "dcf583fd-2641-4444-b6c9-f0df1c19c7e5",
+      "index": 10,
+      "type": "mcq",
+      "level": "H",
+      "text": "Thả hai tờ giấy giống nhau về khối lượng và kích thước, nhưng một tờ vo tròn nén chặt còn một tờ để phẳng trong không khí. Tại sao tờ giấy vo tròn lại rơi nhanh hơn hẳn tờ giấy để nguyên?",
+      "options": [
+        "Vì tờ giấy vo tròn có trọng lượng lớn hơn tờ giấy để nguyên.",
+        "Vì tờ giấy vo tròn có diện tích cản gió nhỏ hơn nên độ lớn lực cản không khí tác dụng lên nó nhỏ hơn nhiều so với tờ giấy để phẳng.",
+        "Vì trọng lực tác dụng lên tờ giấy phẳng bị triệt tiêu hoàn toàn.",
+        "Vì tờ giấy phẳng bị ma sát với không khí sinh ra điện tích đẩy nó lên."
+      ],
+      "correctAnswer": "Vì tờ giấy vo tròn có diện tích cản gió nhỏ hơn nên độ lớn lực cản không khí tác dụng lên nó nhỏ hơn nhiều so với tờ giấy để phẳng.",
+      "solution": "Hai tờ giấy nặng như nhau ($P_1 = P_2$). Tờ vo tròn có diện tích tiếp xúc với không khí nhỏ hơn rất nhiều nên lực cản không khí $F_c$ nhỏ hơn đáng kể, làm nó rơi nhanh hơn.",
+      "points": 0.5
+    },
+    {
+      "id": "e4fbe9b1-c9be-41e2-bc39-702896387827",
+      "index": 11,
+      "type": "mcq",
+      "level": "H",
+      "text": "Một vật rơi tự do từ độ cao $h$ xuống mặt đất hết thời gian $t = 2\\,giây$. Lấy $g = 10\\,m/s^2$. Độ cao $h$ và vận tốc $v$ của vật khi vừa chạm đất lần lượt là:",
+      "options": [
+        "$h = 20$ m và $v = 20$ m/s",
+        "$h = 10$ m và $v = 20$ m/s",
+        "$h = 20$ m và $v = 10$ m/s",
+        "$h = 40$ m và $v = 20$ m/s"
+      ],
+      "correctAnswer": "$h = 20$ m và $v = 20$ m/s",
+      "solution": "- Độ cao: $h = \\frac{1}{2} g \\cdot t^2 = \\frac{1}{2} \\times 10 \\times 2^2 = 20$ m.\n- Vận tốc khi chạm đất: $v = g \\cdot t = 10 \\times 2 = 20$ m/s.",
+      "points": 0.5
+    },
+    {
+      "id": "ee669a07-9b9a-4b48-8688-06a0efbb4ffe",
+      "index": 12,
+      "type": "mcq",
+      "level": "H",
+      "text": "Để kiểm tra phương thẳng đứng của sự rơi tự do và kiểm tra xem bức tường trong lớp học có thẳng đứng hay không, người ta thường dùng dụng cụ đơn giản nào?",
+      "options": [
+        "Dùng thước dây chia độ.",
+        "Dùng dây dọi (gồm một sợi dây nhẹ buộc một quả nặng).",
+        "Dùng lực kế lò xo.",
+        "Dùng nhiệt kế thủy ngân."
+      ],
+      "correctAnswer": "Dùng dây dọi (gồm một sợi dây nhẹ buộc một quả nặng).",
+      "solution": "Trọng lực luôn hướng thẳng đứng xuống dưới. Khi treo quả nặng vào dây dọi, sợi dây sẽ duỗi thẳng theo phương trùng với phương của trọng lực.",
+      "points": 0.5
+    },
+    {
+      "id": "c91e7e40-a77b-424e-93c3-5b7279dffb16",
+      "index": 13,
+      "type": "mcq",
+      "level": "H",
+      "text": "Trong các chuyển động sau đây, chuyển động nào **được coi là sự rơi tự do**?",
+      "options": [
+        "Một chiếc lá cây ngô đồng đang rụng rơi trong gió.",
+        "Hạt bụi mịn chuyển động lơ lửng trong không khí.",
+        "Quả tạ bằng sắt rơi từ trên cao xuống đất trong không khí.",
+        "Vận động viên nhảy dù đang mở dù bay trong không trung."
+      ],
+      "correctAnswer": "Quả tạ bằng sắt rơi từ trên cao xuống đất trong không khí.",
+      "solution": "Quả tạ sắt có trọng lượng $P$ rất lớn so với lực cản không khí $F_c$ không đáng kể $\\implies$ coi là rơi tự do.",
+      "points": 0.5
+    },
+    {
+      "id": "7636e16b-8b66-4f03-b48c-f4e5ab333d8b",
+      "index": 14,
+      "type": "mcq",
+      "level": "H",
+      "text": "Một vật rơi tự do tại nơi có gia tốc $g = 9,8\\,m/s^2$. Ý nghĩa vật lý của giá trị gia tốc này là gì?",
+      "options": [
+        "Sau mỗi giây, quãng đường vật đi được luôn tăng thêm $9,8$ m.",
+        "Sau mỗi giây, vận tốc của vật tăng thêm một lượng $9,8$ m/s.",
+        "Vật đi được quãng đường $9,8$ m trong giây đầu tiên.",
+        "Vận tốc của vật không đổi và bằng $9,8$ m/s trong suốt quá trình rơi."
+      ],
+      "correctAnswer": "Sau mỗi giây, vận tốc của vật tăng thêm một lượng $9,8$ m/s.",
+      "solution": "Gia tốc $g = \\frac{\\Delta v}{\\Delta t} = 9,8\\,m/s^2$ cho biết sau mỗi khoảng thời gian 1 giây, vận tốc của vật rơi tự do tăng thêm đúng $9,8$ m/s.",
+      "points": 0.5
+    },
+    {
+      "id": "99bbde32-1fc5-47d6-8ede-8a170e0990e8",
+      "index": 15,
+      "type": "mcq",
+      "level": "H",
+      "text": "Một hòn đá thả rơi tự do từ một cây cầu cao xuống mặt nước. Biết vận tốc của hòn đá ngay trước khi chạm nước là $15$ m/s. Lấy $g = 10\\,m/s^2$. Thời gian rơi và độ cao của cây cầu so với mặt nước là:",
+      "options": [
+        "$t = 1,5$ s và $h = 11,25$ m",
+        "$t = 1,5$ s và $h = 22,5$ m",
+        "$t = 3,0$ s và $h = 11,25$ m",
+        "$t = 2,0$ s và $h = 20,0$ m"
+      ],
+      "correctAnswer": "$t = 1,5$ s và $h = 11,25$ m",
+      "solution": "- Thời gian rơi: $t = \\frac{v}{g} = \\frac{15}{10} = 1,5$ s.\n- Độ cao cây cầu: $h = \\frac{v^2}{2g} = \\frac{15^2}{2 \\times 10} = \\frac{225}{20} = 11,25$ m.",
+      "points": 0.5
+    },
+    {
+      "id": "3202a53d-648a-444c-b267-f1245fc8ad44",
+      "index": 16,
+      "type": "mcq",
+      "level": "VD",
+      "text": "Một hòn đá rơi tự do từ đỉnh một tòa tháp cao $45$ m xuống đất ($g = 10\\,m/s^2$). Thời gian hòn đá rơi hết toàn bộ tháp và quãng đường hòn đá rơi được trong **giây cuối cùng** trước khi chạm đất lần lượt là:",
+      "options": [
+        "Thời gian rơi $t = 3$ s; Quãng đường giây cuối $s_{cuối} = 25$ m",
+        "Thời gian rơi $t = 3$ s; Quãng đường giây cuối $s_{cuối} = 15$ m",
+        "Thời gian rơi $t = 4,5$ s; Quãng đường giây cuối $s_{cuối} = 25$ m",
+        "Thời gian rơi $t = 3$ s; Quãng đường giây cuối $s_{cuối} = 20$ m"
+      ],
+      "correctAnswer": "Thời gian rơi $t = 3$ s; Quãng đường giây cuối $s_{cuối} = 25$ m",
+      "solution": "1. Tổng thời gian rơi: $t = \\sqrt{\\frac{2h}{g}} = \\sqrt{\\frac{2 \\times 45}{10}} = 3$ s.\n2. Quãng đường rơi trong 2 giây đầu: $s_2 = \\frac{1}{2} g t_2^2 = \\frac{1}{2} \\times 10 \\times 2^2 = 20$ m.\n3. Quãng đường đi trong giây cuối cùng (giây thứ 3): $s_{cuối} = h - s_2 = 45 - 20 = 25$ m.",
+      "points": 0.5
+    },
+    {
+      "id": "d707cc18-e792-481c-be1a-e0093fe5f343",
+      "index": 17,
+      "type": "mcq",
+      "level": "VD",
+      "text": "Thả rơi tự do một vật từ độ cao $h$ so với mặt đất. Biết rằng trong giây cuối cùng trước khi chạm đất, vật đi được quãng đường $35$ m. Lấy $g = 10\\,m/s^2$. Tổng thời gian rơi $t$ và độ cao $h$ ban đầu của vật là:",
+      "options": [
+        "$t = 4$ s và $h = 80$ m",
+        "$t = 3$ s và $h = 45$ m",
+        "$t = 5$ s và $h = 125$ m",
+        "$t = 4$ s và $h = 60$ m"
+      ],
+      "correctAnswer": "$t = 4$ s và $h = 80$ m",
+      "solution": "1. Quãng đường rơi trong $t$ giây: $s(t) = \\frac{1}{2} g t^2 = 5t^2$.\n2. Quãng đường rơi trong $(t-1)$ giây đầu: $s(t-1) = 5(t-1)^2$.\n3. Quãng đường trong giây cuối:\n $$\\Delta s = 5t^2 - 5(t-1)^2 = 35 \\iff 5(2t - 1) = 35 \\iff 2t - 1 = 7 \\implies t = 4$ s$.\n4. Độ cao ban đầu: $h = 5 \\times 4^2 = 80$ m.",
+      "points": 0.5
+    },
+    {
+      "id": "2fbe9f25-a38e-4d7f-ac71-3027e88a815b",
+      "index": 18,
+      "type": "mcq",
+      "level": "VD",
+      "text": "Năm 1971, nhà du hành vũ trụ người Mỹ David Scott đã thực hiện thí nghiệm đồng thời thả rơi một chiếc lông chim và một chiếc búa ở cùng độ cao trên Mặt Trăng. Ông nhận thấy cả hai vật đều chạm bề mặt Mặt Trăng cùng một lúc. Giải thích nào sau đây là đúng nhất?",
+      "options": [
+        "Vì trên Mặt Trăng không có không khí (môi trường chân không), chiếc lông chim không chịu lực cản nên cả hai vật rơi tự do với cùng gia tốc trọng trường Mặt Trăng.",
+        "Vì trọng lực của Mặt Trăng hút chiếc lông chim mạnh hơn chiếc búa.",
+        "Vì chiếc búa và chiếc lông chim có khối lượng bằng nhau khi đưa lên Mặt Trăng.",
+        "Vì Mặt Trăng không có lực hấp dẫn nên hai vật lơ lửng rồi tự rơi xuống."
+      ],
+      "correctAnswer": "Vì trên Mặt Trăng không có không khí (môi trường chân không), chiếc lông chim không chịu lực cản nên cả hai vật rơi tự do với cùng gia tốc trọng trường Mặt Trăng.",
+      "solution": "Trên Mặt Trăng không có khí quyển (chân không), do đó không có lực cản không khí. Cả chiếc lông chim và chiếc búa đều rơi tự do chỉ dưới tác dụng của trọng lực Mặt Trăng, thu được cùng một gia tốc $g_{MT} \\approx 1,62\\,m/s^2$ nên rơi chạm đất cùng lúc.",
+      "points": 0.5
+    },
+    {
+      "id": "28a35ac0-ea38-41ec-af37-f7157d0dff35",
+      "index": 19,
+      "type": "mcq",
+      "level": "VD",
+      "text": "Các giọt nước mưa nhỏ rơi từ mái nhà xuống đất sau những khoảng thời gian bằng nhau $\\Delta t$. Khi giọt thứ nhất vừa chạm đất thì giọt thứ tư bắt đầu tách ra khỏi mái nhà. Tại thời điểm giọt thứ nhất chạm đất, khoảng cách từ giọt thứ hai và giọt thứ ba đến mái nhà lần lượt là bao nhiêu nếu mái nhà cao $h = 9$ m? (Lấy $g = 10\\,m/s^2$).",
+      "options": [
+        "Giọt thứ hai cách mái nhà $4$ m; Giọt thứ ba cách mái nhà $1$ m",
+        "Giọt thứ hai cách mái nhà $6$ m; Giọt thứ ba cách mái nhà $3$ m",
+        "Giọt thứ hai cách mái nhà $4,5$ m; Giọt thứ ba cách mái nhà $2,25$ m",
+        "Giọt thứ hai cách mái nhà $5$ m; Giọt thứ ba cách mái nhà $2$ m"
+      ],
+      "correctAnswer": "Giọt thứ hai cách mái nhà $4$ m; Giọt thứ ba cách mái nhà $1$ m",
+      "solution": "1. Giọt 4 bắt đầu rơi ứng với thời điểm $t = 0$.\n - Giọt 3 đã rơi thời gian $t_3 = 1\\Delta t$.\n - Giọt 2 đã rơi thời gian $t_2 = 2\\Delta t$.\n - Giọt 1 đã rơi thời gian $t_1 = 3\\Delta t$.\n2. Quãng đường giọt 1 rơi chạm đất:\n $$h = \\frac{1}{2} g (3\\Delta t)^2 = 9 \\times \\left(\\frac{1}{2} g \\Delta t^2\\right) = 9\\,m \\implies \\frac{1}{2} g \\Delta t^2 = 1$ m$.\n3. Khoảng cách giọt thứ hai đến mái nhà: $h_2 = \\frac{1}{2} g (2\\Delta t)^2 = 4 \\times 1 = 4$ m.\n4. Khoảng cách giọt thứ ba đến mái nhà: $h_3 = \\frac{1}{2} g (1\\Delta t)^2 = 1 \\times 1 = 1$ m.",
+      "points": 0.5
+    },
+    {
+      "id": "810e023d-d1ba-4758-bff1-4736a7cd52a5",
+      "index": 20,
+      "type": "mcq",
+      "level": "VD",
+      "text": "Thả rơi tự do một vật từ độ cao $h = 20$ m so với mặt đất ($g = 10\\,m/s^2$). Gọi $t_1$ là thời gian vật rơi trong $1$ m đầu tiên và $t_2$ là thời gian vật rơi trong $1$ m cuối cùng trước khi chạm đất. Tỉ số $\\frac{t_1}{t_2}$ gần bằng giá trị nào nhất sau đây?",
+      "options": [
+        "$8,84$",
+        "$4,42$",
+        "$10,0$",
+        "$6,25$"
+      ],
+      "correctAnswer": "$8,84$",
+      "solution": "1. Thời gian rơi $1$ m đầu tiên: $t_1 = \\frac{1}{\\sqrt{5}} \\approx 0,4472$ s.\n2. Tổng thời gian rơi từ độ cao $20$ m chạm đất: $t = 2$ s.\n3. Thời gian rơi $19$ m đầu tiên: $t_{19} = \\sqrt{3,8} \\approx 1,9494$ s.\n4. Thời gian rơi $1$ m cuối cùng: $t_2 = 2 - 1,9494 = 0,0506$ s.\n5. Tỉ số $\\frac{t_1}{t_2} = \\frac{0,4472}{0,0506} \\approx 8,84$.",
+      "points": 0.5
+    }
+  ]
+}</script>
+  <script id="edusync-runtime-data" type="application/json">{"examId":"6065397c-15e3-43a5-89e3-dfd97bd808af","title":"Sự Rơi Tự Do","subject":"Vật Lý","grade":"10","category":"CHƯƠNG 2: ĐỘNG HỌC","durationMinutes":20,"maxScore":10,"shuffleQuestions":false,"shuffleOptions":false,"blocks":[{"blockId":"single_63cb239a-127d-4294-8267-05873f4505e1_0","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"63cb239a-127d-4294-8267-05873f4505e1","type":"mcq","level":"B","chapterName":"","points":0.5,"textHtml":"Sự rơi tự do là gì?","rawText":"Sự rơi tự do là gì?","ownImageUrl":"","optionsHtml":["Sự rơi của các vật trong không khí dưới tác dụng của lực cản.","Sự rơi của vật chỉ chịu tác dụng của trọng lực.","Chuyển động của vật khi được ném thẳng đứng từ dưới lên.","Sự chuyển động của vật dưới tác dụng của lực nâng không khí."],"optionsRaw":["Sự rơi của các vật trong không khí dưới tác dụng của lực cản.","Sự rơi của vật chỉ chịu tác dụng của trọng lực.","Chuyển động của vật khi được ném thẳng đứng từ dưới lên.","Sự chuyển động của vật dưới tác dụng của lực nâng không khí."],"correctIndex":1,"correctAnswer":"Sự rơi của vật chỉ chịu tác dụng của trọng lực.","subQuestions":[],"solutionHtml":"SGK Vật lí 10 Trang 45 định nghĩa: Sự rơi tự do là sự rơi chỉ dưới tác dụng của trọng lực.","rawSolution":"SGK Vật lí 10 Trang 45 định nghĩa: Sự rơi tự do là sự rơi chỉ dưới tác dụng của trọng lực."}]},{"blockId":"single_8a236984-ce3c-419b-90c4-622926ad3989_1","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"8a236984-ce3c-419b-90c4-622926ad3989","type":"mcq","level":"B","chapterName":"","points":0.5,"textHtml":"Trong trường hợp nào sau đây, sự rơi của vật trong không khí có thể được coi là **sự rơi tự do**?","rawText":"Trong trường hợp nào sau đây, sự rơi của vật trong không khí có thể được coi là **sự rơi tự do**?","ownImageUrl":"","optionsHtml":["Khi lực cản của không khí rất nhỏ không đáng kể so với trọng lượng của vật.","Khi lực cản của không khí cân bằng với trọng lượng của vật.","Khi vật có khối lượng cực kỳ nhẹ như lông chim hay chiếc lá.","Khi vật chuyển động thẳng đều từ trên cao xuống."],"optionsRaw":["Khi lực cản của không khí rất nhỏ không đáng kể so với trọng lượng của vật.","Khi lực cản của không khí cân bằng với trọng lượng của vật.","Khi vật có khối lượng cực kỳ nhẹ như lông chim hay chiếc lá.","Khi vật chuyển động thẳng đều từ trên cao xuống."],"correctIndex":0,"correctAnswer":"Khi lực cản của không khí rất nhỏ không đáng kể so với trọng lượng của vật.","subQuestions":[],"solutionHtml":"SGK Trang 45 ghi rõ: Nếu vật rơi trong không khí mà độ lớn của lực cản không khí không đáng kể so với trọng lượng của vật thì cũng được coi là rơi tự do.","rawSolution":"SGK Trang 45 ghi rõ: Nếu vật rơi trong không khí mà độ lớn của lực cản không khí không đáng kể so với trọng lượng của vật thì cũng được coi là rơi tự do."}]},{"blockId":"single_1c651c9a-431d-4127-a59b-8350f815ef81_2","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"1c651c9a-431d-4127-a59b-8350f815ef81","type":"mcq","level":"B","chapterName":"","points":0.5,"textHtml":"Chuyển động rơi tự do có phương và chiều như thế nào?","rawText":"Chuyển động rơi tự do có phương và chiều như thế nào?","ownImageUrl":"","optionsHtml":["Phương nằm ngang, chiều từ trái sang phải.","Phương thẳng đứng, chiều từ trên xuống dưới.","Phương thẳng đứng, chiều từ dưới lên trên.","Phương xiên góc, chiều hướng vào tâm Trái Đất."],"optionsRaw":["Phương nằm ngang, chiều từ trái sang phải.","Phương thẳng đứng, chiều từ trên xuống dưới.","Phương thẳng đứng, chiều từ dưới lên trên.","Phương xiên góc, chiều hướng vào tâm Trái Đất."],"correctIndex":1,"correctAnswer":"Phương thẳng đứng, chiều từ trên xuống dưới.","subQuestions":[],"solutionHtml":"Vì trọng lực $\\vec{P}$ có phương thẳng đứng và chiều hướng từ trên xuống dưới, nên chuyển động rơi tự do cũng có phương thẳng đứng và chiều từ trên xuống dưới.","rawSolution":"Vì trọng lực $\\vec{P}$ có phương thẳng đứng và chiều hướng từ trên xuống dưới, nên chuyển động rơi tự do cũng có phương thẳng đứng và chiều từ trên xuống dưới."}]},{"blockId":"single_c53f3cb3-bbd8-48b4-a694-b7dbe886dcef_3","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"c53f3cb3-bbd8-48b4-a694-b7dbe886dcef","type":"mcq","level":"B","chapterName":"","points":0.5,"textHtml":"Tính chất chuyển động của vật rơi tự do (thả rơi không vận tốc đầu) thuộc dạng chuyển động nào?","rawText":"Tính chất chuyển động của vật rơi tự do (thả rơi không vận tốc đầu) thuộc dạng chuyển động nào?","ownImageUrl":"","optionsHtml":["Chuyển động thẳng đều.","Chuyển động thẳng nhanh dần đều.","Chuyển động thẳng chậm dần đều.","Chuyển động biến đổi phức tạp không gia tốc."],"optionsRaw":["Chuyển động thẳng đều.","Chuyển động thẳng nhanh dần đều.","Chuyển động thẳng chậm dần đều.","Chuyển động biến đổi phức tạp không gia tốc."],"correctIndex":1,"correctAnswer":"Chuyển động thẳng nhanh dần đều.","subQuestions":[],"solutionHtml":"Sự rơi tự do (không vận tốc đầu $v_0 = 0$) là chuyển động thẳng nhanh dần đều với gia tốc rơi tự do $g$ không đổi.","rawSolution":"Sự rơi tự do (không vận tốc đầu $v_0 = 0$) là chuyển động thẳng nhanh dần đều với gia tốc rơi tự do $g$ không đổi."}]},{"blockId":"single_89a64ee6-5e6d-4e75-a74c-11ad78d5c80a_4","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"89a64ee6-5e6d-4e75-a74c-11ad78d5c80a","type":"mcq","level":"B","chapterName":"","points":0.5,"textHtml":"Công thức tính **vận tốc** $v$ của vật rơi tự do sau thời gian $t$ (khi thả không vận tốc đầu $v_0 = 0$) tại nơi có gia tốc rơi tự do $g$ là:","rawText":"Công thức tính **vận tốc** $v$ của vật rơi tự do sau thời gian $t$ (khi thả không vận tốc đầu $v_0 = 0$) tại nơi có gia tốc rơi tự do $g$ là:","ownImageUrl":"","optionsHtml":["$v = g \\cdot t$","$v = \\frac{1}{2} g \\cdot t^2$","$v = g \\cdot t^2$","$v = 2g \\cdot t$"],"optionsRaw":["$v = g \\cdot t$","$v = \\frac{1}{2} g \\cdot t^2$","$v = g \\cdot t^2$","$v = 2g \\cdot t$"],"correctIndex":0,"correctAnswer":"$v = g \\cdot t$","subQuestions":[],"solutionHtml":"Chuyển động nhanh dần đều với $v_0 = 0$ và gia tốc $a = g \\implies v = g \\cdot t$.","rawSolution":"Chuyển động nhanh dần đều với $v_0 = 0$ và gia tốc $a = g \\implies v = g \\cdot t$."}]},{"blockId":"single_e59d1ea6-9766-49f4-94d0-d0da76d25d95_5","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"e59d1ea6-9766-49f4-94d0-d0da76d25d95","type":"mcq","level":"B","chapterName":"","points":0.5,"textHtml":"Công thức tính **quãng đường đi được** $s$ (hoặc độ cao $h$) của vật rơi tự do sau thời gian $t$ là:","rawText":"Công thức tính **quãng đường đi được** $s$ (hoặc độ cao $h$) của vật rơi tự do sau thời gian $t$ là:","ownImageUrl":"","optionsHtml":["$s = g \\cdot t$","$s = \\frac{1}{2} g \\cdot t^2$","$s = 2 g \\cdot t^2$","$s = g \\cdot t^2$"],"optionsRaw":["$s = g \\cdot t$","$s = \\frac{1}{2} g \\cdot t^2$","$s = 2 g \\cdot t^2$","$s = g \\cdot t^2$"],"correctIndex":1,"correctAnswer":"$s = \\frac{1}{2} g \\cdot t^2$","subQuestions":[],"solutionHtml":"Áp dụng công thức $s = v_0t + \\frac{1}{2}at^2$ với $v_0 = 0$ và $a = g \\implies s = \\frac{1}{2} g \\cdot t^2$.","rawSolution":"Áp dụng công thức $s = v_0t + \\frac{1}{2}at^2$ với $v_0 = 0$ và $a = g \\implies s = \\frac{1}{2} g \\cdot t^2$."}]},{"blockId":"single_5254ba2c-432d-43fe-b878-a621d9b3fc8c_6","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"5254ba2c-432d-43fe-b878-a621d9b3fc8c","type":"mcq","level":"B","chapterName":"","points":0.5,"textHtml":"Công thức liên hệ giữa vận tốc $v$, gia tốc rơi tự do $g$ và quãng đường rơi $s$ **không phụ thuộc trực tiếp vào thời gian $t$** là:","rawText":"Công thức liên hệ giữa vận tốc $v$, gia tốc rơi tự do $g$ và quãng đường rơi $s$ **không phụ thuộc trực tiếp vào thời gian $t$** là:","ownImageUrl":"","optionsHtml":["$v^2 = g \\cdot s$","$v^2 = 2g \\cdot s$","$v = 2g \\cdot s$","$v^2 = \\frac{1}{2} g \\cdot s$"],"optionsRaw":["$v^2 = g \\cdot s$","$v^2 = 2g \\cdot s$","$v = 2g \\cdot s$","$v^2 = \\frac{1}{2} g \\cdot s$"],"correctIndex":1,"correctAnswer":"$v^2 = 2g \\cdot s$","subQuestions":[],"solutionHtml":"Áp dụng công thức $v^2 - v_0^2 = 2as$ với $v_0 = 0$ và $a = g \\implies v^2 = 2g \\cdot s$.","rawSolution":"Áp dụng công thức $v^2 - v_0^2 = 2as$ với $v_0 = 0$ và $a = g \\implies v^2 = 2g \\cdot s$."}]},{"blockId":"single_30a24f69-a359-4522-8ad1-c97547e7427a_7","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"30a24f69-a359-4522-8ad1-c97547e7427a","type":"mcq","level":"B","chapterName":"","points":0.5,"textHtml":"Nhận xét nào sau đây về **gia tốc rơi tự do $g$** tại các nơi trên bề mặt Trái Đất là **ĐÚNG**?","rawText":"Nhận xét nào sau đây về **gia tốc rơi tự do $g$** tại các nơi trên bề mặt Trái Đất là **ĐÚNG**?","ownImageUrl":"","optionsHtml":["Tại mọi nơi trên Trái Đất, gia tốc rơi tự do luôn có giá trị bằng nhau tuyệt đối.","Tại cùng một nơi địa lý và ở cùng độ cao, các vật rơi tự do với cùng một gia tốc $g$.","Gia tốc $g$ ở Xích đạo lớn hơn gia tốc $g$ ở hai Cực.","Gia tốc $g$ tăng dần khi độ cao so với mặt nước biển tăng lên."],"optionsRaw":["Tại mọi nơi trên Trái Đất, gia tốc rơi tự do luôn có giá trị bằng nhau tuyệt đối.","Tại cùng một nơi địa lý và ở cùng độ cao, các vật rơi tự do với cùng một gia tốc $g$.","Gia tốc $g$ ở Xích đạo lớn hơn gia tốc $g$ ở hai Cực.","Gia tốc $g$ tăng dần khi độ cao so với mặt nước biển tăng lên."],"correctIndex":1,"correctAnswer":"Tại cùng một nơi địa lý và ở cùng độ cao, các vật rơi tự do với cùng một gia tốc $g$.","subQuestions":[],"solutionHtml":"Tại cùng một vị trí địa lý và ở cùng độ cao, mọi vật rơi tự do với cùng gia tốc $g$. Giá trị $g$ phụ thuộc vĩ độ và giảm dần khi lên cao.","rawSolution":"Tại cùng một vị trí địa lý và ở cùng độ cao, mọi vật rơi tự do với cùng gia tốc $g$. Giá trị $g$ phụ thuộc vĩ độ và giảm dần khi lên cao."}]},{"blockId":"single_ee17287f-ac17-4dfa-aca8-7bff9b1d580f_8","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"ee17287f-ac17-4dfa-aca8-7bff9b1d580f","type":"mcq","level":"H","chapterName":"","points":0.5,"textHtml":"Thí nghiệm với ống Niutơn rút hết không khí (chân không) chứa một hòn bi chì và một chiếc lông chim chứng tỏ điều gì?","rawText":"Thí nghiệm với ống Niutơn rút hết không khí (chân không) chứa một hòn bi chì và một chiếc lông chim chứng tỏ điều gì?","ownImageUrl":"","optionsHtml":["Trong chân không, vật nặng rơi nhanh hơn vật nhẹ.","Trong chân không, lực cản không khí làm chiếc lông chim rơi chậm lại.","Trong chân không (khi không có lực cản không khí), mọi vật rơi nhanh như nhau.","Trọng lực không tác dụng lên các vật đặt trong chân không."],"optionsRaw":["Trong chân không, vật nặng rơi nhanh hơn vật nhẹ.","Trong chân không, lực cản không khí làm chiếc lông chim rơi chậm lại.","Trong chân không (khi không có lực cản không khí), mọi vật rơi nhanh như nhau.","Trọng lực không tác dụng lên các vật đặt trong chân không."],"correctIndex":2,"correctAnswer":"Trong chân không (khi không có lực cản không khí), mọi vật rơi nhanh như nhau.","subQuestions":[],"solutionHtml":"Thí nghiệm ống Niutơn chứng minh rằng khi loại bỏ sức cản không khí (môi trường chân không), mọi vật dù nặng hay nhẹ đều rơi tự do nhanh như nhau.","rawSolution":"Thí nghiệm ống Niutơn chứng minh rằng khi loại bỏ sức cản không khí (môi trường chân không), mọi vật dù nặng hay nhẹ đều rơi tự do nhanh như nhau."}]},{"blockId":"single_dcf583fd-2641-4444-b6c9-f0df1c19c7e5_9","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"dcf583fd-2641-4444-b6c9-f0df1c19c7e5","type":"mcq","level":"H","chapterName":"","points":0.5,"textHtml":"Thả hai tờ giấy giống nhau về khối lượng và kích thước, nhưng một tờ vo tròn nén chặt còn một tờ để phẳng trong không khí. Tại sao tờ giấy vo tròn lại rơi nhanh hơn hẳn tờ giấy để nguyên?","rawText":"Thả hai tờ giấy giống nhau về khối lượng và kích thước, nhưng một tờ vo tròn nén chặt còn một tờ để phẳng trong không khí. Tại sao tờ giấy vo tròn lại rơi nhanh hơn hẳn tờ giấy để nguyên?","ownImageUrl":"","optionsHtml":["Vì tờ giấy vo tròn có trọng lượng lớn hơn tờ giấy để nguyên.","Vì tờ giấy vo tròn có diện tích cản gió nhỏ hơn nên độ lớn lực cản không khí tác dụng lên nó nhỏ hơn nhiều so với tờ giấy để phẳng.","Vì trọng lực tác dụng lên tờ giấy phẳng bị triệt tiêu hoàn toàn.","Vì tờ giấy phẳng bị ma sát với không khí sinh ra điện tích đẩy nó lên."],"optionsRaw":["Vì tờ giấy vo tròn có trọng lượng lớn hơn tờ giấy để nguyên.","Vì tờ giấy vo tròn có diện tích cản gió nhỏ hơn nên độ lớn lực cản không khí tác dụng lên nó nhỏ hơn nhiều so với tờ giấy để phẳng.","Vì trọng lực tác dụng lên tờ giấy phẳng bị triệt tiêu hoàn toàn.","Vì tờ giấy phẳng bị ma sát với không khí sinh ra điện tích đẩy nó lên."],"correctIndex":1,"correctAnswer":"Vì tờ giấy vo tròn có diện tích cản gió nhỏ hơn nên độ lớn lực cản không khí tác dụng lên nó nhỏ hơn nhiều so với tờ giấy để phẳng.","subQuestions":[],"solutionHtml":"Hai tờ giấy nặng như nhau ($P_1 = P_2$). Tờ vo tròn có diện tích tiếp xúc với không khí nhỏ hơn rất nhiều nên lực cản không khí $F_c$ nhỏ hơn đáng kể, làm nó rơi nhanh hơn.","rawSolution":"Hai tờ giấy nặng như nhau ($P_1 = P_2$). Tờ vo tròn có diện tích tiếp xúc với không khí nhỏ hơn rất nhiều nên lực cản không khí $F_c$ nhỏ hơn đáng kể, làm nó rơi nhanh hơn."}]},{"blockId":"single_e4fbe9b1-c9be-41e2-bc39-702896387827_10","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"e4fbe9b1-c9be-41e2-bc39-702896387827","type":"mcq","level":"H","chapterName":"","points":0.5,"textHtml":"Một vật rơi tự do từ độ cao $h$ xuống mặt đất hết thời gian $t = 2\\,giây$. Lấy $g = 10\\,m/s^2$. Độ cao $h$ và vận tốc $v$ của vật khi vừa chạm đất lần lượt là:","rawText":"Một vật rơi tự do từ độ cao $h$ xuống mặt đất hết thời gian $t = 2\\,giây$. Lấy $g = 10\\,m/s^2$. Độ cao $h$ và vận tốc $v$ của vật khi vừa chạm đất lần lượt là:","ownImageUrl":"","optionsHtml":["$h = 20$ m và $v = 20$ m/s","$h = 10$ m và $v = 20$ m/s","$h = 20$ m và $v = 10$ m/s","$h = 40$ m và $v = 20$ m/s"],"optionsRaw":["$h = 20$ m và $v = 20$ m/s","$h = 10$ m và $v = 20$ m/s","$h = 20$ m và $v = 10$ m/s","$h = 40$ m và $v = 20$ m/s"],"correctIndex":0,"correctAnswer":"$h = 20$ m và $v = 20$ m/s","subQuestions":[],"solutionHtml":"- Độ cao: $h = \\frac{1}{2} g \\cdot t^2 = \\frac{1}{2} \\times 10 \\times 2^2 = 20$ m.<br>- Vận tốc khi chạm đất: $v = g \\cdot t = 10 \\times 2 = 20$ m/s.","rawSolution":"- Độ cao: $h = \\frac{1}{2} g \\cdot t^2 = \\frac{1}{2} \\times 10 \\times 2^2 = 20$ m.\n- Vận tốc khi chạm đất: $v = g \\cdot t = 10 \\times 2 = 20$ m/s."}]},{"blockId":"single_ee669a07-9b9a-4b48-8688-06a0efbb4ffe_11","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"ee669a07-9b9a-4b48-8688-06a0efbb4ffe","type":"mcq","level":"H","chapterName":"","points":0.5,"textHtml":"Để kiểm tra phương thẳng đứng của sự rơi tự do và kiểm tra xem bức tường trong lớp học có thẳng đứng hay không, người ta thường dùng dụng cụ đơn giản nào?","rawText":"Để kiểm tra phương thẳng đứng của sự rơi tự do và kiểm tra xem bức tường trong lớp học có thẳng đứng hay không, người ta thường dùng dụng cụ đơn giản nào?","ownImageUrl":"","optionsHtml":["Dùng thước dây chia độ.","Dùng dây dọi (gồm một sợi dây nhẹ buộc một quả nặng).","Dùng lực kế lò xo.","Dùng nhiệt kế thủy ngân."],"optionsRaw":["Dùng thước dây chia độ.","Dùng dây dọi (gồm một sợi dây nhẹ buộc một quả nặng).","Dùng lực kế lò xo.","Dùng nhiệt kế thủy ngân."],"correctIndex":1,"correctAnswer":"Dùng dây dọi (gồm một sợi dây nhẹ buộc một quả nặng).","subQuestions":[],"solutionHtml":"Trọng lực luôn hướng thẳng đứng xuống dưới. Khi treo quả nặng vào dây dọi, sợi dây sẽ duỗi thẳng theo phương trùng với phương của trọng lực.","rawSolution":"Trọng lực luôn hướng thẳng đứng xuống dưới. Khi treo quả nặng vào dây dọi, sợi dây sẽ duỗi thẳng theo phương trùng với phương của trọng lực."}]},{"blockId":"single_c91e7e40-a77b-424e-93c3-5b7279dffb16_12","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"c91e7e40-a77b-424e-93c3-5b7279dffb16","type":"mcq","level":"H","chapterName":"","points":0.5,"textHtml":"Trong các chuyển động sau đây, chuyển động nào **được coi là sự rơi tự do**?","rawText":"Trong các chuyển động sau đây, chuyển động nào **được coi là sự rơi tự do**?","ownImageUrl":"","optionsHtml":["Một chiếc lá cây ngô đồng đang rụng rơi trong gió.","Hạt bụi mịn chuyển động lơ lửng trong không khí.","Quả tạ bằng sắt rơi từ trên cao xuống đất trong không khí.","Vận động viên nhảy dù đang mở dù bay trong không trung."],"optionsRaw":["Một chiếc lá cây ngô đồng đang rụng rơi trong gió.","Hạt bụi mịn chuyển động lơ lửng trong không khí.","Quả tạ bằng sắt rơi từ trên cao xuống đất trong không khí.","Vận động viên nhảy dù đang mở dù bay trong không trung."],"correctIndex":2,"correctAnswer":"Quả tạ bằng sắt rơi từ trên cao xuống đất trong không khí.","subQuestions":[],"solutionHtml":"Quả tạ sắt có trọng lượng $P$ rất lớn so với lực cản không khí $F_c$ không đáng kể $\\implies$ coi là rơi tự do.","rawSolution":"Quả tạ sắt có trọng lượng $P$ rất lớn so với lực cản không khí $F_c$ không đáng kể $\\implies$ coi là rơi tự do."}]},{"blockId":"single_7636e16b-8b66-4f03-b48c-f4e5ab333d8b_13","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"7636e16b-8b66-4f03-b48c-f4e5ab333d8b","type":"mcq","level":"H","chapterName":"","points":0.5,"textHtml":"Một vật rơi tự do tại nơi có gia tốc $g = 9,8\\,m/s^2$. Ý nghĩa vật lý của giá trị gia tốc này là gì?","rawText":"Một vật rơi tự do tại nơi có gia tốc $g = 9,8\\,m/s^2$. Ý nghĩa vật lý của giá trị gia tốc này là gì?","ownImageUrl":"","optionsHtml":["Sau mỗi giây, quãng đường vật đi được luôn tăng thêm $9,8$ m.","Sau mỗi giây, vận tốc của vật tăng thêm một lượng $9,8$ m/s.","Vật đi được quãng đường $9,8$ m trong giây đầu tiên.","Vận tốc của vật không đổi và bằng $9,8$ m/s trong suốt quá trình rơi."],"optionsRaw":["Sau mỗi giây, quãng đường vật đi được luôn tăng thêm $9,8$ m.","Sau mỗi giây, vận tốc của vật tăng thêm một lượng $9,8$ m/s.","Vật đi được quãng đường $9,8$ m trong giây đầu tiên.","Vận tốc của vật không đổi và bằng $9,8$ m/s trong suốt quá trình rơi."],"correctIndex":1,"correctAnswer":"Sau mỗi giây, vận tốc của vật tăng thêm một lượng $9,8$ m/s.","subQuestions":[],"solutionHtml":"Gia tốc $g = \\frac{\\Delta v}{\\Delta t} = 9,8\\,m/s^2$ cho biết sau mỗi khoảng thời gian 1 giây, vận tốc của vật rơi tự do tăng thêm đúng $9,8$ m/s.","rawSolution":"Gia tốc $g = \\frac{\\Delta v}{\\Delta t} = 9,8\\,m/s^2$ cho biết sau mỗi khoảng thời gian 1 giây, vận tốc của vật rơi tự do tăng thêm đúng $9,8$ m/s."}]},{"blockId":"single_99bbde32-1fc5-47d6-8ede-8a170e0990e8_14","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"99bbde32-1fc5-47d6-8ede-8a170e0990e8","type":"mcq","level":"H","chapterName":"","points":0.5,"textHtml":"Một hòn đá thả rơi tự do từ một cây cầu cao xuống mặt nước. Biết vận tốc của hòn đá ngay trước khi chạm nước là $15$ m/s. Lấy $g = 10\\,m/s^2$. Thời gian rơi và độ cao của cây cầu so với mặt nước là:","rawText":"Một hòn đá thả rơi tự do từ một cây cầu cao xuống mặt nước. Biết vận tốc của hòn đá ngay trước khi chạm nước là $15$ m/s. Lấy $g = 10\\,m/s^2$. Thời gian rơi và độ cao của cây cầu so với mặt nước là:","ownImageUrl":"","optionsHtml":["$t = 1,5$ s và $h = 11,25$ m","$t = 1,5$ s và $h = 22,5$ m","$t = 3,0$ s và $h = 11,25$ m","$t = 2,0$ s và $h = 20,0$ m"],"optionsRaw":["$t = 1,5$ s và $h = 11,25$ m","$t = 1,5$ s và $h = 22,5$ m","$t = 3,0$ s và $h = 11,25$ m","$t = 2,0$ s và $h = 20,0$ m"],"correctIndex":0,"correctAnswer":"$t = 1,5$ s và $h = 11,25$ m","subQuestions":[],"solutionHtml":"- Thời gian rơi: $t = \\frac{v}{g} = \\frac{15}{10} = 1,5$ s.<br>- Độ cao cây cầu: $h = \\frac{v^2}{2g} = \\frac{15^2}{2 \\times 10} = \\frac{225}{20} = 11,25$ m.","rawSolution":"- Thời gian rơi: $t = \\frac{v}{g} = \\frac{15}{10} = 1,5$ s.\n- Độ cao cây cầu: $h = \\frac{v^2}{2g} = \\frac{15^2}{2 \\times 10} = \\frac{225}{20} = 11,25$ m."}]},{"blockId":"single_3202a53d-648a-444c-b267-f1245fc8ad44_15","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"3202a53d-648a-444c-b267-f1245fc8ad44","type":"mcq","level":"VD","chapterName":"","points":0.5,"textHtml":"Một hòn đá rơi tự do từ đỉnh một tòa tháp cao $45$ m xuống đất ($g = 10\\,m/s^2$). Thời gian hòn đá rơi hết toàn bộ tháp và quãng đường hòn đá rơi được trong **giây cuối cùng** trước khi chạm đất lần lượt là:","rawText":"Một hòn đá rơi tự do từ đỉnh một tòa tháp cao $45$ m xuống đất ($g = 10\\,m/s^2$). Thời gian hòn đá rơi hết toàn bộ tháp và quãng đường hòn đá rơi được trong **giây cuối cùng** trước khi chạm đất lần lượt là:","ownImageUrl":"","optionsHtml":["Thời gian rơi $t = 3$ s; Quãng đường giây cuối $s_{cuối} = 25$ m","Thời gian rơi $t = 3$ s; Quãng đường giây cuối $s_{cuối} = 15$ m","Thời gian rơi $t = 4,5$ s; Quãng đường giây cuối $s_{cuối} = 25$ m","Thời gian rơi $t = 3$ s; Quãng đường giây cuối $s_{cuối} = 20$ m"],"optionsRaw":["Thời gian rơi $t = 3$ s; Quãng đường giây cuối $s_{cuối} = 25$ m","Thời gian rơi $t = 3$ s; Quãng đường giây cuối $s_{cuối} = 15$ m","Thời gian rơi $t = 4,5$ s; Quãng đường giây cuối $s_{cuối} = 25$ m","Thời gian rơi $t = 3$ s; Quãng đường giây cuối $s_{cuối} = 20$ m"],"correctIndex":0,"correctAnswer":"Thời gian rơi $t = 3$ s; Quãng đường giây cuối $s_{cuối} = 25$ m","subQuestions":[],"solutionHtml":"1. Tổng thời gian rơi: $t = \\sqrt{\\frac{2h}{g}} = \\sqrt{\\frac{2 \\times 45}{10}} = 3$ s.<br>2. Quãng đường rơi trong 2 giây đầu: $s_2 = \\frac{1}{2} g t_2^2 = \\frac{1}{2} \\times 10 \\times 2^2 = 20$ m.<br>3. Quãng đường đi trong giây cuối cùng (giây thứ 3): $s_{cuối} = h - s_2 = 45 - 20 = 25$ m.","rawSolution":"1. Tổng thời gian rơi: $t = \\sqrt{\\frac{2h}{g}} = \\sqrt{\\frac{2 \\times 45}{10}} = 3$ s.\n2. Quãng đường rơi trong 2 giây đầu: $s_2 = \\frac{1}{2} g t_2^2 = \\frac{1}{2} \\times 10 \\times 2^2 = 20$ m.\n3. Quãng đường đi trong giây cuối cùng (giây thứ 3): $s_{cuối} = h - s_2 = 45 - 20 = 25$ m."}]},{"blockId":"single_d707cc18-e792-481c-be1a-e0093fe5f343_16","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"d707cc18-e792-481c-be1a-e0093fe5f343","type":"mcq","level":"VD","chapterName":"","points":0.5,"textHtml":"Thả rơi tự do một vật từ độ cao $h$ so với mặt đất. Biết rằng trong giây cuối cùng trước khi chạm đất, vật đi được quãng đường $35$ m. Lấy $g = 10\\,m/s^2$. Tổng thời gian rơi $t$ và độ cao $h$ ban đầu của vật là:","rawText":"Thả rơi tự do một vật từ độ cao $h$ so với mặt đất. Biết rằng trong giây cuối cùng trước khi chạm đất, vật đi được quãng đường $35$ m. Lấy $g = 10\\,m/s^2$. Tổng thời gian rơi $t$ và độ cao $h$ ban đầu của vật là:","ownImageUrl":"","optionsHtml":["$t = 4$ s và $h = 80$ m","$t = 3$ s và $h = 45$ m","$t = 5$ s và $h = 125$ m","$t = 4$ s và $h = 60$ m"],"optionsRaw":["$t = 4$ s và $h = 80$ m","$t = 3$ s và $h = 45$ m","$t = 5$ s và $h = 125$ m","$t = 4$ s và $h = 60$ m"],"correctIndex":0,"correctAnswer":"$t = 4$ s và $h = 80$ m","subQuestions":[],"solutionHtml":"1. Quãng đường rơi trong $t$ giây: $s(t) = \\frac{1}{2} g t^2 = 5t^2$.<br>2. Quãng đường rơi trong $(t-1)$ giây đầu: $s(t-1) = 5(t-1)^2$.<br>3. Quãng đường trong giây cuối:<br> $$\\Delta s = 5t^2 - 5(t-1)^2 = 35 \\iff 5(2t - 1) = 35 \\iff 2t - 1 = 7 \\implies t = 4$ s$.<br>4. Độ cao ban đầu: $h = 5 \\times 4^2 = 80$ m.","rawSolution":"1. Quãng đường rơi trong $t$ giây: $s(t) = \\frac{1}{2} g t^2 = 5t^2$.\n2. Quãng đường rơi trong $(t-1)$ giây đầu: $s(t-1) = 5(t-1)^2$.\n3. Quãng đường trong giây cuối:\n $$\\Delta s = 5t^2 - 5(t-1)^2 = 35 \\iff 5(2t - 1) = 35 \\iff 2t - 1 = 7 \\implies t = 4$ s$.\n4. Độ cao ban đầu: $h = 5 \\times 4^2 = 80$ m."}]},{"blockId":"single_2fbe9f25-a38e-4d7f-ac71-3027e88a815b_17","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"2fbe9f25-a38e-4d7f-ac71-3027e88a815b","type":"mcq","level":"VD","chapterName":"","points":0.5,"textHtml":"Năm 1971, nhà du hành vũ trụ người Mỹ David Scott đã thực hiện thí nghiệm đồng thời thả rơi một chiếc lông chim và một chiếc búa ở cùng độ cao trên Mặt Trăng. Ông nhận thấy cả hai vật đều chạm bề mặt Mặt Trăng cùng một lúc. Giải thích nào sau đây là đúng nhất?","rawText":"Năm 1971, nhà du hành vũ trụ người Mỹ David Scott đã thực hiện thí nghiệm đồng thời thả rơi một chiếc lông chim và một chiếc búa ở cùng độ cao trên Mặt Trăng. Ông nhận thấy cả hai vật đều chạm bề mặt Mặt Trăng cùng một lúc. Giải thích nào sau đây là đúng nhất?","ownImageUrl":"","optionsHtml":["Vì trên Mặt Trăng không có không khí (môi trường chân không), chiếc lông chim không chịu lực cản nên cả hai vật rơi tự do với cùng gia tốc trọng trường Mặt Trăng.","Vì trọng lực của Mặt Trăng hút chiếc lông chim mạnh hơn chiếc búa.","Vì chiếc búa và chiếc lông chim có khối lượng bằng nhau khi đưa lên Mặt Trăng.","Vì Mặt Trăng không có lực hấp dẫn nên hai vật lơ lửng rồi tự rơi xuống."],"optionsRaw":["Vì trên Mặt Trăng không có không khí (môi trường chân không), chiếc lông chim không chịu lực cản nên cả hai vật rơi tự do với cùng gia tốc trọng trường Mặt Trăng.","Vì trọng lực của Mặt Trăng hút chiếc lông chim mạnh hơn chiếc búa.","Vì chiếc búa và chiếc lông chim có khối lượng bằng nhau khi đưa lên Mặt Trăng.","Vì Mặt Trăng không có lực hấp dẫn nên hai vật lơ lửng rồi tự rơi xuống."],"correctIndex":0,"correctAnswer":"Vì trên Mặt Trăng không có không khí (môi trường chân không), chiếc lông chim không chịu lực cản nên cả hai vật rơi tự do với cùng gia tốc trọng trường Mặt Trăng.","subQuestions":[],"solutionHtml":"Trên Mặt Trăng không có khí quyển (chân không), do đó không có lực cản không khí. Cả chiếc lông chim và chiếc búa đều rơi tự do chỉ dưới tác dụng của trọng lực Mặt Trăng, thu được cùng một gia tốc $g_{MT} \\approx 1,62\\,m/s^2$ nên rơi chạm đất cùng lúc.","rawSolution":"Trên Mặt Trăng không có khí quyển (chân không), do đó không có lực cản không khí. Cả chiếc lông chim và chiếc búa đều rơi tự do chỉ dưới tác dụng của trọng lực Mặt Trăng, thu được cùng một gia tốc $g_{MT} \\approx 1,62\\,m/s^2$ nên rơi chạm đất cùng lúc."}]},{"blockId":"single_28a35ac0-ea38-41ec-af37-f7157d0dff35_18","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"28a35ac0-ea38-41ec-af37-f7157d0dff35","type":"mcq","level":"VD","chapterName":"","points":0.5,"textHtml":"Các giọt nước mưa nhỏ rơi từ mái nhà xuống đất sau những khoảng thời gian bằng nhau $\\Delta t$. Khi giọt thứ nhất vừa chạm đất thì giọt thứ tư bắt đầu tách ra khỏi mái nhà. Tại thời điểm giọt thứ nhất chạm đất, khoảng cách từ giọt thứ hai và giọt thứ ba đến mái nhà lần lượt là bao nhiêu nếu mái nhà cao $h = 9$ m? (Lấy $g = 10\\,m/s^2$).","rawText":"Các giọt nước mưa nhỏ rơi từ mái nhà xuống đất sau những khoảng thời gian bằng nhau $\\Delta t$. Khi giọt thứ nhất vừa chạm đất thì giọt thứ tư bắt đầu tách ra khỏi mái nhà. Tại thời điểm giọt thứ nhất chạm đất, khoảng cách từ giọt thứ hai và giọt thứ ba đến mái nhà lần lượt là bao nhiêu nếu mái nhà cao $h = 9$ m? (Lấy $g = 10\\,m/s^2$).","ownImageUrl":"","optionsHtml":["Giọt thứ hai cách mái nhà $4$ m; Giọt thứ ba cách mái nhà $1$ m","Giọt thứ hai cách mái nhà $6$ m; Giọt thứ ba cách mái nhà $3$ m","Giọt thứ hai cách mái nhà $4,5$ m; Giọt thứ ba cách mái nhà $2,25$ m","Giọt thứ hai cách mái nhà $5$ m; Giọt thứ ba cách mái nhà $2$ m"],"optionsRaw":["Giọt thứ hai cách mái nhà $4$ m; Giọt thứ ba cách mái nhà $1$ m","Giọt thứ hai cách mái nhà $6$ m; Giọt thứ ba cách mái nhà $3$ m","Giọt thứ hai cách mái nhà $4,5$ m; Giọt thứ ba cách mái nhà $2,25$ m","Giọt thứ hai cách mái nhà $5$ m; Giọt thứ ba cách mái nhà $2$ m"],"correctIndex":0,"correctAnswer":"Giọt thứ hai cách mái nhà $4$ m; Giọt thứ ba cách mái nhà $1$ m","subQuestions":[],"solutionHtml":"1. Giọt 4 bắt đầu rơi ứng với thời điểm $t = 0$.<br> - Giọt 3 đã rơi thời gian $t_3 = 1\\Delta t$.<br> - Giọt 2 đã rơi thời gian $t_2 = 2\\Delta t$.<br> - Giọt 1 đã rơi thời gian $t_1 = 3\\Delta t$.<br>2. Quãng đường giọt 1 rơi chạm đất:<br> $$h = \\frac{1}{2} g (3\\Delta t)^2 = 9 \\times \\left(\\frac{1}{2} g \\Delta t^2\\right) = 9\\,m \\implies \\frac{1}{2} g \\Delta t^2 = 1$ m$.<br>3. Khoảng cách giọt thứ hai đến mái nhà: $h_2 = \\frac{1}{2} g (2\\Delta t)^2 = 4 \\times 1 = 4$ m.<br>4. Khoảng cách giọt thứ ba đến mái nhà: $h_3 = \\frac{1}{2} g (1\\Delta t)^2 = 1 \\times 1 = 1$ m.","rawSolution":"1. Giọt 4 bắt đầu rơi ứng với thời điểm $t = 0$.\n - Giọt 3 đã rơi thời gian $t_3 = 1\\Delta t$.\n - Giọt 2 đã rơi thời gian $t_2 = 2\\Delta t$.\n - Giọt 1 đã rơi thời gian $t_1 = 3\\Delta t$.\n2. Quãng đường giọt 1 rơi chạm đất:\n $$h = \\frac{1}{2} g (3\\Delta t)^2 = 9 \\times \\left(\\frac{1}{2} g \\Delta t^2\\right) = 9\\,m \\implies \\frac{1}{2} g \\Delta t^2 = 1$ m$.\n3. Khoảng cách giọt thứ hai đến mái nhà: $h_2 = \\frac{1}{2} g (2\\Delta t)^2 = 4 \\times 1 = 4$ m.\n4. Khoảng cách giọt thứ ba đến mái nhà: $h_3 = \\frac{1}{2} g (1\\Delta t)^2 = 1 \\times 1 = 1$ m."}]},{"blockId":"single_810e023d-d1ba-4758-bff1-4736a7cd52a5_19","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"810e023d-d1ba-4758-bff1-4736a7cd52a5","type":"mcq","level":"VD","chapterName":"","points":0.5,"textHtml":"Thả rơi tự do một vật từ độ cao $h = 20$ m so với mặt đất ($g = 10\\,m/s^2$). Gọi $t_1$ là thời gian vật rơi trong $1$ m đầu tiên và $t_2$ là thời gian vật rơi trong $1$ m cuối cùng trước khi chạm đất. Tỉ số $\\frac{t_1}{t_2}$ gần bằng giá trị nào nhất sau đây?","rawText":"Thả rơi tự do một vật từ độ cao $h = 20$ m so với mặt đất ($g = 10\\,m/s^2$). Gọi $t_1$ là thời gian vật rơi trong $1$ m đầu tiên và $t_2$ là thời gian vật rơi trong $1$ m cuối cùng trước khi chạm đất. Tỉ số $\\frac{t_1}{t_2}$ gần bằng giá trị nào nhất sau đây?","ownImageUrl":"","optionsHtml":["$8,84$","$4,42$","$10,0$","$6,25$"],"optionsRaw":["$8,84$","$4,42$","$10,0$","$6,25$"],"correctIndex":0,"correctAnswer":"$8,84$","subQuestions":[],"solutionHtml":"1. Thời gian rơi $1$ m đầu tiên: $t_1 = \\frac{1}{\\sqrt{5}} \\approx 0,4472$ s.<br>2. Tổng thời gian rơi từ độ cao $20$ m chạm đất: $t = 2$ s.<br>3. Thời gian rơi $19$ m đầu tiên: $t_{19} = \\sqrt{3,8} \\approx 1,9494$ s.<br>4. Thời gian rơi $1$ m cuối cùng: $t_2 = 2 - 1,9494 = 0,0506$ s.<br>5. Tỉ số $\\frac{t_1}{t_2} = \\frac{0,4472}{0,0506} \\approx 8,84$.","rawSolution":"1. Thời gian rơi $1$ m đầu tiên: $t_1 = \\frac{1}{\\sqrt{5}} \\approx 0,4472$ s.\n2. Tổng thời gian rơi từ độ cao $20$ m chạm đất: $t = 2$ s.\n3. Thời gian rơi $19$ m đầu tiên: $t_{19} = \\sqrt{3,8} \\approx 1,9494$ s.\n4. Thời gian rơi $1$ m cuối cùng: $t_2 = 2 - 1,9494 = 0,0506$ s.\n5. Tỉ số $\\frac{t_1}{t_2} = \\frac{0,4472}{0,0506} \\approx 8,84$."}]}]}</script>
+  <script>
+    (function() {
+      var dataEl = document.getElementById('edusync-runtime-data');
+      var EXAM = JSON.parse(dataEl.textContent || '{}');
+      var LETTERS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+      var TF_LABELS = ['a', 'b', 'c', 'd', 'e', 'f'];
+
+      function shuffle(arr) {
+        var copy = arr.slice();
+        for (var i = copy.length - 1; i > 0; i--) {
+          var j = Math.floor(Math.random() * (i + 1));
+          var tmp = copy[i]; copy[i] = copy[j]; copy[j] = tmp;
+        }
+        return copy;
+      }
+
+      var blocks = EXAM.shuffleQuestions ? shuffle(EXAM.blocks || []) : (EXAM.blocks || []);
+      var flatQuestions = [];
+      blocks.forEach(function(block) {
+        block.questions.forEach(function(q) {
+          if (q.type === 'mcq' && EXAM.shuffleOptions && Array.isArray(q.optionsHtml)) {
+            var tagged = q.optionsHtml.map(function(html, idx) {
+              return { html: html, raw: q.optionsRaw[idx], isCorrect: idx === q.correctIndex };
+            });
+            var mixed = shuffle(tagged);
+            q.optionsHtml = mixed.map(function(m) { return m.html; });
+            q.optionsRaw = mixed.map(function(m) { return m.raw; });
+            q.correctIndex = Math.max(0, mixed.findIndex(function(m) { return m.isCorrect; }));
+          }
+          q.displayNumber = flatQuestions.length + 1;
+          flatQuestions.push(q);
+        });
+      });
+
+      var userAnswers = {};
+      var submitted = false;
+      var durationLimit = (EXAM.durationMinutes || 0) > 0 ? EXAM.durationMinutes * 60 : 0;
+      var startTime = Date.now();
+      var timerHandle = null;
+
+      function fmtTime(sec) {
+        var s = Math.max(0, Math.floor(sec));
+        var m = Math.floor(s / 60);
+        var r = s % 60;
+        return String(m).padStart(2, '0') + ':' + String(r).padStart(2, '0');
+      }
+
+      function isQuestionAnswered(q) {
+        var ans = userAnswers[q.id];
+        if (q.type === 'mcq') return typeof ans === 'number';
+        if (q.type === 'short') return typeof ans === 'string' && ans.trim().length > 0;
+        if (q.type === 'group-tf') {
+          if (!ans || typeof ans !== 'object') return false;
+          return q.subQuestions.some(function(sq) { return ans[sq.id] === 'True' || ans[sq.id] === 'False'; });
+        }
+        return false;
+      }
+
+      function updateProgress() {
+        var done = flatQuestions.filter(isQuestionAnswered).length;
+        document.getElementById('progressLabel').textContent = done + '/' + flatQuestions.length;
+        document.getElementById('sidebarCount').textContent = 'Đã làm ' + done + '/' + flatQuestions.length;
+        flatQuestions.forEach(function(q) {
+          var pBtn = document.getElementById('pbtn_' + q.displayNumber);
+          if (!pBtn || submitted) return;
+          pBtn.className = 'p-btn mono' + (isQuestionAnswered(q) ? ' done' : '');
+        });
+      }
+
+      function buildQuestionEl(q) {
+        var card = document.createElement('article');
+        card.className = 'q-card';
+        card.id = 'qcard_' + q.displayNumber;
+
+        var header = document.createElement('div');
+        header.className = 'q-header';
+        var leftMeta = '<span class="q-num">Câu ' + q.displayNumber + '</span>';
+        var tags = [q.level ? ('Mức ' + q.level) : '', q.points + ' đ', q.chapterName || ''].filter(Boolean).join(' · ');
+        header.innerHTML = leftMeta + '<span id="qstatus_' + q.displayNumber + '" class="q-status">' + tags + '</span>';
+        card.appendChild(header);
+
+        var qTextEl = document.createElement('div');
+        qTextEl.className = 'q-text';
+        qTextEl.innerHTML = q.textHtml;
+        card.appendChild(qTextEl);
+
+        if (q.ownImageUrl) {
+          var fig = document.createElement('div');
+          fig.className = 'q-figure';
+          var img = document.createElement('img');
+          img.src = q.ownImageUrl;
+          img.alt = 'Hình minh họa câu ' + q.displayNumber;
+          fig.appendChild(img);
+          card.appendChild(fig);
+        }
+
+        if (q.type === 'mcq') {
+          var grid = document.createElement('div');
+          grid.className = 'options-grid';
+          q.optionsHtml.forEach(function(optHtml, optIdx) {
+            var btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'opt-btn';
+            btn.id = 'opt_' + q.id + '_' + optIdx;
+            btn.innerHTML = '<span class="opt-letter mono">' + (LETTERS[optIdx] || optIdx + 1) + '</span><span style="flex:1;">' + optHtml + '</span>';
+            btn.addEventListener('click', function() {
+              if (submitted) return;
+              userAnswers[q.id] = optIdx;
+              q.optionsHtml.forEach(function(_, i2) {
+                var el = document.getElementById('opt_' + q.id + '_' + i2);
+                if (el) el.classList.toggle('selected', i2 === optIdx);
+              });
+              updateProgress();
+            });
+            grid.appendChild(btn);
+          });
+          card.appendChild(grid);
+        } else if (q.type === 'group-tf') {
+          var list = document.createElement('div');
+          list.className = 'tf-list';
+          q.subQuestions.forEach(function(sq, sIdx) {
+            var row = document.createElement('div');
+            row.className = 'tf-row';
+            row.id = 'tfrow_' + sq.id;
+
+            var txt = document.createElement('div');
+            txt.className = 'tf-text';
+            txt.innerHTML = '<strong>' + (TF_LABELS[sIdx] || (sIdx + 1)) + ')</strong> ' + sq.textHtml;
+            row.appendChild(txt);
+
+            var actions = document.createElement('div');
+            actions.className = 'tf-actions';
+            ['True', 'False'].forEach(function(val) {
+              var b = document.createElement('button');
+              b.type = 'button';
+              b.className = 'tf-choice';
+              b.id = 'tfbtn_' + sq.id + '_' + val;
+              b.textContent = val === 'True' ? 'Đúng' : 'Sai';
+              b.addEventListener('click', function() {
+                if (submitted) return;
+                if (!userAnswers[q.id] || typeof userAnswers[q.id] !== 'object') userAnswers[q.id] = {};
+                userAnswers[q.id][sq.id] = val;
+                var bt = document.getElementById('tfbtn_' + sq.id + '_True');
+                var bf = document.getElementById('tfbtn_' + sq.id + '_False');
+                if (bt) bt.classList.toggle('active', val === 'True');
+                if (bf) bf.classList.toggle('active', val === 'False');
+                updateProgress();
+              });
+              actions.appendChild(b);
+            });
+            row.appendChild(actions);
+            list.appendChild(row);
+          });
+          card.appendChild(list);
+        } else {
+          var sBox = document.createElement('div');
+          sBox.className = 'short-box';
+          var inp = document.createElement('input');
+          inp.type = 'text';
+          inp.className = 'short-input';
+          inp.id = 'short_' + q.id;
+          inp.placeholder = 'Nhập đáp số (vd: 2.6 hoặc 36)';
+          inp.addEventListener('input', function() {
+            if (submitted) return;
+            userAnswers[q.id] = inp.value;
+            updateProgress();
+          });
+          var fb = document.createElement('span');
+          fb.id = 'shortfb_' + q.id;
+          fb.className = 'short-feedback';
+          sBox.appendChild(inp);
+          sBox.appendChild(fb);
+          card.appendChild(sBox);
+        }
+
+        if (q.solutionHtml) {
+          var sol = document.createElement('div');
+          sol.className = 'solution-box';
+          sol.id = 'sol_' + q.id;
+          sol.innerHTML = '<strong>Lời giải chi tiết:</strong><div style="margin-top:4px;">' + q.solutionHtml + '</div>';
+          card.appendChild(sol);
+        }
+
+        return card;
+      }
+
+      function renderExam() {
+        var root = document.getElementById('questionsRoot');
+        var pal = document.getElementById('paletteRoot');
+        root.innerHTML = '';
+        pal.innerHTML = '';
+
+        blocks.forEach(function(block) {
+          if (block.contextHtml || block.sharedImageUrl) {
+            var groupEl = document.createElement('section');
+            groupEl.className = 'context-group';
+
+            var head = document.createElement('div');
+            head.className = 'context-header';
+            var firstNum = block.questions[0].displayNumber;
+            var lastNum = block.questions[block.questions.length - 1].displayNumber;
+            var labelText = block.questions.length > 1
+              ? 'Dữ liệu dùng chung cho Câu ' + firstNum + ' – Câu ' + lastNum
+              : 'Dữ liệu đề bài (Câu ' + firstNum + ')';
+            var html = '<div class="context-label">' + labelText + '</div>';
+            if (block.contextHtml) {
+              html += '<div class="context-body">' + block.contextHtml + '</div>';
+            }
+            head.innerHTML = html;
+            if (block.sharedImageUrl) {
+              var fig = document.createElement('div');
+              fig.className = 'q-figure';
+              var img = document.createElement('img');
+              img.src = block.sharedImageUrl;
+              img.alt = labelText;
+              fig.appendChild(img);
+              head.appendChild(fig);
+            }
+            groupEl.appendChild(head);
+
+            var inner = document.createElement('div');
+            inner.className = 'context-questions';
+            block.questions.forEach(function(q) {
+              inner.appendChild(buildQuestionEl(q));
+            });
+            groupEl.appendChild(inner);
+            root.appendChild(groupEl);
+          } else {
+            block.questions.forEach(function(q) {
+              root.appendChild(buildQuestionEl(q));
+            });
+          }
+        });
+
+        flatQuestions.forEach(function(q) {
+          var b = document.createElement('button');
+          b.type = 'button';
+          b.className = 'p-btn mono';
+          b.id = 'pbtn_' + q.displayNumber;
+          b.textContent = String(q.displayNumber);
+          b.addEventListener('click', function() {
+            var target = document.getElementById('qcard_' + q.displayNumber);
+            if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          });
+          pal.appendChild(b);
+        });
+
+        updateProgress();
+        if (window.MathJax && window.MathJax.typesetPromise) {
+          window.MathJax.typesetPromise().catch(function() {});
+        }
+      }
+
+      function normalizeShort(val) {
+        return String(val || '').trim().replace(/,/g, '.').replace(/\s+/g, '').toLowerCase();
+      }
+
+      function isShortMatch(userVal, expectedVal) {
+        var u = normalizeShort(userVal);
+        var e = normalizeShort(expectedVal);
+        if (!u) return false;
+        if (u === e) return true;
+        var nu = parseFloat(u);
+        var ne = parseFloat(e);
+        if (!isNaN(nu) && !isNaN(ne) && String(nu) === u || !isNaN(nu) && !isNaN(ne)) {
+          if (/^-?\d+(?:\.\d+)?$/.test(u) && /^-?\d+(?:\.\d+)?$/.test(e)) {
+            return Math.abs(nu - ne) < 1e-6;
+          }
+        }
+        return false;
+      }
+
+      function gradeAndSubmit(force) {
+        if (submitted) return;
+        var answered = flatQuestions.filter(isQuestionAnswered).length;
+        if (!force && answered < flatQuestions.length) {
+          document.getElementById('confirmMsg').textContent =
+            'Bạn mới làm ' + answered + '/' + flatQuestions.length + ' câu. Bạn có chắc muốn nộp bài ngay?';
+          document.getElementById('confirmBar').classList.add('visible');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+          return;
+        }
+        document.getElementById('confirmBar').classList.remove('visible');
+        submitted = true;
+        if (timerHandle) clearInterval(timerHandle);
+
+        var totalScore = 0;
+        var maxScore = EXAM.maxScore || 10;
+        var correctQuestions = 0;
+        var answerDetails = [];
+
+        flatQuestions.forEach(function(q) {
+          var qCorrect = false;
+          var pBtn = document.getElementById('pbtn_' + q.displayNumber);
+          var stEl = document.getElementById('qstatus_' + q.displayNumber);
+          var solEl = document.getElementById('sol_' + q.id);
+          if (solEl) solEl.classList.add('visible');
+
+          if (q.type === 'mcq') {
+            var chosen = typeof userAnswers[q.id] === 'number' ? userAnswers[q.id] : -1;
+            qCorrect = chosen === q.correctIndex;
+            if (qCorrect) {
+              totalScore += q.points;
+              correctQuestions++;
+            }
+            q.optionsHtml.forEach(function(_, i) {
+              var ob = document.getElementById('opt_' + q.id + '_' + i);
+              if (!ob) return;
+              ob.disabled = true;
+              ob.classList.remove('selected');
+              if (i === q.correctIndex) ob.classList.add('correct');
+              else if (i === chosen) ob.classList.add('wrong');
+            });
+            if (stEl) {
+              stEl.textContent = qCorrect ? ('Đúng (+' + q.points + 'đ)') : 'Sai (0đ)';
+              stEl.className = 'q-status ' + (qCorrect ? 'ok' : 'bad');
+            }
+            answerDetails.push({
+              orderIndex: answerDetails.length,
+              questionText: 'Câu ' + q.displayNumber + ': ' + q.rawText,
+              options: q.optionsRaw,
+              selectedIndex: chosen,
+              correctIndex: q.correctIndex,
+              isCorrect: qCorrect,
+              explanation: q.rawSolution
+            });
+          } else if (q.type === 'group-tf') {
+            var tfMap = (userAnswers[q.id] && typeof userAnswers[q.id] === 'object') ? userAnswers[q.id] : {};
+            var rightSubs = 0;
+            q.subQuestions.forEach(function(sq, sIdx) {
+              var picked = tfMap[sq.id] || '';
+              var subOk = picked === sq.correctAnswer;
+              if (subOk) rightSubs++;
+              var row = document.getElementById('tfrow_' + sq.id);
+              if (row) row.classList.add(subOk ? 'ok' : 'bad');
+              ['True', 'False'].forEach(function(v) {
+                var btn = document.getElementById('tfbtn_' + sq.id + '_' + v);
+                if (!btn) return;
+                btn.disabled = true;
+                if (v === sq.correctAnswer) btn.classList.add('right-ans');
+              });
+              answerDetails.push({
+                orderIndex: answerDetails.length,
+                questionText: 'Câu ' + q.displayNumber + (TF_LABELS[sIdx] || '') + ': ' + sq.rawText,
+                options: ['Đúng', 'Sai'],
+                selectedIndex: picked === 'True' ? 0 : (picked === 'False' ? 1 : -1),
+                correctIndex: sq.correctAnswer === 'True' ? 0 : 1,
+                isCorrect: subOk,
+                explanation: sIdx === q.subQuestions.length - 1 ? q.rawSolution : ''
+              });
+            });
+            var earnedRatio = 0;
+            if (q.subQuestions.length === 4) {
+              earnedRatio = rightSubs === 1 ? 0.1 : rightSubs === 2 ? 0.25 : rightSubs === 3 ? 0.5 : rightSubs === 4 ? 1 : 0;
+            } else if (q.subQuestions.length > 0) {
+              earnedRatio = rightSubs / q.subQuestions.length;
+            }
+            var earned = Math.round(q.points * earnedRatio * 100) / 100;
+            totalScore += earned;
+            qCorrect = rightSubs === q.subQuestions.length;
+            if (qCorrect) correctQuestions++;
+            if (stEl) {
+              stEl.textContent = 'Đúng ' + rightSubs + '/' + q.subQuestions.length + ' ý (+' + earned + 'đ)';
+              stEl.className = 'q-status ' + (qCorrect ? 'ok' : 'bad');
+            }
+          } else {
+            var rawInput = document.getElementById('short_' + q.id);
+            var typed = rawInput ? rawInput.value.trim() : '';
+            if (rawInput) rawInput.disabled = true;
+            qCorrect = isShortMatch(typed, q.correctAnswer);
+            if (qCorrect) {
+              totalScore += q.points;
+              correctQuestions++;
+            }
+            var fbEl = document.getElementById('shortfb_' + q.id);
+            if (fbEl) {
+              fbEl.textContent = qCorrect
+                ? ('Chính xác (+' + q.points + 'đ)')
+                : ('Đáp án đúng: ' + q.correctAnswer);
+              fbEl.style.color = qCorrect ? 'var(--ok)' : 'var(--bad)';
+            }
+            if (stEl) {
+              stEl.textContent = qCorrect ? ('Đúng (+' + q.points + 'đ)') : 'Sai (0đ)';
+              stEl.className = 'q-status ' + (qCorrect ? 'ok' : 'bad');
+            }
+            answerDetails.push({
+              orderIndex: answerDetails.length,
+              questionText: 'Câu ' + q.displayNumber + ': ' + q.rawText,
+              options: ['Bài làm: ' + (typed || '(bỏ trống)'), 'Đáp án chuẩn: ' + q.correctAnswer],
+              selectedIndex: qCorrect ? 1 : 0,
+              correctIndex: 1,
+              isCorrect: qCorrect,
+              explanation: q.rawSolution
+            });
+          }
+
+          if (pBtn) {
+            pBtn.className = 'p-btn mono ' + (qCorrect ? 'ok' : 'bad');
+          }
+        });
+
+        totalScore = Math.round(totalScore * 100) / 100;
+        var pct = maxScore > 0 ? Math.round((totalScore / maxScore) * 1000) / 10 : 0;
+
+        document.getElementById('scoreText').textContent = totalScore + ' / ' + maxScore + ' điểm';
+        document.getElementById('correctText').textContent =
+          'Đúng hoàn toàn ' + correctQuestions + ' / ' + flatQuestions.length + ' câu (' + pct + '%)';
+        document.getElementById('resultScreen').classList.add('visible');
+        document.getElementById('topSubmitBtn').style.display = 'none';
+        document.getElementById('sideSubmitBtn').style.display = 'none';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+
+        if (window.MathJax && window.MathJax.typesetPromise) {
+          window.MathJax.typesetPromise().catch(function() {});
+        }
+
+        if (typeof window.EduSyncSubmitScore === 'function') {
+          window.EduSyncSubmitScore(totalScore, maxScore, correctQuestions, flatQuestions.length, answerDetails);
+        } else if (window.parent && window.parent !== window) {
+          window.parent.postMessage({
+            type: 'QUIZ_RESULT',
+            score: totalScore,
+            maxScore: maxScore,
+            correctCount: correctQuestions,
+            totalQuestions: flatQuestions.length,
+            answerDetails: answerDetails
+          }, '*');
+        }
+      }
+
+      document.getElementById('topSubmitBtn').addEventListener('click', function() { gradeAndSubmit(false); });
+      document.getElementById('sideSubmitBtn').addEventListener('click', function() { gradeAndSubmit(false); });
+      document.getElementById('confirmYesBtn').addEventListener('click', function() { gradeAndSubmit(true); });
+      document.getElementById('confirmCancelBtn').addEventListener('click', function() {
+        document.getElementById('confirmBar').classList.remove('visible');
+      });
+
+      function tickTimer() {
+        if (submitted) return;
+        var elapsed = Math.floor((Date.now() - startTime) / 1000);
+        var box = document.getElementById('timerBox');
+        if (durationLimit > 0) {
+          var rem = Math.max(0, durationLimit - elapsed);
+          box.textContent = fmtTime(rem);
+          box.classList.toggle('urgent', rem <= 60);
+          if (rem <= 0) gradeAndSubmit(true);
+        } else {
+          box.textContent = fmtTime(elapsed);
+        }
+      }
+
+      renderExam();
+      tickTimer();
+      timerHandle = setInterval(tickTimer, 1000);
+    })();
+  </script>
+</body>
+</html>
