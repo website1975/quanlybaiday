@@ -1,0 +1,1358 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Đề Vật Lý Cụm Bắc Ninh Lần 1</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true
+      },
+      options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre'] }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --border: #e2e8f0;
+      --text: #0f172a;
+      --muted: #64748b;
+      --accent: #1d4ed8;
+      --accent-hover: #1e40af;
+      --accent-soft: #eff6ff;
+      --ok: #047857;
+      --ok-bg: #ecfdf5;
+      --ok-border: #6ee7b7;
+      --bad: #dc2626;
+      --bad-bg: #fef2f2;
+      --bad-border: #fca5a5;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.55;
+    }
+    .mono { font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace; font-variant-numeric: tabular-nums; }
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+    }
+    .topbar-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .exam-title { font-size: 16px; font-weight: 700; margin: 0; color: var(--text); }
+    .exam-meta { font-size: 12px; color: var(--muted); margin-top: 2px; }
+    .topbar-actions { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+    .timer-box {
+      padding: 6px 12px;
+      border-radius: 8px;
+      background: #f1f5f9;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .timer-box.urgent {
+      background: var(--bad-bg);
+      color: var(--bad);
+      border: 1px solid var(--bad-border);
+    }
+    .btn {
+      border: 1px solid transparent;
+      border-radius: 8px;
+      padding: 8px 16px;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background-color 0.15s ease, border-color 0.15s ease;
+    }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-primary:hover { background: var(--accent-hover); }
+    .btn-secondary { background: #fff; border-color: #cbd5e1; color: #334155; }
+    .btn-secondary:hover { background: #f8fafc; }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 280px;
+      gap: 20px;
+      align-items: start;
+    }
+    @media (max-width: 960px) {
+      .container { grid-template-columns: 1fr; }
+    }
+    .main-col { display: flex; flex-direction: column; gap: 18px; }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+    }
+    .result-card {
+      background: var(--ok-bg);
+      border: 1px solid var(--ok-border);
+      border-radius: 12px;
+      padding: 20px;
+      display: none;
+    }
+    .result-card.visible { display: block; }
+    .result-score { font-size: 26px; font-weight: 700; color: var(--ok); margin: 4px 0; }
+    .result-sub { font-size: 13px; color: #065f46; }
+    .confirm-bar {
+      display: none;
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      border-radius: 10px;
+      padding: 14px 16px;
+      margin-bottom: 4px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      font-size: 13px;
+      color: #92400e;
+    }
+    .confirm-bar.visible { display: flex; }
+    .context-group {
+      background: var(--surface);
+      border: 1px solid #cbd5e1;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .context-header {
+      background: #f1f5f9;
+      border-bottom: 1px solid var(--border);
+      padding: 16px 20px;
+    }
+    .context-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 6px;
+    }
+    .context-body { font-size: 14px; color: #1e293b; }
+    .context-questions {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      background: #f8fafc;
+    }
+    .q-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 18px;
+      scroll-margin-top: 84px;
+    }
+    .q-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding-bottom: 10px;
+      margin-bottom: 12px;
+      border-bottom: 1px solid #f1f5f9;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .q-num { font-size: 14px; font-weight: 700; color: var(--text); }
+    .q-status { font-weight: 600; }
+    .q-status.ok { color: var(--ok); }
+    .q-status.bad { color: var(--bad); }
+    .q-text { font-size: 15px; font-weight: 500; color: var(--text); margin-bottom: 14px; }
+    .q-figure {
+      margin: 12px 0;
+      text-align: center;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px;
+    }
+    .q-figure img { max-width: 100%; max-height: 360px; height: auto; border-radius: 4px; }
+    .options-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+    @media (max-width: 640px) {
+      .options-grid { grid-template-columns: 1fr; }
+    }
+    .opt-btn {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      text-align: left;
+      padding: 11px 13px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #fff;
+      font-family: inherit;
+      font-size: 14px;
+      color: #1e293b;
+      cursor: pointer;
+      transition: border-color 0.15s ease, background-color 0.15s ease;
+    }
+    .opt-btn:hover:not(:disabled) { border-color: #94a3b8; background: #f8fafc; }
+    .opt-btn.selected { border-color: var(--accent); background: var(--accent-soft); color: #1e3a8a; font-weight: 500; }
+    .opt-btn.correct { border-color: var(--ok-border); background: var(--ok-bg); color: #064e3b; font-weight: 600; }
+    .opt-btn.wrong { border-color: var(--bad-border); background: var(--bad-bg); color: #7f1d1d; }
+    .opt-letter {
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      border: 1px solid #cbd5e1;
+      background: #fff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .opt-btn.selected .opt-letter { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .tf-list { display: flex; flex-direction: column; gap: 10px; }
+    .tf-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #fff;
+    }
+    .tf-row.ok { border-color: var(--ok-border); background: var(--ok-bg); }
+    .tf-row.bad { border-color: var(--bad-border); background: var(--bad-bg); }
+    .tf-text { font-size: 14px; flex: 1; }
+    .tf-actions { display: flex; gap: 6px; flex-shrink: 0; }
+    .tf-choice {
+      padding: 6px 12px;
+      border-radius: 6px;
+      border: 1px solid #cbd5e1;
+      background: #fff;
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .tf-choice.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .tf-choice.right-ans { border-color: var(--ok); color: var(--ok); }
+    .short-box { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+    .short-input {
+      width: 240px;
+      max-width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px;
+    }
+    .short-input:focus { outline: 2px solid var(--accent); border-color: var(--accent); }
+    .short-feedback { font-size: 13px; font-weight: 600; }
+    .solution-box {
+      display: none;
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: 8px;
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      font-size: 13px;
+      color: #334155;
+    }
+    .solution-box.visible { display: block; }
+    .sidebar {
+      position: sticky;
+      top: 76px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+    }
+    .palette-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 6px;
+      margin: 12px 0 16px;
+    }
+    .p-btn {
+      height: 34px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: #f8fafc;
+      font-size: 12px;
+      font-weight: 700;
+      color: #334155;
+      cursor: pointer;
+    }
+    .p-btn.done { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .p-btn.ok { background: var(--ok); color: #fff; border-color: var(--ok); }
+    .p-btn.bad { background: var(--bad); color: #fff; border-color: var(--bad); }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div>
+        <h1 class="exam-title">Đề Vật Lý Cụm Bắc Ninh Lần 1</h1>
+        <div class="exam-meta">Vật lý · Khối 12 · ltđh 2027 · 28 câu · Thang 10 điểm</div>
+      </div>
+      <div class="topbar-actions">
+        <span id="progressLabel" class="exam-meta mono">0/28</span>
+        <div id="timerBox" class="timer-box mono">00:00</div>
+        <button id="topSubmitBtn" type="button" class="btn btn-primary">Nộp bài</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <main class="main-col">
+      <div id="confirmBar" class="confirm-bar">
+        <span id="confirmMsg">Bạn vẫn còn câu chưa trả lời. Xác nhận nộp bài ngay?</span>
+        <div style="display:flex;gap:8px;">
+          <button id="confirmCancelBtn" type="button" class="btn btn-secondary">Làm tiếp</button>
+          <button id="confirmYesBtn" type="button" class="btn btn-primary">Xác nhận nộp</button>
+        </div>
+      </div>
+
+      <section id="resultScreen" class="result-card">
+        <div style="font-size:12px;font-weight:700;color:#047857;">KẾT QUẢ BÀI LÀM</div>
+        <div id="scoreText" class="result-score mono">0 / 10</div>
+        <div id="correctText" class="result-sub mono">0 / 28</div>
+        <div id="explanationsSection" class="result-sub" style="margin-top:6px;">
+          Xem lại từng câu và lời giải chi tiết ở bên dưới.
+        </div>
+      </section>
+
+      <div id="questionsRoot" class="main-col"></div>
+    </main>
+
+    <aside class="sidebar">
+      <div style="font-size:14px;font-weight:700;">Bảng câu hỏi</div>
+      <div id="sidebarCount" class="exam-meta mono">Đã làm 0/28</div>
+      <div id="paletteRoot" class="palette-grid"></div>
+      <button id="sideSubmitBtn" type="button" class="btn btn-primary" style="width:100%;">Nộp bài &amp; Chấm điểm</button>
+    </aside>
+  </div>
+
+  <script type="application/json" id="edusync-exam-json">{
+  "id": "b5068b5b-9739-4969-8449-5649e9fda653",
+  "title": "Đề Vật Lý Cụm Bắc Ninh Lần 1",
+  "subject": "Vật lý",
+  "grade": "12",
+  "type": "test",
+  "category": "ltđh 2027",
+  "durationMinutes": 50,
+  "shuffleQuestions": false,
+  "shuffleOptions": false,
+  "questionCount": 28,
+  "questions": [
+    {
+      "id": "1fd65527-a4d1-43ca-88b8-006a2f7030db",
+      "index": 1,
+      "type": "mcq",
+      "level": "B",
+      "text": "Theo mô hình động học phân tử, các phân tử chất rắn kết tinh",
+      "options": [
+        "luôn dao động quanh vị trí cân bằng xác định.",
+        "luôn đứng yên tại vị trí các nút mạng.",
+        "luôn dao động quanh vị trí cân bằng không xác định.",
+        "luôn chuyển động tự do về mọi phía."
+      ],
+      "correctAnswer": "luôn dao động quanh vị trí cân bằng xác định.",
+      "solution": "Ở chất rắn kết tinh, các phân tử sắp xếp theo trật tự hình học xác định và luôn dao động quanh vị trí cân bằng cố định.",
+      "points": 0.25,
+      "chapterName": "Chương 1: vật lý nhiệt"
+    },
+    {
+      "id": "18acb4fa-4032-441a-9c17-654f285553d5",
+      "index": 2,
+      "type": "mcq",
+      "level": "H",
+      "text": "Dưới góc độ mô hình động học phân tử, sự bay hơi của chất lỏng xảy ra là do",
+      "options": [
+        "các phân tử ở bề mặt có đủ động năng thắng lực hút thoát ra ngoài.",
+        "toàn bộ phân tử chất lỏng đồng loạt đứt gãy liên kết để tách rời nhau.",
+        "lực hút của các phân tử khí phía trên kéo phân tử lỏng thoát ra ngoài.",
+        "các phân tử từ đáy bình nhận đủ nhiệt lượng và bay thẳng lên mặt thoáng."
+      ],
+      "correctAnswer": "các phân tử ở bề mặt có đủ động năng thắng lực hút thoát ra ngoài.",
+      "solution": "Sự bay hơi xảy ra ở mặt thoáng khi một số phân tử chất lỏng ở bề mặt có động năng đủ lớn để thắng lực hút của các phân tử lân cận và thoát ra ngoài không khí.",
+      "points": 0.25,
+      "chapterName": "Chương 1: vật lý nhiệt"
+    },
+    {
+      "id": "56e6a344-eb00-4a1a-9d6d-ff440baa94f1",
+      "index": 3,
+      "type": "mcq",
+      "level": "B",
+      "text": "Nội năng của một vật cấu tạo từ các phân tử là",
+      "options": [
+        "tổng động năng chuyển động nhiệt và thế năng tương tác của phân tử.",
+        "tổng động năng và thế năng của vật trong trường trọng lực.",
+        "tổng nhiệt lượng vật nhận vào và động năng tịnh tiến của các hạt.",
+        "tổng nhiệt lượng và công cơ học mà vật đó trao đổi với môi trường."
+      ],
+      "correctAnswer": "tổng động năng chuyển động nhiệt và thế năng tương tác của phân tử.",
+      "solution": "Nội năng của vật là tổng động năng chuyển động nhiệt và thế năng tương tác của các phân tử cấu tạo nên vật.",
+      "points": 0.25,
+      "chapterName": "Chương 1: vật lý nhiệt"
+    },
+    {
+      "id": "025cb77a-6121-4232-a88e-fcbb7ccc3353",
+      "index": 4,
+      "type": "mcq",
+      "level": "B",
+      "text": "Đại lượng đo bằng nhiệt lượng cần truyền cho $1\\text{ kg}$ một chất để nhiệt độ của nó tăng thêm $1^{\\circ}\\text{C}$ gọi là",
+      "options": [
+        "nhiệt hóa hơi riêng.",
+        "nhiệt lượng chuyển thể.",
+        "nhiệt nóng chảy riêng.",
+        "nhiệt dung riêng."
+      ],
+      "correctAnswer": "nhiệt dung riêng.",
+      "solution": "Theo định nghĩa, nhiệt dung riêng $c$ của một chất là nhiệt lượng cần truyền cho $1\\text{ kg}$ chất đó làm nhiệt độ tăng thêm $1^{\\circ}\\text{C}$ (hoặc $1\\text{ K}$).",
+      "points": 0.25,
+      "chapterName": "Chương 1: vật lý nhiệt"
+    },
+    {
+      "id": "dcf6917b-ada1-40a4-aa1c-020a38c1bb16",
+      "index": 5,
+      "type": "mcq",
+      "level": "H",
+      "text": "Có ý kiến cho rằng: \"Bỏng hơi nước $100^{\\circ}\\text{C}$ nặng hơn nước sôi $100^{\\circ}\\text{C}$ là do phân tử hơi nước có tốc độ lớn, đâm xuyên sâu vào da gây thương tổn nặng\". Nhận định này đúng hay sai?",
+      "options": [
+        "Đúng, vì áp suất hơi nước cao hơn lỏng nên ép nhiệt lượng vào da với cường độ mạnh hơn.",
+        "Sai, vì thực chất hơi nước luôn có nhiệt độ cao hơn $100^{\\circ}\\text{C}$ do bốc lên trực tiếp từ ngọn lửa.",
+        "Sai, vì nguyên nhân chính là hơi nước khi ngưng tụ trên da sẽ tỏa ra thêm một nhiệt lượng rất lớn (ẩn nhiệt hóa hơi).",
+        "Đúng, vì động năng lớn của phân tử khí dễ dàng phá vỡ các tế bào da ở tầng sâu."
+      ],
+      "correctAnswer": "Sai, vì nguyên nhân chính là hơi nước khi ngưng tụ trên da sẽ tỏa ra thêm một nhiệt lượng rất lớn (ẩn nhiệt hóa hơi).",
+      "solution": "Nhận định sai. Khi hơi nước $100^{\\circ}\\text{C}$ chạm vào da, ngoài nhiệt lượng hạ nhiệt độ nó còn tỏa ra thêm nhiệt lượng hóa hơi $Q = L \\cdot m$ khi ngưng tụ thành nước lỏng ở $100^{\\circ}\\text{C}$, gây bỏng nặng hơn.",
+      "points": 0.25,
+      "chapterName": "Chương 1: vật lý nhiệt"
+    },
+    {
+      "id": "147dc38b-46a8-493e-80f7-3858cb21436e",
+      "index": 6,
+      "type": "mcq",
+      "level": "H",
+      "text": "Trong một giờ thực hành, học sinh hút một ít nước ấm (khoảng $60^{\\circ}\\text{C}$) vào một xi-lanh y tế bằng nhựa, sau đó bịt kín đầu vòi xả và dùng lực kéo thật mạnh pit-tông ra phía sau. Ngay lập tức, nước bên trong xi-lanh nổi bọt sùng sục như đang sôi. Hiện tượng nước sôi trong trường hợp này xảy ra chủ yếu là do",
+      "options": [
+        "nhiệt lượng từ tay người kéo đã cung cấp đủ ẩn nhiệt hóa hơi.",
+        "ma sát ở pit-tông sinh nhiệt làm khối nước nóng lên đến $100^{\\circ}\\text{C}$",
+        "lượng khí dãn nở đã thực hiện công làm tăng nội năng của nước.",
+        "áp suất giảm mạnh làm nhiệt độ sôi của nước hạ xuống dưới $60^{\\circ}\\text{C}$."
+      ],
+      "correctAnswer": "áp suất giảm mạnh làm nhiệt độ sôi của nước hạ xuống dưới $60^{\\circ}\\text{C}$.",
+      "solution": "Khi kéo mạnh pít-tông làm thể tích tăng, áp suất bên trong xi-lanh giảm mạnh; khi áp suất giảm thì nhiệt độ sôi của chất lỏng giảm xuống, khiến nước $60^{\\circ}\\text{C}$ sôi được.",
+      "points": 0.25,
+      "chapterName": "Chương 1: vật lý nhiệt"
+    },
+    {
+      "id": "f33e342b-1cb8-4009-8f6a-166446061ff1",
+      "index": 7,
+      "type": "mcq",
+      "level": "VD",
+      "text": "Vào mùa hè ở các tỉnh miền Trung nước ta thường xuất hiện hiện tượng \"gió Lào\" (gió phơn). Mặc dù xuất phát là luồng gió mang hơi ẩm từ biển thổi vào, nhưng sau khi vượt qua dãy Trường Sơn để tràn xuống đồng bằng, luồng gió này lại trở nên vô cùng khô và nóng. Bản chất vật lí chủ yếu làm cho khối không khí này bị nóng lên nhanh chóng khi trượt xuống sườn núi là do",
+      "options": [
+        "khối khí đi xuống sườn núi bị nén nhận công làm nội năng tăng, dẫn đến nhiệt độ tăng.",
+        "quá trình hơi nước bay hơi trở lại ở sườn khuất gió đã giải phóng một lượng nhiệt khổng lồ.",
+        "ma sát mạnh giữa khối khí chuyển động với tốc độ cao và bề mặt sườn núi sinh ra nhiệt lượng lớn.",
+        "không khí đã mất hết hơi ẩm nên dễ dàng hấp thụ trực tiếp bức xạ nhiệt từ Mặt Trời."
+      ],
+      "correctAnswer": "khối khí đi xuống sườn núi bị nén nhận công làm nội năng tăng, dẫn đến nhiệt độ tăng.",
+      "solution": "Khi luồng gió tràn xuống sườn núi, áp suất khí quyển tăng làm khối khí bị nén (nhận công $A > 0$), nội năng tăng dẫn đến nhiệt độ không khí tăng nhanh và trở nên khô nóng.",
+      "points": 0.25,
+      "chapterName": "Chương 1: vật lý nhiệt"
+    },
+    {
+      "id": "0202990e-a2b4-47ec-b351-0be6e6d76764",
+      "index": 8,
+      "type": "mcq",
+      "level": "H",
+      "text": "Khi so sánh thang nhiệt độ Celsius (độ C) và thang nhiệt độ Kelvin (K), phát biểu nào sau đây là đúng?",
+      "options": [
+        "Nhiệt độ Kelvin và nhiệt độ Celsius tỉ lệ nghịch với nhau.",
+        "Nhiệt độ Kelvin luôn nhỏ hơn giá trị nhiệt độ Celsius tương ứng.",
+        "Nhiệt độ Kelvin luôn có giá trị dương, trong khi nhiệt độ Celsius có thể âm.",
+        "Mỗi độ chia trong thang Kelvin lớn hơn mỗi độ chia trong thang Celsius."
+      ],
+      "correctAnswer": "Nhiệt độ Kelvin luôn có giá trị dương, trong khi nhiệt độ Celsius có thể âm.",
+      "solution": "Thang Kelvin lấy mốc $0\\text{ K}$ là độ không tuyệt đối nên mọi nhiệt độ có thể đạt được đều lớn hơn $0\\text{ K}$ (dương), trong khi thang Celsius có thể âm (dưới $0^{\\circ}\\text{C}$); độ lớn mỗi độ chia của hai thang bằng nhau.",
+      "points": 0.25,
+      "chapterName": "Chương 1: vật lý nhiệt"
+    },
+    {
+      "id": "c189b47d-c815-4fc4-8314-987b008a215e",
+      "index": 9,
+      "type": "mcq",
+      "level": "B",
+      "text": "Gọi $Q$ là nhiệt lượng cần cung cấp để làm hóa hơi hoàn toàn khối lượng chất lỏng $m$ ở nhiệt độ sôi và $L$ là nhiệt hóa hơi riêng của chất lỏng đó. Hệ thức nào sau đây đúng?",
+      "options": [
+        "$Q=\\frac{L}{m}$",
+        "$Q=m.L$",
+        "$Q=\\frac{m}{L}$",
+        "$Q=m.L^{2}$"
+      ],
+      "correctAnswer": "$Q=m.L$",
+      "solution": "Nhiệt lượng cần cung cấp để chất lỏng khối lượng $m$ hóa hơi hoàn toàn ở nhiệt độ sôi là $Q = m \\cdot L$.",
+      "points": 0.25,
+      "chapterName": "Chương 1: vật lý nhiệt"
+    },
+    {
+      "id": "0add41d7-14ab-4a50-a2f1-438a6d3bbb11",
+      "index": 10,
+      "type": "mcq",
+      "level": "B",
+      "text": "Đơn vị của nhiệt nóng chảy riêng ($\\lambda$) trong hệ SI là gì?",
+      "options": [
+        "$J/kg.K$",
+        "$J/kg$.",
+        "$J.kg$.",
+        "$J/K$."
+      ],
+      "correctAnswer": "$J/kg$.",
+      "solution": "Từ $Q = \\lambda m \\Rightarrow \\lambda = \\frac{Q}{m}$, đơn vị trong hệ SI của nhiệt nóng chảy riêng là $\\text{J/kg}$.",
+      "points": 0.25,
+      "chapterName": "Chương 1: vật lý nhiệt"
+    },
+    {
+      "id": "13dc020a-6cb6-420f-8914-9461fb61bb07",
+      "index": 11,
+      "type": "mcq",
+      "level": "B",
+      "text": "Khi hai vật có nhiệt độ khác nhau được đặt tiếp xúc với nhau và cô lập với môi trường xung quanh thì quá trình tự truyền nhiệt sẽ dừng lại khi hai vật",
+      "options": [
+        "có cùng nội năng.",
+        "có cùng khối lượng.",
+        "có cùng nhiệt độ.",
+        "có cùng nhiệt dung."
+      ],
+      "correctAnswer": "có cùng nhiệt độ.",
+      "solution": "Quá trình truyền nhiệt tự nhiên kết thúc khi hai vật đạt trạng thái cân bằng nhiệt, tức là có cùng nhiệt độ.",
+      "points": 0.25,
+      "chapterName": "Chương 1: vật lý nhiệt"
+    },
+    {
+      "id": "10cd1fc7-f3fc-451a-8536-f8a145496b48",
+      "index": 12,
+      "type": "mcq",
+      "level": "VD",
+      "text": "Cung cấp nhiệt lượng liên tục với công suất không đổi cho một ấm chứa nước đang ở $20^{\\circ}\\text{C}$. Quá trình (1) tính từ lúc bắt đầu đun cho đến khi nước vừa đạt $100^{\\circ}\\text{C}$; quá trình (2) tính từ lúc nước bắt đầu sôi ở $100^{\\circ}\\text{C}$ cho đến khi hóa hơi hoàn toàn. Cho biết nhiệt dung riêng của nước là $c = 4200\\text{ J/(kg.K)}$ và nhiệt hóa hơi riêng của nước ở $100^{\\circ}\\text{C}$ là $L = 2{,}26.10^{6}\\text{ J/kg}$. Phát biểu nào sau đây là đúng?",
+      "options": [
+        "Ở quá trình (2), toàn bộ nhiệt lượng nhận vào chuyển hóa hoàn toàn thành công cơ học để đẩy không khí xung quanh.",
+        "Thời gian đun nước ở quá trình (1) ngắn hơn thời gian hóa hơi hoàn toàn ở quá trình (2).",
+        "Nhiệt lượng khối nước nhận được ở quá trình (1) lớn hơn nhiệt lượng nhận được ở quá trình (2).",
+        "Trong quá trình (2), động năng trung bình của các phân tử nước tiếp tục tăng lên do khối nước vẫn liên tục nhận nhiệt."
+      ],
+      "correctAnswer": "Thời gian đun nước ở quá trình (1) ngắn hơn thời gian hóa hơi hoàn toàn ở quá trình (2).",
+      "solution": "Với cùng khối lượng $m$: $Q_1 = m c (100 - 20) = 336000 m\\text{ (J)}$; $Q_2 = m L = 2260000 m\\text{ (J)} > Q_1$. Do công suất không đổi nên $t_1 = \\frac{Q_1}{\\mathcal{P}} < t_2 = \\frac{Q_2}{\\mathcal{P}}$. Trong quá trình sôi ở $100^{\\circ}\\text{C}$, nhiệt độ không đổi nên động năng trung bình phân tử không tăng thêm.",
+      "points": 0.25,
+      "chapterName": "Chương 1: vật lý nhiệt"
+    },
+    {
+      "id": "f66c00e3-497a-4445-8970-87c705785631",
+      "index": 13,
+      "type": "mcq",
+      "level": "B",
+      "text": "Trong mô hình động học phân tử, lực tương tác giữa các phân tử khí có đặc điểm là",
+      "options": [
+        "luôn tồn tại để duy trì thể tích của khối khí không bị thay đổi.",
+        "luôn luôn là lực đẩy để giúp khối khí dễ dàng dãn nở ra vô hạn.",
+        "rất lớn so với lực tương tác của các phân tử trong chất rắn và lỏng.",
+        "rất yếu, chỉ đáng kể khi các phân tử va chạm với nhau."
+      ],
+      "correctAnswer": "rất yếu, chỉ đáng kể khi các phân tử va chạm với nhau.",
+      "solution": "Khoảng cách giữa các phân tử khí lớn nên lực liên kết phân tử rất yếu (coi như không đáng kể trừ khi va chạm).",
+      "points": 0.25,
+      "chapterName": "chương 2: vật lý chất khí"
+    },
+    {
+      "id": "7b44cc5e-a42b-401e-9306-b4ed1a825ecc",
+      "index": 14,
+      "type": "mcq",
+      "level": "B",
+      "text": "Quá trình một chất chuyển từ thể khí (hơi) sang thể lỏng được gọi là gì?",
+      "options": [
+        "Sự nóng chảy.",
+        "Sự bay hơi.",
+        "Sự ngưng tụ.",
+        "Sự đông đặc."
+      ],
+      "correctAnswer": "Sự ngưng tụ.",
+      "solution": "Quá trình chất chuyển từ thể khí sang thể lỏng được gọi là sự ngưng tụ.",
+      "points": 0.25,
+      "chapterName": "Chương 1: vật lý nhiệt"
+    },
+    {
+      "id": "73e2de06-1801-4264-a51c-8670f5e459e6",
+      "index": 15,
+      "type": "mcq",
+      "level": "H",
+      "text": "Vào mùa hè, sau khi tắm biển lên bờ, nếu có một cơn gió thổi qua ta thường cảm thấy ớn lạnh dù trời đang rất nóng. Hiện tượng này xảy ra chủ yếu là do",
+      "options": [
+        "nước bám trên da bay hơi nhanh và thu nhiệt từ cơ thể.",
+        "lớp nước mỏng trên da ngăn cản cơ thể hấp thụ nhiệt.",
+        "gió thổi bay lớp không khí nóng quanh cơ thể.",
+        "gió mang hơi lạnh từ mặt nước truyền thẳng vào cơ thể."
+      ],
+      "correctAnswer": "nước bám trên da bay hơi nhanh và thu nhiệt từ cơ thể.",
+      "solution": "Gió làm nước trên da bay hơi nhanh hơn; quá trình bay hơi thu nhiệt lượng hóa hơi từ cơ thể làm ta cảm thấy lạnh.",
+      "points": 0.25,
+      "chapterName": "Chương 1: vật lý nhiệt"
+    },
+    {
+      "id": "1c723ccb-ffce-4c97-a66e-8bf62b881c51",
+      "index": 16,
+      "type": "mcq",
+      "level": "H",
+      "text": "Khi nói về mô hình động học phân tử chất khí, phát biểu nào sau đây là sai?",
+      "options": [
+        "Chất khí luôn bành trướng chiếm trọn bình chứa là do các phân tử đẩy nhau rất mạnh.",
+        "Các phân tử khí chuyển động hỗn loạn càng nhanh khi nhiệt độ của khí càng cao.",
+        "Áp suất mà chất khí tác dụng lên thành bình là do các phân tử khí va chạm vào.",
+        "Lực tương tác giữa các phân tử khí rất yếu, chỉ đáng kể khi chúng va chạm với nhau."
+      ],
+      "correctAnswer": "Chất khí luôn bành trướng chiếm trọn bình chứa là do các phân tử đẩy nhau rất mạnh.",
+      "solution": "Chất khí chiếm đầy bình chứa là do các phân tử khí chuyển động hỗn loạn không ngừng về mọi phía, không phải do lực đẩy giữa chúng rất mạnh.",
+      "points": 0.25,
+      "chapterName": "chương 2: vật lý chất khí"
+    },
+    {
+      "id": "f7e87a68-66a7-45c5-8f8d-ca725f1bc6f6",
+      "index": 17,
+      "type": "mcq",
+      "level": "B",
+      "text": "Trong thang nhiệt độ Celsius, mỗi độ chia ($1^{\\circ}\\text{C}$) có giá trị bằng $1/100$ của khoảng cách giữa",
+      "options": [
+        "nhiệt độ nước đá đang tan và nhiệt độ nước sôi (ở $1\\text{ atm}$).",
+        "nhiệt độ không tuyệt đối đến nhiệt độ điểm ba của nước (ở $1\\text{ atm}$).",
+        "nhiệt độ phòng tiêu chuẩn và nhiệt độ điểm ba của nước (ở $1\\text{ atm}$).",
+        "nhiệt độ không tuyệt đối và nhiệt độ nước sôi (ở $1\\text{ atm}$)."
+      ],
+      "correctAnswer": "nhiệt độ nước đá đang tan và nhiệt độ nước sôi (ở $1\\text{ atm}$).",
+      "solution": "Trong thang Celsius, khoảng cách giữa nhiệt độ nước đá đang tan ($0^{\\circ}\\text{C}$) và nhiệt độ nước sôi ($100^{\\circ}\\text{C}$) ở áp suất $1\\text{ atm}$ được chia thành $100$ phần bằng nhau.",
+      "points": 0.25,
+      "chapterName": "Chương 1: vật lý nhiệt"
+    },
+    {
+      "id": "98eb2986-9f2f-40bc-a96e-4f742cbfcd11",
+      "index": 18,
+      "type": "mcq",
+      "level": "B",
+      "text": "Theo định luật 1 của nhiệt động lực học, độ biến thiên nội năng của một hệ thống bằng",
+      "options": [
+        "thương của công và nhiệt lượng mà hệ nhận được.",
+        "hiệu của công và nhiệt lượng mà hệ nhận được.",
+        "tổng của công và nhiệt lượng mà hệ nhận được.",
+        "tích của công và nhiệt lượng mà hệ nhận được."
+      ],
+      "correctAnswer": "tổng của công và nhiệt lượng mà hệ nhận được.",
+      "solution": "Theo nguyên lí I nhiệt động lực học: $\\Delta U = A + Q$, độ biến thiên nội năng bằng tổng công và nhiệt lượng mà hệ nhận được.",
+      "points": 0.25,
+      "chapterName": "Chương 1: vật lý nhiệt"
+    },
+    {
+      "id": "0eda9ff4-4147-4f17-86f4-66fb294ace7a",
+      "index": 19,
+      "type": "group-tf",
+      "level": "H",
+      "text": "Năm 1848, nhà vật lí Lord Kelvin đề xuất một thang đo nhiệt độ tuyệt đối dựa trên khái niệm \"độ không tuyệt đối\" - giới hạn nhiệt độ thấp nhất trong vũ trụ. Thang nhiệt độ Kelvin là thang đo chuẩn của Hệ SI và là cơ sở cho các tính toán nhiệt động lực học. Xét các phát biểu sau:",
+      "subQuestions": [
+        {
+          "id": "1d3b93f5-0ee0-4a18-a6ee-4df72b57aaa4",
+          "text": "Công thức liên hệ giữa nhiệt độ $T$ trong thang Kelvin và nhiệt độ $t$ trong thang Celsius là $T = t + 273{,}15$.",
+          "level": "B",
+          "correctAnswer": "True"
+        },
+        {
+          "id": "19804a4f-c6c2-45b9-946e-599e7304951c",
+          "text": "Ở nhiệt độ không độ tuyệt đối, chuyển động nhiệt của các phân tử cấu tạo nên vật hầu như ngừng lại.",
+          "level": "H",
+          "correctAnswer": "True"
+        },
+        {
+          "id": "82b13788-925a-4435-8edc-2737a2cf6b7d",
+          "text": "Nhiệt độ tại điểm ba của nước có giá trị là $273{,}15\\text{ K}$.",
+          "level": "B",
+          "correctAnswer": "False"
+        },
+        {
+          "id": "b901a710-d947-405c-8a1d-7bf1a8fd33d1",
+          "text": "Một khoảng chia trong thang Kelvin bằng $273{,}15$ khoảng chia trong thang Celsius.",
+          "level": "H",
+          "correctAnswer": "False"
+        }
+      ],
+      "solution": "a) Đúng: Công thức chuyển đổi chuẩn là $T(\\text{K}) = t(^{\\circ}\\text{C}) + 273{,}15$. \nb) Đúng: Tại $0\\text{ K}$, động năng chuyển động nhiệt phân tử giảm về mức tối thiểu (hầu như ngừng lại theo mô hình cổ điển). \nc) Sai: Điểm ba của nước tương ứng $0{,}01^{\\circ}\\text{C} \\approx 273{,}16\\text{ K}$. \nd) Sai: Độ lớn $1\\text{ K}$ bằng đúng $1^{\\circ}\\text{C}$ (bằng $1$ khoảng chia, không phải $273{,}15$).",
+      "points": 1,
+      "chapterName": "Chương 1: vật lý nhiệt"
+    },
+    {
+      "id": "00759339-880f-45e5-bda5-6663ce249081",
+      "index": 20,
+      "type": "group-tf",
+      "level": "VD",
+      "text": "Dựa trên cơ sở lý thuyết: Nhiệt lượng cung cấp làm tăng nhiệt độ chất lỏng được xác định bởi công thức $Q=mc\\Delta T$, một nhóm học sinh đưa ra giả thuyết: \"Độ dốc của đồ thị nhiệt độ - thời gian phụ thuộc vào nhiệt dung riêng của chất lỏng và có thể dùng để đo đại lượng này\".\nĐể kiểm tra giả thuyết, họ dùng bình nhiệt lượng kế, dây điện trở nối với nguồn điện có công suất tiêu thụ điện $P$ không đổi, cân, cảm biến nhiệt độ kết nối máy tính và làm thí nghiệm theo các bước sau:\n(1) Dùng cân lấy một lượng chất lỏng có khối lượng $m$ cho vào bình nhiệt lượng kế.\n(2) Cấp điện cho dây điện trở để đun nóng chất lỏng, đồng thời dùng cảm biến và phần mềm máy tính để vẽ đồ thị sự phụ thuộc của nhiệt độ $T$ vào thời gian đun $t$. Bỏ qua sự hao phí nhiệt và chất lỏng chưa sôi.",
+      "subQuestions": [
+        {
+          "id": "3292e3e7-ecf8-4322-a247-b4dafaf8db13",
+          "text": "Đồ thị $T$ theo $t$ là một đường thẳng luôn đi qua gốc tọa độ.",
+          "level": "H",
+          "correctAnswer": "False"
+        },
+        {
+          "id": "074ee52a-1583-45b4-8cca-04b81cb25806",
+          "text": "Với cùng $P$ và $m$, chất lỏng có nhiệt dung riêng $c$ càng lớn thì độ dốc $\\tan \\alpha$ của đồ thị càng lớn.",
+          "level": "VD",
+          "correctAnswer": "False"
+        },
+        {
+          "id": "0110ea22-2df5-4018-8516-28f66986190c",
+          "text": "Với $\\tan \\alpha$ là độ dốc của đồ thị, nhiệt dung riêng của chất lỏng được tính theo công thức $c = \\frac{P}{m.\\tan \\alpha}$.",
+          "level": "VD",
+          "correctAnswer": "True"
+        },
+        {
+          "id": "5012d2c0-c7f9-496b-8507-1835fac40f9b",
+          "text": "Thực tế do có thất thoát nhiệt ra môi trường, đồ thị thu được có xu hướng cong dần xuống dưới.",
+          "level": "H",
+          "correctAnswer": "True"
+        }
+      ],
+      "solution": "a) Sai: Tại $t = 0$, chất lỏng có nhiệt độ ban đầu $T_0 > 0$, nên đường thẳng $T(t) = T_0 + \\frac{P}{mc} t$ không đi qua gốc tọa độ. b) Sai: Độ dốc $\\tan \\alpha = \\frac{\\Delta T}{\\Delta t} = \\frac{P}{mc}$ tỉ lệ nghịch với $c$, nên $c$ càng lớn thì $\\tan \\alpha$ càng nhỏ. c) Đúng: Từ $\\tan \\alpha = \\frac{P}{mc} \\Rightarrow c = \\frac{P}{m \\tan \\alpha}$. d) Đúng: Khi nhiệt độ tăng lên, tốc độ tỏa nhiệt ra môi trường tăng nên phần nhiệt làm tăng nhiệt độ giảm dần, làm đồ thị cong xuống dưới.",
+      "points": 1,
+      "chapterName": "Chương 1: vật lý nhiệt"
+    },
+    {
+      "id": "4fc310de-532b-4cff-a96a-c9eabbac3329",
+      "index": 21,
+      "type": "group-tf",
+      "level": "VD",
+      "text": "Đun nóng liên tục một khối lượng nước đá ban đầu ở nhiệt độ âm bằng một nguồn nhiệt có công suất $P$ không đổi. Sự phụ thuộc của nhiệt độ vào thời gian đun được biểu diễn bằng đồ thị như hình vẽ (Nhiệt độ (°C) có các mốc $0^{\\circ}\\text{C}$ tại $t_1$ đến $t_2$ nằm ngang và $100^{\\circ}\\text{C}$ tại $t_3$ đến $t_4$ nằm ngang; Thời gian (phút) có các mốc $t_1, t_2, t_3, t_4$). Bỏ qua hao phí tỏa nhiệt ra môi trường. Trong đề có nhắc đến tỉ số $\\frac{L}{\\lambda} = \\frac{t_4 - t_3}{t_2 - t_1}$.",
+      "subQuestions": [
+        {
+          "id": "1e1daa0b-d912-4c5f-bea2-6d8aecea9b43",
+          "text": "Từ $t_{1}$ đến $t_{2}$, khối chất đang nóng chảy.",
+          "level": "H",
+          "correctAnswer": "True"
+        },
+        {
+          "id": "e6a81740-b333-4ccd-9b0a-b303f6c29fb5",
+          "text": "Từ $t_{3}$ đến $t_{4}$, nhiệt độ không đổi nên nội năng của khối chất không đổi.",
+          "level": "H",
+          "correctAnswer": "False"
+        },
+        {
+          "id": "49bb1071-cba9-48eb-8bed-7a53a85a026e",
+          "text": "Độ dốc đồ thị cho thấy nhiệt dung riêng của nước đá nhỏ hơn của nước lỏng.",
+          "level": "VD",
+          "correctAnswer": "True"
+        },
+        {
+          "id": "8f4a8f14-73c3-4dbe-8e24-ae5305110ff1",
+          "text": "Tỉ số giữa nhiệt hóa hơi riêng ($L$) và nhiệt nóng chảy riêng ($\\lambda$) là $\\frac{L}{\\lambda} = \\frac{t_4 - t_3}{t_2 - t_1}$.",
+          "level": "VD",
+          "correctAnswer": "True"
+        }
+      ],
+      "solution": "a) Đúng: Từ $t_1$ đến $t_2$, nhiệt độ giữ nguyên ở $0^{\\circ}\\text{C}$ nên nước đá đang nóng chảy. \nb) Sai: Từ $t_3$ đến $t_4$, nước sôi và hóa hơi ở $100^{\\circ}\\text{C}$, khối chất nhận nhiệt nên thế năng tương tác phân tử tăng, nội năng vẫn tăng. \nc) Đúng: Nhìn độ dốc $\\frac{\\Delta T}{\\Delta t} = \\frac{P}{mc}$, đoạn nước đá tăng nhiệt có độ dốc lớn hơn đoạn nước lỏng tăng nhiệt, suy ra nhiệt dung riêng của nước đá nhỏ hơn nước lỏng \nd) Đúng: Vì công suất không đổi nên $Q_{t_2 t_1} = P(t_2 - t_1) = m\\lambda$ và $Q_{t_4 t_3} = P(t_4 - t_3) = mL \\Rightarrow \\frac{L}{\\lambda} = \\frac{t_4 - t_3}{t_2 - t_1}$.",
+      "points": 1,
+      "imageUrl": "https://buelyuxsztnhrwinrldp.supabase.co/storage/v1/object/public/quiz-images/afbb3cff-e1e4-4e7f-aa88-c642c28aa1d5.png",
+      "chapterName": "Chương 1: vật lý nhiệt"
+    },
+    {
+      "id": "706163d6-4023-4980-bdf0-1a234524ee94",
+      "index": 22,
+      "type": "group-tf",
+      "level": "H",
+      "text": "Quan sát một cốc nước đặt yên trên mặt bàn, ta thấy mặt nước hoàn toàn phẳng lặng. Từ quan sát này, một nhóm học sinh đưa ra giả thuyết: \"Trong điều kiện bình thường, các phân tử nước hoàn toàn đứng yên\".\nĐể kiểm tra giả thuyết, họ dùng kính hiển vi, lam kính, nước cất, một ít hạt phấn hoa và làm thí nghiệm theo các bước sau:\n(1) Nhỏ một giọt nước cất lên lam kính và rắc một ít hạt phấn hoa vào giọt nước.\n(2) Đặt lam kính lên kính hiển vi và điều chỉnh tiêu cự để quan sát sự di chuyển của các hạt phấn hoa.\n(3) Ghi nhận vị trí của một hạt phấn hoa sau những khoảng thời gian bằng nhau liên tiếp.",
+      "subQuestions": [
+        {
+          "id": "d33eed9c-7fa6-45ec-8b94-255007ad9728",
+          "text": "Nếu giả thuyết đúng, hạt phấn hoa sẽ nằm yên hoặc chỉ chìm dần xuống theo đường thẳng.",
+          "level": "H",
+          "correctAnswer": "True"
+        },
+        {
+          "id": "64fe3281-8804-47b9-84a8-8f23bd8b1002",
+          "text": "Thực tế, đường nối các vị trí của hạt phấn hoa sau những khoảng thời gian bằng nhau là những đường gấp khúc ngẫu nhiên.",
+          "level": "B",
+          "correctAnswer": "True"
+        },
+        {
+          "id": "e2a1efbc-48ad-4f21-bb27-748415b07a36",
+          "text": "Hạt phấn hoa chuyển động là do nó là một thực thể sinh học.",
+          "level": "H",
+          "correctAnswer": "False"
+        },
+        {
+          "id": "397d4d54-5ff8-41ba-aac1-ce46c9d88114",
+          "text": "Kết quả thí nghiệm đã bác bỏ giả thuyết của học sinh, chứng tỏ các phân tử nước luôn chuyển động không ngừng.",
+          "level": "H",
+          "correctAnswer": "True"
+        }
+      ],
+      "solution": "a) Đúng: Nếu các phân tử nước đứng yên, hạt phấn hoa chỉ chịu trọng lực và lực đẩy Ác-si-mét nên đứng yên hoặc rơi thẳng đứng. b) Đúng: Quỹ đạo nối các vị trí liên tiếp của hạt phấn hoa là đường gấp khúc không theo quy luật. c) Sai: Hạt phấn hoa chuyển động do va chạm của các phân tử nước, không phải do đặc tính sinh học. d) Đúng: Chuyển động Brown chứng tỏ các phân tử nước chuyển động nhiệt hỗn loạn không ngừng.",
+      "points": 1,
+      "chapterName": "Chương 1: vật lý nhiệt"
+    },
+    {
+      "id": "8bf423e3-8924-4107-84bb-25b20218f5ec",
+      "index": 23,
+      "type": "short",
+      "level": "VD",
+      "context": "Một người thợ máy đánh bóng một phụ kiện bằng đồng có khối lượng $0{,}20\\text{ kg}$ bằng một miếng vải nhám trong thời gian $76\\text{ giây}$. Anh ta di chuyển miếng vải qua lại trên phụ kiện với tốc độ trượt trung bình $2{,}0\\text{ m/s}$ bằng cách duy trì lực ma sát $15\\text{ N}$ theo phương tiếp tuyến với bề mặt. Giả sử nội năng mà phụ kiện nhận được gấp $4$ lần nội năng mà miếng vải nhám nhận được. Bỏ qua sự trao đổi nhiệt với môi trường xung quanh. Biết nhiệt dung riêng của đồng là $380\\text{ J/(kg.K)}$ và nhiệt độ ban đầu của phụ kiện là $25^{\\circ}\\text{C}$.",
+      "text": "Tổng công của lực ma sát sinh ra trong suốt quá trình đánh bóng có độ lớn là bao nhiêu jun?",
+      "correctAnswer": "2280",
+      "solution": "Quãng đường trượt: $s = v \\cdot t = 2{,}0 \\cdot 76 = 152\\text{ m}$. Độ lớn công của lực ma sát: $A = F_{ms} \\cdot s = 15 \\cdot 152 = 2280\\text{ J}$.",
+      "points": 0.25,
+      "chapterName": "Chương 1: vật lý nhiệt"
+    },
+    {
+      "id": "b7221cee-7aee-436e-9ebe-25e6b2cd9b60",
+      "index": 24,
+      "type": "short",
+      "level": "VDC",
+      "context": "Một người thợ máy đánh bóng một phụ kiện bằng đồng có khối lượng $0{,}20\\text{ kg}$ bằng một miếng vải nhám trong thời gian $76\\text{ giây}$. Anh ta di chuyển miếng vải qua lại trên phụ kiện với tốc độ trượt trung bình $2{,}0\\text{ m/s}$ bằng cách duy trì lực ma sát $15\\text{ N}$ theo phương tiếp tuyến với bề mặt. Giả sử nội năng mà phụ kiện nhận được gấp $4$ lần nội năng mà miếng vải nhám nhận được. Bỏ qua sự trao đổi nhiệt với môi trường xung quanh. Biết nhiệt dung riêng của đồng là $380\\text{ J/(kg.K)}$ và nhiệt độ ban đầu của phụ kiện là $25^{\\circ}\\text{C}$.",
+      "text": "Nhiệt độ của phụ kiện ngay sau khi đánh bóng xong là bao nhiêu °C?",
+      "correctAnswer": "49",
+      "solution": "Tổng công ma sát $A = 2280\\text{ J}$ chuyển hóa thành nội năng của phụ kiện và miếng vải: $\\Delta U_{đồng} + \\Delta U_{vải} = 2280\\text{ J}$. Vì $\\Delta U_{đồng} = 4 \\Delta U_{vải} \\Rightarrow \\Delta U_{đồng} = \\frac{4}{5} \\cdot 2280 = 1824\\text{ J}$. Độ tăng nhiệt độ của phụ kiện đồng: $\\Delta t = \\frac{\\Delta U_{đồng}}{m c} = \\frac{1824}{0{,}20 \\cdot 380} = \\frac{1824}{76} = 24^{\\circ}\\text{C}$. Nhiệt độ sau khi đánh bóng: $t = 25 + 24 = 49^{\\circ}\\text{C}$.",
+      "points": 0.25,
+      "chapterName": "Chương 1: vật lý nhiệt"
+    },
+    {
+      "id": "aa7a7ced-9eb9-432f-b186-75ed3774d300",
+      "index": 25,
+      "type": "short",
+      "level": "VD",
+      "context": "Trong một thí nghiệm về sự trao đổi nhiệt, hai mẫu vật liệu A và B có nhiệt độ ban đầu khác nhau được đặt trong một bình cách nhiệt và trao đổi nhiệt với nhau cho đến khi đạt cân bằng. Khối lượng của các mẫu lần lượt là $m_{A}=5{,}0\\text{ kg}$ và $m_{B}=1{,}5\\text{ kg}$. Bỏ qua sự thất thoát nhiệt ra môi trường và nhiệt dung của bình chứa.\nKết quả thí nghiệm được ghi nhận qua hai đồ thị:\nĐồ thị (a): Biểu diễn sự thay đổi nhiệt độ theo thời gian của mẫu A (đường liền, bắt đầu từ $100^{\\circ}\\text{C}$, giảm về nhiệt độ cân bằng khoảng $32^{\\circ}\\text{C}$ tại $\\tau = 20$ phút) và mẫu B (đường đứt nét, bắt đầu từ $20^{\\circ}\\text{C}$, tăng lên nhiệt độ cân bằng khoảng $32^{\\circ}\\text{C}$ tại $\\tau = 20$ phút).\nĐồ thị (b): Biểu diễn mối quan hệ giữa độ tăng nhiệt độ ($\\Delta T$, trục tung có các mốc $1, 2, 3, 4\\,^{\\circ}\\text{C}$) và nhiệt lượng truyền trên một đơn vị khối lượng ($Q/m$, trục hoành có các mốc $0, 8, 16\\text{ kJ/kg}$, đi qua điểm $\\Delta T = 2^{\\circ}\\text{C}$ tại $Q/m = 8\\text{ kJ/kg}$ và $\\Delta T = 4^{\\circ}\\text{C}$ tại $Q/m = 16\\text{ kJ/kg}$) cho riêng vật liệu B.",
+      "text": "Nhiệt dung riêng của vật liệu B là bao nhiêu $J/(kg.K)$?",
+      "correctAnswer": "4000",
+      "solution": "Từ đồ thị (b), khi $\\frac{Q}{m} = 8\\text{ kJ/kg} = 8000\\text{ J/kg}$ thì $\\Delta T = 2^{\\circ}\\text{C} = 2\\text{ K}$. Nhiệt dung riêng của vật liệu B: $c_B = \\frac{Q}{m\\Delta T} = \\frac{8000}{2} = 4000\\text{ J/(kg.K)}$.",
+      "points": 0.25,
+      "imageUrl": "https://buelyuxsztnhrwinrldp.supabase.co/storage/v1/object/public/quiz-images/96b379b9-a771-4cf5-9b81-38c4beeb7c03.png",
+      "chapterName": "Chương 1: vật lý nhiệt"
+    },
+    {
+      "id": "d74c0da8-2686-466b-9fb8-fb5437628fd2",
+      "index": 26,
+      "type": "short",
+      "level": "VDC",
+      "context": "Trong một thí nghiệm về sự trao đổi nhiệt, hai mẫu vật liệu A và B có nhiệt độ ban đầu khác nhau được đặt trong một bình cách nhiệt và trao đổi nhiệt với nhau cho đến khi đạt cân bằng. Khối lượng của các mẫu lần lượt là $m_{A}=5{,}0\\text{ kg}$ và $m_{B}=1{,}5\\text{ kg}$. Bỏ qua sự thất thoát nhiệt ra môi trường và nhiệt dung của bình chứa.\nKết quả thí nghiệm được ghi nhận qua hai đồ thị:\nĐồ thị (a): Biểu diễn sự thay đổi nhiệt độ theo thời gian của mẫu A (đường liền, bắt đầu từ $100^{\\circ}\\text{C}$, giảm về nhiệt độ cân bằng khoảng $32^{\\circ}\\text{C}$ tại $\\tau = 20$ phút) và mẫu B (đường đứt nét, bắt đầu từ $20^{\\circ}\\text{C}$, tăng lên nhiệt độ cân bằng khoảng $32^{\\circ}\\text{C}$ tại $\\tau = 20$ phút).\nĐồ thị (b): Biểu diễn mối quan hệ giữa độ tăng nhiệt độ ($\\Delta T$, trục tung có các mốc $1, 2, 3, 4\\,^{\\circ}\\text{C}$) và nhiệt lượng truyền trên một đơn vị khối lượng ($Q/m$, trục hoành có các mốc $0, 8, 16\\text{ kJ/kg}$, đi qua điểm $\\Delta T = 2^{\\circ}\\text{C}$ tại $Q/m = 8\\text{ kJ/kg}$ và $\\Delta T = 4^{\\circ}\\text{C}$ tại $Q/m = 16\\text{ kJ/kg}$) cho riêng vật liệu B.",
+      "text": "Nhiệt dung riêng của vật liệu A là bao nhiêu $J/(kg.K)$?",
+      "correctAnswer": "400",
+      "solution": "$Q_A=Q_B\\Rightarrow m_A.c_A.60=m_B.c_B.20\\Rightarrow 300.c_A=30.c_B\\Rightarrow c_A400$",
+      "points": 0.25,
+      "chapterName": "Chương 1: vật lý nhiệt"
+    },
+    {
+      "id": "91c8550b-ed43-4d8a-bedf-a4fbd4671e0c",
+      "index": 27,
+      "type": "short",
+      "level": "VD",
+      "context": "Người dân bản địa đôi khi đun nước bằng cách đặt những hòn đá nóng vào trong thùng nước. Một người sử dụng đá granit đang ở nhiệt độ $500^{\\circ}\\text{C}$ để đun $4{,}00\\text{ kg}$ nước ban đầu ở nhiệt độ $15^{\\circ}\\text{C}$ cho đến khi nước sôi. Biết có $0{,}0250\\text{ kg}$ nước thoát ra dưới dạng hơi từ tiếng xèo xèo ban đầu. Bỏ qua mọi sự thất thoát nhiệt ra môi trường xung quanh và nhiệt dung của thùng chứa. Cho nhiệt dung riêng của nước là $4180\\text{ J/(kg.K)}$ và của đá granit là $800\\text{ J/(kg.K)}$, nhiệt hóa hơi riêng của nước là $2{,}3.10^{6}\\text{ J/kg}$, áp suất khí quyển là $1\\text{ atm}$.",
+      "text": "Kể từ nhiệt độ ban đầu, nhiệt lượng cần thiết để làm hóa hơi nước qua tiếng xèo xèo là bao nhiêu kJ (làm tròn kết quả đến chữ số hàng đơn vị)?",
+      "correctAnswer": "66",
+      "solution": "Với $m_1 = 0{,}0250\\text{ kg}$ nước ban đầu ở $15^{\\circ}\\text{C}$ nóng tới $100^{\\circ}\\text{C}$ rồi hóa hơi hoàn toàn ở $100^{\\circ}\\text{C}$: $Q_{hh} = m_1 c_n (100 - 15) + m_1 L = 0{,}0250 \\cdot 4180 \\cdot 85 + 0{,}0250 \\cdot 2{,}3 \\cdot 10^6 = 8882{,}5 + 57500 = 66382{,}5\\text{ J} \\approx 66\\text{ kJ}$",
+      "points": 0.25,
+      "chapterName": "Chương 1: vật lý nhiệt"
+    },
+    {
+      "id": "f9692433-1ec3-4c7b-8c92-b7dad7e6d9d0",
+      "index": 28,
+      "type": "short",
+      "level": "VDC",
+      "context": "Người dân bản địa đôi khi đun nước bằng cách đặt những hòn đá nóng vào trong thùng nước. Một người sử dụng đá granit đang ở nhiệt độ $500^{\\circ}\\text{C}$ để đun $4{,}00\\text{ kg}$ nước ban đầu ở nhiệt độ $15^{\\circ}\\text{C}$ cho đến khi nước sôi. Biết có $0{,}0250\\text{ kg}$ nước thoát ra dưới dạng hơi từ tiếng xèo xèo ban đầu. Bỏ qua mọi sự thất thoát nhiệt ra môi trường xung quanh và nhiệt dung của thùng chứa. Cho nhiệt dung riêng của nước là $4180\\text{ J/(kg.K)}$ và của đá granit là $800\\text{ J/(kg.K)}$, nhiệt hóa hơi riêng của nước là $2{,}3.10^{6}\\text{ J/kg}$, áp suất khí quyển là $1\\text{ atm}$.",
+      "text": "Khối lượng đá granit tối thiểu cần sử dụng để đun sôi lượng nước trên là bao nhiêu kg (làm tròn kết quả đến chữ số hàng phần trăm)?",
+      "correctAnswer": "4.62",
+      "solution": "$Q_{đá} = Q_n\\Rightarrow m_{đá}.c_{đá}.400=(m_n.4180.85)+m_h.\\lambda$\n$\\Rightarrow m_{đá} = 4,62 kg $",
+      "points": 0.25,
+      "chapterName": "Chương 1: vật lý nhiệt"
+    }
+  ]
+}</script>
+  <script id="edusync-runtime-data" type="application/json">{"examId":"b5068b5b-9739-4969-8449-5649e9fda653","title":"Đề Vật Lý Cụm Bắc Ninh Lần 1","subject":"Vật lý","grade":"12","category":"ltđh 2027","durationMinutes":50,"maxScore":10,"shuffleQuestions":false,"shuffleOptions":false,"blocks":[{"blockId":"single_1fd65527-a4d1-43ca-88b8-006a2f7030db_0","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"1fd65527-a4d1-43ca-88b8-006a2f7030db","type":"mcq","level":"B","chapterName":"Chương 1: vật lý nhiệt","points":0.25,"textHtml":"Theo mô hình động học phân tử, các phân tử chất rắn kết tinh","rawText":"Theo mô hình động học phân tử, các phân tử chất rắn kết tinh","ownImageUrl":"","optionsHtml":["luôn dao động quanh vị trí cân bằng xác định.","luôn đứng yên tại vị trí các nút mạng.","luôn dao động quanh vị trí cân bằng không xác định.","luôn chuyển động tự do về mọi phía."],"optionsRaw":["luôn dao động quanh vị trí cân bằng xác định.","luôn đứng yên tại vị trí các nút mạng.","luôn dao động quanh vị trí cân bằng không xác định.","luôn chuyển động tự do về mọi phía."],"correctIndex":0,"correctAnswer":"luôn dao động quanh vị trí cân bằng xác định.","subQuestions":[],"solutionHtml":"Ở chất rắn kết tinh, các phân tử sắp xếp theo trật tự hình học xác định và luôn dao động quanh vị trí cân bằng cố định.","rawSolution":"Ở chất rắn kết tinh, các phân tử sắp xếp theo trật tự hình học xác định và luôn dao động quanh vị trí cân bằng cố định."}]},{"blockId":"single_18acb4fa-4032-441a-9c17-654f285553d5_1","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"18acb4fa-4032-441a-9c17-654f285553d5","type":"mcq","level":"H","chapterName":"Chương 1: vật lý nhiệt","points":0.25,"textHtml":"Dưới góc độ mô hình động học phân tử, sự bay hơi của chất lỏng xảy ra là do","rawText":"Dưới góc độ mô hình động học phân tử, sự bay hơi của chất lỏng xảy ra là do","ownImageUrl":"","optionsHtml":["các phân tử ở bề mặt có đủ động năng thắng lực hút thoát ra ngoài.","toàn bộ phân tử chất lỏng đồng loạt đứt gãy liên kết để tách rời nhau.","lực hút của các phân tử khí phía trên kéo phân tử lỏng thoát ra ngoài.","các phân tử từ đáy bình nhận đủ nhiệt lượng và bay thẳng lên mặt thoáng."],"optionsRaw":["các phân tử ở bề mặt có đủ động năng thắng lực hút thoát ra ngoài.","toàn bộ phân tử chất lỏng đồng loạt đứt gãy liên kết để tách rời nhau.","lực hút của các phân tử khí phía trên kéo phân tử lỏng thoát ra ngoài.","các phân tử từ đáy bình nhận đủ nhiệt lượng và bay thẳng lên mặt thoáng."],"correctIndex":0,"correctAnswer":"các phân tử ở bề mặt có đủ động năng thắng lực hút thoát ra ngoài.","subQuestions":[],"solutionHtml":"Sự bay hơi xảy ra ở mặt thoáng khi một số phân tử chất lỏng ở bề mặt có động năng đủ lớn để thắng lực hút của các phân tử lân cận và thoát ra ngoài không khí.","rawSolution":"Sự bay hơi xảy ra ở mặt thoáng khi một số phân tử chất lỏng ở bề mặt có động năng đủ lớn để thắng lực hút của các phân tử lân cận và thoát ra ngoài không khí."}]},{"blockId":"single_56e6a344-eb00-4a1a-9d6d-ff440baa94f1_2","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"56e6a344-eb00-4a1a-9d6d-ff440baa94f1","type":"mcq","level":"B","chapterName":"Chương 1: vật lý nhiệt","points":0.25,"textHtml":"Nội năng của một vật cấu tạo từ các phân tử là","rawText":"Nội năng của một vật cấu tạo từ các phân tử là","ownImageUrl":"","optionsHtml":["tổng động năng chuyển động nhiệt và thế năng tương tác của phân tử.","tổng động năng và thế năng của vật trong trường trọng lực.","tổng nhiệt lượng vật nhận vào và động năng tịnh tiến của các hạt.","tổng nhiệt lượng và công cơ học mà vật đó trao đổi với môi trường."],"optionsRaw":["tổng động năng chuyển động nhiệt và thế năng tương tác của phân tử.","tổng động năng và thế năng của vật trong trường trọng lực.","tổng nhiệt lượng vật nhận vào và động năng tịnh tiến của các hạt.","tổng nhiệt lượng và công cơ học mà vật đó trao đổi với môi trường."],"correctIndex":0,"correctAnswer":"tổng động năng chuyển động nhiệt và thế năng tương tác của phân tử.","subQuestions":[],"solutionHtml":"Nội năng của vật là tổng động năng chuyển động nhiệt và thế năng tương tác của các phân tử cấu tạo nên vật.","rawSolution":"Nội năng của vật là tổng động năng chuyển động nhiệt và thế năng tương tác của các phân tử cấu tạo nên vật."}]},{"blockId":"single_025cb77a-6121-4232-a88e-fcbb7ccc3353_3","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"025cb77a-6121-4232-a88e-fcbb7ccc3353","type":"mcq","level":"B","chapterName":"Chương 1: vật lý nhiệt","points":0.25,"textHtml":"Đại lượng đo bằng nhiệt lượng cần truyền cho $1\\text{ kg}$ một chất để nhiệt độ của nó tăng thêm $1^{\\circ}\\text{C}$ gọi là","rawText":"Đại lượng đo bằng nhiệt lượng cần truyền cho $1\\text{ kg}$ một chất để nhiệt độ của nó tăng thêm $1^{\\circ}\\text{C}$ gọi là","ownImageUrl":"","optionsHtml":["nhiệt hóa hơi riêng.","nhiệt lượng chuyển thể.","nhiệt nóng chảy riêng.","nhiệt dung riêng."],"optionsRaw":["nhiệt hóa hơi riêng.","nhiệt lượng chuyển thể.","nhiệt nóng chảy riêng.","nhiệt dung riêng."],"correctIndex":3,"correctAnswer":"nhiệt dung riêng.","subQuestions":[],"solutionHtml":"Theo định nghĩa, nhiệt dung riêng $c$ của một chất là nhiệt lượng cần truyền cho $1\\text{ kg}$ chất đó làm nhiệt độ tăng thêm $1^{\\circ}\\text{C}$ (hoặc $1\\text{ K}$).","rawSolution":"Theo định nghĩa, nhiệt dung riêng $c$ của một chất là nhiệt lượng cần truyền cho $1\\text{ kg}$ chất đó làm nhiệt độ tăng thêm $1^{\\circ}\\text{C}$ (hoặc $1\\text{ K}$)."}]},{"blockId":"single_dcf6917b-ada1-40a4-aa1c-020a38c1bb16_4","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"dcf6917b-ada1-40a4-aa1c-020a38c1bb16","type":"mcq","level":"H","chapterName":"Chương 1: vật lý nhiệt","points":0.25,"textHtml":"Có ý kiến cho rằng: &quot;Bỏng hơi nước $100^{\\circ}\\text{C}$ nặng hơn nước sôi $100^{\\circ}\\text{C}$ là do phân tử hơi nước có tốc độ lớn, đâm xuyên sâu vào da gây thương tổn nặng&quot;. Nhận định này đúng hay sai?","rawText":"Có ý kiến cho rằng: \"Bỏng hơi nước $100^{\\circ}\\text{C}$ nặng hơn nước sôi $100^{\\circ}\\text{C}$ là do phân tử hơi nước có tốc độ lớn, đâm xuyên sâu vào da gây thương tổn nặng\". Nhận định này đúng hay sai?","ownImageUrl":"","optionsHtml":["Đúng, vì áp suất hơi nước cao hơn lỏng nên ép nhiệt lượng vào da với cường độ mạnh hơn.","Sai, vì thực chất hơi nước luôn có nhiệt độ cao hơn $100^{\\circ}\\text{C}$ do bốc lên trực tiếp từ ngọn lửa.","Sai, vì nguyên nhân chính là hơi nước khi ngưng tụ trên da sẽ tỏa ra thêm một nhiệt lượng rất lớn (ẩn nhiệt hóa hơi).","Đúng, vì động năng lớn của phân tử khí dễ dàng phá vỡ các tế bào da ở tầng sâu."],"optionsRaw":["Đúng, vì áp suất hơi nước cao hơn lỏng nên ép nhiệt lượng vào da với cường độ mạnh hơn.","Sai, vì thực chất hơi nước luôn có nhiệt độ cao hơn $100^{\\circ}\\text{C}$ do bốc lên trực tiếp từ ngọn lửa.","Sai, vì nguyên nhân chính là hơi nước khi ngưng tụ trên da sẽ tỏa ra thêm một nhiệt lượng rất lớn (ẩn nhiệt hóa hơi).","Đúng, vì động năng lớn của phân tử khí dễ dàng phá vỡ các tế bào da ở tầng sâu."],"correctIndex":2,"correctAnswer":"Sai, vì nguyên nhân chính là hơi nước khi ngưng tụ trên da sẽ tỏa ra thêm một nhiệt lượng rất lớn (ẩn nhiệt hóa hơi).","subQuestions":[],"solutionHtml":"Nhận định sai. Khi hơi nước $100^{\\circ}\\text{C}$ chạm vào da, ngoài nhiệt lượng hạ nhiệt độ nó còn tỏa ra thêm nhiệt lượng hóa hơi $Q = L \\cdot m$ khi ngưng tụ thành nước lỏng ở $100^{\\circ}\\text{C}$, gây bỏng nặng hơn.","rawSolution":"Nhận định sai. Khi hơi nước $100^{\\circ}\\text{C}$ chạm vào da, ngoài nhiệt lượng hạ nhiệt độ nó còn tỏa ra thêm nhiệt lượng hóa hơi $Q = L \\cdot m$ khi ngưng tụ thành nước lỏng ở $100^{\\circ}\\text{C}$, gây bỏng nặng hơn."}]},{"blockId":"single_147dc38b-46a8-493e-80f7-3858cb21436e_5","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"147dc38b-46a8-493e-80f7-3858cb21436e","type":"mcq","level":"H","chapterName":"Chương 1: vật lý nhiệt","points":0.25,"textHtml":"Trong một giờ thực hành, học sinh hút một ít nước ấm (khoảng $60^{\\circ}\\text{C}$) vào một xi-lanh y tế bằng nhựa, sau đó bịt kín đầu vòi xả và dùng lực kéo thật mạnh pit-tông ra phía sau. Ngay lập tức, nước bên trong xi-lanh nổi bọt sùng sục như đang sôi. Hiện tượng nước sôi trong trường hợp này xảy ra chủ yếu là do","rawText":"Trong một giờ thực hành, học sinh hút một ít nước ấm (khoảng $60^{\\circ}\\text{C}$) vào một xi-lanh y tế bằng nhựa, sau đó bịt kín đầu vòi xả và dùng lực kéo thật mạnh pit-tông ra phía sau. Ngay lập tức, nước bên trong xi-lanh nổi bọt sùng sục như đang sôi. Hiện tượng nước sôi trong trường hợp này xảy ra chủ yếu là do","ownImageUrl":"","optionsHtml":["nhiệt lượng từ tay người kéo đã cung cấp đủ ẩn nhiệt hóa hơi.","ma sát ở pit-tông sinh nhiệt làm khối nước nóng lên đến $100^{\\circ}\\text{C}$","lượng khí dãn nở đã thực hiện công làm tăng nội năng của nước.","áp suất giảm mạnh làm nhiệt độ sôi của nước hạ xuống dưới $60^{\\circ}\\text{C}$."],"optionsRaw":["nhiệt lượng từ tay người kéo đã cung cấp đủ ẩn nhiệt hóa hơi.","ma sát ở pit-tông sinh nhiệt làm khối nước nóng lên đến $100^{\\circ}\\text{C}$","lượng khí dãn nở đã thực hiện công làm tăng nội năng của nước.","áp suất giảm mạnh làm nhiệt độ sôi của nước hạ xuống dưới $60^{\\circ}\\text{C}$."],"correctIndex":3,"correctAnswer":"áp suất giảm mạnh làm nhiệt độ sôi của nước hạ xuống dưới $60^{\\circ}\\text{C}$.","subQuestions":[],"solutionHtml":"Khi kéo mạnh pít-tông làm thể tích tăng, áp suất bên trong xi-lanh giảm mạnh; khi áp suất giảm thì nhiệt độ sôi của chất lỏng giảm xuống, khiến nước $60^{\\circ}\\text{C}$ sôi được.","rawSolution":"Khi kéo mạnh pít-tông làm thể tích tăng, áp suất bên trong xi-lanh giảm mạnh; khi áp suất giảm thì nhiệt độ sôi của chất lỏng giảm xuống, khiến nước $60^{\\circ}\\text{C}$ sôi được."}]},{"blockId":"single_f33e342b-1cb8-4009-8f6a-166446061ff1_6","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"f33e342b-1cb8-4009-8f6a-166446061ff1","type":"mcq","level":"VD","chapterName":"Chương 1: vật lý nhiệt","points":0.25,"textHtml":"Vào mùa hè ở các tỉnh miền Trung nước ta thường xuất hiện hiện tượng &quot;gió Lào&quot; (gió phơn). Mặc dù xuất phát là luồng gió mang hơi ẩm từ biển thổi vào, nhưng sau khi vượt qua dãy Trường Sơn để tràn xuống đồng bằng, luồng gió này lại trở nên vô cùng khô và nóng. Bản chất vật lí chủ yếu làm cho khối không khí này bị nóng lên nhanh chóng khi trượt xuống sườn núi là do","rawText":"Vào mùa hè ở các tỉnh miền Trung nước ta thường xuất hiện hiện tượng \"gió Lào\" (gió phơn). Mặc dù xuất phát là luồng gió mang hơi ẩm từ biển thổi vào, nhưng sau khi vượt qua dãy Trường Sơn để tràn xuống đồng bằng, luồng gió này lại trở nên vô cùng khô và nóng. Bản chất vật lí chủ yếu làm cho khối không khí này bị nóng lên nhanh chóng khi trượt xuống sườn núi là do","ownImageUrl":"","optionsHtml":["khối khí đi xuống sườn núi bị nén nhận công làm nội năng tăng, dẫn đến nhiệt độ tăng.","quá trình hơi nước bay hơi trở lại ở sườn khuất gió đã giải phóng một lượng nhiệt khổng lồ.","ma sát mạnh giữa khối khí chuyển động với tốc độ cao và bề mặt sườn núi sinh ra nhiệt lượng lớn.","không khí đã mất hết hơi ẩm nên dễ dàng hấp thụ trực tiếp bức xạ nhiệt từ Mặt Trời."],"optionsRaw":["khối khí đi xuống sườn núi bị nén nhận công làm nội năng tăng, dẫn đến nhiệt độ tăng.","quá trình hơi nước bay hơi trở lại ở sườn khuất gió đã giải phóng một lượng nhiệt khổng lồ.","ma sát mạnh giữa khối khí chuyển động với tốc độ cao và bề mặt sườn núi sinh ra nhiệt lượng lớn.","không khí đã mất hết hơi ẩm nên dễ dàng hấp thụ trực tiếp bức xạ nhiệt từ Mặt Trời."],"correctIndex":0,"correctAnswer":"khối khí đi xuống sườn núi bị nén nhận công làm nội năng tăng, dẫn đến nhiệt độ tăng.","subQuestions":[],"solutionHtml":"Khi luồng gió tràn xuống sườn núi, áp suất khí quyển tăng làm khối khí bị nén (nhận công $A &gt; 0$), nội năng tăng dẫn đến nhiệt độ không khí tăng nhanh và trở nên khô nóng.","rawSolution":"Khi luồng gió tràn xuống sườn núi, áp suất khí quyển tăng làm khối khí bị nén (nhận công $A > 0$), nội năng tăng dẫn đến nhiệt độ không khí tăng nhanh và trở nên khô nóng."}]},{"blockId":"single_0202990e-a2b4-47ec-b351-0be6e6d76764_7","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"0202990e-a2b4-47ec-b351-0be6e6d76764","type":"mcq","level":"H","chapterName":"Chương 1: vật lý nhiệt","points":0.25,"textHtml":"Khi so sánh thang nhiệt độ Celsius (độ C) và thang nhiệt độ Kelvin (K), phát biểu nào sau đây là đúng?","rawText":"Khi so sánh thang nhiệt độ Celsius (độ C) và thang nhiệt độ Kelvin (K), phát biểu nào sau đây là đúng?","ownImageUrl":"","optionsHtml":["Nhiệt độ Kelvin và nhiệt độ Celsius tỉ lệ nghịch với nhau.","Nhiệt độ Kelvin luôn nhỏ hơn giá trị nhiệt độ Celsius tương ứng.","Nhiệt độ Kelvin luôn có giá trị dương, trong khi nhiệt độ Celsius có thể âm.","Mỗi độ chia trong thang Kelvin lớn hơn mỗi độ chia trong thang Celsius."],"optionsRaw":["Nhiệt độ Kelvin và nhiệt độ Celsius tỉ lệ nghịch với nhau.","Nhiệt độ Kelvin luôn nhỏ hơn giá trị nhiệt độ Celsius tương ứng.","Nhiệt độ Kelvin luôn có giá trị dương, trong khi nhiệt độ Celsius có thể âm.","Mỗi độ chia trong thang Kelvin lớn hơn mỗi độ chia trong thang Celsius."],"correctIndex":2,"correctAnswer":"Nhiệt độ Kelvin luôn có giá trị dương, trong khi nhiệt độ Celsius có thể âm.","subQuestions":[],"solutionHtml":"Thang Kelvin lấy mốc $0\\text{ K}$ là độ không tuyệt đối nên mọi nhiệt độ có thể đạt được đều lớn hơn $0\\text{ K}$ (dương), trong khi thang Celsius có thể âm (dưới $0^{\\circ}\\text{C}$); độ lớn mỗi độ chia của hai thang bằng nhau.","rawSolution":"Thang Kelvin lấy mốc $0\\text{ K}$ là độ không tuyệt đối nên mọi nhiệt độ có thể đạt được đều lớn hơn $0\\text{ K}$ (dương), trong khi thang Celsius có thể âm (dưới $0^{\\circ}\\text{C}$); độ lớn mỗi độ chia của hai thang bằng nhau."}]},{"blockId":"single_c189b47d-c815-4fc4-8314-987b008a215e_8","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"c189b47d-c815-4fc4-8314-987b008a215e","type":"mcq","level":"B","chapterName":"Chương 1: vật lý nhiệt","points":0.25,"textHtml":"Gọi $Q$ là nhiệt lượng cần cung cấp để làm hóa hơi hoàn toàn khối lượng chất lỏng $m$ ở nhiệt độ sôi và $L$ là nhiệt hóa hơi riêng của chất lỏng đó. Hệ thức nào sau đây đúng?","rawText":"Gọi $Q$ là nhiệt lượng cần cung cấp để làm hóa hơi hoàn toàn khối lượng chất lỏng $m$ ở nhiệt độ sôi và $L$ là nhiệt hóa hơi riêng của chất lỏng đó. Hệ thức nào sau đây đúng?","ownImageUrl":"","optionsHtml":["$Q=\\frac{L}{m}$","$Q=m.L$","$Q=\\frac{m}{L}$","$Q=m.L^{2}$"],"optionsRaw":["$Q=\\frac{L}{m}$","$Q=m.L$","$Q=\\frac{m}{L}$","$Q=m.L^{2}$"],"correctIndex":1,"correctAnswer":"$Q=m.L$","subQuestions":[],"solutionHtml":"Nhiệt lượng cần cung cấp để chất lỏng khối lượng $m$ hóa hơi hoàn toàn ở nhiệt độ sôi là $Q = m \\cdot L$.","rawSolution":"Nhiệt lượng cần cung cấp để chất lỏng khối lượng $m$ hóa hơi hoàn toàn ở nhiệt độ sôi là $Q = m \\cdot L$."}]},{"blockId":"single_0add41d7-14ab-4a50-a2f1-438a6d3bbb11_9","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"0add41d7-14ab-4a50-a2f1-438a6d3bbb11","type":"mcq","level":"B","chapterName":"Chương 1: vật lý nhiệt","points":0.25,"textHtml":"Đơn vị của nhiệt nóng chảy riêng ($\\lambda$) trong hệ SI là gì?","rawText":"Đơn vị của nhiệt nóng chảy riêng ($\\lambda$) trong hệ SI là gì?","ownImageUrl":"","optionsHtml":["$J/kg.K$","$J/kg$.","$J.kg$.","$J/K$."],"optionsRaw":["$J/kg.K$","$J/kg$.","$J.kg$.","$J/K$."],"correctIndex":1,"correctAnswer":"$J/kg$.","subQuestions":[],"solutionHtml":"Từ $Q = \\lambda m \\Rightarrow \\lambda = \\frac{Q}{m}$, đơn vị trong hệ SI của nhiệt nóng chảy riêng là $\\text{J/kg}$.","rawSolution":"Từ $Q = \\lambda m \\Rightarrow \\lambda = \\frac{Q}{m}$, đơn vị trong hệ SI của nhiệt nóng chảy riêng là $\\text{J/kg}$."}]},{"blockId":"single_13dc020a-6cb6-420f-8914-9461fb61bb07_10","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"13dc020a-6cb6-420f-8914-9461fb61bb07","type":"mcq","level":"B","chapterName":"Chương 1: vật lý nhiệt","points":0.25,"textHtml":"Khi hai vật có nhiệt độ khác nhau được đặt tiếp xúc với nhau và cô lập với môi trường xung quanh thì quá trình tự truyền nhiệt sẽ dừng lại khi hai vật","rawText":"Khi hai vật có nhiệt độ khác nhau được đặt tiếp xúc với nhau và cô lập với môi trường xung quanh thì quá trình tự truyền nhiệt sẽ dừng lại khi hai vật","ownImageUrl":"","optionsHtml":["có cùng nội năng.","có cùng khối lượng.","có cùng nhiệt độ.","có cùng nhiệt dung."],"optionsRaw":["có cùng nội năng.","có cùng khối lượng.","có cùng nhiệt độ.","có cùng nhiệt dung."],"correctIndex":2,"correctAnswer":"có cùng nhiệt độ.","subQuestions":[],"solutionHtml":"Quá trình truyền nhiệt tự nhiên kết thúc khi hai vật đạt trạng thái cân bằng nhiệt, tức là có cùng nhiệt độ.","rawSolution":"Quá trình truyền nhiệt tự nhiên kết thúc khi hai vật đạt trạng thái cân bằng nhiệt, tức là có cùng nhiệt độ."}]},{"blockId":"single_10cd1fc7-f3fc-451a-8536-f8a145496b48_11","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"10cd1fc7-f3fc-451a-8536-f8a145496b48","type":"mcq","level":"VD","chapterName":"Chương 1: vật lý nhiệt","points":0.25,"textHtml":"Cung cấp nhiệt lượng liên tục với công suất không đổi cho một ấm chứa nước đang ở $20^{\\circ}\\text{C}$. Quá trình (1) tính từ lúc bắt đầu đun cho đến khi nước vừa đạt $100^{\\circ}\\text{C}$; quá trình (2) tính từ lúc nước bắt đầu sôi ở $100^{\\circ}\\text{C}$ cho đến khi hóa hơi hoàn toàn. Cho biết nhiệt dung riêng của nước là $c = 4200\\text{ J/(kg.K)}$ và nhiệt hóa hơi riêng của nước ở $100^{\\circ}\\text{C}$ là $L = 2{,}26.10^{6}\\text{ J/kg}$. Phát biểu nào sau đây là đúng?","rawText":"Cung cấp nhiệt lượng liên tục với công suất không đổi cho một ấm chứa nước đang ở $20^{\\circ}\\text{C}$. Quá trình (1) tính từ lúc bắt đầu đun cho đến khi nước vừa đạt $100^{\\circ}\\text{C}$; quá trình (2) tính từ lúc nước bắt đầu sôi ở $100^{\\circ}\\text{C}$ cho đến khi hóa hơi hoàn toàn. Cho biết nhiệt dung riêng của nước là $c = 4200\\text{ J/(kg.K)}$ và nhiệt hóa hơi riêng của nước ở $100^{\\circ}\\text{C}$ là $L = 2{,}26.10^{6}\\text{ J/kg}$. Phát biểu nào sau đây là đúng?","ownImageUrl":"","optionsHtml":["Ở quá trình (2), toàn bộ nhiệt lượng nhận vào chuyển hóa hoàn toàn thành công cơ học để đẩy không khí xung quanh.","Thời gian đun nước ở quá trình (1) ngắn hơn thời gian hóa hơi hoàn toàn ở quá trình (2).","Nhiệt lượng khối nước nhận được ở quá trình (1) lớn hơn nhiệt lượng nhận được ở quá trình (2).","Trong quá trình (2), động năng trung bình của các phân tử nước tiếp tục tăng lên do khối nước vẫn liên tục nhận nhiệt."],"optionsRaw":["Ở quá trình (2), toàn bộ nhiệt lượng nhận vào chuyển hóa hoàn toàn thành công cơ học để đẩy không khí xung quanh.","Thời gian đun nước ở quá trình (1) ngắn hơn thời gian hóa hơi hoàn toàn ở quá trình (2).","Nhiệt lượng khối nước nhận được ở quá trình (1) lớn hơn nhiệt lượng nhận được ở quá trình (2).","Trong quá trình (2), động năng trung bình của các phân tử nước tiếp tục tăng lên do khối nước vẫn liên tục nhận nhiệt."],"correctIndex":1,"correctAnswer":"Thời gian đun nước ở quá trình (1) ngắn hơn thời gian hóa hơi hoàn toàn ở quá trình (2).","subQuestions":[],"solutionHtml":"Với cùng khối lượng $m$: $Q_1 = m c (100 - 20) = 336000 m\\text{ (J)}$; $Q_2 = m L = 2260000 m\\text{ (J)} &gt; Q_1$. Do công suất không đổi nên $t_1 = \\frac{Q_1}{\\mathcal{P}} &lt; t_2 = \\frac{Q_2}{\\mathcal{P}}$. Trong quá trình sôi ở $100^{\\circ}\\text{C}$, nhiệt độ không đổi nên động năng trung bình phân tử không tăng thêm.","rawSolution":"Với cùng khối lượng $m$: $Q_1 = m c (100 - 20) = 336000 m\\text{ (J)}$; $Q_2 = m L = 2260000 m\\text{ (J)} > Q_1$. Do công suất không đổi nên $t_1 = \\frac{Q_1}{\\mathcal{P}} < t_2 = \\frac{Q_2}{\\mathcal{P}}$. Trong quá trình sôi ở $100^{\\circ}\\text{C}$, nhiệt độ không đổi nên động năng trung bình phân tử không tăng thêm."}]},{"blockId":"single_f66c00e3-497a-4445-8970-87c705785631_12","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"f66c00e3-497a-4445-8970-87c705785631","type":"mcq","level":"B","chapterName":"chương 2: vật lý chất khí","points":0.25,"textHtml":"Trong mô hình động học phân tử, lực tương tác giữa các phân tử khí có đặc điểm là","rawText":"Trong mô hình động học phân tử, lực tương tác giữa các phân tử khí có đặc điểm là","ownImageUrl":"","optionsHtml":["luôn tồn tại để duy trì thể tích của khối khí không bị thay đổi.","luôn luôn là lực đẩy để giúp khối khí dễ dàng dãn nở ra vô hạn.","rất lớn so với lực tương tác của các phân tử trong chất rắn và lỏng.","rất yếu, chỉ đáng kể khi các phân tử va chạm với nhau."],"optionsRaw":["luôn tồn tại để duy trì thể tích của khối khí không bị thay đổi.","luôn luôn là lực đẩy để giúp khối khí dễ dàng dãn nở ra vô hạn.","rất lớn so với lực tương tác của các phân tử trong chất rắn và lỏng.","rất yếu, chỉ đáng kể khi các phân tử va chạm với nhau."],"correctIndex":3,"correctAnswer":"rất yếu, chỉ đáng kể khi các phân tử va chạm với nhau.","subQuestions":[],"solutionHtml":"Khoảng cách giữa các phân tử khí lớn nên lực liên kết phân tử rất yếu (coi như không đáng kể trừ khi va chạm).","rawSolution":"Khoảng cách giữa các phân tử khí lớn nên lực liên kết phân tử rất yếu (coi như không đáng kể trừ khi va chạm)."}]},{"blockId":"single_7b44cc5e-a42b-401e-9306-b4ed1a825ecc_13","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"7b44cc5e-a42b-401e-9306-b4ed1a825ecc","type":"mcq","level":"B","chapterName":"Chương 1: vật lý nhiệt","points":0.25,"textHtml":"Quá trình một chất chuyển từ thể khí (hơi) sang thể lỏng được gọi là gì?","rawText":"Quá trình một chất chuyển từ thể khí (hơi) sang thể lỏng được gọi là gì?","ownImageUrl":"","optionsHtml":["Sự nóng chảy.","Sự bay hơi.","Sự ngưng tụ.","Sự đông đặc."],"optionsRaw":["Sự nóng chảy.","Sự bay hơi.","Sự ngưng tụ.","Sự đông đặc."],"correctIndex":2,"correctAnswer":"Sự ngưng tụ.","subQuestions":[],"solutionHtml":"Quá trình chất chuyển từ thể khí sang thể lỏng được gọi là sự ngưng tụ.","rawSolution":"Quá trình chất chuyển từ thể khí sang thể lỏng được gọi là sự ngưng tụ."}]},{"blockId":"single_73e2de06-1801-4264-a51c-8670f5e459e6_14","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"73e2de06-1801-4264-a51c-8670f5e459e6","type":"mcq","level":"H","chapterName":"Chương 1: vật lý nhiệt","points":0.25,"textHtml":"Vào mùa hè, sau khi tắm biển lên bờ, nếu có một cơn gió thổi qua ta thường cảm thấy ớn lạnh dù trời đang rất nóng. Hiện tượng này xảy ra chủ yếu là do","rawText":"Vào mùa hè, sau khi tắm biển lên bờ, nếu có một cơn gió thổi qua ta thường cảm thấy ớn lạnh dù trời đang rất nóng. Hiện tượng này xảy ra chủ yếu là do","ownImageUrl":"","optionsHtml":["nước bám trên da bay hơi nhanh và thu nhiệt từ cơ thể.","lớp nước mỏng trên da ngăn cản cơ thể hấp thụ nhiệt.","gió thổi bay lớp không khí nóng quanh cơ thể.","gió mang hơi lạnh từ mặt nước truyền thẳng vào cơ thể."],"optionsRaw":["nước bám trên da bay hơi nhanh và thu nhiệt từ cơ thể.","lớp nước mỏng trên da ngăn cản cơ thể hấp thụ nhiệt.","gió thổi bay lớp không khí nóng quanh cơ thể.","gió mang hơi lạnh từ mặt nước truyền thẳng vào cơ thể."],"correctIndex":0,"correctAnswer":"nước bám trên da bay hơi nhanh và thu nhiệt từ cơ thể.","subQuestions":[],"solutionHtml":"Gió làm nước trên da bay hơi nhanh hơn; quá trình bay hơi thu nhiệt lượng hóa hơi từ cơ thể làm ta cảm thấy lạnh.","rawSolution":"Gió làm nước trên da bay hơi nhanh hơn; quá trình bay hơi thu nhiệt lượng hóa hơi từ cơ thể làm ta cảm thấy lạnh."}]},{"blockId":"single_1c723ccb-ffce-4c97-a66e-8bf62b881c51_15","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"1c723ccb-ffce-4c97-a66e-8bf62b881c51","type":"mcq","level":"H","chapterName":"chương 2: vật lý chất khí","points":0.25,"textHtml":"Khi nói về mô hình động học phân tử chất khí, phát biểu nào sau đây là sai?","rawText":"Khi nói về mô hình động học phân tử chất khí, phát biểu nào sau đây là sai?","ownImageUrl":"","optionsHtml":["Chất khí luôn bành trướng chiếm trọn bình chứa là do các phân tử đẩy nhau rất mạnh.","Các phân tử khí chuyển động hỗn loạn càng nhanh khi nhiệt độ của khí càng cao.","Áp suất mà chất khí tác dụng lên thành bình là do các phân tử khí va chạm vào.","Lực tương tác giữa các phân tử khí rất yếu, chỉ đáng kể khi chúng va chạm với nhau."],"optionsRaw":["Chất khí luôn bành trướng chiếm trọn bình chứa là do các phân tử đẩy nhau rất mạnh.","Các phân tử khí chuyển động hỗn loạn càng nhanh khi nhiệt độ của khí càng cao.","Áp suất mà chất khí tác dụng lên thành bình là do các phân tử khí va chạm vào.","Lực tương tác giữa các phân tử khí rất yếu, chỉ đáng kể khi chúng va chạm với nhau."],"correctIndex":0,"correctAnswer":"Chất khí luôn bành trướng chiếm trọn bình chứa là do các phân tử đẩy nhau rất mạnh.","subQuestions":[],"solutionHtml":"Chất khí chiếm đầy bình chứa là do các phân tử khí chuyển động hỗn loạn không ngừng về mọi phía, không phải do lực đẩy giữa chúng rất mạnh.","rawSolution":"Chất khí chiếm đầy bình chứa là do các phân tử khí chuyển động hỗn loạn không ngừng về mọi phía, không phải do lực đẩy giữa chúng rất mạnh."}]},{"blockId":"single_f7e87a68-66a7-45c5-8f8d-ca725f1bc6f6_16","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"f7e87a68-66a7-45c5-8f8d-ca725f1bc6f6","type":"mcq","level":"B","chapterName":"Chương 1: vật lý nhiệt","points":0.25,"textHtml":"Trong thang nhiệt độ Celsius, mỗi độ chia ($1^{\\circ}\\text{C}$) có giá trị bằng $1/100$ của khoảng cách giữa","rawText":"Trong thang nhiệt độ Celsius, mỗi độ chia ($1^{\\circ}\\text{C}$) có giá trị bằng $1/100$ của khoảng cách giữa","ownImageUrl":"","optionsHtml":["nhiệt độ nước đá đang tan và nhiệt độ nước sôi (ở $1\\text{ atm}$).","nhiệt độ không tuyệt đối đến nhiệt độ điểm ba của nước (ở $1\\text{ atm}$).","nhiệt độ phòng tiêu chuẩn và nhiệt độ điểm ba của nước (ở $1\\text{ atm}$).","nhiệt độ không tuyệt đối và nhiệt độ nước sôi (ở $1\\text{ atm}$)."],"optionsRaw":["nhiệt độ nước đá đang tan và nhiệt độ nước sôi (ở $1\\text{ atm}$).","nhiệt độ không tuyệt đối đến nhiệt độ điểm ba của nước (ở $1\\text{ atm}$).","nhiệt độ phòng tiêu chuẩn và nhiệt độ điểm ba của nước (ở $1\\text{ atm}$).","nhiệt độ không tuyệt đối và nhiệt độ nước sôi (ở $1\\text{ atm}$)."],"correctIndex":0,"correctAnswer":"nhiệt độ nước đá đang tan và nhiệt độ nước sôi (ở $1\\text{ atm}$).","subQuestions":[],"solutionHtml":"Trong thang Celsius, khoảng cách giữa nhiệt độ nước đá đang tan ($0^{\\circ}\\text{C}$) và nhiệt độ nước sôi ($100^{\\circ}\\text{C}$) ở áp suất $1\\text{ atm}$ được chia thành $100$ phần bằng nhau.","rawSolution":"Trong thang Celsius, khoảng cách giữa nhiệt độ nước đá đang tan ($0^{\\circ}\\text{C}$) và nhiệt độ nước sôi ($100^{\\circ}\\text{C}$) ở áp suất $1\\text{ atm}$ được chia thành $100$ phần bằng nhau."}]},{"blockId":"single_98eb2986-9f2f-40bc-a96e-4f742cbfcd11_17","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"98eb2986-9f2f-40bc-a96e-4f742cbfcd11","type":"mcq","level":"B","chapterName":"Chương 1: vật lý nhiệt","points":0.25,"textHtml":"Theo định luật 1 của nhiệt động lực học, độ biến thiên nội năng của một hệ thống bằng","rawText":"Theo định luật 1 của nhiệt động lực học, độ biến thiên nội năng của một hệ thống bằng","ownImageUrl":"","optionsHtml":["thương của công và nhiệt lượng mà hệ nhận được.","hiệu của công và nhiệt lượng mà hệ nhận được.","tổng của công và nhiệt lượng mà hệ nhận được.","tích của công và nhiệt lượng mà hệ nhận được."],"optionsRaw":["thương của công và nhiệt lượng mà hệ nhận được.","hiệu của công và nhiệt lượng mà hệ nhận được.","tổng của công và nhiệt lượng mà hệ nhận được.","tích của công và nhiệt lượng mà hệ nhận được."],"correctIndex":2,"correctAnswer":"tổng của công và nhiệt lượng mà hệ nhận được.","subQuestions":[],"solutionHtml":"Theo nguyên lí I nhiệt động lực học: $\\Delta U = A + Q$, độ biến thiên nội năng bằng tổng công và nhiệt lượng mà hệ nhận được.","rawSolution":"Theo nguyên lí I nhiệt động lực học: $\\Delta U = A + Q$, độ biến thiên nội năng bằng tổng công và nhiệt lượng mà hệ nhận được."}]},{"blockId":"single_0eda9ff4-4147-4f17-86f4-66fb294ace7a_18","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"0eda9ff4-4147-4f17-86f4-66fb294ace7a","type":"group-tf","level":"H","chapterName":"Chương 1: vật lý nhiệt","points":1,"textHtml":"Năm 1848, nhà vật lí Lord Kelvin đề xuất một thang đo nhiệt độ tuyệt đối dựa trên khái niệm &quot;độ không tuyệt đối&quot; - giới hạn nhiệt độ thấp nhất trong vũ trụ. Thang nhiệt độ Kelvin là thang đo chuẩn của Hệ SI và là cơ sở cho các tính toán nhiệt động lực học. Xét các phát biểu sau:","rawText":"Năm 1848, nhà vật lí Lord Kelvin đề xuất một thang đo nhiệt độ tuyệt đối dựa trên khái niệm \"độ không tuyệt đối\" - giới hạn nhiệt độ thấp nhất trong vũ trụ. Thang nhiệt độ Kelvin là thang đo chuẩn của Hệ SI và là cơ sở cho các tính toán nhiệt động lực học. Xét các phát biểu sau:","ownImageUrl":"","optionsHtml":[],"optionsRaw":[],"correctIndex":0,"correctAnswer":"","subQuestions":[{"id":"1d3b93f5-0ee0-4a18-a6ee-4df72b57aaa4","level":"B","textHtml":"Công thức liên hệ giữa nhiệt độ $T$ trong thang Kelvin và nhiệt độ $t$ trong thang Celsius là $T = t + 273{,}15$.","rawText":"Công thức liên hệ giữa nhiệt độ $T$ trong thang Kelvin và nhiệt độ $t$ trong thang Celsius là $T = t + 273{,}15$.","correctAnswer":"True"},{"id":"19804a4f-c6c2-45b9-946e-599e7304951c","level":"H","textHtml":"Ở nhiệt độ không độ tuyệt đối, chuyển động nhiệt của các phân tử cấu tạo nên vật hầu như ngừng lại.","rawText":"Ở nhiệt độ không độ tuyệt đối, chuyển động nhiệt của các phân tử cấu tạo nên vật hầu như ngừng lại.","correctAnswer":"True"},{"id":"82b13788-925a-4435-8edc-2737a2cf6b7d","level":"B","textHtml":"Nhiệt độ tại điểm ba của nước có giá trị là $273{,}15\\text{ K}$.","rawText":"Nhiệt độ tại điểm ba của nước có giá trị là $273{,}15\\text{ K}$.","correctAnswer":"False"},{"id":"b901a710-d947-405c-8a1d-7bf1a8fd33d1","level":"H","textHtml":"Một khoảng chia trong thang Kelvin bằng $273{,}15$ khoảng chia trong thang Celsius.","rawText":"Một khoảng chia trong thang Kelvin bằng $273{,}15$ khoảng chia trong thang Celsius.","correctAnswer":"False"}],"solutionHtml":"a) Đúng: Công thức chuyển đổi chuẩn là $T(\\text{K}) = t(^{\\circ}\\text{C}) + 273{,}15$. <br>b) Đúng: Tại $0\\text{ K}$, động năng chuyển động nhiệt phân tử giảm về mức tối thiểu (hầu như ngừng lại theo mô hình cổ điển). <br>c) Sai: Điểm ba của nước tương ứng $0{,}01^{\\circ}\\text{C} \\approx 273{,}16\\text{ K}$. <br>d) Sai: Độ lớn $1\\text{ K}$ bằng đúng $1^{\\circ}\\text{C}$ (bằng $1$ khoảng chia, không phải $273{,}15$).","rawSolution":"a) Đúng: Công thức chuyển đổi chuẩn là $T(\\text{K}) = t(^{\\circ}\\text{C}) + 273{,}15$. \nb) Đúng: Tại $0\\text{ K}$, động năng chuyển động nhiệt phân tử giảm về mức tối thiểu (hầu như ngừng lại theo mô hình cổ điển). \nc) Sai: Điểm ba của nước tương ứng $0{,}01^{\\circ}\\text{C} \\approx 273{,}16\\text{ K}$. \nd) Sai: Độ lớn $1\\text{ K}$ bằng đúng $1^{\\circ}\\text{C}$ (bằng $1$ khoảng chia, không phải $273{,}15$)."}]},{"blockId":"single_00759339-880f-45e5-bda5-6663ce249081_19","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"00759339-880f-45e5-bda5-6663ce249081","type":"group-tf","level":"VD","chapterName":"Chương 1: vật lý nhiệt","points":1,"textHtml":"Dựa trên cơ sở lý thuyết: Nhiệt lượng cung cấp làm tăng nhiệt độ chất lỏng được xác định bởi công thức $Q=mc\\Delta T$, một nhóm học sinh đưa ra giả thuyết: &quot;Độ dốc của đồ thị nhiệt độ - thời gian phụ thuộc vào nhiệt dung riêng của chất lỏng và có thể dùng để đo đại lượng này&quot;.<br>Để kiểm tra giả thuyết, họ dùng bình nhiệt lượng kế, dây điện trở nối với nguồn điện có công suất tiêu thụ điện $P$ không đổi, cân, cảm biến nhiệt độ kết nối máy tính và làm thí nghiệm theo các bước sau:<br>(1) Dùng cân lấy một lượng chất lỏng có khối lượng $m$ cho vào bình nhiệt lượng kế.<br>(2) Cấp điện cho dây điện trở để đun nóng chất lỏng, đồng thời dùng cảm biến và phần mềm máy tính để vẽ đồ thị sự phụ thuộc của nhiệt độ $T$ vào thời gian đun $t$. Bỏ qua sự hao phí nhiệt và chất lỏng chưa sôi.","rawText":"Dựa trên cơ sở lý thuyết: Nhiệt lượng cung cấp làm tăng nhiệt độ chất lỏng được xác định bởi công thức $Q=mc\\Delta T$, một nhóm học sinh đưa ra giả thuyết: \"Độ dốc của đồ thị nhiệt độ - thời gian phụ thuộc vào nhiệt dung riêng của chất lỏng và có thể dùng để đo đại lượng này\".\nĐể kiểm tra giả thuyết, họ dùng bình nhiệt lượng kế, dây điện trở nối với nguồn điện có công suất tiêu thụ điện $P$ không đổi, cân, cảm biến nhiệt độ kết nối máy tính và làm thí nghiệm theo các bước sau:\n(1) Dùng cân lấy một lượng chất lỏng có khối lượng $m$ cho vào bình nhiệt lượng kế.\n(2) Cấp điện cho dây điện trở để đun nóng chất lỏng, đồng thời dùng cảm biến và phần mềm máy tính để vẽ đồ thị sự phụ thuộc của nhiệt độ $T$ vào thời gian đun $t$. Bỏ qua sự hao phí nhiệt và chất lỏng chưa sôi.","ownImageUrl":"","optionsHtml":[],"optionsRaw":[],"correctIndex":0,"correctAnswer":"","subQuestions":[{"id":"3292e3e7-ecf8-4322-a247-b4dafaf8db13","level":"H","textHtml":"Đồ thị $T$ theo $t$ là một đường thẳng luôn đi qua gốc tọa độ.","rawText":"Đồ thị $T$ theo $t$ là một đường thẳng luôn đi qua gốc tọa độ.","correctAnswer":"False"},{"id":"074ee52a-1583-45b4-8cca-04b81cb25806","level":"VD","textHtml":"Với cùng $P$ và $m$, chất lỏng có nhiệt dung riêng $c$ càng lớn thì độ dốc $\\tan \\alpha$ của đồ thị càng lớn.","rawText":"Với cùng $P$ và $m$, chất lỏng có nhiệt dung riêng $c$ càng lớn thì độ dốc $\\tan \\alpha$ của đồ thị càng lớn.","correctAnswer":"False"},{"id":"0110ea22-2df5-4018-8516-28f66986190c","level":"VD","textHtml":"Với $\\tan \\alpha$ là độ dốc của đồ thị, nhiệt dung riêng của chất lỏng được tính theo công thức $c = \\frac{P}{m.\\tan \\alpha}$.","rawText":"Với $\\tan \\alpha$ là độ dốc của đồ thị, nhiệt dung riêng của chất lỏng được tính theo công thức $c = \\frac{P}{m.\\tan \\alpha}$.","correctAnswer":"True"},{"id":"5012d2c0-c7f9-496b-8507-1835fac40f9b","level":"H","textHtml":"Thực tế do có thất thoát nhiệt ra môi trường, đồ thị thu được có xu hướng cong dần xuống dưới.","rawText":"Thực tế do có thất thoát nhiệt ra môi trường, đồ thị thu được có xu hướng cong dần xuống dưới.","correctAnswer":"True"}],"solutionHtml":"a) Sai: Tại $t = 0$, chất lỏng có nhiệt độ ban đầu $T_0 &gt; 0$, nên đường thẳng $T(t) = T_0 + \\frac{P}{mc} t$ không đi qua gốc tọa độ. b) Sai: Độ dốc $\\tan \\alpha = \\frac{\\Delta T}{\\Delta t} = \\frac{P}{mc}$ tỉ lệ nghịch với $c$, nên $c$ càng lớn thì $\\tan \\alpha$ càng nhỏ. c) Đúng: Từ $\\tan \\alpha = \\frac{P}{mc} \\Rightarrow c = \\frac{P}{m \\tan \\alpha}$. d) Đúng: Khi nhiệt độ tăng lên, tốc độ tỏa nhiệt ra môi trường tăng nên phần nhiệt làm tăng nhiệt độ giảm dần, làm đồ thị cong xuống dưới.","rawSolution":"a) Sai: Tại $t = 0$, chất lỏng có nhiệt độ ban đầu $T_0 > 0$, nên đường thẳng $T(t) = T_0 + \\frac{P}{mc} t$ không đi qua gốc tọa độ. b) Sai: Độ dốc $\\tan \\alpha = \\frac{\\Delta T}{\\Delta t} = \\frac{P}{mc}$ tỉ lệ nghịch với $c$, nên $c$ càng lớn thì $\\tan \\alpha$ càng nhỏ. c) Đúng: Từ $\\tan \\alpha = \\frac{P}{mc} \\Rightarrow c = \\frac{P}{m \\tan \\alpha}$. d) Đúng: Khi nhiệt độ tăng lên, tốc độ tỏa nhiệt ra môi trường tăng nên phần nhiệt làm tăng nhiệt độ giảm dần, làm đồ thị cong xuống dưới."}]},{"blockId":"single_4fc310de-532b-4cff-a96a-c9eabbac3329_20","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"4fc310de-532b-4cff-a96a-c9eabbac3329","type":"group-tf","level":"VD","chapterName":"Chương 1: vật lý nhiệt","points":1,"textHtml":"Đun nóng liên tục một khối lượng nước đá ban đầu ở nhiệt độ âm bằng một nguồn nhiệt có công suất $P$ không đổi. Sự phụ thuộc của nhiệt độ vào thời gian đun được biểu diễn bằng đồ thị như hình vẽ (Nhiệt độ (°C) có các mốc $0^{\\circ}\\text{C}$ tại $t_1$ đến $t_2$ nằm ngang và $100^{\\circ}\\text{C}$ tại $t_3$ đến $t_4$ nằm ngang; Thời gian (phút) có các mốc $t_1, t_2, t_3, t_4$). Bỏ qua hao phí tỏa nhiệt ra môi trường. Trong đề có nhắc đến tỉ số $\\frac{L}{\\lambda} = \\frac{t_4 - t_3}{t_2 - t_1}$.","rawText":"Đun nóng liên tục một khối lượng nước đá ban đầu ở nhiệt độ âm bằng một nguồn nhiệt có công suất $P$ không đổi. Sự phụ thuộc của nhiệt độ vào thời gian đun được biểu diễn bằng đồ thị như hình vẽ (Nhiệt độ (°C) có các mốc $0^{\\circ}\\text{C}$ tại $t_1$ đến $t_2$ nằm ngang và $100^{\\circ}\\text{C}$ tại $t_3$ đến $t_4$ nằm ngang; Thời gian (phút) có các mốc $t_1, t_2, t_3, t_4$). Bỏ qua hao phí tỏa nhiệt ra môi trường. Trong đề có nhắc đến tỉ số $\\frac{L}{\\lambda} = \\frac{t_4 - t_3}{t_2 - t_1}$.","ownImageUrl":"https://buelyuxsztnhrwinrldp.supabase.co/storage/v1/object/public/quiz-images/afbb3cff-e1e4-4e7f-aa88-c642c28aa1d5.png","optionsHtml":[],"optionsRaw":[],"correctIndex":0,"correctAnswer":"","subQuestions":[{"id":"1e1daa0b-d912-4c5f-bea2-6d8aecea9b43","level":"H","textHtml":"Từ $t_{1}$ đến $t_{2}$, khối chất đang nóng chảy.","rawText":"Từ $t_{1}$ đến $t_{2}$, khối chất đang nóng chảy.","correctAnswer":"True"},{"id":"e6a81740-b333-4ccd-9b0a-b303f6c29fb5","level":"H","textHtml":"Từ $t_{3}$ đến $t_{4}$, nhiệt độ không đổi nên nội năng của khối chất không đổi.","rawText":"Từ $t_{3}$ đến $t_{4}$, nhiệt độ không đổi nên nội năng của khối chất không đổi.","correctAnswer":"False"},{"id":"49bb1071-cba9-48eb-8bed-7a53a85a026e","level":"VD","textHtml":"Độ dốc đồ thị cho thấy nhiệt dung riêng của nước đá nhỏ hơn của nước lỏng.","rawText":"Độ dốc đồ thị cho thấy nhiệt dung riêng của nước đá nhỏ hơn của nước lỏng.","correctAnswer":"True"},{"id":"8f4a8f14-73c3-4dbe-8e24-ae5305110ff1","level":"VD","textHtml":"Tỉ số giữa nhiệt hóa hơi riêng ($L$) và nhiệt nóng chảy riêng ($\\lambda$) là $\\frac{L}{\\lambda} = \\frac{t_4 - t_3}{t_2 - t_1}$.","rawText":"Tỉ số giữa nhiệt hóa hơi riêng ($L$) và nhiệt nóng chảy riêng ($\\lambda$) là $\\frac{L}{\\lambda} = \\frac{t_4 - t_3}{t_2 - t_1}$.","correctAnswer":"True"}],"solutionHtml":"a) Đúng: Từ $t_1$ đến $t_2$, nhiệt độ giữ nguyên ở $0^{\\circ}\\text{C}$ nên nước đá đang nóng chảy. <br>b) Sai: Từ $t_3$ đến $t_4$, nước sôi và hóa hơi ở $100^{\\circ}\\text{C}$, khối chất nhận nhiệt nên thế năng tương tác phân tử tăng, nội năng vẫn tăng. <br>c) Đúng: Nhìn độ dốc $\\frac{\\Delta T}{\\Delta t} = \\frac{P}{mc}$, đoạn nước đá tăng nhiệt có độ dốc lớn hơn đoạn nước lỏng tăng nhiệt, suy ra nhiệt dung riêng của nước đá nhỏ hơn nước lỏng <br>d) Đúng: Vì công suất không đổi nên $Q_{t_2 t_1} = P(t_2 - t_1) = m\\lambda$ và $Q_{t_4 t_3} = P(t_4 - t_3) = mL \\Rightarrow \\frac{L}{\\lambda} = \\frac{t_4 - t_3}{t_2 - t_1}$.","rawSolution":"a) Đúng: Từ $t_1$ đến $t_2$, nhiệt độ giữ nguyên ở $0^{\\circ}\\text{C}$ nên nước đá đang nóng chảy. \nb) Sai: Từ $t_3$ đến $t_4$, nước sôi và hóa hơi ở $100^{\\circ}\\text{C}$, khối chất nhận nhiệt nên thế năng tương tác phân tử tăng, nội năng vẫn tăng. \nc) Đúng: Nhìn độ dốc $\\frac{\\Delta T}{\\Delta t} = \\frac{P}{mc}$, đoạn nước đá tăng nhiệt có độ dốc lớn hơn đoạn nước lỏng tăng nhiệt, suy ra nhiệt dung riêng của nước đá nhỏ hơn nước lỏng \nd) Đúng: Vì công suất không đổi nên $Q_{t_2 t_1} = P(t_2 - t_1) = m\\lambda$ và $Q_{t_4 t_3} = P(t_4 - t_3) = mL \\Rightarrow \\frac{L}{\\lambda} = \\frac{t_4 - t_3}{t_2 - t_1}$."}]},{"blockId":"single_706163d6-4023-4980-bdf0-1a234524ee94_21","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"706163d6-4023-4980-bdf0-1a234524ee94","type":"group-tf","level":"H","chapterName":"Chương 1: vật lý nhiệt","points":1,"textHtml":"Quan sát một cốc nước đặt yên trên mặt bàn, ta thấy mặt nước hoàn toàn phẳng lặng. Từ quan sát này, một nhóm học sinh đưa ra giả thuyết: &quot;Trong điều kiện bình thường, các phân tử nước hoàn toàn đứng yên&quot;.<br>Để kiểm tra giả thuyết, họ dùng kính hiển vi, lam kính, nước cất, một ít hạt phấn hoa và làm thí nghiệm theo các bước sau:<br>(1) Nhỏ một giọt nước cất lên lam kính và rắc một ít hạt phấn hoa vào giọt nước.<br>(2) Đặt lam kính lên kính hiển vi và điều chỉnh tiêu cự để quan sát sự di chuyển của các hạt phấn hoa.<br>(3) Ghi nhận vị trí của một hạt phấn hoa sau những khoảng thời gian bằng nhau liên tiếp.","rawText":"Quan sát một cốc nước đặt yên trên mặt bàn, ta thấy mặt nước hoàn toàn phẳng lặng. Từ quan sát này, một nhóm học sinh đưa ra giả thuyết: \"Trong điều kiện bình thường, các phân tử nước hoàn toàn đứng yên\".\nĐể kiểm tra giả thuyết, họ dùng kính hiển vi, lam kính, nước cất, một ít hạt phấn hoa và làm thí nghiệm theo các bước sau:\n(1) Nhỏ một giọt nước cất lên lam kính và rắc một ít hạt phấn hoa vào giọt nước.\n(2) Đặt lam kính lên kính hiển vi và điều chỉnh tiêu cự để quan sát sự di chuyển của các hạt phấn hoa.\n(3) Ghi nhận vị trí của một hạt phấn hoa sau những khoảng thời gian bằng nhau liên tiếp.","ownImageUrl":"","optionsHtml":[],"optionsRaw":[],"correctIndex":0,"correctAnswer":"","subQuestions":[{"id":"d33eed9c-7fa6-45ec-8b94-255007ad9728","level":"H","textHtml":"Nếu giả thuyết đúng, hạt phấn hoa sẽ nằm yên hoặc chỉ chìm dần xuống theo đường thẳng.","rawText":"Nếu giả thuyết đúng, hạt phấn hoa sẽ nằm yên hoặc chỉ chìm dần xuống theo đường thẳng.","correctAnswer":"True"},{"id":"64fe3281-8804-47b9-84a8-8f23bd8b1002","level":"B","textHtml":"Thực tế, đường nối các vị trí của hạt phấn hoa sau những khoảng thời gian bằng nhau là những đường gấp khúc ngẫu nhiên.","rawText":"Thực tế, đường nối các vị trí của hạt phấn hoa sau những khoảng thời gian bằng nhau là những đường gấp khúc ngẫu nhiên.","correctAnswer":"True"},{"id":"e2a1efbc-48ad-4f21-bb27-748415b07a36","level":"H","textHtml":"Hạt phấn hoa chuyển động là do nó là một thực thể sinh học.","rawText":"Hạt phấn hoa chuyển động là do nó là một thực thể sinh học.","correctAnswer":"False"},{"id":"397d4d54-5ff8-41ba-aac1-ce46c9d88114","level":"H","textHtml":"Kết quả thí nghiệm đã bác bỏ giả thuyết của học sinh, chứng tỏ các phân tử nước luôn chuyển động không ngừng.","rawText":"Kết quả thí nghiệm đã bác bỏ giả thuyết của học sinh, chứng tỏ các phân tử nước luôn chuyển động không ngừng.","correctAnswer":"True"}],"solutionHtml":"a) Đúng: Nếu các phân tử nước đứng yên, hạt phấn hoa chỉ chịu trọng lực và lực đẩy Ác-si-mét nên đứng yên hoặc rơi thẳng đứng. b) Đúng: Quỹ đạo nối các vị trí liên tiếp của hạt phấn hoa là đường gấp khúc không theo quy luật. c) Sai: Hạt phấn hoa chuyển động do va chạm của các phân tử nước, không phải do đặc tính sinh học. d) Đúng: Chuyển động Brown chứng tỏ các phân tử nước chuyển động nhiệt hỗn loạn không ngừng.","rawSolution":"a) Đúng: Nếu các phân tử nước đứng yên, hạt phấn hoa chỉ chịu trọng lực và lực đẩy Ác-si-mét nên đứng yên hoặc rơi thẳng đứng. b) Đúng: Quỹ đạo nối các vị trí liên tiếp của hạt phấn hoa là đường gấp khúc không theo quy luật. c) Sai: Hạt phấn hoa chuyển động do va chạm của các phân tử nước, không phải do đặc tính sinh học. d) Đúng: Chuyển động Brown chứng tỏ các phân tử nước chuyển động nhiệt hỗn loạn không ngừng."}]},{"blockId":"group_8bf423e3-8924-4107-84bb-25b20218f5ec_22","isSharedGroup":true,"contextHtml":"Một người thợ máy đánh bóng một phụ kiện bằng đồng có khối lượng $0{,}20\\text{ kg}$ bằng một miếng vải nhám trong thời gian $76\\text{ giây}$. Anh ta di chuyển miếng vải qua lại trên phụ kiện với tốc độ trượt trung bình $2{,}0\\text{ m/s}$ bằng cách duy trì lực ma sát $15\\text{ N}$ theo phương tiếp tuyến với bề mặt. Giả sử nội năng mà phụ kiện nhận được gấp $4$ lần nội năng mà miếng vải nhám nhận được. Bỏ qua sự trao đổi nhiệt với môi trường xung quanh. Biết nhiệt dung riêng của đồng là $380\\text{ J/(kg.K)}$ và nhiệt độ ban đầu của phụ kiện là $25^{\\circ}\\text{C}$.","sharedImageUrl":"","questions":[{"id":"8bf423e3-8924-4107-84bb-25b20218f5ec","type":"short","level":"VD","chapterName":"Chương 1: vật lý nhiệt","points":0.25,"textHtml":"Tổng công của lực ma sát sinh ra trong suốt quá trình đánh bóng có độ lớn là bao nhiêu jun?","rawText":"Tổng công của lực ma sát sinh ra trong suốt quá trình đánh bóng có độ lớn là bao nhiêu jun?","ownImageUrl":"","optionsHtml":[],"optionsRaw":[],"correctIndex":0,"correctAnswer":"2280","subQuestions":[],"solutionHtml":"Quãng đường trượt: $s = v \\cdot t = 2{,}0 \\cdot 76 = 152\\text{ m}$. Độ lớn công của lực ma sát: $A = F_{ms} \\cdot s = 15 \\cdot 152 = 2280\\text{ J}$.","rawSolution":"Quãng đường trượt: $s = v \\cdot t = 2{,}0 \\cdot 76 = 152\\text{ m}$. Độ lớn công của lực ma sát: $A = F_{ms} \\cdot s = 15 \\cdot 152 = 2280\\text{ J}$."},{"id":"b7221cee-7aee-436e-9ebe-25e6b2cd9b60","type":"short","level":"VDC","chapterName":"Chương 1: vật lý nhiệt","points":0.25,"textHtml":"Nhiệt độ của phụ kiện ngay sau khi đánh bóng xong là bao nhiêu °C?","rawText":"Nhiệt độ của phụ kiện ngay sau khi đánh bóng xong là bao nhiêu °C?","ownImageUrl":"","optionsHtml":[],"optionsRaw":[],"correctIndex":0,"correctAnswer":"49","subQuestions":[],"solutionHtml":"Tổng công ma sát $A = 2280\\text{ J}$ chuyển hóa thành nội năng của phụ kiện và miếng vải: $\\Delta U_{đồng} + \\Delta U_{vải} = 2280\\text{ J}$. Vì $\\Delta U_{đồng} = 4 \\Delta U_{vải} \\Rightarrow \\Delta U_{đồng} = \\frac{4}{5} \\cdot 2280 = 1824\\text{ J}$. Độ tăng nhiệt độ của phụ kiện đồng: $\\Delta t = \\frac{\\Delta U_{đồng}}{m c} = \\frac{1824}{0{,}20 \\cdot 380} = \\frac{1824}{76} = 24^{\\circ}\\text{C}$. Nhiệt độ sau khi đánh bóng: $t = 25 + 24 = 49^{\\circ}\\text{C}$.","rawSolution":"Tổng công ma sát $A = 2280\\text{ J}$ chuyển hóa thành nội năng của phụ kiện và miếng vải: $\\Delta U_{đồng} + \\Delta U_{vải} = 2280\\text{ J}$. Vì $\\Delta U_{đồng} = 4 \\Delta U_{vải} \\Rightarrow \\Delta U_{đồng} = \\frac{4}{5} \\cdot 2280 = 1824\\text{ J}$. Độ tăng nhiệt độ của phụ kiện đồng: $\\Delta t = \\frac{\\Delta U_{đồng}}{m c} = \\frac{1824}{0{,}20 \\cdot 380} = \\frac{1824}{76} = 24^{\\circ}\\text{C}$. Nhiệt độ sau khi đánh bóng: $t = 25 + 24 = 49^{\\circ}\\text{C}$."}]},{"blockId":"group_aa7a7ced-9eb9-432f-b186-75ed3774d300_24","isSharedGroup":true,"contextHtml":"Trong một thí nghiệm về sự trao đổi nhiệt, hai mẫu vật liệu A và B có nhiệt độ ban đầu khác nhau được đặt trong một bình cách nhiệt và trao đổi nhiệt với nhau cho đến khi đạt cân bằng. Khối lượng của các mẫu lần lượt là $m_{A}=5{,}0\\text{ kg}$ và $m_{B}=1{,}5\\text{ kg}$. Bỏ qua sự thất thoát nhiệt ra môi trường và nhiệt dung của bình chứa.<br>Kết quả thí nghiệm được ghi nhận qua hai đồ thị:<br>Đồ thị (a): Biểu diễn sự thay đổi nhiệt độ theo thời gian của mẫu A (đường liền, bắt đầu từ $100^{\\circ}\\text{C}$, giảm về nhiệt độ cân bằng khoảng $32^{\\circ}\\text{C}$ tại $\\tau = 20$ phút) và mẫu B (đường đứt nét, bắt đầu từ $20^{\\circ}\\text{C}$, tăng lên nhiệt độ cân bằng khoảng $32^{\\circ}\\text{C}$ tại $\\tau = 20$ phút).<br>Đồ thị (b): Biểu diễn mối quan hệ giữa độ tăng nhiệt độ ($\\Delta T$, trục tung có các mốc $1, 2, 3, 4\\,^{\\circ}\\text{C}$) và nhiệt lượng truyền trên một đơn vị khối lượng ($Q/m$, trục hoành có các mốc $0, 8, 16\\text{ kJ/kg}$, đi qua điểm $\\Delta T = 2^{\\circ}\\text{C}$ tại $Q/m = 8\\text{ kJ/kg}$ và $\\Delta T = 4^{\\circ}\\text{C}$ tại $Q/m = 16\\text{ kJ/kg}$) cho riêng vật liệu B.","sharedImageUrl":"https://buelyuxsztnhrwinrldp.supabase.co/storage/v1/object/public/quiz-images/96b379b9-a771-4cf5-9b81-38c4beeb7c03.png","questions":[{"id":"aa7a7ced-9eb9-432f-b186-75ed3774d300","type":"short","level":"VD","chapterName":"Chương 1: vật lý nhiệt","points":0.25,"textHtml":"Nhiệt dung riêng của vật liệu B là bao nhiêu $J/(kg.K)$?","rawText":"Nhiệt dung riêng của vật liệu B là bao nhiêu $J/(kg.K)$?","ownImageUrl":"","optionsHtml":[],"optionsRaw":[],"correctIndex":0,"correctAnswer":"4000","subQuestions":[],"solutionHtml":"Từ đồ thị (b), khi $\\frac{Q}{m} = 8\\text{ kJ/kg} = 8000\\text{ J/kg}$ thì $\\Delta T = 2^{\\circ}\\text{C} = 2\\text{ K}$. Nhiệt dung riêng của vật liệu B: $c_B = \\frac{Q}{m\\Delta T} = \\frac{8000}{2} = 4000\\text{ J/(kg.K)}$.","rawSolution":"Từ đồ thị (b), khi $\\frac{Q}{m} = 8\\text{ kJ/kg} = 8000\\text{ J/kg}$ thì $\\Delta T = 2^{\\circ}\\text{C} = 2\\text{ K}$. Nhiệt dung riêng của vật liệu B: $c_B = \\frac{Q}{m\\Delta T} = \\frac{8000}{2} = 4000\\text{ J/(kg.K)}$."},{"id":"d74c0da8-2686-466b-9fb8-fb5437628fd2","type":"short","level":"VDC","chapterName":"Chương 1: vật lý nhiệt","points":0.25,"textHtml":"Nhiệt dung riêng của vật liệu A là bao nhiêu $J/(kg.K)$?","rawText":"Nhiệt dung riêng của vật liệu A là bao nhiêu $J/(kg.K)$?","ownImageUrl":"","optionsHtml":[],"optionsRaw":[],"correctIndex":0,"correctAnswer":"400","subQuestions":[],"solutionHtml":"$Q_A=Q_B\\Rightarrow m_A.c_A.60=m_B.c_B.20\\Rightarrow 300.c_A=30.c_B\\Rightarrow c_A400$","rawSolution":"$Q_A=Q_B\\Rightarrow m_A.c_A.60=m_B.c_B.20\\Rightarrow 300.c_A=30.c_B\\Rightarrow c_A400$"}]},{"blockId":"group_91c8550b-ed43-4d8a-bedf-a4fbd4671e0c_26","isSharedGroup":true,"contextHtml":"Người dân bản địa đôi khi đun nước bằng cách đặt những hòn đá nóng vào trong thùng nước. Một người sử dụng đá granit đang ở nhiệt độ $500^{\\circ}\\text{C}$ để đun $4{,}00\\text{ kg}$ nước ban đầu ở nhiệt độ $15^{\\circ}\\text{C}$ cho đến khi nước sôi. Biết có $0{,}0250\\text{ kg}$ nước thoát ra dưới dạng hơi từ tiếng xèo xèo ban đầu. Bỏ qua mọi sự thất thoát nhiệt ra môi trường xung quanh và nhiệt dung của thùng chứa. Cho nhiệt dung riêng của nước là $4180\\text{ J/(kg.K)}$ và của đá granit là $800\\text{ J/(kg.K)}$, nhiệt hóa hơi riêng của nước là $2{,}3.10^{6}\\text{ J/kg}$, áp suất khí quyển là $1\\text{ atm}$.","sharedImageUrl":"","questions":[{"id":"91c8550b-ed43-4d8a-bedf-a4fbd4671e0c","type":"short","level":"VD","chapterName":"Chương 1: vật lý nhiệt","points":0.25,"textHtml":"Kể từ nhiệt độ ban đầu, nhiệt lượng cần thiết để làm hóa hơi nước qua tiếng xèo xèo là bao nhiêu kJ (làm tròn kết quả đến chữ số hàng đơn vị)?","rawText":"Kể từ nhiệt độ ban đầu, nhiệt lượng cần thiết để làm hóa hơi nước qua tiếng xèo xèo là bao nhiêu kJ (làm tròn kết quả đến chữ số hàng đơn vị)?","ownImageUrl":"","optionsHtml":[],"optionsRaw":[],"correctIndex":0,"correctAnswer":"66","subQuestions":[],"solutionHtml":"Với $m_1 = 0{,}0250\\text{ kg}$ nước ban đầu ở $15^{\\circ}\\text{C}$ nóng tới $100^{\\circ}\\text{C}$ rồi hóa hơi hoàn toàn ở $100^{\\circ}\\text{C}$: $Q_{hh} = m_1 c_n (100 - 15) + m_1 L = 0{,}0250 \\cdot 4180 \\cdot 85 + 0{,}0250 \\cdot 2{,}3 \\cdot 10^6 = 8882{,}5 + 57500 = 66382{,}5\\text{ J} \\approx 66\\text{ kJ}$","rawSolution":"Với $m_1 = 0{,}0250\\text{ kg}$ nước ban đầu ở $15^{\\circ}\\text{C}$ nóng tới $100^{\\circ}\\text{C}$ rồi hóa hơi hoàn toàn ở $100^{\\circ}\\text{C}$: $Q_{hh} = m_1 c_n (100 - 15) + m_1 L = 0{,}0250 \\cdot 4180 \\cdot 85 + 0{,}0250 \\cdot 2{,}3 \\cdot 10^6 = 8882{,}5 + 57500 = 66382{,}5\\text{ J} \\approx 66\\text{ kJ}$"},{"id":"f9692433-1ec3-4c7b-8c92-b7dad7e6d9d0","type":"short","level":"VDC","chapterName":"Chương 1: vật lý nhiệt","points":0.25,"textHtml":"Khối lượng đá granit tối thiểu cần sử dụng để đun sôi lượng nước trên là bao nhiêu kg (làm tròn kết quả đến chữ số hàng phần trăm)?","rawText":"Khối lượng đá granit tối thiểu cần sử dụng để đun sôi lượng nước trên là bao nhiêu kg (làm tròn kết quả đến chữ số hàng phần trăm)?","ownImageUrl":"","optionsHtml":[],"optionsRaw":[],"correctIndex":0,"correctAnswer":"4.62","subQuestions":[],"solutionHtml":"$Q_{đá} = Q_n\\Rightarrow m_{đá}.c_{đá}.400=(m_n.4180.85)+m_h.\\lambda$<br>$\\Rightarrow m_{đá} = 4,62 kg $","rawSolution":"$Q_{đá} = Q_n\\Rightarrow m_{đá}.c_{đá}.400=(m_n.4180.85)+m_h.\\lambda$\n$\\Rightarrow m_{đá} = 4,62 kg $"}]}]}</script>
+  <script>
+    (function() {
+      var dataEl = document.getElementById('edusync-runtime-data');
+      var EXAM = JSON.parse(dataEl.textContent || '{}');
+      var LETTERS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+      var TF_LABELS = ['a', 'b', 'c', 'd', 'e', 'f'];
+
+      function shuffle(arr) {
+        var copy = arr.slice();
+        for (var i = copy.length - 1; i > 0; i--) {
+          var j = Math.floor(Math.random() * (i + 1));
+          var tmp = copy[i]; copy[i] = copy[j]; copy[j] = tmp;
+        }
+        return copy;
+      }
+
+      var blocks = EXAM.shuffleQuestions ? shuffle(EXAM.blocks || []) : (EXAM.blocks || []);
+      var flatQuestions = [];
+      blocks.forEach(function(block) {
+        block.questions.forEach(function(q) {
+          if (q.type === 'mcq' && EXAM.shuffleOptions && Array.isArray(q.optionsHtml)) {
+            var tagged = q.optionsHtml.map(function(html, idx) {
+              return { html: html, raw: q.optionsRaw[idx], isCorrect: idx === q.correctIndex };
+            });
+            var mixed = shuffle(tagged);
+            q.optionsHtml = mixed.map(function(m) { return m.html; });
+            q.optionsRaw = mixed.map(function(m) { return m.raw; });
+            q.correctIndex = Math.max(0, mixed.findIndex(function(m) { return m.isCorrect; }));
+          }
+          q.displayNumber = flatQuestions.length + 1;
+          flatQuestions.push(q);
+        });
+      });
+
+      var userAnswers = {};
+      var submitted = false;
+      var durationLimit = (EXAM.durationMinutes || 0) > 0 ? EXAM.durationMinutes * 60 : 0;
+      var startTime = Date.now();
+      var timerHandle = null;
+
+      function fmtTime(sec) {
+        var s = Math.max(0, Math.floor(sec));
+        var m = Math.floor(s / 60);
+        var r = s % 60;
+        return String(m).padStart(2, '0') + ':' + String(r).padStart(2, '0');
+      }
+
+      function isQuestionAnswered(q) {
+        var ans = userAnswers[q.id];
+        if (q.type === 'mcq') return typeof ans === 'number';
+        if (q.type === 'short') return typeof ans === 'string' && ans.trim().length > 0;
+        if (q.type === 'group-tf') {
+          if (!ans || typeof ans !== 'object') return false;
+          return q.subQuestions.some(function(sq) { return ans[sq.id] === 'True' || ans[sq.id] === 'False'; });
+        }
+        return false;
+      }
+
+      function updateProgress() {
+        var done = flatQuestions.filter(isQuestionAnswered).length;
+        document.getElementById('progressLabel').textContent = done + '/' + flatQuestions.length;
+        document.getElementById('sidebarCount').textContent = 'Đã làm ' + done + '/' + flatQuestions.length;
+        flatQuestions.forEach(function(q) {
+          var pBtn = document.getElementById('pbtn_' + q.displayNumber);
+          if (!pBtn || submitted) return;
+          pBtn.className = 'p-btn mono' + (isQuestionAnswered(q) ? ' done' : '');
+        });
+      }
+
+      function buildQuestionEl(q) {
+        var card = document.createElement('article');
+        card.className = 'q-card';
+        card.id = 'qcard_' + q.displayNumber;
+
+        var header = document.createElement('div');
+        header.className = 'q-header';
+        var leftMeta = '<span class="q-num">Câu ' + q.displayNumber + '</span>';
+        var tags = [q.level ? ('Mức ' + q.level) : '', q.points + ' đ', q.chapterName || ''].filter(Boolean).join(' · ');
+        header.innerHTML = leftMeta + '<span id="qstatus_' + q.displayNumber + '" class="q-status">' + tags + '</span>';
+        card.appendChild(header);
+
+        var qTextEl = document.createElement('div');
+        qTextEl.className = 'q-text';
+        qTextEl.innerHTML = q.textHtml;
+        card.appendChild(qTextEl);
+
+        if (q.ownImageUrl) {
+          var fig = document.createElement('div');
+          fig.className = 'q-figure';
+          var img = document.createElement('img');
+          img.src = q.ownImageUrl;
+          img.alt = 'Hình minh họa câu ' + q.displayNumber;
+          fig.appendChild(img);
+          card.appendChild(fig);
+        }
+
+        if (q.type === 'mcq') {
+          var grid = document.createElement('div');
+          grid.className = 'options-grid';
+          q.optionsHtml.forEach(function(optHtml, optIdx) {
+            var btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'opt-btn';
+            btn.id = 'opt_' + q.id + '_' + optIdx;
+            btn.innerHTML = '<span class="opt-letter mono">' + (LETTERS[optIdx] || optIdx + 1) + '</span><span style="flex:1;">' + optHtml + '</span>';
+            btn.addEventListener('click', function() {
+              if (submitted) return;
+              userAnswers[q.id] = optIdx;
+              q.optionsHtml.forEach(function(_, i2) {
+                var el = document.getElementById('opt_' + q.id + '_' + i2);
+                if (el) el.classList.toggle('selected', i2 === optIdx);
+              });
+              updateProgress();
+            });
+            grid.appendChild(btn);
+          });
+          card.appendChild(grid);
+        } else if (q.type === 'group-tf') {
+          var list = document.createElement('div');
+          list.className = 'tf-list';
+          q.subQuestions.forEach(function(sq, sIdx) {
+            var row = document.createElement('div');
+            row.className = 'tf-row';
+            row.id = 'tfrow_' + sq.id;
+
+            var txt = document.createElement('div');
+            txt.className = 'tf-text';
+            txt.innerHTML = '<strong>' + (TF_LABELS[sIdx] || (sIdx + 1)) + ')</strong> ' + sq.textHtml;
+            row.appendChild(txt);
+
+            var actions = document.createElement('div');
+            actions.className = 'tf-actions';
+            ['True', 'False'].forEach(function(val) {
+              var b = document.createElement('button');
+              b.type = 'button';
+              b.className = 'tf-choice';
+              b.id = 'tfbtn_' + sq.id + '_' + val;
+              b.textContent = val === 'True' ? 'Đúng' : 'Sai';
+              b.addEventListener('click', function() {
+                if (submitted) return;
+                if (!userAnswers[q.id] || typeof userAnswers[q.id] !== 'object') userAnswers[q.id] = {};
+                userAnswers[q.id][sq.id] = val;
+                var bt = document.getElementById('tfbtn_' + sq.id + '_True');
+                var bf = document.getElementById('tfbtn_' + sq.id + '_False');
+                if (bt) bt.classList.toggle('active', val === 'True');
+                if (bf) bf.classList.toggle('active', val === 'False');
+                updateProgress();
+              });
+              actions.appendChild(b);
+            });
+            row.appendChild(actions);
+            list.appendChild(row);
+          });
+          card.appendChild(list);
+        } else {
+          var sBox = document.createElement('div');
+          sBox.className = 'short-box';
+          var inp = document.createElement('input');
+          inp.type = 'text';
+          inp.className = 'short-input';
+          inp.id = 'short_' + q.id;
+          inp.placeholder = 'Nhập đáp số (vd: 2.6 hoặc 36)';
+          inp.addEventListener('input', function() {
+            if (submitted) return;
+            userAnswers[q.id] = inp.value;
+            updateProgress();
+          });
+          var fb = document.createElement('span');
+          fb.id = 'shortfb_' + q.id;
+          fb.className = 'short-feedback';
+          sBox.appendChild(inp);
+          sBox.appendChild(fb);
+          card.appendChild(sBox);
+        }
+
+        if (q.solutionHtml) {
+          var sol = document.createElement('div');
+          sol.className = 'solution-box';
+          sol.id = 'sol_' + q.id;
+          sol.innerHTML = '<strong>Lời giải chi tiết:</strong><div style="margin-top:4px;">' + q.solutionHtml + '</div>';
+          card.appendChild(sol);
+        }
+
+        return card;
+      }
+
+      function renderExam() {
+        var root = document.getElementById('questionsRoot');
+        var pal = document.getElementById('paletteRoot');
+        root.innerHTML = '';
+        pal.innerHTML = '';
+
+        blocks.forEach(function(block) {
+          if (block.contextHtml || block.sharedImageUrl) {
+            var groupEl = document.createElement('section');
+            groupEl.className = 'context-group';
+
+            var head = document.createElement('div');
+            head.className = 'context-header';
+            var firstNum = block.questions[0].displayNumber;
+            var lastNum = block.questions[block.questions.length - 1].displayNumber;
+            var labelText = block.questions.length > 1
+              ? 'Dữ liệu dùng chung cho Câu ' + firstNum + ' – Câu ' + lastNum
+              : 'Dữ liệu đề bài (Câu ' + firstNum + ')';
+            var html = '<div class="context-label">' + labelText + '</div>';
+            if (block.contextHtml) {
+              html += '<div class="context-body">' + block.contextHtml + '</div>';
+            }
+            head.innerHTML = html;
+            if (block.sharedImageUrl) {
+              var fig = document.createElement('div');
+              fig.className = 'q-figure';
+              var img = document.createElement('img');
+              img.src = block.sharedImageUrl;
+              img.alt = labelText;
+              fig.appendChild(img);
+              head.appendChild(fig);
+            }
+            groupEl.appendChild(head);
+
+            var inner = document.createElement('div');
+            inner.className = 'context-questions';
+            block.questions.forEach(function(q) {
+              inner.appendChild(buildQuestionEl(q));
+            });
+            groupEl.appendChild(inner);
+            root.appendChild(groupEl);
+          } else {
+            block.questions.forEach(function(q) {
+              root.appendChild(buildQuestionEl(q));
+            });
+          }
+        });
+
+        flatQuestions.forEach(function(q) {
+          var b = document.createElement('button');
+          b.type = 'button';
+          b.className = 'p-btn mono';
+          b.id = 'pbtn_' + q.displayNumber;
+          b.textContent = String(q.displayNumber);
+          b.addEventListener('click', function() {
+            var target = document.getElementById('qcard_' + q.displayNumber);
+            if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          });
+          pal.appendChild(b);
+        });
+
+        updateProgress();
+        if (window.MathJax && window.MathJax.typesetPromise) {
+          window.MathJax.typesetPromise().catch(function() {});
+        }
+      }
+
+      function normalizeShort(val) {
+        return String(val || '').trim().replace(/,/g, '.').replace(/\s+/g, '').toLowerCase();
+      }
+
+      function isShortMatch(userVal, expectedVal) {
+        var u = normalizeShort(userVal);
+        var e = normalizeShort(expectedVal);
+        if (!u) return false;
+        if (u === e) return true;
+        var nu = parseFloat(u);
+        var ne = parseFloat(e);
+        if (!isNaN(nu) && !isNaN(ne) && String(nu) === u || !isNaN(nu) && !isNaN(ne)) {
+          if (/^-?\d+(?:\.\d+)?$/.test(u) && /^-?\d+(?:\.\d+)?$/.test(e)) {
+            return Math.abs(nu - ne) < 1e-6;
+          }
+        }
+        return false;
+      }
+
+      function gradeAndSubmit(force) {
+        if (submitted) return;
+        var answered = flatQuestions.filter(isQuestionAnswered).length;
+        if (!force && answered < flatQuestions.length) {
+          document.getElementById('confirmMsg').textContent =
+            'Bạn mới làm ' + answered + '/' + flatQuestions.length + ' câu. Bạn có chắc muốn nộp bài ngay?';
+          document.getElementById('confirmBar').classList.add('visible');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+          return;
+        }
+        document.getElementById('confirmBar').classList.remove('visible');
+        submitted = true;
+        if (timerHandle) clearInterval(timerHandle);
+
+        var totalScore = 0;
+        var maxScore = EXAM.maxScore || 10;
+        var correctQuestions = 0;
+        var answerDetails = [];
+
+        flatQuestions.forEach(function(q) {
+          var qCorrect = false;
+          var pBtn = document.getElementById('pbtn_' + q.displayNumber);
+          var stEl = document.getElementById('qstatus_' + q.displayNumber);
+          var solEl = document.getElementById('sol_' + q.id);
+          if (solEl) solEl.classList.add('visible');
+
+          if (q.type === 'mcq') {
+            var chosen = typeof userAnswers[q.id] === 'number' ? userAnswers[q.id] : -1;
+            qCorrect = chosen === q.correctIndex;
+            if (qCorrect) {
+              totalScore += q.points;
+              correctQuestions++;
+            }
+            q.optionsHtml.forEach(function(_, i) {
+              var ob = document.getElementById('opt_' + q.id + '_' + i);
+              if (!ob) return;
+              ob.disabled = true;
+              ob.classList.remove('selected');
+              if (i === q.correctIndex) ob.classList.add('correct');
+              else if (i === chosen) ob.classList.add('wrong');
+            });
+            if (stEl) {
+              stEl.textContent = qCorrect ? ('Đúng (+' + q.points + 'đ)') : 'Sai (0đ)';
+              stEl.className = 'q-status ' + (qCorrect ? 'ok' : 'bad');
+            }
+            answerDetails.push({
+              orderIndex: answerDetails.length,
+              questionText: 'Câu ' + q.displayNumber + ': ' + q.rawText,
+              options: q.optionsRaw,
+              selectedIndex: chosen,
+              correctIndex: q.correctIndex,
+              isCorrect: qCorrect,
+              explanation: q.rawSolution
+            });
+          } else if (q.type === 'group-tf') {
+            var tfMap = (userAnswers[q.id] && typeof userAnswers[q.id] === 'object') ? userAnswers[q.id] : {};
+            var rightSubs = 0;
+            q.subQuestions.forEach(function(sq, sIdx) {
+              var picked = tfMap[sq.id] || '';
+              var subOk = picked === sq.correctAnswer;
+              if (subOk) rightSubs++;
+              var row = document.getElementById('tfrow_' + sq.id);
+              if (row) row.classList.add(subOk ? 'ok' : 'bad');
+              ['True', 'False'].forEach(function(v) {
+                var btn = document.getElementById('tfbtn_' + sq.id + '_' + v);
+                if (!btn) return;
+                btn.disabled = true;
+                if (v === sq.correctAnswer) btn.classList.add('right-ans');
+              });
+              answerDetails.push({
+                orderIndex: answerDetails.length,
+                questionText: 'Câu ' + q.displayNumber + (TF_LABELS[sIdx] || '') + ': ' + sq.rawText,
+                options: ['Đúng', 'Sai'],
+                selectedIndex: picked === 'True' ? 0 : (picked === 'False' ? 1 : -1),
+                correctIndex: sq.correctAnswer === 'True' ? 0 : 1,
+                isCorrect: subOk,
+                explanation: sIdx === q.subQuestions.length - 1 ? q.rawSolution : ''
+              });
+            });
+            var earnedRatio = 0;
+            if (q.subQuestions.length === 4) {
+              earnedRatio = rightSubs === 1 ? 0.1 : rightSubs === 2 ? 0.25 : rightSubs === 3 ? 0.5 : rightSubs === 4 ? 1 : 0;
+            } else if (q.subQuestions.length > 0) {
+              earnedRatio = rightSubs / q.subQuestions.length;
+            }
+            var earned = Math.round(q.points * earnedRatio * 100) / 100;
+            totalScore += earned;
+            qCorrect = rightSubs === q.subQuestions.length;
+            if (qCorrect) correctQuestions++;
+            if (stEl) {
+              stEl.textContent = 'Đúng ' + rightSubs + '/' + q.subQuestions.length + ' ý (+' + earned + 'đ)';
+              stEl.className = 'q-status ' + (qCorrect ? 'ok' : 'bad');
+            }
+          } else {
+            var rawInput = document.getElementById('short_' + q.id);
+            var typed = rawInput ? rawInput.value.trim() : '';
+            if (rawInput) rawInput.disabled = true;
+            qCorrect = isShortMatch(typed, q.correctAnswer);
+            if (qCorrect) {
+              totalScore += q.points;
+              correctQuestions++;
+            }
+            var fbEl = document.getElementById('shortfb_' + q.id);
+            if (fbEl) {
+              fbEl.textContent = qCorrect
+                ? ('Chính xác (+' + q.points + 'đ)')
+                : ('Đáp án đúng: ' + q.correctAnswer);
+              fbEl.style.color = qCorrect ? 'var(--ok)' : 'var(--bad)';
+            }
+            if (stEl) {
+              stEl.textContent = qCorrect ? ('Đúng (+' + q.points + 'đ)') : 'Sai (0đ)';
+              stEl.className = 'q-status ' + (qCorrect ? 'ok' : 'bad');
+            }
+            answerDetails.push({
+              orderIndex: answerDetails.length,
+              questionText: 'Câu ' + q.displayNumber + ': ' + q.rawText,
+              options: ['Bài làm: ' + (typed || '(bỏ trống)'), 'Đáp án chuẩn: ' + q.correctAnswer],
+              selectedIndex: qCorrect ? 1 : 0,
+              correctIndex: 1,
+              isCorrect: qCorrect,
+              explanation: q.rawSolution
+            });
+          }
+
+          if (pBtn) {
+            pBtn.className = 'p-btn mono ' + (qCorrect ? 'ok' : 'bad');
+          }
+        });
+
+        totalScore = Math.round(totalScore * 100) / 100;
+        var pct = maxScore > 0 ? Math.round((totalScore / maxScore) * 1000) / 10 : 0;
+
+        document.getElementById('scoreText').textContent = totalScore + ' / ' + maxScore + ' điểm';
+        document.getElementById('correctText').textContent =
+          'Đúng hoàn toàn ' + correctQuestions + ' / ' + flatQuestions.length + ' câu (' + pct + '%)';
+        document.getElementById('resultScreen').classList.add('visible');
+        document.getElementById('topSubmitBtn').style.display = 'none';
+        document.getElementById('sideSubmitBtn').style.display = 'none';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+
+        if (window.MathJax && window.MathJax.typesetPromise) {
+          window.MathJax.typesetPromise().catch(function() {});
+        }
+
+        if (typeof window.EduSyncSubmitScore === 'function') {
+          window.EduSyncSubmitScore(totalScore, maxScore, correctQuestions, flatQuestions.length, answerDetails);
+        } else if (window.parent && window.parent !== window) {
+          window.parent.postMessage({
+            type: 'QUIZ_RESULT',
+            score: totalScore,
+            maxScore: maxScore,
+            correctCount: correctQuestions,
+            totalQuestions: flatQuestions.length,
+            answerDetails: answerDetails
+          }, '*');
+        }
+      }
+
+      document.getElementById('topSubmitBtn').addEventListener('click', function() { gradeAndSubmit(false); });
+      document.getElementById('sideSubmitBtn').addEventListener('click', function() { gradeAndSubmit(false); });
+      document.getElementById('confirmYesBtn').addEventListener('click', function() { gradeAndSubmit(true); });
+      document.getElementById('confirmCancelBtn').addEventListener('click', function() {
+        document.getElementById('confirmBar').classList.remove('visible');
+      });
+
+      function tickTimer() {
+        if (submitted) return;
+        var elapsed = Math.floor((Date.now() - startTime) / 1000);
+        var box = document.getElementById('timerBox');
+        if (durationLimit > 0) {
+          var rem = Math.max(0, durationLimit - elapsed);
+          box.textContent = fmtTime(rem);
+          box.classList.toggle('urgent', rem <= 60);
+          if (rem <= 0) gradeAndSubmit(true);
+        } else {
+          box.textContent = fmtTime(elapsed);
+        }
+      }
+
+      renderExam();
+      tickTimer();
+      timerHandle = setInterval(tickTimer, 1000);
+    })();
+  </script>
+</body>
+</html>
