@@ -1,0 +1,1154 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tốc Độ Và Vận Tốc</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true
+      },
+      options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre'] }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --border: #e2e8f0;
+      --text: #0f172a;
+      --muted: #64748b;
+      --accent: #1d4ed8;
+      --accent-hover: #1e40af;
+      --accent-soft: #eff6ff;
+      --ok: #047857;
+      --ok-bg: #ecfdf5;
+      --ok-border: #6ee7b7;
+      --bad: #dc2626;
+      --bad-bg: #fef2f2;
+      --bad-border: #fca5a5;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.55;
+    }
+    .mono { font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace; font-variant-numeric: tabular-nums; }
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+    }
+    .topbar-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .exam-title { font-size: 16px; font-weight: 700; margin: 0; color: var(--text); }
+    .exam-meta { font-size: 12px; color: var(--muted); margin-top: 2px; }
+    .topbar-actions { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+    .timer-box {
+      padding: 6px 12px;
+      border-radius: 8px;
+      background: #f1f5f9;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .timer-box.urgent {
+      background: var(--bad-bg);
+      color: var(--bad);
+      border: 1px solid var(--bad-border);
+    }
+    .btn {
+      border: 1px solid transparent;
+      border-radius: 8px;
+      padding: 8px 16px;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background-color 0.15s ease, border-color 0.15s ease;
+    }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-primary:hover { background: var(--accent-hover); }
+    .btn-secondary { background: #fff; border-color: #cbd5e1; color: #334155; }
+    .btn-secondary:hover { background: #f8fafc; }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 280px;
+      gap: 20px;
+      align-items: start;
+    }
+    @media (max-width: 960px) {
+      .container { grid-template-columns: 1fr; }
+    }
+    .main-col { display: flex; flex-direction: column; gap: 18px; }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+    }
+    .result-card {
+      background: var(--ok-bg);
+      border: 1px solid var(--ok-border);
+      border-radius: 12px;
+      padding: 20px;
+      display: none;
+    }
+    .result-card.visible { display: block; }
+    .result-score { font-size: 26px; font-weight: 700; color: var(--ok); margin: 4px 0; }
+    .result-sub { font-size: 13px; color: #065f46; }
+    .confirm-bar {
+      display: none;
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      border-radius: 10px;
+      padding: 14px 16px;
+      margin-bottom: 4px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      font-size: 13px;
+      color: #92400e;
+    }
+    .confirm-bar.visible { display: flex; }
+    .context-group {
+      background: var(--surface);
+      border: 1px solid #cbd5e1;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .context-header {
+      background: #f1f5f9;
+      border-bottom: 1px solid var(--border);
+      padding: 16px 20px;
+    }
+    .context-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 6px;
+    }
+    .context-body { font-size: 14px; color: #1e293b; }
+    .context-questions {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      background: #f8fafc;
+    }
+    .q-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 18px;
+      scroll-margin-top: 84px;
+    }
+    .q-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding-bottom: 10px;
+      margin-bottom: 12px;
+      border-bottom: 1px solid #f1f5f9;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .q-num { font-size: 14px; font-weight: 700; color: var(--text); }
+    .q-status { font-weight: 600; }
+    .q-status.ok { color: var(--ok); }
+    .q-status.bad { color: var(--bad); }
+    .q-text { font-size: 15px; font-weight: 500; color: var(--text); margin-bottom: 14px; }
+    .q-figure {
+      margin: 12px 0;
+      text-align: center;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px;
+    }
+    .q-figure img { max-width: 100%; max-height: 360px; height: auto; border-radius: 4px; }
+    .options-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+    @media (max-width: 640px) {
+      .options-grid { grid-template-columns: 1fr; }
+    }
+    .opt-btn {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      text-align: left;
+      padding: 11px 13px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #fff;
+      font-family: inherit;
+      font-size: 14px;
+      color: #1e293b;
+      cursor: pointer;
+      transition: border-color 0.15s ease, background-color 0.15s ease;
+    }
+    .opt-btn:hover:not(:disabled) { border-color: #94a3b8; background: #f8fafc; }
+    .opt-btn.selected { border-color: var(--accent); background: var(--accent-soft); color: #1e3a8a; font-weight: 500; }
+    .opt-btn.correct { border-color: var(--ok-border); background: var(--ok-bg); color: #064e3b; font-weight: 600; }
+    .opt-btn.wrong { border-color: var(--bad-border); background: var(--bad-bg); color: #7f1d1d; }
+    .opt-letter {
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      border: 1px solid #cbd5e1;
+      background: #fff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .opt-btn.selected .opt-letter { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .tf-list { display: flex; flex-direction: column; gap: 10px; }
+    .tf-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #fff;
+    }
+    .tf-row.ok { border-color: var(--ok-border); background: var(--ok-bg); }
+    .tf-row.bad { border-color: var(--bad-border); background: var(--bad-bg); }
+    .tf-text { font-size: 14px; flex: 1; }
+    .tf-actions { display: flex; gap: 6px; flex-shrink: 0; }
+    .tf-choice {
+      padding: 6px 12px;
+      border-radius: 6px;
+      border: 1px solid #cbd5e1;
+      background: #fff;
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .tf-choice.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .tf-choice.right-ans { border-color: var(--ok); color: var(--ok); }
+    .short-box { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+    .short-input {
+      width: 240px;
+      max-width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px;
+    }
+    .short-input:focus { outline: 2px solid var(--accent); border-color: var(--accent); }
+    .short-feedback { font-size: 13px; font-weight: 600; }
+    .solution-box {
+      display: none;
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: 8px;
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      font-size: 13px;
+      color: #334155;
+    }
+    .solution-box.visible { display: block; }
+    .sidebar {
+      position: sticky;
+      top: 76px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+    }
+    .palette-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 6px;
+      margin: 12px 0 16px;
+    }
+    .p-btn {
+      height: 34px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: #f8fafc;
+      font-size: 12px;
+      font-weight: 700;
+      color: #334155;
+      cursor: pointer;
+    }
+    .p-btn.done { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .p-btn.ok { background: var(--ok); color: #fff; border-color: var(--ok); }
+    .p-btn.bad { background: var(--bad); color: #fff; border-color: var(--bad); }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div>
+        <h1 class="exam-title">Tốc Độ Và Vận Tốc</h1>
+        <div class="exam-meta">Vật Lý · Khối 10 · CHƯƠNG 2: ĐỘNG HỌC · 20 câu · Thang 10 điểm</div>
+      </div>
+      <div class="topbar-actions">
+        <span id="progressLabel" class="exam-meta mono">0/20</span>
+        <div id="timerBox" class="timer-box mono">00:00</div>
+        <button id="topSubmitBtn" type="button" class="btn btn-primary">Nộp bài</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <main class="main-col">
+      <div id="confirmBar" class="confirm-bar">
+        <span id="confirmMsg">Bạn vẫn còn câu chưa trả lời. Xác nhận nộp bài ngay?</span>
+        <div style="display:flex;gap:8px;">
+          <button id="confirmCancelBtn" type="button" class="btn btn-secondary">Làm tiếp</button>
+          <button id="confirmYesBtn" type="button" class="btn btn-primary">Xác nhận nộp</button>
+        </div>
+      </div>
+
+      <section id="resultScreen" class="result-card">
+        <div style="font-size:12px;font-weight:700;color:#047857;">KẾT QUẢ BÀI LÀM</div>
+        <div id="scoreText" class="result-score mono">0 / 10</div>
+        <div id="correctText" class="result-sub mono">0 / 20</div>
+        <div id="explanationsSection" class="result-sub" style="margin-top:6px;">
+          Xem lại từng câu và lời giải chi tiết ở bên dưới.
+        </div>
+      </section>
+
+      <div id="questionsRoot" class="main-col"></div>
+    </main>
+
+    <aside class="sidebar">
+      <div style="font-size:14px;font-weight:700;">Bảng câu hỏi</div>
+      <div id="sidebarCount" class="exam-meta mono">Đã làm 0/20</div>
+      <div id="paletteRoot" class="palette-grid"></div>
+      <button id="sideSubmitBtn" type="button" class="btn btn-primary" style="width:100%;">Nộp bài &amp; Chấm điểm</button>
+    </aside>
+  </div>
+
+  <script type="application/json" id="edusync-exam-json">{
+  "id": "098a7a3b-e644-4bc1-88f8-20478d360560",
+  "title": "Tốc Độ Và Vận Tốc",
+  "subject": "Vật Lý",
+  "grade": "10",
+  "type": "test",
+  "category": "CHƯƠNG 2: ĐỘNG HỌC",
+  "durationMinutes": 20,
+  "shuffleQuestions": false,
+  "shuffleOptions": false,
+  "questionCount": 20,
+  "questions": [
+    {
+      "id": "1d42eebc-0b01-4d64-8182-6b1cdf3784b5",
+      "index": 1,
+      "type": "mcq",
+      "level": "B",
+      "text": "Đại lượng nào sau đây được xác định bằng thương số giữa quãng đường đi được và khoảng thời gian để đi hết quãng đường đó?",
+      "options": [
+        "Vận tốc trung bình.",
+        "Tốc độ trung bình.",
+        "Vận tốc tức thời.",
+        "Độ dịch chuyển."
+      ],
+      "correctAnswer": "Tốc độ trung bình.",
+      "solution": "Theo định nghĩa trong SGK (Trang 26), thương số giữa quãng đường đi được và thời gian đi được xác định độ nhanh, chậm của chuyển động gọi là tốc độ trung bình: $v = \\frac{s}{t}$.",
+      "points": 0.5
+    },
+    {
+      "id": "b3308d41-5853-40ed-a059-de7ff6d14622",
+      "index": 2,
+      "type": "mcq",
+      "level": "B",
+      "text": "Đồng hồ tốc độ (tốc kế) đặt trên bảng điều khiển của xe máy hoặc ô tô khi đang chạy chỉ đại lượng nào dưới đây?",
+      "options": [
+        "Tốc độ trung bình của xe.",
+        "Vận tốc trung bình của xe.",
+        "Tốc độ tức thời của xe.",
+        "Vận tốc tức thời của xe."
+      ],
+      "correctAnswer": "Tốc độ tức thời của xe.",
+      "solution": "Tốc kế đặt trước mặt người lái xe chỉ tốc độ mà xe đang chạy vào thời điểm người lái xe đọc số chỉ của tốc kế. Tốc độ này gọi là tốc độ tức thời (SGK Trang 27).",
+      "points": 0.5
+    },
+    {
+      "id": "c0589ca0-fe99-47a4-843a-ec19e02b3bbe",
+      "index": 3,
+      "type": "mcq",
+      "level": "B",
+      "text": "Vận tốc trung bình là đại lượng được xác định bằng thương số giữa đại lượng nào và thời gian dịch chuyển?",
+      "options": [
+        "Quãng đường đi được.",
+        "Độ dịch chuyển.",
+        "Tốc độ tức thời.",
+        "Tọa độ ban đầu."
+      ],
+      "correctAnswer": "Độ dịch chuyển.",
+      "solution": "Trong Vật lí, thương số giữa độ dịch chuyển và thời gian dịch chuyển để xác định độ nhanh, chậm của chuyển động theo một hướng xác định được gọi là vận tốc trung bình: $\\vec{v} = \\frac{\\vec{d}}{t}$ (SGK Trang 27).",
+      "points": 0.5
+    },
+    {
+      "id": "170ce8a0-dad3-414b-bcca-c3e44e5c050c",
+      "index": 4,
+      "type": "mcq",
+      "level": "B",
+      "text": "Phát biểu nào sau đây là **SAI** khi nói về vectơ vận tốc trung bình $\\vec{v}$?",
+      "options": [
+        "Gốc của vectơ vận tốc nằm trên vật chuyển động.",
+        "Hướng của vectơ vận tốc là hướng của độ dịch chuyển.",
+        "Độ dài của vectơ vận tốc tỉ lệ với độ lớn của vận tốc.",
+        "Hướng của vectơ vận tốc luôn luôn cùng hướng với hướng chuyển động của vật trong mọi trường hợp đường cong."
+      ],
+      "correctAnswer": "Hướng của vectơ vận tốc luôn luôn cùng hướng với hướng chuyển động của vật trong mọi trường hợp đường cong.",
+      "solution": "Vectơ vận tốc trung bình có gốc nằm trên vật chuyển động, hướng là hướng của độ dịch chuyển (chứ không nhất thiết trùng với hướng chuyển động tức thời tại mọi điểm nếu đường đi cong phức tạp), độ dài tỉ lệ với độ lớn vận tốc (SGK Trang 28).",
+      "points": 0.5
+    },
+    {
+      "id": "9f05c7c2-f850-4cb4-abde-56765ba4999e",
+      "index": 5,
+      "type": "mcq",
+      "level": "B",
+      "text": "Khi nào thì tốc độ trung bình và độ lớn vận tốc trung bình của một vật chuyển động có giá trị **bằng nhau**?",
+      "options": [
+        "Khi vật chuyển động tròn đều.",
+        "Khi vật chuyển động thẳng và không đổi chiều.",
+        "Khi vật chuyển động thẳng và có đổi chiều chuyển động.",
+        "Trong mọi trường hợp chuyển động."
+      ],
+      "correctAnswer": "Khi vật chuyển động thẳng và không đổi chiều.",
+      "solution": "Khi vật chuyển động thẳng theo một hướng (không đổi chiều) thì quãng đường đi được bằng độ lớn độ dịch chuyển ($s = d$), do đó tốc độ và vận tốc có độ lớn bằng nhau: $v = v$ (SGK Trang 29).",
+      "points": 0.5
+    },
+    {
+      "id": "8c4b0290-0c1f-4547-a6c9-52916a74f684",
+      "index": 6,
+      "type": "mcq",
+      "level": "B",
+      "text": "Gọi $\\vec{v}_{1,2}$ là vận tốc của vật (1) đối với vật (2), $\\vec{v}_{2,3}$ là vận tốc của vật (2) đối với vật (3), $\\vec{v}_{1,3}$ là vận tốc của vật (1) đối với vật (3). Công thức cộng vận tốc đúng là:",
+      "options": [
+        "$\\vec{v}_{1,3} = \\vec{v}_{1,2} + \\vec{v}_{2,3}$",
+        "$\\vec{v}_{1,2} = \\vec{v}_{1,3} + \\vec{v}_{2,3}$",
+        "$\\vec{v}_{1,3} = \\vec{v}_{1,2} - \\vec{v}_{2,3}$",
+        "$v_{1,3} = v_{1,2} + v_{2,3}$ trong mọi trường hợp."
+      ],
+      "correctAnswer": "$\\vec{v}_{1,3} = \\vec{v}_{1,2} + \\vec{v}_{2,3}$",
+      "solution": "Công thức cộng vận tốc dạng vectơ chuẩn là: $\\vec{v}_{1,3} = \\vec{v}_{1,2} + \\vec{v}_{2,3}$ (SGK Trang 29).",
+      "points": 0.5
+    },
+    {
+      "id": "3cadd3f0-50c4-40e2-8445-5b0b8fc2d8e1",
+      "index": 7,
+      "type": "mcq",
+      "level": "B",
+      "text": "Khái niệm tốc độ tức thời liên quan trực tiếp đến khái niệm nào trong Toán học lớp 11?",
+      "options": [
+        "Tích phân.",
+        "Đạo hàm.",
+        "Hình học không gian.",
+        "Cấp số cộng."
+      ],
+      "correctAnswer": "Đạo hàm.",
+      "solution": "SGK Trang 27 mục 'EM CÓ BIẾT?' nêu rõ: Khái niệm tốc độ tức thời liên quan đến phép tính đạo hàm của môn Toán học. Có thể coi tốc độ tức thời là tốc độ trung bình trong khoảng thời gian rất ngắn.",
+      "points": 0.5
+    },
+    {
+      "id": "4a6a57e1-2f9f-4586-90d4-004f4a7ed041",
+      "index": 8,
+      "type": "mcq",
+      "level": "B",
+      "text": "Điểm khác biệt cơ bản nhất giữa tốc độ và vận tốc là gì?",
+      "options": [
+        "Tốc độ có đơn vị là m/s, còn vận tốc có đơn vị là km/h.",
+        "Tốc độ là đại lượng vô hướng, còn vận tốc là đại lượng vectơ thể hiện cả độ lớn và hướng.",
+        "Tốc độ dùng cho chuyển động thẳng, vận tốc dùng cho chuyển động cong.",
+        "Tốc độ luôn thay đổi, vận tốc luôn hằng số."
+      ],
+      "correctAnswer": "Tốc độ là đại lượng vô hướng, còn vận tốc là đại lượng vectơ thể hiện cả độ lớn và hướng.",
+      "solution": "Tốc độ $v = s/t$ là đại lượng vô hướng (chỉ có độ lớn), còn vận tốc $\\vec{v} = \\vec{d}/t$ là đại lượng vectơ có cả độ lớn và hướng dịch chuyển.",
+      "points": 0.5
+    },
+    {
+      "id": "13f095ee-7bc7-4092-a27d-daf956c3dd1e",
+      "index": 9,
+      "type": "mcq",
+      "level": "H",
+      "text": "Một vận động viên chạy từ điểm xuất phát A đến điểm B trên đường thẳng dài $100$ m, sau đó quay ngược trở lại về đúng vị trí xuất phát A. Vận tốc trung bình của người đó trong cả quá trình chạy là:",
+      "options": [
+        "Cực đại.",
+        "Bằng 0.",
+        "Bằng tốc độ trung bình.",
+        "Bằng $100$ m/s."
+      ],
+      "correctAnswer": "Bằng 0.",
+      "solution": "Vì điểm đầu và điểm cuối trùng nhau (về lại A) nên độ dịch chuyển $d = 0$. Vận tốc trung bình $v = \\frac{d}{t} = 0$.",
+      "points": 0.5
+    },
+    {
+      "id": "b5dd684c-e3fb-49a9-be22-453910094259",
+      "index": 10,
+      "type": "mcq",
+      "level": "H",
+      "text": "Một người đi xe máy từ ngã tư O (Hình 5.1 trong bài) đi theo hướng Bắc với tốc độ trung bình $30$ km/h. Biết mỗi khoảng chia trên trục giao thông dài $0,5$ km. Sau thời gian $3 phút$, người đó đến vị trí điểm nào?",
+      "options": [
+        "Điểm C.",
+        "Điểm D.",
+        "Điểm E.",
+        "Điểm H."
+      ],
+      "correctAnswer": "Điểm C.",
+      "solution": "Đổi thời gian $t = 3 phút = \\frac{3}{60} h = 0,05$ h. Quãng đường đi được $s = v \\cdot t = 30 \\times 0,05 = 1,5$ km. Vì mỗi đoạn là $0,5$ km nên $1,5$ km ứng với 3 đoạn về hướng Bắc. Tương ứng vị trí điểm C.",
+      "points": 0.5
+    },
+    {
+      "id": "f9806e7d-3c2e-4fd6-9841-f0b33e1f6eb4",
+      "index": 11,
+      "type": "mcq",
+      "level": "H",
+      "text": "Bố đưa bạn A đi học từ nhà lúc 7 giờ. Sau 5 phút xe đạt tốc độ $30$ km/h. Sau 10 phút nữa xe tăng tốc độ lên $45$ km/h. Đến trường xe dừng lúc 7 giờ 30 phút. Giá trị $45$ km/h ghi nhận ở thời điểm 7 giờ 15 phút là đại lượng nào?",
+      "options": [
+        "Tốc độ trung bình cả chuyến đi.",
+        "Vận tốc trung bình cả chuyến đi.",
+        "Tốc độ tức thời của xe máy.",
+        "Quãng đường xe đi được."
+      ],
+      "correctAnswer": "Tốc độ tức thời của xe máy.",
+      "solution": "Tốc độ ghi nhận tại một thời điểm xác định (lúc 7h15min) là tốc độ tức thời của xe máy vào thời điểm đó.",
+      "points": 0.5
+    },
+    {
+      "id": "cee7c542-c474-470e-9a1a-692c16b0de98",
+      "index": 12,
+      "type": "mcq",
+      "level": "H",
+      "text": "Một đoàn tàu đang chạy thẳng với vận tốc $36$ km/h so với mặt đường. Một hành khách đi về phía **cuối tàu** với vận tốc $1$ m/s so với sàn tàu. Vận tốc của hành khách đối với mặt đường có độ lớn là bao nhiêu?",
+      "options": [
+        "$11$ m/s",
+        "$9$ m/s",
+        "$37$ m/s",
+        "$35$ m/s"
+      ],
+      "correctAnswer": "$9$ m/s",
+      "solution": "Đổi vận tốc tàu so với đường: $v_{2,3} = 36 km/h = 10$ m/s theo hướng tàu chạy. Vận tốc người so với tàu: $v_{1,2} = 1$ m/s ngược hướng tàu chạy. Vì chuyển động ngược chiều: $v_{1,3} = v_{2,3} - v_{1,2} = 10 - 1 = 9$ m/s.",
+      "points": 0.5
+    },
+    {
+      "id": "1a119792-8276-4780-82f3-a374ef8afb52",
+      "index": 13,
+      "type": "mcq",
+      "level": "H",
+      "text": "Một người bơi trong bể bơi yên lặng có thể đạt vận tốc tối đa $1$ m/s. Nếu người này bơi **xuôi dòng** sông có vận tốc dòng chảy là $1$ m/s thì vận tốc tối đa của người đó so với bờ sông có thể đạt là bao nhiêu?",
+      "options": [
+        "$0$ m/s",
+        "$1$ m/s",
+        "$2$ m/s",
+        "$1,41$ m/s"
+      ],
+      "correctAnswer": "$2$ m/s",
+      "solution": "Khi bơi xuôi dòng, vận tốc bơi và vận tốc dòng nước cùng phương cùng chiều: $v_{1,3} = v_{1,2} + v_{2,3} = 1 + 1 = 2$ m/s.",
+      "points": 0.5
+    },
+    {
+      "id": "de9407bd-32a5-43e7-9f4a-2f641419c918",
+      "index": 14,
+      "type": "mcq",
+      "level": "H",
+      "text": "Dựa vào Bảng 5.2 (Thành tích của nữ vận động viên Việt Nam chạy cự li $100$ m): Điền kinh QG 2016 ($11,64$ s), SEA Games 29 năm 2017 ($11,56$ s), SEA Games 30 năm 2019 ($11,54$ s). Phát biểu nào đúng?",
+      "options": [
+        "Tốc độ trung bình tại SEA Games 30 là lớn nhất.",
+        "Tốc độ trung bình tại Điền kinh QG 2016 là lớn nhất.",
+        "Tốc độ trung bình cả 3 giải là bằng nhau.",
+        "Không thể so sánh tốc độ vì khác giải đấu."
+      ],
+      "correctAnswer": "Tốc độ trung bình tại SEA Games 30 là lớn nhất.",
+      "solution": "Cùng cự li chạy $s = 100$ m, giải SEA Games 30 có thời gian chạy ngắn nhất ($11,54$ s), do đó tốc độ trung bình $v = s/t$ đạt giá trị lớn nhất.",
+      "points": 0.5
+    },
+    {
+      "id": "a4e7a3bb-c1e4-4e83-98b2-9703af5a4d1e",
+      "index": 15,
+      "type": "mcq",
+      "level": "H",
+      "text": "Nếu hai vận tốc thành phần $\\vec{v}_{1,2}$ và $\\vec{v}_{2,3}$ vuông góc với nhau thì độ lớn của vận tốc tổng hợp $v_{1,3}$ được tính bằng công thức nào?",
+      "options": [
+        "$v_{1,3} = v_{1,2} + v_{2,3}$",
+        "$v_{1,3} = |v_{1,2} - v_{2,3}|$",
+        "$v_{1,3} = \\sqrt{v_{1,2}^2 + v_{2,3}^2}$",
+        "$v_{1,3} = \\frac{v_{1,2} + v_{2,3}}{2}$"
+      ],
+      "correctAnswer": "$v_{1,3} = \\sqrt{v_{1,2}^2 + v_{2,3}^2}$",
+      "solution": "Khi $\\vec{v}_{1,2} \\perp \\vec{v}_{2,3}$, theo quy tắc hình bình hành (tam giác vuông), độ lớn vận tốc tổng hợp là: $v_{1,3} = \\sqrt{v_{1,2}^2 + v_{2,3}^2}$ (SGK Trang 29).",
+      "points": 0.5
+    },
+    {
+      "id": "0ee4616f-a699-432c-9323-a12ad9946f24",
+      "index": 16,
+      "type": "mcq",
+      "level": "VD",
+      "text": "Bạn A đi học từ nhà đến trường theo lộ trình $A \\to B \\to C$ (Hình 5.2). Đoạn đường $AB = 400$ m hết $6 phút$, đoạn đường $BC = 300$ m hết $4 phút$ (với $AB \\perp BC$). Tốc độ trung bình và độ lớn vận tốc trung bình của bạn A khi đi từ A đến C lần lượt là:",
+      "options": [
+        "$1,17$ m/s và $0,83$ m/s",
+        "$0,83$ m/s và $1,17$ m/s",
+        "$1,00$ m/s và $1,00$ m/s",
+        "$0,70$ m/s và $0,50$ m/s"
+      ],
+      "correctAnswer": "$1,17$ m/s và $0,83$ m/s",
+      "solution": "Tổng quãng đường $s = 400 + 300 = 700$ m. Tổng thời gian $t = 6 phút + 4 phút = 10 phút = 600$ s.\n- Tốc độ trung bình: $v = \\frac{s}{t} = \\frac{700}{600} \\approx 1,17$ m/s.\n- Độ dịch chuyển $d = AC = \\sqrt{400^2 + 300^2} = 500$ m.\n- Độ lớn vận tốc trung bình: $v = \\frac{d}{t} = \\frac{500}{600} \\approx 0,83$ m/s.",
+      "points": 0.5
+    },
+    {
+      "id": "886445c8-ab40-4895-8517-a457ea52de85",
+      "index": 17,
+      "type": "mcq",
+      "level": "VD",
+      "text": "Một ca nô chạy trong hồ nước yên lặng có vận tốc tối đa $18$ km/h. Khi ca nô chạy hướng vuông góc với bờ sang một con sông có dòng chảy theo hướng Bắc - Nam với vận tốc $5$ m/s thì vận tốc tối đa ca nô đạt được so với bờ sông là bao nhiêu?",
+      "options": [
+        "$5,00$ m/s",
+        "$7,07$ m/s",
+        "$10,0$ m/s",
+        "$23,0$ km/h"
+      ],
+      "correctAnswer": "$7,07$ m/s",
+      "solution": "Đổi vận tốc ca nô đối với nước: $v_{1,2} = 18 km/h = 5$ m/s. Vận tốc nước chảy so với bờ: $v_{2,3} = 5$ m/s. Vì hai vận tốc vuông góc nhau nên: $v_{1,3} = \\sqrt{v_{1,2}^2 + v_{2,3}^2} = \\sqrt{5^2 + 5^2} = 5\\sqrt{2} \\approx 7,07$ m/s (SGK Trang 29).",
+      "points": 0.5
+    },
+    {
+      "id": "bed815e1-5eac-456e-8fbe-93aff24360f2",
+      "index": 18,
+      "type": "mcq",
+      "level": "VD",
+      "text": "Một máy bay đang bay theo hướng Bắc với vận tốc $200$ m/s đối với không khí thì bị gió thổi từ hướng Tây sang Đông với vận tốc $20$ m/s. Độ lớn vận tốc tổng hợp của máy bay lúc này so với mặt đất xấp xỉ bằng:",
+      "options": [
+        "$220,0$ m/s",
+        "$180,0$ m/s",
+        "$201,0$ m/s",
+        "$205,5$ m/s"
+      ],
+      "correctAnswer": "$201,0$ m/s",
+      "solution": "Hướng Bắc và hướng Đông vuông góc với nhau. Áp dụng công thức tổng hợp hai vận tốc vuông góc:\n$v = \\sqrt{v_{máy bay}^2 + v_{gió}^2} = \\sqrt{200^2 + 20^2} = \\sqrt{40000 + 400} = \\sqrt{40400} \\approx 201,0$ m/s.",
+      "points": 0.5
+    },
+    {
+      "id": "5a96020d-d9b3-468d-b555-7916d508f1b3",
+      "index": 19,
+      "type": "mcq",
+      "level": "VD",
+      "text": "Một ca nô chạy hết tốc lực trên mặt nước yên lặng có thể đạt $21,5$ km/h. Ca nô này chạy xuôi dòng sông từ A đến B mất thời gian $1 giờ$, rồi lập tức quay ngược dòng từ B về A thì phải mất $2 giờ$ nữa mới về tới A. Vận tốc chảy của dòng nước là bao nhiêu?",
+      "options": [
+        "$7,17$ km/h",
+        "$5,38$ km/h",
+        "$3,58$ km/h",
+        "$4,30$ km/h"
+      ],
+      "correctAnswer": "$7,17$ km/h",
+      "solution": "Gọi $v_1 = 21,5$ km/h là vận tốc ca nô đối với nước, $v_n$ là vận tốc dòng nước.\n- Khi xuôi dòng từ A đến B: $s = (v_1 + v_n) \\cdot t_1 = (21,5 + v_n) \\cdot 1$.\n- Khi ngược dòng từ B về A: $s = (v_1 - v_n) \\cdot t_2 = (21,5 - v_n) \\cdot 2$.\nCho hai biểu thức quãng đường bằng nhau:\n$21,5 + v_n = 2 \\cdot (21,5 - v_n) \\iff 21,5 + v_n = 43 - 2v_n \\iff 3v_n = 21,5 \\implies v_n = \\frac{21,5}{3} \\approx 7,17$ km/h.",
+      "points": 0.5
+    },
+    {
+      "id": "78f5f78b-144a-41e7-b0b7-2b96d3595fa5",
+      "index": 20,
+      "type": "mcq",
+      "level": "VD",
+      "text": "Một con thuyền đi từ bờ A sang bờ B của một con sông rộng $400$ m. Vận tốc chảy của dòng nước là $3$ m/s. Thuyền di chuyển với tốc độ $5$ m/s so với nước. Để thuyền cập bến tại điểm B đối diện trực diện với A theo đường thẳng vuông góc với bờ sông, người lái phải hướng mũi thuyền hợp với bờ sông phía thượng nguồn một góc $\\alpha$ và thời gian qua sông $t$ bằng:",
+      "options": [
+        "$\\alpha \\approx 53,13^\\circ$; $t = 100$ s",
+        "$\\alpha \\approx 36,87^\\circ$; $t = 100$ s",
+        "$\\alpha \\approx 53,13^\\circ$; $t = 80$ s",
+        "$\\alpha \\approx 60,00^\\circ$; $t = 133,3$ s"
+      ],
+      "correctAnswer": "$\\alpha \\approx 53,13^\\circ$; $t = 100$ s",
+      "solution": "Để thuyền đi theo đường thẳng vuông góc bờ sông, vectơ vận tốc tổng hợp $\\vec{v}$ phải vuông góc với bờ.\n- Thành phần vận tốc thuyền ngược dòng phải triệt tiêu vận tốc dòng nước: $v_{thuyền} \\cdot \\cos\\alpha = v_{nước} \\implies \\cos\\alpha = \\frac{3}{5} = 0,6 \\implies \\alpha \\approx 53,13^\\circ$ so với bờ sông phía thượng nguồn.\n- Vận tốc tổng hợp theo phương vuông góc với bờ: $v = \\sqrt{v_{thuyền}^2 - v_{nước}^2} = \\sqrt{5^2 - 3^2} = 4$ m/s.\n- Thời gian qua sông: $t = \\frac{d}{v} = \\frac{400}{4} = 100$ s.",
+      "points": 0.5
+    }
+  ]
+}</script>
+  <script id="edusync-runtime-data" type="application/json">{"examId":"098a7a3b-e644-4bc1-88f8-20478d360560","title":"Tốc Độ Và Vận Tốc","subject":"Vật Lý","grade":"10","category":"CHƯƠNG 2: ĐỘNG HỌC","durationMinutes":20,"maxScore":10,"shuffleQuestions":false,"shuffleOptions":false,"blocks":[{"blockId":"single_1d42eebc-0b01-4d64-8182-6b1cdf3784b5_0","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"1d42eebc-0b01-4d64-8182-6b1cdf3784b5","type":"mcq","level":"B","chapterName":"","points":0.5,"textHtml":"Đại lượng nào sau đây được xác định bằng thương số giữa quãng đường đi được và khoảng thời gian để đi hết quãng đường đó?","rawText":"Đại lượng nào sau đây được xác định bằng thương số giữa quãng đường đi được và khoảng thời gian để đi hết quãng đường đó?","ownImageUrl":"","optionsHtml":["Vận tốc trung bình.","Tốc độ trung bình.","Vận tốc tức thời.","Độ dịch chuyển."],"optionsRaw":["Vận tốc trung bình.","Tốc độ trung bình.","Vận tốc tức thời.","Độ dịch chuyển."],"correctIndex":1,"correctAnswer":"Tốc độ trung bình.","subQuestions":[],"solutionHtml":"Theo định nghĩa trong SGK (Trang 26), thương số giữa quãng đường đi được và thời gian đi được xác định độ nhanh, chậm của chuyển động gọi là tốc độ trung bình: $v = \\frac{s}{t}$.","rawSolution":"Theo định nghĩa trong SGK (Trang 26), thương số giữa quãng đường đi được và thời gian đi được xác định độ nhanh, chậm của chuyển động gọi là tốc độ trung bình: $v = \\frac{s}{t}$."}]},{"blockId":"single_b3308d41-5853-40ed-a059-de7ff6d14622_1","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"b3308d41-5853-40ed-a059-de7ff6d14622","type":"mcq","level":"B","chapterName":"","points":0.5,"textHtml":"Đồng hồ tốc độ (tốc kế) đặt trên bảng điều khiển của xe máy hoặc ô tô khi đang chạy chỉ đại lượng nào dưới đây?","rawText":"Đồng hồ tốc độ (tốc kế) đặt trên bảng điều khiển của xe máy hoặc ô tô khi đang chạy chỉ đại lượng nào dưới đây?","ownImageUrl":"","optionsHtml":["Tốc độ trung bình của xe.","Vận tốc trung bình của xe.","Tốc độ tức thời của xe.","Vận tốc tức thời của xe."],"optionsRaw":["Tốc độ trung bình của xe.","Vận tốc trung bình của xe.","Tốc độ tức thời của xe.","Vận tốc tức thời của xe."],"correctIndex":2,"correctAnswer":"Tốc độ tức thời của xe.","subQuestions":[],"solutionHtml":"Tốc kế đặt trước mặt người lái xe chỉ tốc độ mà xe đang chạy vào thời điểm người lái xe đọc số chỉ của tốc kế. Tốc độ này gọi là tốc độ tức thời (SGK Trang 27).","rawSolution":"Tốc kế đặt trước mặt người lái xe chỉ tốc độ mà xe đang chạy vào thời điểm người lái xe đọc số chỉ của tốc kế. Tốc độ này gọi là tốc độ tức thời (SGK Trang 27)."}]},{"blockId":"single_c0589ca0-fe99-47a4-843a-ec19e02b3bbe_2","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"c0589ca0-fe99-47a4-843a-ec19e02b3bbe","type":"mcq","level":"B","chapterName":"","points":0.5,"textHtml":"Vận tốc trung bình là đại lượng được xác định bằng thương số giữa đại lượng nào và thời gian dịch chuyển?","rawText":"Vận tốc trung bình là đại lượng được xác định bằng thương số giữa đại lượng nào và thời gian dịch chuyển?","ownImageUrl":"","optionsHtml":["Quãng đường đi được.","Độ dịch chuyển.","Tốc độ tức thời.","Tọa độ ban đầu."],"optionsRaw":["Quãng đường đi được.","Độ dịch chuyển.","Tốc độ tức thời.","Tọa độ ban đầu."],"correctIndex":1,"correctAnswer":"Độ dịch chuyển.","subQuestions":[],"solutionHtml":"Trong Vật lí, thương số giữa độ dịch chuyển và thời gian dịch chuyển để xác định độ nhanh, chậm của chuyển động theo một hướng xác định được gọi là vận tốc trung bình: $\\vec{v} = \\frac{\\vec{d}}{t}$ (SGK Trang 27).","rawSolution":"Trong Vật lí, thương số giữa độ dịch chuyển và thời gian dịch chuyển để xác định độ nhanh, chậm của chuyển động theo một hướng xác định được gọi là vận tốc trung bình: $\\vec{v} = \\frac{\\vec{d}}{t}$ (SGK Trang 27)."}]},{"blockId":"single_170ce8a0-dad3-414b-bcca-c3e44e5c050c_3","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"170ce8a0-dad3-414b-bcca-c3e44e5c050c","type":"mcq","level":"B","chapterName":"","points":0.5,"textHtml":"Phát biểu nào sau đây là **SAI** khi nói về vectơ vận tốc trung bình $\\vec{v}$?","rawText":"Phát biểu nào sau đây là **SAI** khi nói về vectơ vận tốc trung bình $\\vec{v}$?","ownImageUrl":"","optionsHtml":["Gốc của vectơ vận tốc nằm trên vật chuyển động.","Hướng của vectơ vận tốc là hướng của độ dịch chuyển.","Độ dài của vectơ vận tốc tỉ lệ với độ lớn của vận tốc.","Hướng của vectơ vận tốc luôn luôn cùng hướng với hướng chuyển động của vật trong mọi trường hợp đường cong."],"optionsRaw":["Gốc của vectơ vận tốc nằm trên vật chuyển động.","Hướng của vectơ vận tốc là hướng của độ dịch chuyển.","Độ dài của vectơ vận tốc tỉ lệ với độ lớn của vận tốc.","Hướng của vectơ vận tốc luôn luôn cùng hướng với hướng chuyển động của vật trong mọi trường hợp đường cong."],"correctIndex":3,"correctAnswer":"Hướng của vectơ vận tốc luôn luôn cùng hướng với hướng chuyển động của vật trong mọi trường hợp đường cong.","subQuestions":[],"solutionHtml":"Vectơ vận tốc trung bình có gốc nằm trên vật chuyển động, hướng là hướng của độ dịch chuyển (chứ không nhất thiết trùng với hướng chuyển động tức thời tại mọi điểm nếu đường đi cong phức tạp), độ dài tỉ lệ với độ lớn vận tốc (SGK Trang 28).","rawSolution":"Vectơ vận tốc trung bình có gốc nằm trên vật chuyển động, hướng là hướng của độ dịch chuyển (chứ không nhất thiết trùng với hướng chuyển động tức thời tại mọi điểm nếu đường đi cong phức tạp), độ dài tỉ lệ với độ lớn vận tốc (SGK Trang 28)."}]},{"blockId":"single_9f05c7c2-f850-4cb4-abde-56765ba4999e_4","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"9f05c7c2-f850-4cb4-abde-56765ba4999e","type":"mcq","level":"B","chapterName":"","points":0.5,"textHtml":"Khi nào thì tốc độ trung bình và độ lớn vận tốc trung bình của một vật chuyển động có giá trị **bằng nhau**?","rawText":"Khi nào thì tốc độ trung bình và độ lớn vận tốc trung bình của một vật chuyển động có giá trị **bằng nhau**?","ownImageUrl":"","optionsHtml":["Khi vật chuyển động tròn đều.","Khi vật chuyển động thẳng và không đổi chiều.","Khi vật chuyển động thẳng và có đổi chiều chuyển động.","Trong mọi trường hợp chuyển động."],"optionsRaw":["Khi vật chuyển động tròn đều.","Khi vật chuyển động thẳng và không đổi chiều.","Khi vật chuyển động thẳng và có đổi chiều chuyển động.","Trong mọi trường hợp chuyển động."],"correctIndex":1,"correctAnswer":"Khi vật chuyển động thẳng và không đổi chiều.","subQuestions":[],"solutionHtml":"Khi vật chuyển động thẳng theo một hướng (không đổi chiều) thì quãng đường đi được bằng độ lớn độ dịch chuyển ($s = d$), do đó tốc độ và vận tốc có độ lớn bằng nhau: $v = v$ (SGK Trang 29).","rawSolution":"Khi vật chuyển động thẳng theo một hướng (không đổi chiều) thì quãng đường đi được bằng độ lớn độ dịch chuyển ($s = d$), do đó tốc độ và vận tốc có độ lớn bằng nhau: $v = v$ (SGK Trang 29)."}]},{"blockId":"single_8c4b0290-0c1f-4547-a6c9-52916a74f684_5","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"8c4b0290-0c1f-4547-a6c9-52916a74f684","type":"mcq","level":"B","chapterName":"","points":0.5,"textHtml":"Gọi $\\vec{v}_{1,2}$ là vận tốc của vật (1) đối với vật (2), $\\vec{v}_{2,3}$ là vận tốc của vật (2) đối với vật (3), $\\vec{v}_{1,3}$ là vận tốc của vật (1) đối với vật (3). Công thức cộng vận tốc đúng là:","rawText":"Gọi $\\vec{v}_{1,2}$ là vận tốc của vật (1) đối với vật (2), $\\vec{v}_{2,3}$ là vận tốc của vật (2) đối với vật (3), $\\vec{v}_{1,3}$ là vận tốc của vật (1) đối với vật (3). Công thức cộng vận tốc đúng là:","ownImageUrl":"","optionsHtml":["$\\vec{v}_{1,3} = \\vec{v}_{1,2} + \\vec{v}_{2,3}$","$\\vec{v}_{1,2} = \\vec{v}_{1,3} + \\vec{v}_{2,3}$","$\\vec{v}_{1,3} = \\vec{v}_{1,2} - \\vec{v}_{2,3}$","$v_{1,3} = v_{1,2} + v_{2,3}$ trong mọi trường hợp."],"optionsRaw":["$\\vec{v}_{1,3} = \\vec{v}_{1,2} + \\vec{v}_{2,3}$","$\\vec{v}_{1,2} = \\vec{v}_{1,3} + \\vec{v}_{2,3}$","$\\vec{v}_{1,3} = \\vec{v}_{1,2} - \\vec{v}_{2,3}$","$v_{1,3} = v_{1,2} + v_{2,3}$ trong mọi trường hợp."],"correctIndex":0,"correctAnswer":"$\\vec{v}_{1,3} = \\vec{v}_{1,2} + \\vec{v}_{2,3}$","subQuestions":[],"solutionHtml":"Công thức cộng vận tốc dạng vectơ chuẩn là: $\\vec{v}_{1,3} = \\vec{v}_{1,2} + \\vec{v}_{2,3}$ (SGK Trang 29).","rawSolution":"Công thức cộng vận tốc dạng vectơ chuẩn là: $\\vec{v}_{1,3} = \\vec{v}_{1,2} + \\vec{v}_{2,3}$ (SGK Trang 29)."}]},{"blockId":"single_3cadd3f0-50c4-40e2-8445-5b0b8fc2d8e1_6","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"3cadd3f0-50c4-40e2-8445-5b0b8fc2d8e1","type":"mcq","level":"B","chapterName":"","points":0.5,"textHtml":"Khái niệm tốc độ tức thời liên quan trực tiếp đến khái niệm nào trong Toán học lớp 11?","rawText":"Khái niệm tốc độ tức thời liên quan trực tiếp đến khái niệm nào trong Toán học lớp 11?","ownImageUrl":"","optionsHtml":["Tích phân.","Đạo hàm.","Hình học không gian.","Cấp số cộng."],"optionsRaw":["Tích phân.","Đạo hàm.","Hình học không gian.","Cấp số cộng."],"correctIndex":1,"correctAnswer":"Đạo hàm.","subQuestions":[],"solutionHtml":"SGK Trang 27 mục &#39;EM CÓ BIẾT?&#39; nêu rõ: Khái niệm tốc độ tức thời liên quan đến phép tính đạo hàm của môn Toán học. Có thể coi tốc độ tức thời là tốc độ trung bình trong khoảng thời gian rất ngắn.","rawSolution":"SGK Trang 27 mục 'EM CÓ BIẾT?' nêu rõ: Khái niệm tốc độ tức thời liên quan đến phép tính đạo hàm của môn Toán học. Có thể coi tốc độ tức thời là tốc độ trung bình trong khoảng thời gian rất ngắn."}]},{"blockId":"single_4a6a57e1-2f9f-4586-90d4-004f4a7ed041_7","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"4a6a57e1-2f9f-4586-90d4-004f4a7ed041","type":"mcq","level":"B","chapterName":"","points":0.5,"textHtml":"Điểm khác biệt cơ bản nhất giữa tốc độ và vận tốc là gì?","rawText":"Điểm khác biệt cơ bản nhất giữa tốc độ và vận tốc là gì?","ownImageUrl":"","optionsHtml":["Tốc độ có đơn vị là m/s, còn vận tốc có đơn vị là km/h.","Tốc độ là đại lượng vô hướng, còn vận tốc là đại lượng vectơ thể hiện cả độ lớn và hướng.","Tốc độ dùng cho chuyển động thẳng, vận tốc dùng cho chuyển động cong.","Tốc độ luôn thay đổi, vận tốc luôn hằng số."],"optionsRaw":["Tốc độ có đơn vị là m/s, còn vận tốc có đơn vị là km/h.","Tốc độ là đại lượng vô hướng, còn vận tốc là đại lượng vectơ thể hiện cả độ lớn và hướng.","Tốc độ dùng cho chuyển động thẳng, vận tốc dùng cho chuyển động cong.","Tốc độ luôn thay đổi, vận tốc luôn hằng số."],"correctIndex":1,"correctAnswer":"Tốc độ là đại lượng vô hướng, còn vận tốc là đại lượng vectơ thể hiện cả độ lớn và hướng.","subQuestions":[],"solutionHtml":"Tốc độ $v = s/t$ là đại lượng vô hướng (chỉ có độ lớn), còn vận tốc $\\vec{v} = \\vec{d}/t$ là đại lượng vectơ có cả độ lớn và hướng dịch chuyển.","rawSolution":"Tốc độ $v = s/t$ là đại lượng vô hướng (chỉ có độ lớn), còn vận tốc $\\vec{v} = \\vec{d}/t$ là đại lượng vectơ có cả độ lớn và hướng dịch chuyển."}]},{"blockId":"single_13f095ee-7bc7-4092-a27d-daf956c3dd1e_8","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"13f095ee-7bc7-4092-a27d-daf956c3dd1e","type":"mcq","level":"H","chapterName":"","points":0.5,"textHtml":"Một vận động viên chạy từ điểm xuất phát A đến điểm B trên đường thẳng dài $100$ m, sau đó quay ngược trở lại về đúng vị trí xuất phát A. Vận tốc trung bình của người đó trong cả quá trình chạy là:","rawText":"Một vận động viên chạy từ điểm xuất phát A đến điểm B trên đường thẳng dài $100$ m, sau đó quay ngược trở lại về đúng vị trí xuất phát A. Vận tốc trung bình của người đó trong cả quá trình chạy là:","ownImageUrl":"","optionsHtml":["Cực đại.","Bằng 0.","Bằng tốc độ trung bình.","Bằng $100$ m/s."],"optionsRaw":["Cực đại.","Bằng 0.","Bằng tốc độ trung bình.","Bằng $100$ m/s."],"correctIndex":1,"correctAnswer":"Bằng 0.","subQuestions":[],"solutionHtml":"Vì điểm đầu và điểm cuối trùng nhau (về lại A) nên độ dịch chuyển $d = 0$. Vận tốc trung bình $v = \\frac{d}{t} = 0$.","rawSolution":"Vì điểm đầu và điểm cuối trùng nhau (về lại A) nên độ dịch chuyển $d = 0$. Vận tốc trung bình $v = \\frac{d}{t} = 0$."}]},{"blockId":"single_b5dd684c-e3fb-49a9-be22-453910094259_9","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"b5dd684c-e3fb-49a9-be22-453910094259","type":"mcq","level":"H","chapterName":"","points":0.5,"textHtml":"Một người đi xe máy từ ngã tư O (Hình 5.1 trong bài) đi theo hướng Bắc với tốc độ trung bình $30$ km/h. Biết mỗi khoảng chia trên trục giao thông dài $0,5$ km. Sau thời gian $3 phút$, người đó đến vị trí điểm nào?","rawText":"Một người đi xe máy từ ngã tư O (Hình 5.1 trong bài) đi theo hướng Bắc với tốc độ trung bình $30$ km/h. Biết mỗi khoảng chia trên trục giao thông dài $0,5$ km. Sau thời gian $3 phút$, người đó đến vị trí điểm nào?","ownImageUrl":"","optionsHtml":["Điểm C.","Điểm D.","Điểm E.","Điểm H."],"optionsRaw":["Điểm C.","Điểm D.","Điểm E.","Điểm H."],"correctIndex":0,"correctAnswer":"Điểm C.","subQuestions":[],"solutionHtml":"Đổi thời gian $t = 3 phút = \\frac{3}{60} h = 0,05$ h. Quãng đường đi được $s = v \\cdot t = 30 \\times 0,05 = 1,5$ km. Vì mỗi đoạn là $0,5$ km nên $1,5$ km ứng với 3 đoạn về hướng Bắc. Tương ứng vị trí điểm C.","rawSolution":"Đổi thời gian $t = 3 phút = \\frac{3}{60} h = 0,05$ h. Quãng đường đi được $s = v \\cdot t = 30 \\times 0,05 = 1,5$ km. Vì mỗi đoạn là $0,5$ km nên $1,5$ km ứng với 3 đoạn về hướng Bắc. Tương ứng vị trí điểm C."}]},{"blockId":"single_f9806e7d-3c2e-4fd6-9841-f0b33e1f6eb4_10","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"f9806e7d-3c2e-4fd6-9841-f0b33e1f6eb4","type":"mcq","level":"H","chapterName":"","points":0.5,"textHtml":"Bố đưa bạn A đi học từ nhà lúc 7 giờ. Sau 5 phút xe đạt tốc độ $30$ km/h. Sau 10 phút nữa xe tăng tốc độ lên $45$ km/h. Đến trường xe dừng lúc 7 giờ 30 phút. Giá trị $45$ km/h ghi nhận ở thời điểm 7 giờ 15 phút là đại lượng nào?","rawText":"Bố đưa bạn A đi học từ nhà lúc 7 giờ. Sau 5 phút xe đạt tốc độ $30$ km/h. Sau 10 phút nữa xe tăng tốc độ lên $45$ km/h. Đến trường xe dừng lúc 7 giờ 30 phút. Giá trị $45$ km/h ghi nhận ở thời điểm 7 giờ 15 phút là đại lượng nào?","ownImageUrl":"","optionsHtml":["Tốc độ trung bình cả chuyến đi.","Vận tốc trung bình cả chuyến đi.","Tốc độ tức thời của xe máy.","Quãng đường xe đi được."],"optionsRaw":["Tốc độ trung bình cả chuyến đi.","Vận tốc trung bình cả chuyến đi.","Tốc độ tức thời của xe máy.","Quãng đường xe đi được."],"correctIndex":2,"correctAnswer":"Tốc độ tức thời của xe máy.","subQuestions":[],"solutionHtml":"Tốc độ ghi nhận tại một thời điểm xác định (lúc 7h15min) là tốc độ tức thời của xe máy vào thời điểm đó.","rawSolution":"Tốc độ ghi nhận tại một thời điểm xác định (lúc 7h15min) là tốc độ tức thời của xe máy vào thời điểm đó."}]},{"blockId":"single_cee7c542-c474-470e-9a1a-692c16b0de98_11","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"cee7c542-c474-470e-9a1a-692c16b0de98","type":"mcq","level":"H","chapterName":"","points":0.5,"textHtml":"Một đoàn tàu đang chạy thẳng với vận tốc $36$ km/h so với mặt đường. Một hành khách đi về phía **cuối tàu** với vận tốc $1$ m/s so với sàn tàu. Vận tốc của hành khách đối với mặt đường có độ lớn là bao nhiêu?","rawText":"Một đoàn tàu đang chạy thẳng với vận tốc $36$ km/h so với mặt đường. Một hành khách đi về phía **cuối tàu** với vận tốc $1$ m/s so với sàn tàu. Vận tốc của hành khách đối với mặt đường có độ lớn là bao nhiêu?","ownImageUrl":"","optionsHtml":["$11$ m/s","$9$ m/s","$37$ m/s","$35$ m/s"],"optionsRaw":["$11$ m/s","$9$ m/s","$37$ m/s","$35$ m/s"],"correctIndex":1,"correctAnswer":"$9$ m/s","subQuestions":[],"solutionHtml":"Đổi vận tốc tàu so với đường: $v_{2,3} = 36 km/h = 10$ m/s theo hướng tàu chạy. Vận tốc người so với tàu: $v_{1,2} = 1$ m/s ngược hướng tàu chạy. Vì chuyển động ngược chiều: $v_{1,3} = v_{2,3} - v_{1,2} = 10 - 1 = 9$ m/s.","rawSolution":"Đổi vận tốc tàu so với đường: $v_{2,3} = 36 km/h = 10$ m/s theo hướng tàu chạy. Vận tốc người so với tàu: $v_{1,2} = 1$ m/s ngược hướng tàu chạy. Vì chuyển động ngược chiều: $v_{1,3} = v_{2,3} - v_{1,2} = 10 - 1 = 9$ m/s."}]},{"blockId":"single_1a119792-8276-4780-82f3-a374ef8afb52_12","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"1a119792-8276-4780-82f3-a374ef8afb52","type":"mcq","level":"H","chapterName":"","points":0.5,"textHtml":"Một người bơi trong bể bơi yên lặng có thể đạt vận tốc tối đa $1$ m/s. Nếu người này bơi **xuôi dòng** sông có vận tốc dòng chảy là $1$ m/s thì vận tốc tối đa của người đó so với bờ sông có thể đạt là bao nhiêu?","rawText":"Một người bơi trong bể bơi yên lặng có thể đạt vận tốc tối đa $1$ m/s. Nếu người này bơi **xuôi dòng** sông có vận tốc dòng chảy là $1$ m/s thì vận tốc tối đa của người đó so với bờ sông có thể đạt là bao nhiêu?","ownImageUrl":"","optionsHtml":["$0$ m/s","$1$ m/s","$2$ m/s","$1,41$ m/s"],"optionsRaw":["$0$ m/s","$1$ m/s","$2$ m/s","$1,41$ m/s"],"correctIndex":2,"correctAnswer":"$2$ m/s","subQuestions":[],"solutionHtml":"Khi bơi xuôi dòng, vận tốc bơi và vận tốc dòng nước cùng phương cùng chiều: $v_{1,3} = v_{1,2} + v_{2,3} = 1 + 1 = 2$ m/s.","rawSolution":"Khi bơi xuôi dòng, vận tốc bơi và vận tốc dòng nước cùng phương cùng chiều: $v_{1,3} = v_{1,2} + v_{2,3} = 1 + 1 = 2$ m/s."}]},{"blockId":"single_de9407bd-32a5-43e7-9f4a-2f641419c918_13","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"de9407bd-32a5-43e7-9f4a-2f641419c918","type":"mcq","level":"H","chapterName":"","points":0.5,"textHtml":"Dựa vào Bảng 5.2 (Thành tích của nữ vận động viên Việt Nam chạy cự li $100$ m): Điền kinh QG 2016 ($11,64$ s), SEA Games 29 năm 2017 ($11,56$ s), SEA Games 30 năm 2019 ($11,54$ s). Phát biểu nào đúng?","rawText":"Dựa vào Bảng 5.2 (Thành tích của nữ vận động viên Việt Nam chạy cự li $100$ m): Điền kinh QG 2016 ($11,64$ s), SEA Games 29 năm 2017 ($11,56$ s), SEA Games 30 năm 2019 ($11,54$ s). Phát biểu nào đúng?","ownImageUrl":"","optionsHtml":["Tốc độ trung bình tại SEA Games 30 là lớn nhất.","Tốc độ trung bình tại Điền kinh QG 2016 là lớn nhất.","Tốc độ trung bình cả 3 giải là bằng nhau.","Không thể so sánh tốc độ vì khác giải đấu."],"optionsRaw":["Tốc độ trung bình tại SEA Games 30 là lớn nhất.","Tốc độ trung bình tại Điền kinh QG 2016 là lớn nhất.","Tốc độ trung bình cả 3 giải là bằng nhau.","Không thể so sánh tốc độ vì khác giải đấu."],"correctIndex":0,"correctAnswer":"Tốc độ trung bình tại SEA Games 30 là lớn nhất.","subQuestions":[],"solutionHtml":"Cùng cự li chạy $s = 100$ m, giải SEA Games 30 có thời gian chạy ngắn nhất ($11,54$ s), do đó tốc độ trung bình $v = s/t$ đạt giá trị lớn nhất.","rawSolution":"Cùng cự li chạy $s = 100$ m, giải SEA Games 30 có thời gian chạy ngắn nhất ($11,54$ s), do đó tốc độ trung bình $v = s/t$ đạt giá trị lớn nhất."}]},{"blockId":"single_a4e7a3bb-c1e4-4e83-98b2-9703af5a4d1e_14","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"a4e7a3bb-c1e4-4e83-98b2-9703af5a4d1e","type":"mcq","level":"H","chapterName":"","points":0.5,"textHtml":"Nếu hai vận tốc thành phần $\\vec{v}_{1,2}$ và $\\vec{v}_{2,3}$ vuông góc với nhau thì độ lớn của vận tốc tổng hợp $v_{1,3}$ được tính bằng công thức nào?","rawText":"Nếu hai vận tốc thành phần $\\vec{v}_{1,2}$ và $\\vec{v}_{2,3}$ vuông góc với nhau thì độ lớn của vận tốc tổng hợp $v_{1,3}$ được tính bằng công thức nào?","ownImageUrl":"","optionsHtml":["$v_{1,3} = v_{1,2} + v_{2,3}$","$v_{1,3} = |v_{1,2} - v_{2,3}|$","$v_{1,3} = \\sqrt{v_{1,2}^2 + v_{2,3}^2}$","$v_{1,3} = \\frac{v_{1,2} + v_{2,3}}{2}$"],"optionsRaw":["$v_{1,3} = v_{1,2} + v_{2,3}$","$v_{1,3} = |v_{1,2} - v_{2,3}|$","$v_{1,3} = \\sqrt{v_{1,2}^2 + v_{2,3}^2}$","$v_{1,3} = \\frac{v_{1,2} + v_{2,3}}{2}$"],"correctIndex":2,"correctAnswer":"$v_{1,3} = \\sqrt{v_{1,2}^2 + v_{2,3}^2}$","subQuestions":[],"solutionHtml":"Khi $\\vec{v}_{1,2} \\perp \\vec{v}_{2,3}$, theo quy tắc hình bình hành (tam giác vuông), độ lớn vận tốc tổng hợp là: $v_{1,3} = \\sqrt{v_{1,2}^2 + v_{2,3}^2}$ (SGK Trang 29).","rawSolution":"Khi $\\vec{v}_{1,2} \\perp \\vec{v}_{2,3}$, theo quy tắc hình bình hành (tam giác vuông), độ lớn vận tốc tổng hợp là: $v_{1,3} = \\sqrt{v_{1,2}^2 + v_{2,3}^2}$ (SGK Trang 29)."}]},{"blockId":"single_0ee4616f-a699-432c-9323-a12ad9946f24_15","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"0ee4616f-a699-432c-9323-a12ad9946f24","type":"mcq","level":"VD","chapterName":"","points":0.5,"textHtml":"Bạn A đi học từ nhà đến trường theo lộ trình $A \\to B \\to C$ (Hình 5.2). Đoạn đường $AB = 400$ m hết $6 phút$, đoạn đường $BC = 300$ m hết $4 phút$ (với $AB \\perp BC$). Tốc độ trung bình và độ lớn vận tốc trung bình của bạn A khi đi từ A đến C lần lượt là:","rawText":"Bạn A đi học từ nhà đến trường theo lộ trình $A \\to B \\to C$ (Hình 5.2). Đoạn đường $AB = 400$ m hết $6 phút$, đoạn đường $BC = 300$ m hết $4 phút$ (với $AB \\perp BC$). Tốc độ trung bình và độ lớn vận tốc trung bình của bạn A khi đi từ A đến C lần lượt là:","ownImageUrl":"","optionsHtml":["$1,17$ m/s và $0,83$ m/s","$0,83$ m/s và $1,17$ m/s","$1,00$ m/s và $1,00$ m/s","$0,70$ m/s và $0,50$ m/s"],"optionsRaw":["$1,17$ m/s và $0,83$ m/s","$0,83$ m/s và $1,17$ m/s","$1,00$ m/s và $1,00$ m/s","$0,70$ m/s và $0,50$ m/s"],"correctIndex":0,"correctAnswer":"$1,17$ m/s và $0,83$ m/s","subQuestions":[],"solutionHtml":"Tổng quãng đường $s = 400 + 300 = 700$ m. Tổng thời gian $t = 6 phút + 4 phút = 10 phút = 600$ s.<br>- Tốc độ trung bình: $v = \\frac{s}{t} = \\frac{700}{600} \\approx 1,17$ m/s.<br>- Độ dịch chuyển $d = AC = \\sqrt{400^2 + 300^2} = 500$ m.<br>- Độ lớn vận tốc trung bình: $v = \\frac{d}{t} = \\frac{500}{600} \\approx 0,83$ m/s.","rawSolution":"Tổng quãng đường $s = 400 + 300 = 700$ m. Tổng thời gian $t = 6 phút + 4 phút = 10 phút = 600$ s.\n- Tốc độ trung bình: $v = \\frac{s}{t} = \\frac{700}{600} \\approx 1,17$ m/s.\n- Độ dịch chuyển $d = AC = \\sqrt{400^2 + 300^2} = 500$ m.\n- Độ lớn vận tốc trung bình: $v = \\frac{d}{t} = \\frac{500}{600} \\approx 0,83$ m/s."}]},{"blockId":"single_886445c8-ab40-4895-8517-a457ea52de85_16","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"886445c8-ab40-4895-8517-a457ea52de85","type":"mcq","level":"VD","chapterName":"","points":0.5,"textHtml":"Một ca nô chạy trong hồ nước yên lặng có vận tốc tối đa $18$ km/h. Khi ca nô chạy hướng vuông góc với bờ sang một con sông có dòng chảy theo hướng Bắc - Nam với vận tốc $5$ m/s thì vận tốc tối đa ca nô đạt được so với bờ sông là bao nhiêu?","rawText":"Một ca nô chạy trong hồ nước yên lặng có vận tốc tối đa $18$ km/h. Khi ca nô chạy hướng vuông góc với bờ sang một con sông có dòng chảy theo hướng Bắc - Nam với vận tốc $5$ m/s thì vận tốc tối đa ca nô đạt được so với bờ sông là bao nhiêu?","ownImageUrl":"","optionsHtml":["$5,00$ m/s","$7,07$ m/s","$10,0$ m/s","$23,0$ km/h"],"optionsRaw":["$5,00$ m/s","$7,07$ m/s","$10,0$ m/s","$23,0$ km/h"],"correctIndex":1,"correctAnswer":"$7,07$ m/s","subQuestions":[],"solutionHtml":"Đổi vận tốc ca nô đối với nước: $v_{1,2} = 18 km/h = 5$ m/s. Vận tốc nước chảy so với bờ: $v_{2,3} = 5$ m/s. Vì hai vận tốc vuông góc nhau nên: $v_{1,3} = \\sqrt{v_{1,2}^2 + v_{2,3}^2} = \\sqrt{5^2 + 5^2} = 5\\sqrt{2} \\approx 7,07$ m/s (SGK Trang 29).","rawSolution":"Đổi vận tốc ca nô đối với nước: $v_{1,2} = 18 km/h = 5$ m/s. Vận tốc nước chảy so với bờ: $v_{2,3} = 5$ m/s. Vì hai vận tốc vuông góc nhau nên: $v_{1,3} = \\sqrt{v_{1,2}^2 + v_{2,3}^2} = \\sqrt{5^2 + 5^2} = 5\\sqrt{2} \\approx 7,07$ m/s (SGK Trang 29)."}]},{"blockId":"single_bed815e1-5eac-456e-8fbe-93aff24360f2_17","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"bed815e1-5eac-456e-8fbe-93aff24360f2","type":"mcq","level":"VD","chapterName":"","points":0.5,"textHtml":"Một máy bay đang bay theo hướng Bắc với vận tốc $200$ m/s đối với không khí thì bị gió thổi từ hướng Tây sang Đông với vận tốc $20$ m/s. Độ lớn vận tốc tổng hợp của máy bay lúc này so với mặt đất xấp xỉ bằng:","rawText":"Một máy bay đang bay theo hướng Bắc với vận tốc $200$ m/s đối với không khí thì bị gió thổi từ hướng Tây sang Đông với vận tốc $20$ m/s. Độ lớn vận tốc tổng hợp của máy bay lúc này so với mặt đất xấp xỉ bằng:","ownImageUrl":"","optionsHtml":["$220,0$ m/s","$180,0$ m/s","$201,0$ m/s","$205,5$ m/s"],"optionsRaw":["$220,0$ m/s","$180,0$ m/s","$201,0$ m/s","$205,5$ m/s"],"correctIndex":2,"correctAnswer":"$201,0$ m/s","subQuestions":[],"solutionHtml":"Hướng Bắc và hướng Đông vuông góc với nhau. Áp dụng công thức tổng hợp hai vận tốc vuông góc:<br>$v = \\sqrt{v_{máy bay}^2 + v_{gió}^2} = \\sqrt{200^2 + 20^2} = \\sqrt{40000 + 400} = \\sqrt{40400} \\approx 201,0$ m/s.","rawSolution":"Hướng Bắc và hướng Đông vuông góc với nhau. Áp dụng công thức tổng hợp hai vận tốc vuông góc:\n$v = \\sqrt{v_{máy bay}^2 + v_{gió}^2} = \\sqrt{200^2 + 20^2} = \\sqrt{40000 + 400} = \\sqrt{40400} \\approx 201,0$ m/s."}]},{"blockId":"single_5a96020d-d9b3-468d-b555-7916d508f1b3_18","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"5a96020d-d9b3-468d-b555-7916d508f1b3","type":"mcq","level":"VD","chapterName":"","points":0.5,"textHtml":"Một ca nô chạy hết tốc lực trên mặt nước yên lặng có thể đạt $21,5$ km/h. Ca nô này chạy xuôi dòng sông từ A đến B mất thời gian $1 giờ$, rồi lập tức quay ngược dòng từ B về A thì phải mất $2 giờ$ nữa mới về tới A. Vận tốc chảy của dòng nước là bao nhiêu?","rawText":"Một ca nô chạy hết tốc lực trên mặt nước yên lặng có thể đạt $21,5$ km/h. Ca nô này chạy xuôi dòng sông từ A đến B mất thời gian $1 giờ$, rồi lập tức quay ngược dòng từ B về A thì phải mất $2 giờ$ nữa mới về tới A. Vận tốc chảy của dòng nước là bao nhiêu?","ownImageUrl":"","optionsHtml":["$7,17$ km/h","$5,38$ km/h","$3,58$ km/h","$4,30$ km/h"],"optionsRaw":["$7,17$ km/h","$5,38$ km/h","$3,58$ km/h","$4,30$ km/h"],"correctIndex":0,"correctAnswer":"$7,17$ km/h","subQuestions":[],"solutionHtml":"Gọi $v_1 = 21,5$ km/h là vận tốc ca nô đối với nước, $v_n$ là vận tốc dòng nước.<br>- Khi xuôi dòng từ A đến B: $s = (v_1 + v_n) \\cdot t_1 = (21,5 + v_n) \\cdot 1$.<br>- Khi ngược dòng từ B về A: $s = (v_1 - v_n) \\cdot t_2 = (21,5 - v_n) \\cdot 2$.<br>Cho hai biểu thức quãng đường bằng nhau:<br>$21,5 + v_n = 2 \\cdot (21,5 - v_n) \\iff 21,5 + v_n = 43 - 2v_n \\iff 3v_n = 21,5 \\implies v_n = \\frac{21,5}{3} \\approx 7,17$ km/h.","rawSolution":"Gọi $v_1 = 21,5$ km/h là vận tốc ca nô đối với nước, $v_n$ là vận tốc dòng nước.\n- Khi xuôi dòng từ A đến B: $s = (v_1 + v_n) \\cdot t_1 = (21,5 + v_n) \\cdot 1$.\n- Khi ngược dòng từ B về A: $s = (v_1 - v_n) \\cdot t_2 = (21,5 - v_n) \\cdot 2$.\nCho hai biểu thức quãng đường bằng nhau:\n$21,5 + v_n = 2 \\cdot (21,5 - v_n) \\iff 21,5 + v_n = 43 - 2v_n \\iff 3v_n = 21,5 \\implies v_n = \\frac{21,5}{3} \\approx 7,17$ km/h."}]},{"blockId":"single_78f5f78b-144a-41e7-b0b7-2b96d3595fa5_19","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"78f5f78b-144a-41e7-b0b7-2b96d3595fa5","type":"mcq","level":"VD","chapterName":"","points":0.5,"textHtml":"Một con thuyền đi từ bờ A sang bờ B của một con sông rộng $400$ m. Vận tốc chảy của dòng nước là $3$ m/s. Thuyền di chuyển với tốc độ $5$ m/s so với nước. Để thuyền cập bến tại điểm B đối diện trực diện với A theo đường thẳng vuông góc với bờ sông, người lái phải hướng mũi thuyền hợp với bờ sông phía thượng nguồn một góc $\\alpha$ và thời gian qua sông $t$ bằng:","rawText":"Một con thuyền đi từ bờ A sang bờ B của một con sông rộng $400$ m. Vận tốc chảy của dòng nước là $3$ m/s. Thuyền di chuyển với tốc độ $5$ m/s so với nước. Để thuyền cập bến tại điểm B đối diện trực diện với A theo đường thẳng vuông góc với bờ sông, người lái phải hướng mũi thuyền hợp với bờ sông phía thượng nguồn một góc $\\alpha$ và thời gian qua sông $t$ bằng:","ownImageUrl":"","optionsHtml":["$\\alpha \\approx 53,13^\\circ$; $t = 100$ s","$\\alpha \\approx 36,87^\\circ$; $t = 100$ s","$\\alpha \\approx 53,13^\\circ$; $t = 80$ s","$\\alpha \\approx 60,00^\\circ$; $t = 133,3$ s"],"optionsRaw":["$\\alpha \\approx 53,13^\\circ$; $t = 100$ s","$\\alpha \\approx 36,87^\\circ$; $t = 100$ s","$\\alpha \\approx 53,13^\\circ$; $t = 80$ s","$\\alpha \\approx 60,00^\\circ$; $t = 133,3$ s"],"correctIndex":0,"correctAnswer":"$\\alpha \\approx 53,13^\\circ$; $t = 100$ s","subQuestions":[],"solutionHtml":"Để thuyền đi theo đường thẳng vuông góc bờ sông, vectơ vận tốc tổng hợp $\\vec{v}$ phải vuông góc với bờ.<br>- Thành phần vận tốc thuyền ngược dòng phải triệt tiêu vận tốc dòng nước: $v_{thuyền} \\cdot \\cos\\alpha = v_{nước} \\implies \\cos\\alpha = \\frac{3}{5} = 0,6 \\implies \\alpha \\approx 53,13^\\circ$ so với bờ sông phía thượng nguồn.<br>- Vận tốc tổng hợp theo phương vuông góc với bờ: $v = \\sqrt{v_{thuyền}^2 - v_{nước}^2} = \\sqrt{5^2 - 3^2} = 4$ m/s.<br>- Thời gian qua sông: $t = \\frac{d}{v} = \\frac{400}{4} = 100$ s.","rawSolution":"Để thuyền đi theo đường thẳng vuông góc bờ sông, vectơ vận tốc tổng hợp $\\vec{v}$ phải vuông góc với bờ.\n- Thành phần vận tốc thuyền ngược dòng phải triệt tiêu vận tốc dòng nước: $v_{thuyền} \\cdot \\cos\\alpha = v_{nước} \\implies \\cos\\alpha = \\frac{3}{5} = 0,6 \\implies \\alpha \\approx 53,13^\\circ$ so với bờ sông phía thượng nguồn.\n- Vận tốc tổng hợp theo phương vuông góc với bờ: $v = \\sqrt{v_{thuyền}^2 - v_{nước}^2} = \\sqrt{5^2 - 3^2} = 4$ m/s.\n- Thời gian qua sông: $t = \\frac{d}{v} = \\frac{400}{4} = 100$ s."}]}]}</script>
+  <script>
+    (function() {
+      var dataEl = document.getElementById('edusync-runtime-data');
+      var EXAM = JSON.parse(dataEl.textContent || '{}');
+      var LETTERS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+      var TF_LABELS = ['a', 'b', 'c', 'd', 'e', 'f'];
+
+      function shuffle(arr) {
+        var copy = arr.slice();
+        for (var i = copy.length - 1; i > 0; i--) {
+          var j = Math.floor(Math.random() * (i + 1));
+          var tmp = copy[i]; copy[i] = copy[j]; copy[j] = tmp;
+        }
+        return copy;
+      }
+
+      var blocks = EXAM.shuffleQuestions ? shuffle(EXAM.blocks || []) : (EXAM.blocks || []);
+      var flatQuestions = [];
+      blocks.forEach(function(block) {
+        block.questions.forEach(function(q) {
+          if (q.type === 'mcq' && EXAM.shuffleOptions && Array.isArray(q.optionsHtml)) {
+            var tagged = q.optionsHtml.map(function(html, idx) {
+              return { html: html, raw: q.optionsRaw[idx], isCorrect: idx === q.correctIndex };
+            });
+            var mixed = shuffle(tagged);
+            q.optionsHtml = mixed.map(function(m) { return m.html; });
+            q.optionsRaw = mixed.map(function(m) { return m.raw; });
+            q.correctIndex = Math.max(0, mixed.findIndex(function(m) { return m.isCorrect; }));
+          }
+          q.displayNumber = flatQuestions.length + 1;
+          flatQuestions.push(q);
+        });
+      });
+
+      var userAnswers = {};
+      var submitted = false;
+      var durationLimit = (EXAM.durationMinutes || 0) > 0 ? EXAM.durationMinutes * 60 : 0;
+      var startTime = Date.now();
+      var timerHandle = null;
+
+      function fmtTime(sec) {
+        var s = Math.max(0, Math.floor(sec));
+        var m = Math.floor(s / 60);
+        var r = s % 60;
+        return String(m).padStart(2, '0') + ':' + String(r).padStart(2, '0');
+      }
+
+      function isQuestionAnswered(q) {
+        var ans = userAnswers[q.id];
+        if (q.type === 'mcq') return typeof ans === 'number';
+        if (q.type === 'short') return typeof ans === 'string' && ans.trim().length > 0;
+        if (q.type === 'group-tf') {
+          if (!ans || typeof ans !== 'object') return false;
+          return q.subQuestions.some(function(sq) { return ans[sq.id] === 'True' || ans[sq.id] === 'False'; });
+        }
+        return false;
+      }
+
+      function updateProgress() {
+        var done = flatQuestions.filter(isQuestionAnswered).length;
+        document.getElementById('progressLabel').textContent = done + '/' + flatQuestions.length;
+        document.getElementById('sidebarCount').textContent = 'Đã làm ' + done + '/' + flatQuestions.length;
+        flatQuestions.forEach(function(q) {
+          var pBtn = document.getElementById('pbtn_' + q.displayNumber);
+          if (!pBtn || submitted) return;
+          pBtn.className = 'p-btn mono' + (isQuestionAnswered(q) ? ' done' : '');
+        });
+      }
+
+      function buildQuestionEl(q) {
+        var card = document.createElement('article');
+        card.className = 'q-card';
+        card.id = 'qcard_' + q.displayNumber;
+
+        var header = document.createElement('div');
+        header.className = 'q-header';
+        var leftMeta = '<span class="q-num">Câu ' + q.displayNumber + '</span>';
+        var tags = [q.level ? ('Mức ' + q.level) : '', q.points + ' đ', q.chapterName || ''].filter(Boolean).join(' · ');
+        header.innerHTML = leftMeta + '<span id="qstatus_' + q.displayNumber + '" class="q-status">' + tags + '</span>';
+        card.appendChild(header);
+
+        var qTextEl = document.createElement('div');
+        qTextEl.className = 'q-text';
+        qTextEl.innerHTML = q.textHtml;
+        card.appendChild(qTextEl);
+
+        if (q.ownImageUrl) {
+          var fig = document.createElement('div');
+          fig.className = 'q-figure';
+          var img = document.createElement('img');
+          img.src = q.ownImageUrl;
+          img.alt = 'Hình minh họa câu ' + q.displayNumber;
+          fig.appendChild(img);
+          card.appendChild(fig);
+        }
+
+        if (q.type === 'mcq') {
+          var grid = document.createElement('div');
+          grid.className = 'options-grid';
+          q.optionsHtml.forEach(function(optHtml, optIdx) {
+            var btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'opt-btn';
+            btn.id = 'opt_' + q.id + '_' + optIdx;
+            btn.innerHTML = '<span class="opt-letter mono">' + (LETTERS[optIdx] || optIdx + 1) + '</span><span style="flex:1;">' + optHtml + '</span>';
+            btn.addEventListener('click', function() {
+              if (submitted) return;
+              userAnswers[q.id] = optIdx;
+              q.optionsHtml.forEach(function(_, i2) {
+                var el = document.getElementById('opt_' + q.id + '_' + i2);
+                if (el) el.classList.toggle('selected', i2 === optIdx);
+              });
+              updateProgress();
+            });
+            grid.appendChild(btn);
+          });
+          card.appendChild(grid);
+        } else if (q.type === 'group-tf') {
+          var list = document.createElement('div');
+          list.className = 'tf-list';
+          q.subQuestions.forEach(function(sq, sIdx) {
+            var row = document.createElement('div');
+            row.className = 'tf-row';
+            row.id = 'tfrow_' + sq.id;
+
+            var txt = document.createElement('div');
+            txt.className = 'tf-text';
+            txt.innerHTML = '<strong>' + (TF_LABELS[sIdx] || (sIdx + 1)) + ')</strong> ' + sq.textHtml;
+            row.appendChild(txt);
+
+            var actions = document.createElement('div');
+            actions.className = 'tf-actions';
+            ['True', 'False'].forEach(function(val) {
+              var b = document.createElement('button');
+              b.type = 'button';
+              b.className = 'tf-choice';
+              b.id = 'tfbtn_' + sq.id + '_' + val;
+              b.textContent = val === 'True' ? 'Đúng' : 'Sai';
+              b.addEventListener('click', function() {
+                if (submitted) return;
+                if (!userAnswers[q.id] || typeof userAnswers[q.id] !== 'object') userAnswers[q.id] = {};
+                userAnswers[q.id][sq.id] = val;
+                var bt = document.getElementById('tfbtn_' + sq.id + '_True');
+                var bf = document.getElementById('tfbtn_' + sq.id + '_False');
+                if (bt) bt.classList.toggle('active', val === 'True');
+                if (bf) bf.classList.toggle('active', val === 'False');
+                updateProgress();
+              });
+              actions.appendChild(b);
+            });
+            row.appendChild(actions);
+            list.appendChild(row);
+          });
+          card.appendChild(list);
+        } else {
+          var sBox = document.createElement('div');
+          sBox.className = 'short-box';
+          var inp = document.createElement('input');
+          inp.type = 'text';
+          inp.className = 'short-input';
+          inp.id = 'short_' + q.id;
+          inp.placeholder = 'Nhập đáp số (vd: 2.6 hoặc 36)';
+          inp.addEventListener('input', function() {
+            if (submitted) return;
+            userAnswers[q.id] = inp.value;
+            updateProgress();
+          });
+          var fb = document.createElement('span');
+          fb.id = 'shortfb_' + q.id;
+          fb.className = 'short-feedback';
+          sBox.appendChild(inp);
+          sBox.appendChild(fb);
+          card.appendChild(sBox);
+        }
+
+        if (q.solutionHtml) {
+          var sol = document.createElement('div');
+          sol.className = 'solution-box';
+          sol.id = 'sol_' + q.id;
+          sol.innerHTML = '<strong>Lời giải chi tiết:</strong><div style="margin-top:4px;">' + q.solutionHtml + '</div>';
+          card.appendChild(sol);
+        }
+
+        return card;
+      }
+
+      function renderExam() {
+        var root = document.getElementById('questionsRoot');
+        var pal = document.getElementById('paletteRoot');
+        root.innerHTML = '';
+        pal.innerHTML = '';
+
+        blocks.forEach(function(block) {
+          if (block.contextHtml || block.sharedImageUrl) {
+            var groupEl = document.createElement('section');
+            groupEl.className = 'context-group';
+
+            var head = document.createElement('div');
+            head.className = 'context-header';
+            var firstNum = block.questions[0].displayNumber;
+            var lastNum = block.questions[block.questions.length - 1].displayNumber;
+            var labelText = block.questions.length > 1
+              ? 'Dữ liệu dùng chung cho Câu ' + firstNum + ' – Câu ' + lastNum
+              : 'Dữ liệu đề bài (Câu ' + firstNum + ')';
+            var html = '<div class="context-label">' + labelText + '</div>';
+            if (block.contextHtml) {
+              html += '<div class="context-body">' + block.contextHtml + '</div>';
+            }
+            head.innerHTML = html;
+            if (block.sharedImageUrl) {
+              var fig = document.createElement('div');
+              fig.className = 'q-figure';
+              var img = document.createElement('img');
+              img.src = block.sharedImageUrl;
+              img.alt = labelText;
+              fig.appendChild(img);
+              head.appendChild(fig);
+            }
+            groupEl.appendChild(head);
+
+            var inner = document.createElement('div');
+            inner.className = 'context-questions';
+            block.questions.forEach(function(q) {
+              inner.appendChild(buildQuestionEl(q));
+            });
+            groupEl.appendChild(inner);
+            root.appendChild(groupEl);
+          } else {
+            block.questions.forEach(function(q) {
+              root.appendChild(buildQuestionEl(q));
+            });
+          }
+        });
+
+        flatQuestions.forEach(function(q) {
+          var b = document.createElement('button');
+          b.type = 'button';
+          b.className = 'p-btn mono';
+          b.id = 'pbtn_' + q.displayNumber;
+          b.textContent = String(q.displayNumber);
+          b.addEventListener('click', function() {
+            var target = document.getElementById('qcard_' + q.displayNumber);
+            if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          });
+          pal.appendChild(b);
+        });
+
+        updateProgress();
+        if (window.MathJax && window.MathJax.typesetPromise) {
+          window.MathJax.typesetPromise().catch(function() {});
+        }
+      }
+
+      function normalizeShort(val) {
+        return String(val || '').trim().replace(/,/g, '.').replace(/\s+/g, '').toLowerCase();
+      }
+
+      function isShortMatch(userVal, expectedVal) {
+        var u = normalizeShort(userVal);
+        var e = normalizeShort(expectedVal);
+        if (!u) return false;
+        if (u === e) return true;
+        var nu = parseFloat(u);
+        var ne = parseFloat(e);
+        if (!isNaN(nu) && !isNaN(ne) && String(nu) === u || !isNaN(nu) && !isNaN(ne)) {
+          if (/^-?\d+(?:\.\d+)?$/.test(u) && /^-?\d+(?:\.\d+)?$/.test(e)) {
+            return Math.abs(nu - ne) < 1e-6;
+          }
+        }
+        return false;
+      }
+
+      function gradeAndSubmit(force) {
+        if (submitted) return;
+        var answered = flatQuestions.filter(isQuestionAnswered).length;
+        if (!force && answered < flatQuestions.length) {
+          document.getElementById('confirmMsg').textContent =
+            'Bạn mới làm ' + answered + '/' + flatQuestions.length + ' câu. Bạn có chắc muốn nộp bài ngay?';
+          document.getElementById('confirmBar').classList.add('visible');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+          return;
+        }
+        document.getElementById('confirmBar').classList.remove('visible');
+        submitted = true;
+        if (timerHandle) clearInterval(timerHandle);
+
+        var totalScore = 0;
+        var maxScore = EXAM.maxScore || 10;
+        var correctQuestions = 0;
+        var answerDetails = [];
+
+        flatQuestions.forEach(function(q) {
+          var qCorrect = false;
+          var pBtn = document.getElementById('pbtn_' + q.displayNumber);
+          var stEl = document.getElementById('qstatus_' + q.displayNumber);
+          var solEl = document.getElementById('sol_' + q.id);
+          if (solEl) solEl.classList.add('visible');
+
+          if (q.type === 'mcq') {
+            var chosen = typeof userAnswers[q.id] === 'number' ? userAnswers[q.id] : -1;
+            qCorrect = chosen === q.correctIndex;
+            if (qCorrect) {
+              totalScore += q.points;
+              correctQuestions++;
+            }
+            q.optionsHtml.forEach(function(_, i) {
+              var ob = document.getElementById('opt_' + q.id + '_' + i);
+              if (!ob) return;
+              ob.disabled = true;
+              ob.classList.remove('selected');
+              if (i === q.correctIndex) ob.classList.add('correct');
+              else if (i === chosen) ob.classList.add('wrong');
+            });
+            if (stEl) {
+              stEl.textContent = qCorrect ? ('Đúng (+' + q.points + 'đ)') : 'Sai (0đ)';
+              stEl.className = 'q-status ' + (qCorrect ? 'ok' : 'bad');
+            }
+            answerDetails.push({
+              orderIndex: answerDetails.length,
+              questionText: 'Câu ' + q.displayNumber + ': ' + q.rawText,
+              options: q.optionsRaw,
+              selectedIndex: chosen,
+              correctIndex: q.correctIndex,
+              isCorrect: qCorrect,
+              explanation: q.rawSolution
+            });
+          } else if (q.type === 'group-tf') {
+            var tfMap = (userAnswers[q.id] && typeof userAnswers[q.id] === 'object') ? userAnswers[q.id] : {};
+            var rightSubs = 0;
+            q.subQuestions.forEach(function(sq, sIdx) {
+              var picked = tfMap[sq.id] || '';
+              var subOk = picked === sq.correctAnswer;
+              if (subOk) rightSubs++;
+              var row = document.getElementById('tfrow_' + sq.id);
+              if (row) row.classList.add(subOk ? 'ok' : 'bad');
+              ['True', 'False'].forEach(function(v) {
+                var btn = document.getElementById('tfbtn_' + sq.id + '_' + v);
+                if (!btn) return;
+                btn.disabled = true;
+                if (v === sq.correctAnswer) btn.classList.add('right-ans');
+              });
+              answerDetails.push({
+                orderIndex: answerDetails.length,
+                questionText: 'Câu ' + q.displayNumber + (TF_LABELS[sIdx] || '') + ': ' + sq.rawText,
+                options: ['Đúng', 'Sai'],
+                selectedIndex: picked === 'True' ? 0 : (picked === 'False' ? 1 : -1),
+                correctIndex: sq.correctAnswer === 'True' ? 0 : 1,
+                isCorrect: subOk,
+                explanation: sIdx === q.subQuestions.length - 1 ? q.rawSolution : ''
+              });
+            });
+            var earnedRatio = 0;
+            if (q.subQuestions.length === 4) {
+              earnedRatio = rightSubs === 1 ? 0.1 : rightSubs === 2 ? 0.25 : rightSubs === 3 ? 0.5 : rightSubs === 4 ? 1 : 0;
+            } else if (q.subQuestions.length > 0) {
+              earnedRatio = rightSubs / q.subQuestions.length;
+            }
+            var earned = Math.round(q.points * earnedRatio * 100) / 100;
+            totalScore += earned;
+            qCorrect = rightSubs === q.subQuestions.length;
+            if (qCorrect) correctQuestions++;
+            if (stEl) {
+              stEl.textContent = 'Đúng ' + rightSubs + '/' + q.subQuestions.length + ' ý (+' + earned + 'đ)';
+              stEl.className = 'q-status ' + (qCorrect ? 'ok' : 'bad');
+            }
+          } else {
+            var rawInput = document.getElementById('short_' + q.id);
+            var typed = rawInput ? rawInput.value.trim() : '';
+            if (rawInput) rawInput.disabled = true;
+            qCorrect = isShortMatch(typed, q.correctAnswer);
+            if (qCorrect) {
+              totalScore += q.points;
+              correctQuestions++;
+            }
+            var fbEl = document.getElementById('shortfb_' + q.id);
+            if (fbEl) {
+              fbEl.textContent = qCorrect
+                ? ('Chính xác (+' + q.points + 'đ)')
+                : ('Đáp án đúng: ' + q.correctAnswer);
+              fbEl.style.color = qCorrect ? 'var(--ok)' : 'var(--bad)';
+            }
+            if (stEl) {
+              stEl.textContent = qCorrect ? ('Đúng (+' + q.points + 'đ)') : 'Sai (0đ)';
+              stEl.className = 'q-status ' + (qCorrect ? 'ok' : 'bad');
+            }
+            answerDetails.push({
+              orderIndex: answerDetails.length,
+              questionText: 'Câu ' + q.displayNumber + ': ' + q.rawText,
+              options: ['Bài làm: ' + (typed || '(bỏ trống)'), 'Đáp án chuẩn: ' + q.correctAnswer],
+              selectedIndex: qCorrect ? 1 : 0,
+              correctIndex: 1,
+              isCorrect: qCorrect,
+              explanation: q.rawSolution
+            });
+          }
+
+          if (pBtn) {
+            pBtn.className = 'p-btn mono ' + (qCorrect ? 'ok' : 'bad');
+          }
+        });
+
+        totalScore = Math.round(totalScore * 100) / 100;
+        var pct = maxScore > 0 ? Math.round((totalScore / maxScore) * 1000) / 10 : 0;
+
+        document.getElementById('scoreText').textContent = totalScore + ' / ' + maxScore + ' điểm';
+        document.getElementById('correctText').textContent =
+          'Đúng hoàn toàn ' + correctQuestions + ' / ' + flatQuestions.length + ' câu (' + pct + '%)';
+        document.getElementById('resultScreen').classList.add('visible');
+        document.getElementById('topSubmitBtn').style.display = 'none';
+        document.getElementById('sideSubmitBtn').style.display = 'none';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+
+        if (window.MathJax && window.MathJax.typesetPromise) {
+          window.MathJax.typesetPromise().catch(function() {});
+        }
+
+        if (typeof window.EduSyncSubmitScore === 'function') {
+          window.EduSyncSubmitScore(totalScore, maxScore, correctQuestions, flatQuestions.length, answerDetails);
+        } else if (window.parent && window.parent !== window) {
+          window.parent.postMessage({
+            type: 'QUIZ_RESULT',
+            score: totalScore,
+            maxScore: maxScore,
+            correctCount: correctQuestions,
+            totalQuestions: flatQuestions.length,
+            answerDetails: answerDetails
+          }, '*');
+        }
+      }
+
+      document.getElementById('topSubmitBtn').addEventListener('click', function() { gradeAndSubmit(false); });
+      document.getElementById('sideSubmitBtn').addEventListener('click', function() { gradeAndSubmit(false); });
+      document.getElementById('confirmYesBtn').addEventListener('click', function() { gradeAndSubmit(true); });
+      document.getElementById('confirmCancelBtn').addEventListener('click', function() {
+        document.getElementById('confirmBar').classList.remove('visible');
+      });
+
+      function tickTimer() {
+        if (submitted) return;
+        var elapsed = Math.floor((Date.now() - startTime) / 1000);
+        var box = document.getElementById('timerBox');
+        if (durationLimit > 0) {
+          var rem = Math.max(0, durationLimit - elapsed);
+          box.textContent = fmtTime(rem);
+          box.classList.toggle('urgent', rem <= 60);
+          if (rem <= 0) gradeAndSubmit(true);
+        } else {
+          box.textContent = fmtTime(elapsed);
+        }
+      }
+
+      renderExam();
+      tickTimer();
+      timerHandle = setInterval(tickTimer, 1000);
+    })();
+  </script>
+</body>
+</html>
