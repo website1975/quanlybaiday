@@ -1,0 +1,1154 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chuyển Động Biến Đổi. Gia Tốc</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true
+      },
+      options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre'] }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --border: #e2e8f0;
+      --text: #0f172a;
+      --muted: #64748b;
+      --accent: #1d4ed8;
+      --accent-hover: #1e40af;
+      --accent-soft: #eff6ff;
+      --ok: #047857;
+      --ok-bg: #ecfdf5;
+      --ok-border: #6ee7b7;
+      --bad: #dc2626;
+      --bad-bg: #fef2f2;
+      --bad-border: #fca5a5;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.55;
+    }
+    .mono { font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace; font-variant-numeric: tabular-nums; }
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+    }
+    .topbar-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .exam-title { font-size: 16px; font-weight: 700; margin: 0; color: var(--text); }
+    .exam-meta { font-size: 12px; color: var(--muted); margin-top: 2px; }
+    .topbar-actions { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+    .timer-box {
+      padding: 6px 12px;
+      border-radius: 8px;
+      background: #f1f5f9;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .timer-box.urgent {
+      background: var(--bad-bg);
+      color: var(--bad);
+      border: 1px solid var(--bad-border);
+    }
+    .btn {
+      border: 1px solid transparent;
+      border-radius: 8px;
+      padding: 8px 16px;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background-color 0.15s ease, border-color 0.15s ease;
+    }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-primary:hover { background: var(--accent-hover); }
+    .btn-secondary { background: #fff; border-color: #cbd5e1; color: #334155; }
+    .btn-secondary:hover { background: #f8fafc; }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 280px;
+      gap: 20px;
+      align-items: start;
+    }
+    @media (max-width: 960px) {
+      .container { grid-template-columns: 1fr; }
+    }
+    .main-col { display: flex; flex-direction: column; gap: 18px; }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+    }
+    .result-card {
+      background: var(--ok-bg);
+      border: 1px solid var(--ok-border);
+      border-radius: 12px;
+      padding: 20px;
+      display: none;
+    }
+    .result-card.visible { display: block; }
+    .result-score { font-size: 26px; font-weight: 700; color: var(--ok); margin: 4px 0; }
+    .result-sub { font-size: 13px; color: #065f46; }
+    .confirm-bar {
+      display: none;
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      border-radius: 10px;
+      padding: 14px 16px;
+      margin-bottom: 4px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      font-size: 13px;
+      color: #92400e;
+    }
+    .confirm-bar.visible { display: flex; }
+    .context-group {
+      background: var(--surface);
+      border: 1px solid #cbd5e1;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .context-header {
+      background: #f1f5f9;
+      border-bottom: 1px solid var(--border);
+      padding: 16px 20px;
+    }
+    .context-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 6px;
+    }
+    .context-body { font-size: 14px; color: #1e293b; }
+    .context-questions {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      background: #f8fafc;
+    }
+    .q-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 18px;
+      scroll-margin-top: 84px;
+    }
+    .q-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding-bottom: 10px;
+      margin-bottom: 12px;
+      border-bottom: 1px solid #f1f5f9;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .q-num { font-size: 14px; font-weight: 700; color: var(--text); }
+    .q-status { font-weight: 600; }
+    .q-status.ok { color: var(--ok); }
+    .q-status.bad { color: var(--bad); }
+    .q-text { font-size: 15px; font-weight: 500; color: var(--text); margin-bottom: 14px; }
+    .q-figure {
+      margin: 12px 0;
+      text-align: center;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px;
+    }
+    .q-figure img { max-width: 100%; max-height: 360px; height: auto; border-radius: 4px; }
+    .options-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+    @media (max-width: 640px) {
+      .options-grid { grid-template-columns: 1fr; }
+    }
+    .opt-btn {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      text-align: left;
+      padding: 11px 13px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #fff;
+      font-family: inherit;
+      font-size: 14px;
+      color: #1e293b;
+      cursor: pointer;
+      transition: border-color 0.15s ease, background-color 0.15s ease;
+    }
+    .opt-btn:hover:not(:disabled) { border-color: #94a3b8; background: #f8fafc; }
+    .opt-btn.selected { border-color: var(--accent); background: var(--accent-soft); color: #1e3a8a; font-weight: 500; }
+    .opt-btn.correct { border-color: var(--ok-border); background: var(--ok-bg); color: #064e3b; font-weight: 600; }
+    .opt-btn.wrong { border-color: var(--bad-border); background: var(--bad-bg); color: #7f1d1d; }
+    .opt-letter {
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      border: 1px solid #cbd5e1;
+      background: #fff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .opt-btn.selected .opt-letter { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .tf-list { display: flex; flex-direction: column; gap: 10px; }
+    .tf-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #fff;
+    }
+    .tf-row.ok { border-color: var(--ok-border); background: var(--ok-bg); }
+    .tf-row.bad { border-color: var(--bad-border); background: var(--bad-bg); }
+    .tf-text { font-size: 14px; flex: 1; }
+    .tf-actions { display: flex; gap: 6px; flex-shrink: 0; }
+    .tf-choice {
+      padding: 6px 12px;
+      border-radius: 6px;
+      border: 1px solid #cbd5e1;
+      background: #fff;
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .tf-choice.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .tf-choice.right-ans { border-color: var(--ok); color: var(--ok); }
+    .short-box { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+    .short-input {
+      width: 240px;
+      max-width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px;
+    }
+    .short-input:focus { outline: 2px solid var(--accent); border-color: var(--accent); }
+    .short-feedback { font-size: 13px; font-weight: 600; }
+    .solution-box {
+      display: none;
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: 8px;
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      font-size: 13px;
+      color: #334155;
+    }
+    .solution-box.visible { display: block; }
+    .sidebar {
+      position: sticky;
+      top: 76px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+    }
+    .palette-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 6px;
+      margin: 12px 0 16px;
+    }
+    .p-btn {
+      height: 34px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: #f8fafc;
+      font-size: 12px;
+      font-weight: 700;
+      color: #334155;
+      cursor: pointer;
+    }
+    .p-btn.done { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .p-btn.ok { background: var(--ok); color: #fff; border-color: var(--ok); }
+    .p-btn.bad { background: var(--bad); color: #fff; border-color: var(--bad); }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div>
+        <h1 class="exam-title">Chuyển Động Biến Đổi. Gia Tốc</h1>
+        <div class="exam-meta">Vật Lý · Khối 10 · CHƯƠNG 2: ĐỘNG HỌC · 20 câu · Thang 10 điểm</div>
+      </div>
+      <div class="topbar-actions">
+        <span id="progressLabel" class="exam-meta mono">0/20</span>
+        <div id="timerBox" class="timer-box mono">00:00</div>
+        <button id="topSubmitBtn" type="button" class="btn btn-primary">Nộp bài</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <main class="main-col">
+      <div id="confirmBar" class="confirm-bar">
+        <span id="confirmMsg">Bạn vẫn còn câu chưa trả lời. Xác nhận nộp bài ngay?</span>
+        <div style="display:flex;gap:8px;">
+          <button id="confirmCancelBtn" type="button" class="btn btn-secondary">Làm tiếp</button>
+          <button id="confirmYesBtn" type="button" class="btn btn-primary">Xác nhận nộp</button>
+        </div>
+      </div>
+
+      <section id="resultScreen" class="result-card">
+        <div style="font-size:12px;font-weight:700;color:#047857;">KẾT QUẢ BÀI LÀM</div>
+        <div id="scoreText" class="result-score mono">0 / 10</div>
+        <div id="correctText" class="result-sub mono">0 / 20</div>
+        <div id="explanationsSection" class="result-sub" style="margin-top:6px;">
+          Xem lại từng câu và lời giải chi tiết ở bên dưới.
+        </div>
+      </section>
+
+      <div id="questionsRoot" class="main-col"></div>
+    </main>
+
+    <aside class="sidebar">
+      <div style="font-size:14px;font-weight:700;">Bảng câu hỏi</div>
+      <div id="sidebarCount" class="exam-meta mono">Đã làm 0/20</div>
+      <div id="paletteRoot" class="palette-grid"></div>
+      <button id="sideSubmitBtn" type="button" class="btn btn-primary" style="width:100%;">Nộp bài &amp; Chấm điểm</button>
+    </aside>
+  </div>
+
+  <script type="application/json" id="edusync-exam-json">{
+  "id": "04b88b60-6e46-4ece-a024-3b0cda8cde4c",
+  "title": "Chuyển Động Biến Đổi. Gia Tốc",
+  "subject": "Vật Lý",
+  "grade": "10",
+  "type": "test",
+  "category": "CHƯƠNG 2: ĐỘNG HỌC",
+  "durationMinutes": 25,
+  "shuffleQuestions": false,
+  "shuffleOptions": false,
+  "questionCount": 20,
+  "questions": [
+    {
+      "id": "f7be9e1a-965d-43dd-b2a6-0f05d1bd32cd",
+      "index": 1,
+      "type": "mcq",
+      "level": "B",
+      "text": "Chuyển động có vận tốc thay đổi theo thời gian được gọi là gì?",
+      "options": [
+        "Chuyển động thẳng đều.",
+        "Chuyển động biến đổi.",
+        "Chuyển động tròn đều.",
+        "Chuyển động đứng yên."
+      ],
+      "correctAnswer": "Chuyển động biến đổi.",
+      "solution": "SGK Trang 37 định nghĩa: Chuyển động có vận tốc thay đổi được gọi là chuyển động biến đổi.",
+      "points": 0.5
+    },
+    {
+      "id": "6f1fe0a2-d74e-44d2-b3d1-c9e2944d29a3",
+      "index": 2,
+      "type": "mcq",
+      "level": "B",
+      "text": "Đại lượng đặc trưng cho sự thay đổi nhanh hay chậm của vận tốc theo thời gian được gọi là gì?",
+      "options": [
+        "Gia tốc.",
+        "Quãng đường.",
+        "Tốc độ trung bình.",
+        "Độ dịch chuyển."
+      ],
+      "correctAnswer": "Gia tốc.",
+      "solution": "SGK Trang 38 ghi rõ: Đại lượng $a$ cho biết sự thay đổi nhanh hay chậm của vận tốc được gọi là gia tốc của chuyển động.",
+      "points": 0.5
+    },
+    {
+      "id": "dcb1c146-5694-4ff0-b622-35635b47a6ec",
+      "index": 3,
+      "type": "mcq",
+      "level": "B",
+      "text": "Trong hệ đo lường SI, đơn vị của gia tốc là:",
+      "options": [
+        "s",
+        "$m.s^2$",
+        "$m/s^2$ (hoặc $m.s^{-2}$)",
+        "km/h"
+      ],
+      "correctAnswer": "$m/s^2$ (hoặc $m.s^{-2}$)",
+      "solution": "Gia tốc $a = \\frac{\\Delta v}{\\Delta t}$. Vận tốc có đơn vị là m/s, thời gian có đơn vị là s, do đó gia tốc có đơn vị là $m/s^2$ (hoặc $m.s^{-2}$).",
+      "points": 0.5
+    },
+    {
+      "id": "6fb467fc-6388-409e-bbad-0ee15a920229",
+      "index": 4,
+      "type": "mcq",
+      "level": "B",
+      "text": "Một chuyển động thẳng là **nhanh dần** khi gia tốc $\\vec{a}$ và vận tốc $\\vec{v}$ thỏa mãn điều kiện nào?",
+      "options": [
+        "$\\vec{a}$ cùng chiều với $\\vec{v}$ (tích $a \\cdot v > 0$).",
+        "$\\vec{a}$ ngược chiều với $\\vec{v}$ (tích $a \\cdot v < 0$).",
+        "Gia tốc $a = 0$.",
+        "Vận tốc $v$ luôn luôn giảm."
+      ],
+      "correctAnswer": "$\\vec{a}$ cùng chiều với $\\vec{v}$ (tích $a \\cdot v > 0$).",
+      "solution": "SGK Trang 38 & 39 kết luận: Khi $\\vec{a}$ cùng chiều với $\\vec{v}$ ($a \\cdot v > 0$) thì chuyển động là nhanh dần.",
+      "points": 0.5
+    },
+    {
+      "id": "22e9b75c-e24e-4328-9175-1174f6d373f1",
+      "index": 5,
+      "type": "mcq",
+      "level": "B",
+      "text": "Một chuyển động thẳng là **chậm dần** khi gia tốc $\\vec{a}$ và vận tốc $\\vec{v}$ thỏa mãn điều kiện nào?",
+      "options": [
+        "$\\vec{a}$ cùng chiều với $\\vec{v}$ (tích $a \\cdot v > 0$).",
+        "$\\vec{a}$ ngược chiều với $\\vec{v}$ (tích $a \\cdot v < 0$).",
+        "Gia tốc $a$ luôn mang giá trị dương.",
+        "Vận tốc $v = 0$."
+      ],
+      "correctAnswer": "$\\vec{a}$ ngược chiều với $\\vec{v}$ (tích $a \\cdot v < 0$).",
+      "solution": "SGK Trang 38 & 39 kết luận: Khi $\\vec{a}$ ngược chiều với $\\vec{v}$ ($a \\cdot v < 0$) thì chuyển động là chậm dần.",
+      "points": 0.5
+    },
+    {
+      "id": "358ce0b7-f143-48f5-89c0-0d59bc0eec73",
+      "index": 6,
+      "type": "mcq",
+      "level": "B",
+      "text": "Thiết bị được trang bị trên các phương tiện giao thông như xe máy, ô tô dùng để đo trực tiếp **vận tốc tức thời** là gì?",
+      "options": [
+        "Nhiệt kế.",
+        "Tốc kế (Đồng hồ đo tốc độ).",
+        "Áp kế.",
+        "Lực kế."
+      ],
+      "correctAnswer": "Tốc kế (Đồng hồ đo tốc độ).",
+      "solution": "SGK Trang 37 ghi rõ: Các phương tiện giao thông như xe máy, ô tô được trang bị tốc kế là thiết bị đo trực tiếp vận tốc tức thời.",
+      "points": 0.5
+    },
+    {
+      "id": "1fd95d66-26f1-442b-99c0-6809c6ac56f1",
+      "index": 7,
+      "type": "mcq",
+      "level": "B",
+      "text": "Độ dốc (hệ số góc) của đường biểu diễn trong **đồ thị vận tốc – thời gian ($v - t$)** của một chuyển động thẳng cho biết đại lượng nào?",
+      "options": [
+        "Quãng đường đi được.",
+        "Độ dịch chuyển.",
+        "Gia tốc của chuyển động.",
+        "Thời gian chuyển động."
+      ],
+      "correctAnswer": "Gia tốc của chuyển động.",
+      "solution": "Độ dốc của đồ thị $v - t$ được tính bằng $\\frac{\\Delta v}{\\Delta t}$, chính là đại lượng gia tốc của chuyển động.",
+      "points": 0.5
+    },
+    {
+      "id": "e9589073-a391-4113-81e4-49ae407a1196",
+      "index": 8,
+      "type": "mcq",
+      "level": "B",
+      "text": "Nhận xét nào sau đây về gia tốc là **SAI**?",
+      "options": [
+        "Gia tốc là đại lượng vectơ: $\\vec{a} = \\frac{\\Delta\\vec{v}}{\\Delta t}$.",
+        "Gia tốc đặc trưng cho mức độ biến đổi vận tốc theo thời gian.",
+        "Khi vật chuyển động chậm dần, gia tốc chắc chắn luôn luôn âm.",
+        "Khi vật chuyển động thẳng đều, gia tốc bằng 0."
+      ],
+      "correctAnswer": "Khi vật chuyển động chậm dần, gia tốc chắc chắn luôn luôn âm.",
+      "solution": "Phát biểúgia tốc chắc chắn luôn luôn âm khi chậm dần' là SAI. Chuyển động chậm dần chỉ yêu cầu $\\vec{a}$ ngược chiều $\\vec{v}$ ($a \\cdot v < 0$). Nếu chiều dương được chọn ngược chiều vận tốc ($v < 0$) thì gia tốc lại mang giá trị dương ($a > 0$).",
+      "points": 0.5
+    },
+    {
+      "id": "bd79a79d-3245-4e0a-84eb-c856fb7019bb",
+      "index": 9,
+      "type": "mcq",
+      "level": "H",
+      "text": "Xét bảng số liệu vận tốc tức thời của một ô tô:\nThời điểm t (s): 0 | 2 | 4 | 6 | 8\nVận tốc v (m/s): 0 | 2,50 | 5,28 | 8,33 | 12,50\nXác định độ biến thiên vận tốc $\\Delta v$ của ô tô sau $8\\,giây$ chuyển động đầu tiên.",
+      "options": [
+        "$12,50$ m/s",
+        "$8,33$ m/s",
+        "$5,28$ m/s",
+        "$2,50$ m/s"
+      ],
+      "correctAnswer": "$12,50$ m/s",
+      "solution": "Độ biến thiên vận tốc sau $8$ s:\n$\\Delta v = v_t - v_0 = 12,50 - 0 = 12,50$ m/s.",
+      "points": 0.5
+    },
+    {
+      "id": "2260f09f-88cf-49e1-91b7-eb83cbef006b",
+      "index": 10,
+      "type": "mcq",
+      "level": "H",
+      "text": "Một xe máy đang chuyển động thẳng với vận tốc $10$ m/s thì tăng tốc. Sau $5$ s kể từ khi tăng tốc, xe đạt vận tốc $12$ m/s. Gia tốc của xe máy trong khoảng thời gian đó là bao nhiêu?",
+      "options": [
+        "$0,4\\,m/s^2$",
+        "$2,0\\,m/s^2$",
+        "$0,8\\,m/s^2$",
+        "$1,2\\,m/s^2$"
+      ],
+      "correctAnswer": "$0,4\\,m/s^2$",
+      "solution": "Áp dụng công thức tính gia tốc:\n$a = \\frac{v - v_0}{\\Delta t} = \\frac{12 - 10}{5} = \\frac{2}{5} = 0,4\\,m/s^2$.",
+      "points": 0.5
+    },
+    {
+      "id": "a2ae9341-ec0d-4c3a-92ef-ed587d79a0d0",
+      "index": 11,
+      "type": "mcq",
+      "level": "H",
+      "text": "Một con báo đang chạy với vận tốc $30$ m/s thì chuyển động chậm dần khi tới gần một con suối. Sau $3\\,giây$, vận tốc của nó giảm còn $9$ m/s. Tính gia tốc của con báo.",
+      "options": [
+        "$-7\\,m/s^2$",
+        "$7\\,m/s^2$",
+        "$-13\\,m/s^2$",
+        "$-3\\,m/s^2$"
+      ],
+      "correctAnswer": "$-7\\,m/s^2$",
+      "solution": "Gia tốc của con báo:\n$a = \\frac{v - v_0}{\\Delta t} = \\frac{9 - 30}{3} = \\frac{-21}{3} = -7\\,m/s^2$.\nDấu âm thể hiện gia tốc ngược chiều với chiều chuyển động (chuyển động chậm dần).",
+      "points": 0.5
+    },
+    {
+      "id": "462480b8-bf41-4ae1-89d6-16cdfe42d41b",
+      "index": 12,
+      "type": "mcq",
+      "level": "H",
+      "text": "Dựa vào đồ thị $v - t$ của một ô tô thể thao (ban đầu xe chạy về phía Bắc): Tính gia tốc của ô tô trong $4\\,giây$ đầu tiên.",
+      "options": [
+        "$5\\,m/s^2$ (hướng về phía Bắc)",
+        "$2,5\\,m/s^2$ (hướng về phía Bắc)",
+        "$10\\,m/s^2$ (hướng về phía Nam)",
+        "$0\\,m/s^2$"
+      ],
+      "correctAnswer": "$5\\,m/s^2$ (hướng về phía Bắc)",
+      "solution": "Trong $4$ s đầu:\n- Tại $t = 0\\,s \\implies v_0 = 0$.\n- Tại $t = 4\\,s \\implies v_1 = 20$ m/s.\n- Gia tốc: $a = \\frac{20 - 0}{4 - 0} = 5\\,m/s^2$. Vì $a > 0$ nên $\\vec{a}$ cùng chiều $\\vec{v}$ (hướng về phía Bắc).",
+      "points": 0.5
+    },
+    {
+      "id": "a0ba29c2-3be3-4d6f-9eec-9ce7cb344ef3",
+      "index": 13,
+      "type": "mcq",
+      "level": "H",
+      "text": "Từ giây thứ 4 đến giây thứ 12 trên đồ thị $v - t$, gia tốc của ô tô thể thao là bao nhiêu và xe chuyển động như thế nào?",
+      "options": [
+        "Gia tốc $a = 0\\,m/s^2$; xe chuyển động thẳng đều với vận tốc $20$ m/s.",
+        "Gia tốc $a = 2,5\\,m/s^2$; xe chuyển động nhanh dần.",
+        "Gia tốc $a = -5\\,m/s^2$; xe chuyển động chậm dần.",
+        "Gia tốc $a = 0\\,m/s^2$; xe đứng yên không chuyển động."
+      ],
+      "correctAnswer": "Gia tốc $a = 0\\,m/s^2$; xe chuyển động thẳng đều với vận tốc $20$ m/s.",
+      "solution": "Từ $t = 4$ s đến $t = 12$ s, đường biểu diễn là một đoạn nằm ngang tại $v = 20$ m/s.\nĐộ biến thiên vận tốc $\\Delta v = 20 - 20 = 0 \\implies a = 0\\,m/s^2$. Xe đang chuyển động thẳng đều.",
+      "points": 0.5
+    },
+    {
+      "id": "7298889d-1a3d-41e5-a4d6-8c921d0540ea",
+      "index": 14,
+      "type": "mcq",
+      "level": "H",
+      "text": "Gia tốc của ô tô thể thao từ giây thứ 12 đến giây thứ 20 trên đồ thị $v - t$ bằng bao nhiêu?",
+      "options": [
+        "$-5\\,m/s^2$",
+        "$5\\,m/s^2$",
+        "$-2,5\\,m/s^2$",
+        "$-10\\,m/s^2$"
+      ],
+      "correctAnswer": "$-5\\,m/s^2$",
+      "solution": "Từ $t_1 = 12$ s ($v_1 = 20$ m/s) đến $t_2 = 20$ s ($v_2 = -20$ m/s):\n$a = \\frac{v_2 - v_1}{t_2 - t_1} = \\frac{-20 - 20}{20 - 12} = \\frac{-40}{8} = -5\\,m/s^2$.",
+      "points": 0.5
+    },
+    {
+      "id": "25b4c8ae-65fd-48fe-a5fa-ea0bec7ee606",
+      "index": 15,
+      "type": "mcq",
+      "level": "H",
+      "text": "Gia tốc của ô tô trên đoạn đường số <4> (từ $t_3 = 6\\,s, v_3 = 49$ km/h đến $t_4 = 7\\,s, v_4 = 30$ km/h) là bao nhiêu?",
+      "options": [
+        "$-5,28\\,m/s^2$",
+        "$-19,0\\,m/s^2$",
+        "$5,28\\,m/s^2$",
+        "$-2,78\\,m/s^2$"
+      ],
+      "correctAnswer": "$-5,28\\,m/s^2$",
+      "solution": "Đổi đơn vị vận tốc ra m/s:\n- $v_3 = 49\\,km/h = \\frac{49}{3,6} \\approx 13,61$ m/s.\n- $v_4 = 30\\,km/h = \\frac{30}{3,6} \\approx 8,33$ m/s.\n- Thời gian $\\Delta t = 7 - 6 = 1$ s.\n- Gia tốc $a_4 = \\frac{8,33 - 13,61}{1} = -5,28\\,m/s^2$.",
+      "points": 0.5
+    },
+    {
+      "id": "425859df-0039-4083-be23-cc67cd8898d8",
+      "index": 16,
+      "type": "mcq",
+      "level": "VD",
+      "text": "Một xe máy đang chạy với vận tốc $12$ m/s thì người lái xe hãm phanh làm xe chuyển động chậm dần với gia tốc có độ lớn $a = 0,4\\,m/s^2$. Thời gian từ lúc hãm phanh đến khi xe dừng hẳn và quãng đường xe đi được trong thời gian đó lần lượt là:",
+      "options": [
+        "$t = 30$ s và $s = 180$ m",
+        "$t = 25$ s và $s = 150$ m",
+        "$t = 30$ s và $s = 360$ m",
+        "$t = 15$ s và $s = 90$ m"
+      ],
+      "correctAnswer": "$t = 30$ s và $s = 180$ m",
+      "solution": "1. Xe chuyển động chậm dần nên $a = -0,4\\,m/s^2$. Khi dừng hẳn $v = 0$.\n- Thời gian hãm phanh: $t = \\frac{v - v_0}{a} = \\frac{0 - 12}{-0,4} = 30$ s.\n2. Vận tốc trung bình trong quá trình hãm phanh đều: $v_{tb} = \\frac{v_0 + v}{2} = \\frac{12 + 0}{2} = 6$ m/s.\n- Quãng đường đi được: $s = v_{tb} \\cdot t = 6 \\times 30 = 180$ m.",
+      "points": 0.5
+    },
+    {
+      "id": "a0bee076-7acf-4b73-90f3-712fd09c30ea",
+      "index": 17,
+      "type": "mcq",
+      "level": "VD",
+      "text": "Dựa vào đồ thị $v - t$: Hãy tính tổng quãng đường $s$ mà ô tô thể thao đã đi được và độ dịch chuyển $d$ của ô tô sau toàn bộ $28\\,giây$ chuyển động.",
+      "options": [
+        "Tổng quãng đường $s = 440$ m; Độ dịch chuyển $d = 80$ m (hướng Bắc).",
+        "Tổng quãng đường $s = 320$ m; Độ dịch chuyển $d = 0$ m.",
+        "Tổng quãng đường $s = 480$ m; Độ dịch chuyển $d = 160$ m (hướng Bắc).",
+        "Tổng quãng đường $s = 440$ m; Độ dịch chuyển $d = 440$ m (hướng Bắc)."
+      ],
+      "correctAnswer": "Tổng quãng đường $s = 440$ m; Độ dịch chuyển $d = 80$ m (hướng Bắc).",
+      "solution": "Diện tích dưới đồ thị $v - t$ chính là quãng đường / độ dịch chuyển:\n1. Giai đoạn 1 (Hướng Bắc, $0 \\to 16$ s): $d_1 = \\frac{(16 + 8) \\times 20}{2} = 240$ m (hướng Bắc).\n2. Giai đoạn 2 (Phía Nam, $16 \\to 28$ s): $s_2 = \\frac{(12 + 8) \\times 20}{2} = 200\\,m \\implies d_2 = -200$ m.\n- Tổng quãng đường: $s = s_1 + s_2 = 240 + 200 = 440$ m.\n- Độ dịch chuyển tổng cộng: $d = d_1 + d_2 = 240 - 200 = 80$ m (hướng Bắc).",
+      "points": 0.5
+    },
+    {
+      "id": "f80e884e-443b-4eb8-b780-def5f7bc641d",
+      "index": 18,
+      "type": "mcq",
+      "level": "VD",
+      "text": "Một xe ô tô đang di chuyển với vận tốc $20$ m/s thì người tài xế phát hiện chướng ngại vật và hãm phanh khẩn cấp. Xe dừng lại hẳn sau $10\\,giây$. Tính quãng đường xe ô tô di chuyển thêm được kể từ lúc hãm phanh đến khi dừng lại hoàn toàn.",
+      "options": [
+        "$100$ m",
+        "$200$ m",
+        "$150$ m",
+        "$50$ m"
+      ],
+      "correctAnswer": "$100$ m",
+      "solution": "Gia tốc hãm phanh: $a = \\frac{0 - 20}{10} = -2\\,m/s^2$.\nVận tốc trung bình trong $10$ s hãm phanh: $v_{tb} = \\frac{20 + 0}{2} = 10$ m/s.\nQuãng đường đi được: $s = v_{tb} \\cdot t = 10 \\times 10 = 100$ m.",
+      "points": 0.5
+    },
+    {
+      "id": "3ad3a5a2-3e2b-4729-863f-12b712e639f4",
+      "index": 19,
+      "type": "mcq",
+      "level": "VD",
+      "text": "Một ô tô thử nghiệm chuyển động thẳng qua 2 giai đoạn liên tiếp từ trạng thái nghỉ ($v_0 = 0$):\n- **Giai đoạn 1:** Tăng tốc đều với gia tốc $a_1 = 2\\,m/s^2$ đạt vận tốc cực đại $v_{max}$.\n- **Giai đoạn 2:** Ngay lập tức hãm phanh giảm tốc đều với gia tốc có độ lớn $a_2 = 4\\,m/s^2$ cho đến khi dừng lại hẳn.\nBiết tổng thời gian chuyển động trong cả hai giai đoạn là $15\\,giây$. Hãy xác định vận tốc cực đại $v_{max}$ và tổng quãng đường ô tô đi được.",
+      "options": [
+        "$v_{max} = 20$ m/s; Quãng đường $s = 150$ m",
+        "$v_{max} = 30$ m/s; Quãng đường $s = 225$ m",
+        "$v_{max} = 15$ m/s; Quãng đường $s = 112,5$ m",
+        "$v_{max} = 24$ m/s; Quãng đường $s = 180$ m"
+      ],
+      "correctAnswer": "$v_{max} = 20$ m/s; Quãng đường $s = 150$ m",
+      "solution": "Gọi $t_1, t_2$ lần lượt là thời gian giai đoạn 1 và giai đoạn 2:\n1. $v_{max} = a_1 \\cdot t_1 = 2t_1 = a_2 \\cdot t_2 = 4t_2 \\implies t_1 = 2t_2$.\n2. $t_1 + t_2 = 15 \\implies 3t_2 = 15 \\implies t_2 = 5\\,s, t_1 = 10$ s.\n3. $v_{max} = 2 \\times 10 = 20$ m/s.\n4. Quãng đường $s = \\frac{1}{2} \\times 15 \\times 20 = 150$ m.",
+      "points": 0.5
+    },
+    {
+      "id": "5f7f6d53-e7d1-4e56-9461-8d614feee34d",
+      "index": 20,
+      "type": "mcq",
+      "level": "VD",
+      "text": "Hai ô tô A và B cùng xuất phát một lúc từ cùng một vị trí trên một đường thẳng. Xe A chuyển động thẳng đều với vận tốc không đổi $v_A = 12$ m/s. Xe B xuất phát từ trạng thái nghỉ ($v_0 = 0$) chuyển động nhanh dần đều với gia tốc $a_B = 2\\,m/s^2$. Xác định **khoảng cách lớn nhất** giữa hai xe trước khi xe B đuổi kịp xe A.",
+      "options": [
+        "$36$ m (tại thời điểm $t = 6$ s)",
+        "$72$ m (tại thời điểm $t = 12$ s)",
+        "$24$ m (tại thời điểm $t = 4$ s)",
+        "$48$ m (tại thời điểm $t = 8$ s)"
+      ],
+      "correctAnswer": "$36$ m (tại thời điểm $t = 6$ s)",
+      "solution": "1. Độ dịch chuyển: $x_A = 12t$, $x_B = t^2$.\n2. Khoảng cách: $\\Delta x = 12t - t^2$.\n- Khoảng cách cực đại khi $v_B = v_A \\implies 2t = 12 \\implies t = 6$ s.\n3. Khoảng cách cực đại: $\\Delta x_{max} = 12(6) - 6^2 = 36$ m.",
+      "points": 0.5
+    }
+  ]
+}</script>
+  <script id="edusync-runtime-data" type="application/json">{"examId":"04b88b60-6e46-4ece-a024-3b0cda8cde4c","title":"Chuyển Động Biến Đổi. Gia Tốc","subject":"Vật Lý","grade":"10","category":"CHƯƠNG 2: ĐỘNG HỌC","durationMinutes":25,"maxScore":10,"shuffleQuestions":false,"shuffleOptions":false,"blocks":[{"blockId":"single_f7be9e1a-965d-43dd-b2a6-0f05d1bd32cd_0","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"f7be9e1a-965d-43dd-b2a6-0f05d1bd32cd","type":"mcq","level":"B","chapterName":"","points":0.5,"textHtml":"Chuyển động có vận tốc thay đổi theo thời gian được gọi là gì?","rawText":"Chuyển động có vận tốc thay đổi theo thời gian được gọi là gì?","ownImageUrl":"","optionsHtml":["Chuyển động thẳng đều.","Chuyển động biến đổi.","Chuyển động tròn đều.","Chuyển động đứng yên."],"optionsRaw":["Chuyển động thẳng đều.","Chuyển động biến đổi.","Chuyển động tròn đều.","Chuyển động đứng yên."],"correctIndex":1,"correctAnswer":"Chuyển động biến đổi.","subQuestions":[],"solutionHtml":"SGK Trang 37 định nghĩa: Chuyển động có vận tốc thay đổi được gọi là chuyển động biến đổi.","rawSolution":"SGK Trang 37 định nghĩa: Chuyển động có vận tốc thay đổi được gọi là chuyển động biến đổi."}]},{"blockId":"single_6f1fe0a2-d74e-44d2-b3d1-c9e2944d29a3_1","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"6f1fe0a2-d74e-44d2-b3d1-c9e2944d29a3","type":"mcq","level":"B","chapterName":"","points":0.5,"textHtml":"Đại lượng đặc trưng cho sự thay đổi nhanh hay chậm của vận tốc theo thời gian được gọi là gì?","rawText":"Đại lượng đặc trưng cho sự thay đổi nhanh hay chậm của vận tốc theo thời gian được gọi là gì?","ownImageUrl":"","optionsHtml":["Gia tốc.","Quãng đường.","Tốc độ trung bình.","Độ dịch chuyển."],"optionsRaw":["Gia tốc.","Quãng đường.","Tốc độ trung bình.","Độ dịch chuyển."],"correctIndex":0,"correctAnswer":"Gia tốc.","subQuestions":[],"solutionHtml":"SGK Trang 38 ghi rõ: Đại lượng $a$ cho biết sự thay đổi nhanh hay chậm của vận tốc được gọi là gia tốc của chuyển động.","rawSolution":"SGK Trang 38 ghi rõ: Đại lượng $a$ cho biết sự thay đổi nhanh hay chậm của vận tốc được gọi là gia tốc của chuyển động."}]},{"blockId":"single_dcb1c146-5694-4ff0-b622-35635b47a6ec_2","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"dcb1c146-5694-4ff0-b622-35635b47a6ec","type":"mcq","level":"B","chapterName":"","points":0.5,"textHtml":"Trong hệ đo lường SI, đơn vị của gia tốc là:","rawText":"Trong hệ đo lường SI, đơn vị của gia tốc là:","ownImageUrl":"","optionsHtml":["s","$m.s^2$","$m/s^2$ (hoặc $m.s^{-2}$)","km/h"],"optionsRaw":["s","$m.s^2$","$m/s^2$ (hoặc $m.s^{-2}$)","km/h"],"correctIndex":2,"correctAnswer":"$m/s^2$ (hoặc $m.s^{-2}$)","subQuestions":[],"solutionHtml":"Gia tốc $a = \\frac{\\Delta v}{\\Delta t}$. Vận tốc có đơn vị là m/s, thời gian có đơn vị là s, do đó gia tốc có đơn vị là $m/s^2$ (hoặc $m.s^{-2}$).","rawSolution":"Gia tốc $a = \\frac{\\Delta v}{\\Delta t}$. Vận tốc có đơn vị là m/s, thời gian có đơn vị là s, do đó gia tốc có đơn vị là $m/s^2$ (hoặc $m.s^{-2}$)."}]},{"blockId":"single_6fb467fc-6388-409e-bbad-0ee15a920229_3","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"6fb467fc-6388-409e-bbad-0ee15a920229","type":"mcq","level":"B","chapterName":"","points":0.5,"textHtml":"Một chuyển động thẳng là **nhanh dần** khi gia tốc $\\vec{a}$ và vận tốc $\\vec{v}$ thỏa mãn điều kiện nào?","rawText":"Một chuyển động thẳng là **nhanh dần** khi gia tốc $\\vec{a}$ và vận tốc $\\vec{v}$ thỏa mãn điều kiện nào?","ownImageUrl":"","optionsHtml":["$\\vec{a}$ cùng chiều với $\\vec{v}$ (tích $a \\cdot v &gt; 0$).","$\\vec{a}$ ngược chiều với $\\vec{v}$ (tích $a \\cdot v &lt; 0$).","Gia tốc $a = 0$.","Vận tốc $v$ luôn luôn giảm."],"optionsRaw":["$\\vec{a}$ cùng chiều với $\\vec{v}$ (tích $a \\cdot v > 0$).","$\\vec{a}$ ngược chiều với $\\vec{v}$ (tích $a \\cdot v < 0$).","Gia tốc $a = 0$.","Vận tốc $v$ luôn luôn giảm."],"correctIndex":0,"correctAnswer":"$\\vec{a}$ cùng chiều với $\\vec{v}$ (tích $a \\cdot v > 0$).","subQuestions":[],"solutionHtml":"SGK Trang 38 &amp; 39 kết luận: Khi $\\vec{a}$ cùng chiều với $\\vec{v}$ ($a \\cdot v &gt; 0$) thì chuyển động là nhanh dần.","rawSolution":"SGK Trang 38 & 39 kết luận: Khi $\\vec{a}$ cùng chiều với $\\vec{v}$ ($a \\cdot v > 0$) thì chuyển động là nhanh dần."}]},{"blockId":"single_22e9b75c-e24e-4328-9175-1174f6d373f1_4","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"22e9b75c-e24e-4328-9175-1174f6d373f1","type":"mcq","level":"B","chapterName":"","points":0.5,"textHtml":"Một chuyển động thẳng là **chậm dần** khi gia tốc $\\vec{a}$ và vận tốc $\\vec{v}$ thỏa mãn điều kiện nào?","rawText":"Một chuyển động thẳng là **chậm dần** khi gia tốc $\\vec{a}$ và vận tốc $\\vec{v}$ thỏa mãn điều kiện nào?","ownImageUrl":"","optionsHtml":["$\\vec{a}$ cùng chiều với $\\vec{v}$ (tích $a \\cdot v &gt; 0$).","$\\vec{a}$ ngược chiều với $\\vec{v}$ (tích $a \\cdot v &lt; 0$).","Gia tốc $a$ luôn mang giá trị dương.","Vận tốc $v = 0$."],"optionsRaw":["$\\vec{a}$ cùng chiều với $\\vec{v}$ (tích $a \\cdot v > 0$).","$\\vec{a}$ ngược chiều với $\\vec{v}$ (tích $a \\cdot v < 0$).","Gia tốc $a$ luôn mang giá trị dương.","Vận tốc $v = 0$."],"correctIndex":1,"correctAnswer":"$\\vec{a}$ ngược chiều với $\\vec{v}$ (tích $a \\cdot v < 0$).","subQuestions":[],"solutionHtml":"SGK Trang 38 &amp; 39 kết luận: Khi $\\vec{a}$ ngược chiều với $\\vec{v}$ ($a \\cdot v &lt; 0$) thì chuyển động là chậm dần.","rawSolution":"SGK Trang 38 & 39 kết luận: Khi $\\vec{a}$ ngược chiều với $\\vec{v}$ ($a \\cdot v < 0$) thì chuyển động là chậm dần."}]},{"blockId":"single_358ce0b7-f143-48f5-89c0-0d59bc0eec73_5","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"358ce0b7-f143-48f5-89c0-0d59bc0eec73","type":"mcq","level":"B","chapterName":"","points":0.5,"textHtml":"Thiết bị được trang bị trên các phương tiện giao thông như xe máy, ô tô dùng để đo trực tiếp **vận tốc tức thời** là gì?","rawText":"Thiết bị được trang bị trên các phương tiện giao thông như xe máy, ô tô dùng để đo trực tiếp **vận tốc tức thời** là gì?","ownImageUrl":"","optionsHtml":["Nhiệt kế.","Tốc kế (Đồng hồ đo tốc độ).","Áp kế.","Lực kế."],"optionsRaw":["Nhiệt kế.","Tốc kế (Đồng hồ đo tốc độ).","Áp kế.","Lực kế."],"correctIndex":1,"correctAnswer":"Tốc kế (Đồng hồ đo tốc độ).","subQuestions":[],"solutionHtml":"SGK Trang 37 ghi rõ: Các phương tiện giao thông như xe máy, ô tô được trang bị tốc kế là thiết bị đo trực tiếp vận tốc tức thời.","rawSolution":"SGK Trang 37 ghi rõ: Các phương tiện giao thông như xe máy, ô tô được trang bị tốc kế là thiết bị đo trực tiếp vận tốc tức thời."}]},{"blockId":"single_1fd95d66-26f1-442b-99c0-6809c6ac56f1_6","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"1fd95d66-26f1-442b-99c0-6809c6ac56f1","type":"mcq","level":"B","chapterName":"","points":0.5,"textHtml":"Độ dốc (hệ số góc) của đường biểu diễn trong **đồ thị vận tốc – thời gian ($v - t$)** của một chuyển động thẳng cho biết đại lượng nào?","rawText":"Độ dốc (hệ số góc) của đường biểu diễn trong **đồ thị vận tốc – thời gian ($v - t$)** của một chuyển động thẳng cho biết đại lượng nào?","ownImageUrl":"","optionsHtml":["Quãng đường đi được.","Độ dịch chuyển.","Gia tốc của chuyển động.","Thời gian chuyển động."],"optionsRaw":["Quãng đường đi được.","Độ dịch chuyển.","Gia tốc của chuyển động.","Thời gian chuyển động."],"correctIndex":2,"correctAnswer":"Gia tốc của chuyển động.","subQuestions":[],"solutionHtml":"Độ dốc của đồ thị $v - t$ được tính bằng $\\frac{\\Delta v}{\\Delta t}$, chính là đại lượng gia tốc của chuyển động.","rawSolution":"Độ dốc của đồ thị $v - t$ được tính bằng $\\frac{\\Delta v}{\\Delta t}$, chính là đại lượng gia tốc của chuyển động."}]},{"blockId":"single_e9589073-a391-4113-81e4-49ae407a1196_7","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"e9589073-a391-4113-81e4-49ae407a1196","type":"mcq","level":"B","chapterName":"","points":0.5,"textHtml":"Nhận xét nào sau đây về gia tốc là **SAI**?","rawText":"Nhận xét nào sau đây về gia tốc là **SAI**?","ownImageUrl":"","optionsHtml":["Gia tốc là đại lượng vectơ: $\\vec{a} = \\frac{\\Delta\\vec{v}}{\\Delta t}$.","Gia tốc đặc trưng cho mức độ biến đổi vận tốc theo thời gian.","Khi vật chuyển động chậm dần, gia tốc chắc chắn luôn luôn âm.","Khi vật chuyển động thẳng đều, gia tốc bằng 0."],"optionsRaw":["Gia tốc là đại lượng vectơ: $\\vec{a} = \\frac{\\Delta\\vec{v}}{\\Delta t}$.","Gia tốc đặc trưng cho mức độ biến đổi vận tốc theo thời gian.","Khi vật chuyển động chậm dần, gia tốc chắc chắn luôn luôn âm.","Khi vật chuyển động thẳng đều, gia tốc bằng 0."],"correctIndex":2,"correctAnswer":"Khi vật chuyển động chậm dần, gia tốc chắc chắn luôn luôn âm.","subQuestions":[],"solutionHtml":"Phát biểúgia tốc chắc chắn luôn luôn âm khi chậm dần&#39; là SAI. Chuyển động chậm dần chỉ yêu cầu $\\vec{a}$ ngược chiều $\\vec{v}$ ($a \\cdot v &lt; 0$). Nếu chiều dương được chọn ngược chiều vận tốc ($v &lt; 0$) thì gia tốc lại mang giá trị dương ($a &gt; 0$).","rawSolution":"Phát biểúgia tốc chắc chắn luôn luôn âm khi chậm dần' là SAI. Chuyển động chậm dần chỉ yêu cầu $\\vec{a}$ ngược chiều $\\vec{v}$ ($a \\cdot v < 0$). Nếu chiều dương được chọn ngược chiều vận tốc ($v < 0$) thì gia tốc lại mang giá trị dương ($a > 0$)."}]},{"blockId":"single_bd79a79d-3245-4e0a-84eb-c856fb7019bb_8","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"bd79a79d-3245-4e0a-84eb-c856fb7019bb","type":"mcq","level":"H","chapterName":"","points":0.5,"textHtml":"Xét bảng số liệu vận tốc tức thời của một ô tô:<br>Thời điểm t (s): 0 | 2 | 4 | 6 | 8<br>Vận tốc v (m/s): 0 | 2,50 | 5,28 | 8,33 | 12,50<br>Xác định độ biến thiên vận tốc $\\Delta v$ của ô tô sau $8\\,giây$ chuyển động đầu tiên.","rawText":"Xét bảng số liệu vận tốc tức thời của một ô tô:\nThời điểm t (s): 0 | 2 | 4 | 6 | 8\nVận tốc v (m/s): 0 | 2,50 | 5,28 | 8,33 | 12,50\nXác định độ biến thiên vận tốc $\\Delta v$ của ô tô sau $8\\,giây$ chuyển động đầu tiên.","ownImageUrl":"","optionsHtml":["$12,50$ m/s","$8,33$ m/s","$5,28$ m/s","$2,50$ m/s"],"optionsRaw":["$12,50$ m/s","$8,33$ m/s","$5,28$ m/s","$2,50$ m/s"],"correctIndex":0,"correctAnswer":"$12,50$ m/s","subQuestions":[],"solutionHtml":"Độ biến thiên vận tốc sau $8$ s:<br>$\\Delta v = v_t - v_0 = 12,50 - 0 = 12,50$ m/s.","rawSolution":"Độ biến thiên vận tốc sau $8$ s:\n$\\Delta v = v_t - v_0 = 12,50 - 0 = 12,50$ m/s."}]},{"blockId":"single_2260f09f-88cf-49e1-91b7-eb83cbef006b_9","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"2260f09f-88cf-49e1-91b7-eb83cbef006b","type":"mcq","level":"H","chapterName":"","points":0.5,"textHtml":"Một xe máy đang chuyển động thẳng với vận tốc $10$ m/s thì tăng tốc. Sau $5$ s kể từ khi tăng tốc, xe đạt vận tốc $12$ m/s. Gia tốc của xe máy trong khoảng thời gian đó là bao nhiêu?","rawText":"Một xe máy đang chuyển động thẳng với vận tốc $10$ m/s thì tăng tốc. Sau $5$ s kể từ khi tăng tốc, xe đạt vận tốc $12$ m/s. Gia tốc của xe máy trong khoảng thời gian đó là bao nhiêu?","ownImageUrl":"","optionsHtml":["$0,4\\,m/s^2$","$2,0\\,m/s^2$","$0,8\\,m/s^2$","$1,2\\,m/s^2$"],"optionsRaw":["$0,4\\,m/s^2$","$2,0\\,m/s^2$","$0,8\\,m/s^2$","$1,2\\,m/s^2$"],"correctIndex":0,"correctAnswer":"$0,4\\,m/s^2$","subQuestions":[],"solutionHtml":"Áp dụng công thức tính gia tốc:<br>$a = \\frac{v - v_0}{\\Delta t} = \\frac{12 - 10}{5} = \\frac{2}{5} = 0,4\\,m/s^2$.","rawSolution":"Áp dụng công thức tính gia tốc:\n$a = \\frac{v - v_0}{\\Delta t} = \\frac{12 - 10}{5} = \\frac{2}{5} = 0,4\\,m/s^2$."}]},{"blockId":"single_a2ae9341-ec0d-4c3a-92ef-ed587d79a0d0_10","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"a2ae9341-ec0d-4c3a-92ef-ed587d79a0d0","type":"mcq","level":"H","chapterName":"","points":0.5,"textHtml":"Một con báo đang chạy với vận tốc $30$ m/s thì chuyển động chậm dần khi tới gần một con suối. Sau $3\\,giây$, vận tốc của nó giảm còn $9$ m/s. Tính gia tốc của con báo.","rawText":"Một con báo đang chạy với vận tốc $30$ m/s thì chuyển động chậm dần khi tới gần một con suối. Sau $3\\,giây$, vận tốc của nó giảm còn $9$ m/s. Tính gia tốc của con báo.","ownImageUrl":"","optionsHtml":["$-7\\,m/s^2$","$7\\,m/s^2$","$-13\\,m/s^2$","$-3\\,m/s^2$"],"optionsRaw":["$-7\\,m/s^2$","$7\\,m/s^2$","$-13\\,m/s^2$","$-3\\,m/s^2$"],"correctIndex":0,"correctAnswer":"$-7\\,m/s^2$","subQuestions":[],"solutionHtml":"Gia tốc của con báo:<br>$a = \\frac{v - v_0}{\\Delta t} = \\frac{9 - 30}{3} = \\frac{-21}{3} = -7\\,m/s^2$.<br>Dấu âm thể hiện gia tốc ngược chiều với chiều chuyển động (chuyển động chậm dần).","rawSolution":"Gia tốc của con báo:\n$a = \\frac{v - v_0}{\\Delta t} = \\frac{9 - 30}{3} = \\frac{-21}{3} = -7\\,m/s^2$.\nDấu âm thể hiện gia tốc ngược chiều với chiều chuyển động (chuyển động chậm dần)."}]},{"blockId":"single_462480b8-bf41-4ae1-89d6-16cdfe42d41b_11","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"462480b8-bf41-4ae1-89d6-16cdfe42d41b","type":"mcq","level":"H","chapterName":"","points":0.5,"textHtml":"Dựa vào đồ thị $v - t$ của một ô tô thể thao (ban đầu xe chạy về phía Bắc): Tính gia tốc của ô tô trong $4\\,giây$ đầu tiên.","rawText":"Dựa vào đồ thị $v - t$ của một ô tô thể thao (ban đầu xe chạy về phía Bắc): Tính gia tốc của ô tô trong $4\\,giây$ đầu tiên.","ownImageUrl":"","optionsHtml":["$5\\,m/s^2$ (hướng về phía Bắc)","$2,5\\,m/s^2$ (hướng về phía Bắc)","$10\\,m/s^2$ (hướng về phía Nam)","$0\\,m/s^2$"],"optionsRaw":["$5\\,m/s^2$ (hướng về phía Bắc)","$2,5\\,m/s^2$ (hướng về phía Bắc)","$10\\,m/s^2$ (hướng về phía Nam)","$0\\,m/s^2$"],"correctIndex":0,"correctAnswer":"$5\\,m/s^2$ (hướng về phía Bắc)","subQuestions":[],"solutionHtml":"Trong $4$ s đầu:<br>- Tại $t = 0\\,s \\implies v_0 = 0$.<br>- Tại $t = 4\\,s \\implies v_1 = 20$ m/s.<br>- Gia tốc: $a = \\frac{20 - 0}{4 - 0} = 5\\,m/s^2$. Vì $a &gt; 0$ nên $\\vec{a}$ cùng chiều $\\vec{v}$ (hướng về phía Bắc).","rawSolution":"Trong $4$ s đầu:\n- Tại $t = 0\\,s \\implies v_0 = 0$.\n- Tại $t = 4\\,s \\implies v_1 = 20$ m/s.\n- Gia tốc: $a = \\frac{20 - 0}{4 - 0} = 5\\,m/s^2$. Vì $a > 0$ nên $\\vec{a}$ cùng chiều $\\vec{v}$ (hướng về phía Bắc)."}]},{"blockId":"single_a0ba29c2-3be3-4d6f-9eec-9ce7cb344ef3_12","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"a0ba29c2-3be3-4d6f-9eec-9ce7cb344ef3","type":"mcq","level":"H","chapterName":"","points":0.5,"textHtml":"Từ giây thứ 4 đến giây thứ 12 trên đồ thị $v - t$, gia tốc của ô tô thể thao là bao nhiêu và xe chuyển động như thế nào?","rawText":"Từ giây thứ 4 đến giây thứ 12 trên đồ thị $v - t$, gia tốc của ô tô thể thao là bao nhiêu và xe chuyển động như thế nào?","ownImageUrl":"","optionsHtml":["Gia tốc $a = 0\\,m/s^2$; xe chuyển động thẳng đều với vận tốc $20$ m/s.","Gia tốc $a = 2,5\\,m/s^2$; xe chuyển động nhanh dần.","Gia tốc $a = -5\\,m/s^2$; xe chuyển động chậm dần.","Gia tốc $a = 0\\,m/s^2$; xe đứng yên không chuyển động."],"optionsRaw":["Gia tốc $a = 0\\,m/s^2$; xe chuyển động thẳng đều với vận tốc $20$ m/s.","Gia tốc $a = 2,5\\,m/s^2$; xe chuyển động nhanh dần.","Gia tốc $a = -5\\,m/s^2$; xe chuyển động chậm dần.","Gia tốc $a = 0\\,m/s^2$; xe đứng yên không chuyển động."],"correctIndex":0,"correctAnswer":"Gia tốc $a = 0\\,m/s^2$; xe chuyển động thẳng đều với vận tốc $20$ m/s.","subQuestions":[],"solutionHtml":"Từ $t = 4$ s đến $t = 12$ s, đường biểu diễn là một đoạn nằm ngang tại $v = 20$ m/s.<br>Độ biến thiên vận tốc $\\Delta v = 20 - 20 = 0 \\implies a = 0\\,m/s^2$. Xe đang chuyển động thẳng đều.","rawSolution":"Từ $t = 4$ s đến $t = 12$ s, đường biểu diễn là một đoạn nằm ngang tại $v = 20$ m/s.\nĐộ biến thiên vận tốc $\\Delta v = 20 - 20 = 0 \\implies a = 0\\,m/s^2$. Xe đang chuyển động thẳng đều."}]},{"blockId":"single_7298889d-1a3d-41e5-a4d6-8c921d0540ea_13","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"7298889d-1a3d-41e5-a4d6-8c921d0540ea","type":"mcq","level":"H","chapterName":"","points":0.5,"textHtml":"Gia tốc của ô tô thể thao từ giây thứ 12 đến giây thứ 20 trên đồ thị $v - t$ bằng bao nhiêu?","rawText":"Gia tốc của ô tô thể thao từ giây thứ 12 đến giây thứ 20 trên đồ thị $v - t$ bằng bao nhiêu?","ownImageUrl":"","optionsHtml":["$-5\\,m/s^2$","$5\\,m/s^2$","$-2,5\\,m/s^2$","$-10\\,m/s^2$"],"optionsRaw":["$-5\\,m/s^2$","$5\\,m/s^2$","$-2,5\\,m/s^2$","$-10\\,m/s^2$"],"correctIndex":0,"correctAnswer":"$-5\\,m/s^2$","subQuestions":[],"solutionHtml":"Từ $t_1 = 12$ s ($v_1 = 20$ m/s) đến $t_2 = 20$ s ($v_2 = -20$ m/s):<br>$a = \\frac{v_2 - v_1}{t_2 - t_1} = \\frac{-20 - 20}{20 - 12} = \\frac{-40}{8} = -5\\,m/s^2$.","rawSolution":"Từ $t_1 = 12$ s ($v_1 = 20$ m/s) đến $t_2 = 20$ s ($v_2 = -20$ m/s):\n$a = \\frac{v_2 - v_1}{t_2 - t_1} = \\frac{-20 - 20}{20 - 12} = \\frac{-40}{8} = -5\\,m/s^2$."}]},{"blockId":"single_25b4c8ae-65fd-48fe-a5fa-ea0bec7ee606_14","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"25b4c8ae-65fd-48fe-a5fa-ea0bec7ee606","type":"mcq","level":"H","chapterName":"","points":0.5,"textHtml":"Gia tốc của ô tô trên đoạn đường số &lt;4&gt; (từ $t_3 = 6\\,s, v_3 = 49$ km/h đến $t_4 = 7\\,s, v_4 = 30$ km/h) là bao nhiêu?","rawText":"Gia tốc của ô tô trên đoạn đường số <4> (từ $t_3 = 6\\,s, v_3 = 49$ km/h đến $t_4 = 7\\,s, v_4 = 30$ km/h) là bao nhiêu?","ownImageUrl":"","optionsHtml":["$-5,28\\,m/s^2$","$-19,0\\,m/s^2$","$5,28\\,m/s^2$","$-2,78\\,m/s^2$"],"optionsRaw":["$-5,28\\,m/s^2$","$-19,0\\,m/s^2$","$5,28\\,m/s^2$","$-2,78\\,m/s^2$"],"correctIndex":0,"correctAnswer":"$-5,28\\,m/s^2$","subQuestions":[],"solutionHtml":"Đổi đơn vị vận tốc ra m/s:<br>- $v_3 = 49\\,km/h = \\frac{49}{3,6} \\approx 13,61$ m/s.<br>- $v_4 = 30\\,km/h = \\frac{30}{3,6} \\approx 8,33$ m/s.<br>- Thời gian $\\Delta t = 7 - 6 = 1$ s.<br>- Gia tốc $a_4 = \\frac{8,33 - 13,61}{1} = -5,28\\,m/s^2$.","rawSolution":"Đổi đơn vị vận tốc ra m/s:\n- $v_3 = 49\\,km/h = \\frac{49}{3,6} \\approx 13,61$ m/s.\n- $v_4 = 30\\,km/h = \\frac{30}{3,6} \\approx 8,33$ m/s.\n- Thời gian $\\Delta t = 7 - 6 = 1$ s.\n- Gia tốc $a_4 = \\frac{8,33 - 13,61}{1} = -5,28\\,m/s^2$."}]},{"blockId":"single_425859df-0039-4083-be23-cc67cd8898d8_15","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"425859df-0039-4083-be23-cc67cd8898d8","type":"mcq","level":"VD","chapterName":"","points":0.5,"textHtml":"Một xe máy đang chạy với vận tốc $12$ m/s thì người lái xe hãm phanh làm xe chuyển động chậm dần với gia tốc có độ lớn $a = 0,4\\,m/s^2$. Thời gian từ lúc hãm phanh đến khi xe dừng hẳn và quãng đường xe đi được trong thời gian đó lần lượt là:","rawText":"Một xe máy đang chạy với vận tốc $12$ m/s thì người lái xe hãm phanh làm xe chuyển động chậm dần với gia tốc có độ lớn $a = 0,4\\,m/s^2$. Thời gian từ lúc hãm phanh đến khi xe dừng hẳn và quãng đường xe đi được trong thời gian đó lần lượt là:","ownImageUrl":"","optionsHtml":["$t = 30$ s và $s = 180$ m","$t = 25$ s và $s = 150$ m","$t = 30$ s và $s = 360$ m","$t = 15$ s và $s = 90$ m"],"optionsRaw":["$t = 30$ s và $s = 180$ m","$t = 25$ s và $s = 150$ m","$t = 30$ s và $s = 360$ m","$t = 15$ s và $s = 90$ m"],"correctIndex":0,"correctAnswer":"$t = 30$ s và $s = 180$ m","subQuestions":[],"solutionHtml":"1. Xe chuyển động chậm dần nên $a = -0,4\\,m/s^2$. Khi dừng hẳn $v = 0$.<br>- Thời gian hãm phanh: $t = \\frac{v - v_0}{a} = \\frac{0 - 12}{-0,4} = 30$ s.<br>2. Vận tốc trung bình trong quá trình hãm phanh đều: $v_{tb} = \\frac{v_0 + v}{2} = \\frac{12 + 0}{2} = 6$ m/s.<br>- Quãng đường đi được: $s = v_{tb} \\cdot t = 6 \\times 30 = 180$ m.","rawSolution":"1. Xe chuyển động chậm dần nên $a = -0,4\\,m/s^2$. Khi dừng hẳn $v = 0$.\n- Thời gian hãm phanh: $t = \\frac{v - v_0}{a} = \\frac{0 - 12}{-0,4} = 30$ s.\n2. Vận tốc trung bình trong quá trình hãm phanh đều: $v_{tb} = \\frac{v_0 + v}{2} = \\frac{12 + 0}{2} = 6$ m/s.\n- Quãng đường đi được: $s = v_{tb} \\cdot t = 6 \\times 30 = 180$ m."}]},{"blockId":"single_a0bee076-7acf-4b73-90f3-712fd09c30ea_16","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"a0bee076-7acf-4b73-90f3-712fd09c30ea","type":"mcq","level":"VD","chapterName":"","points":0.5,"textHtml":"Dựa vào đồ thị $v - t$: Hãy tính tổng quãng đường $s$ mà ô tô thể thao đã đi được và độ dịch chuyển $d$ của ô tô sau toàn bộ $28\\,giây$ chuyển động.","rawText":"Dựa vào đồ thị $v - t$: Hãy tính tổng quãng đường $s$ mà ô tô thể thao đã đi được và độ dịch chuyển $d$ của ô tô sau toàn bộ $28\\,giây$ chuyển động.","ownImageUrl":"","optionsHtml":["Tổng quãng đường $s = 440$ m; Độ dịch chuyển $d = 80$ m (hướng Bắc).","Tổng quãng đường $s = 320$ m; Độ dịch chuyển $d = 0$ m.","Tổng quãng đường $s = 480$ m; Độ dịch chuyển $d = 160$ m (hướng Bắc).","Tổng quãng đường $s = 440$ m; Độ dịch chuyển $d = 440$ m (hướng Bắc)."],"optionsRaw":["Tổng quãng đường $s = 440$ m; Độ dịch chuyển $d = 80$ m (hướng Bắc).","Tổng quãng đường $s = 320$ m; Độ dịch chuyển $d = 0$ m.","Tổng quãng đường $s = 480$ m; Độ dịch chuyển $d = 160$ m (hướng Bắc).","Tổng quãng đường $s = 440$ m; Độ dịch chuyển $d = 440$ m (hướng Bắc)."],"correctIndex":0,"correctAnswer":"Tổng quãng đường $s = 440$ m; Độ dịch chuyển $d = 80$ m (hướng Bắc).","subQuestions":[],"solutionHtml":"Diện tích dưới đồ thị $v - t$ chính là quãng đường / độ dịch chuyển:<br>1. Giai đoạn 1 (Hướng Bắc, $0 \\to 16$ s): $d_1 = \\frac{(16 + 8) \\times 20}{2} = 240$ m (hướng Bắc).<br>2. Giai đoạn 2 (Phía Nam, $16 \\to 28$ s): $s_2 = \\frac{(12 + 8) \\times 20}{2} = 200\\,m \\implies d_2 = -200$ m.<br>- Tổng quãng đường: $s = s_1 + s_2 = 240 + 200 = 440$ m.<br>- Độ dịch chuyển tổng cộng: $d = d_1 + d_2 = 240 - 200 = 80$ m (hướng Bắc).","rawSolution":"Diện tích dưới đồ thị $v - t$ chính là quãng đường / độ dịch chuyển:\n1. Giai đoạn 1 (Hướng Bắc, $0 \\to 16$ s): $d_1 = \\frac{(16 + 8) \\times 20}{2} = 240$ m (hướng Bắc).\n2. Giai đoạn 2 (Phía Nam, $16 \\to 28$ s): $s_2 = \\frac{(12 + 8) \\times 20}{2} = 200\\,m \\implies d_2 = -200$ m.\n- Tổng quãng đường: $s = s_1 + s_2 = 240 + 200 = 440$ m.\n- Độ dịch chuyển tổng cộng: $d = d_1 + d_2 = 240 - 200 = 80$ m (hướng Bắc)."}]},{"blockId":"single_f80e884e-443b-4eb8-b780-def5f7bc641d_17","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"f80e884e-443b-4eb8-b780-def5f7bc641d","type":"mcq","level":"VD","chapterName":"","points":0.5,"textHtml":"Một xe ô tô đang di chuyển với vận tốc $20$ m/s thì người tài xế phát hiện chướng ngại vật và hãm phanh khẩn cấp. Xe dừng lại hẳn sau $10\\,giây$. Tính quãng đường xe ô tô di chuyển thêm được kể từ lúc hãm phanh đến khi dừng lại hoàn toàn.","rawText":"Một xe ô tô đang di chuyển với vận tốc $20$ m/s thì người tài xế phát hiện chướng ngại vật và hãm phanh khẩn cấp. Xe dừng lại hẳn sau $10\\,giây$. Tính quãng đường xe ô tô di chuyển thêm được kể từ lúc hãm phanh đến khi dừng lại hoàn toàn.","ownImageUrl":"","optionsHtml":["$100$ m","$200$ m","$150$ m","$50$ m"],"optionsRaw":["$100$ m","$200$ m","$150$ m","$50$ m"],"correctIndex":0,"correctAnswer":"$100$ m","subQuestions":[],"solutionHtml":"Gia tốc hãm phanh: $a = \\frac{0 - 20}{10} = -2\\,m/s^2$.<br>Vận tốc trung bình trong $10$ s hãm phanh: $v_{tb} = \\frac{20 + 0}{2} = 10$ m/s.<br>Quãng đường đi được: $s = v_{tb} \\cdot t = 10 \\times 10 = 100$ m.","rawSolution":"Gia tốc hãm phanh: $a = \\frac{0 - 20}{10} = -2\\,m/s^2$.\nVận tốc trung bình trong $10$ s hãm phanh: $v_{tb} = \\frac{20 + 0}{2} = 10$ m/s.\nQuãng đường đi được: $s = v_{tb} \\cdot t = 10 \\times 10 = 100$ m."}]},{"blockId":"single_3ad3a5a2-3e2b-4729-863f-12b712e639f4_18","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"3ad3a5a2-3e2b-4729-863f-12b712e639f4","type":"mcq","level":"VD","chapterName":"","points":0.5,"textHtml":"Một ô tô thử nghiệm chuyển động thẳng qua 2 giai đoạn liên tiếp từ trạng thái nghỉ ($v_0 = 0$):<br>- **Giai đoạn 1:** Tăng tốc đều với gia tốc $a_1 = 2\\,m/s^2$ đạt vận tốc cực đại $v_{max}$.<br>- **Giai đoạn 2:** Ngay lập tức hãm phanh giảm tốc đều với gia tốc có độ lớn $a_2 = 4\\,m/s^2$ cho đến khi dừng lại hẳn.<br>Biết tổng thời gian chuyển động trong cả hai giai đoạn là $15\\,giây$. Hãy xác định vận tốc cực đại $v_{max}$ và tổng quãng đường ô tô đi được.","rawText":"Một ô tô thử nghiệm chuyển động thẳng qua 2 giai đoạn liên tiếp từ trạng thái nghỉ ($v_0 = 0$):\n- **Giai đoạn 1:** Tăng tốc đều với gia tốc $a_1 = 2\\,m/s^2$ đạt vận tốc cực đại $v_{max}$.\n- **Giai đoạn 2:** Ngay lập tức hãm phanh giảm tốc đều với gia tốc có độ lớn $a_2 = 4\\,m/s^2$ cho đến khi dừng lại hẳn.\nBiết tổng thời gian chuyển động trong cả hai giai đoạn là $15\\,giây$. Hãy xác định vận tốc cực đại $v_{max}$ và tổng quãng đường ô tô đi được.","ownImageUrl":"","optionsHtml":["$v_{max} = 20$ m/s; Quãng đường $s = 150$ m","$v_{max} = 30$ m/s; Quãng đường $s = 225$ m","$v_{max} = 15$ m/s; Quãng đường $s = 112,5$ m","$v_{max} = 24$ m/s; Quãng đường $s = 180$ m"],"optionsRaw":["$v_{max} = 20$ m/s; Quãng đường $s = 150$ m","$v_{max} = 30$ m/s; Quãng đường $s = 225$ m","$v_{max} = 15$ m/s; Quãng đường $s = 112,5$ m","$v_{max} = 24$ m/s; Quãng đường $s = 180$ m"],"correctIndex":0,"correctAnswer":"$v_{max} = 20$ m/s; Quãng đường $s = 150$ m","subQuestions":[],"solutionHtml":"Gọi $t_1, t_2$ lần lượt là thời gian giai đoạn 1 và giai đoạn 2:<br>1. $v_{max} = a_1 \\cdot t_1 = 2t_1 = a_2 \\cdot t_2 = 4t_2 \\implies t_1 = 2t_2$.<br>2. $t_1 + t_2 = 15 \\implies 3t_2 = 15 \\implies t_2 = 5\\,s, t_1 = 10$ s.<br>3. $v_{max} = 2 \\times 10 = 20$ m/s.<br>4. Quãng đường $s = \\frac{1}{2} \\times 15 \\times 20 = 150$ m.","rawSolution":"Gọi $t_1, t_2$ lần lượt là thời gian giai đoạn 1 và giai đoạn 2:\n1. $v_{max} = a_1 \\cdot t_1 = 2t_1 = a_2 \\cdot t_2 = 4t_2 \\implies t_1 = 2t_2$.\n2. $t_1 + t_2 = 15 \\implies 3t_2 = 15 \\implies t_2 = 5\\,s, t_1 = 10$ s.\n3. $v_{max} = 2 \\times 10 = 20$ m/s.\n4. Quãng đường $s = \\frac{1}{2} \\times 15 \\times 20 = 150$ m."}]},{"blockId":"single_5f7f6d53-e7d1-4e56-9461-8d614feee34d_19","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"5f7f6d53-e7d1-4e56-9461-8d614feee34d","type":"mcq","level":"VD","chapterName":"","points":0.5,"textHtml":"Hai ô tô A và B cùng xuất phát một lúc từ cùng một vị trí trên một đường thẳng. Xe A chuyển động thẳng đều với vận tốc không đổi $v_A = 12$ m/s. Xe B xuất phát từ trạng thái nghỉ ($v_0 = 0$) chuyển động nhanh dần đều với gia tốc $a_B = 2\\,m/s^2$. Xác định **khoảng cách lớn nhất** giữa hai xe trước khi xe B đuổi kịp xe A.","rawText":"Hai ô tô A và B cùng xuất phát một lúc từ cùng một vị trí trên một đường thẳng. Xe A chuyển động thẳng đều với vận tốc không đổi $v_A = 12$ m/s. Xe B xuất phát từ trạng thái nghỉ ($v_0 = 0$) chuyển động nhanh dần đều với gia tốc $a_B = 2\\,m/s^2$. Xác định **khoảng cách lớn nhất** giữa hai xe trước khi xe B đuổi kịp xe A.","ownImageUrl":"","optionsHtml":["$36$ m (tại thời điểm $t = 6$ s)","$72$ m (tại thời điểm $t = 12$ s)","$24$ m (tại thời điểm $t = 4$ s)","$48$ m (tại thời điểm $t = 8$ s)"],"optionsRaw":["$36$ m (tại thời điểm $t = 6$ s)","$72$ m (tại thời điểm $t = 12$ s)","$24$ m (tại thời điểm $t = 4$ s)","$48$ m (tại thời điểm $t = 8$ s)"],"correctIndex":0,"correctAnswer":"$36$ m (tại thời điểm $t = 6$ s)","subQuestions":[],"solutionHtml":"1. Độ dịch chuyển: $x_A = 12t$, $x_B = t^2$.<br>2. Khoảng cách: $\\Delta x = 12t - t^2$.<br>- Khoảng cách cực đại khi $v_B = v_A \\implies 2t = 12 \\implies t = 6$ s.<br>3. Khoảng cách cực đại: $\\Delta x_{max} = 12(6) - 6^2 = 36$ m.","rawSolution":"1. Độ dịch chuyển: $x_A = 12t$, $x_B = t^2$.\n2. Khoảng cách: $\\Delta x = 12t - t^2$.\n- Khoảng cách cực đại khi $v_B = v_A \\implies 2t = 12 \\implies t = 6$ s.\n3. Khoảng cách cực đại: $\\Delta x_{max} = 12(6) - 6^2 = 36$ m."}]}]}</script>
+  <script>
+    (function() {
+      var dataEl = document.getElementById('edusync-runtime-data');
+      var EXAM = JSON.parse(dataEl.textContent || '{}');
+      var LETTERS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+      var TF_LABELS = ['a', 'b', 'c', 'd', 'e', 'f'];
+
+      function shuffle(arr) {
+        var copy = arr.slice();
+        for (var i = copy.length - 1; i > 0; i--) {
+          var j = Math.floor(Math.random() * (i + 1));
+          var tmp = copy[i]; copy[i] = copy[j]; copy[j] = tmp;
+        }
+        return copy;
+      }
+
+      var blocks = EXAM.shuffleQuestions ? shuffle(EXAM.blocks || []) : (EXAM.blocks || []);
+      var flatQuestions = [];
+      blocks.forEach(function(block) {
+        block.questions.forEach(function(q) {
+          if (q.type === 'mcq' && EXAM.shuffleOptions && Array.isArray(q.optionsHtml)) {
+            var tagged = q.optionsHtml.map(function(html, idx) {
+              return { html: html, raw: q.optionsRaw[idx], isCorrect: idx === q.correctIndex };
+            });
+            var mixed = shuffle(tagged);
+            q.optionsHtml = mixed.map(function(m) { return m.html; });
+            q.optionsRaw = mixed.map(function(m) { return m.raw; });
+            q.correctIndex = Math.max(0, mixed.findIndex(function(m) { return m.isCorrect; }));
+          }
+          q.displayNumber = flatQuestions.length + 1;
+          flatQuestions.push(q);
+        });
+      });
+
+      var userAnswers = {};
+      var submitted = false;
+      var durationLimit = (EXAM.durationMinutes || 0) > 0 ? EXAM.durationMinutes * 60 : 0;
+      var startTime = Date.now();
+      var timerHandle = null;
+
+      function fmtTime(sec) {
+        var s = Math.max(0, Math.floor(sec));
+        var m = Math.floor(s / 60);
+        var r = s % 60;
+        return String(m).padStart(2, '0') + ':' + String(r).padStart(2, '0');
+      }
+
+      function isQuestionAnswered(q) {
+        var ans = userAnswers[q.id];
+        if (q.type === 'mcq') return typeof ans === 'number';
+        if (q.type === 'short') return typeof ans === 'string' && ans.trim().length > 0;
+        if (q.type === 'group-tf') {
+          if (!ans || typeof ans !== 'object') return false;
+          return q.subQuestions.some(function(sq) { return ans[sq.id] === 'True' || ans[sq.id] === 'False'; });
+        }
+        return false;
+      }
+
+      function updateProgress() {
+        var done = flatQuestions.filter(isQuestionAnswered).length;
+        document.getElementById('progressLabel').textContent = done + '/' + flatQuestions.length;
+        document.getElementById('sidebarCount').textContent = 'Đã làm ' + done + '/' + flatQuestions.length;
+        flatQuestions.forEach(function(q) {
+          var pBtn = document.getElementById('pbtn_' + q.displayNumber);
+          if (!pBtn || submitted) return;
+          pBtn.className = 'p-btn mono' + (isQuestionAnswered(q) ? ' done' : '');
+        });
+      }
+
+      function buildQuestionEl(q) {
+        var card = document.createElement('article');
+        card.className = 'q-card';
+        card.id = 'qcard_' + q.displayNumber;
+
+        var header = document.createElement('div');
+        header.className = 'q-header';
+        var leftMeta = '<span class="q-num">Câu ' + q.displayNumber + '</span>';
+        var tags = [q.level ? ('Mức ' + q.level) : '', q.points + ' đ', q.chapterName || ''].filter(Boolean).join(' · ');
+        header.innerHTML = leftMeta + '<span id="qstatus_' + q.displayNumber + '" class="q-status">' + tags + '</span>';
+        card.appendChild(header);
+
+        var qTextEl = document.createElement('div');
+        qTextEl.className = 'q-text';
+        qTextEl.innerHTML = q.textHtml;
+        card.appendChild(qTextEl);
+
+        if (q.ownImageUrl) {
+          var fig = document.createElement('div');
+          fig.className = 'q-figure';
+          var img = document.createElement('img');
+          img.src = q.ownImageUrl;
+          img.alt = 'Hình minh họa câu ' + q.displayNumber;
+          fig.appendChild(img);
+          card.appendChild(fig);
+        }
+
+        if (q.type === 'mcq') {
+          var grid = document.createElement('div');
+          grid.className = 'options-grid';
+          q.optionsHtml.forEach(function(optHtml, optIdx) {
+            var btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'opt-btn';
+            btn.id = 'opt_' + q.id + '_' + optIdx;
+            btn.innerHTML = '<span class="opt-letter mono">' + (LETTERS[optIdx] || optIdx + 1) + '</span><span style="flex:1;">' + optHtml + '</span>';
+            btn.addEventListener('click', function() {
+              if (submitted) return;
+              userAnswers[q.id] = optIdx;
+              q.optionsHtml.forEach(function(_, i2) {
+                var el = document.getElementById('opt_' + q.id + '_' + i2);
+                if (el) el.classList.toggle('selected', i2 === optIdx);
+              });
+              updateProgress();
+            });
+            grid.appendChild(btn);
+          });
+          card.appendChild(grid);
+        } else if (q.type === 'group-tf') {
+          var list = document.createElement('div');
+          list.className = 'tf-list';
+          q.subQuestions.forEach(function(sq, sIdx) {
+            var row = document.createElement('div');
+            row.className = 'tf-row';
+            row.id = 'tfrow_' + sq.id;
+
+            var txt = document.createElement('div');
+            txt.className = 'tf-text';
+            txt.innerHTML = '<strong>' + (TF_LABELS[sIdx] || (sIdx + 1)) + ')</strong> ' + sq.textHtml;
+            row.appendChild(txt);
+
+            var actions = document.createElement('div');
+            actions.className = 'tf-actions';
+            ['True', 'False'].forEach(function(val) {
+              var b = document.createElement('button');
+              b.type = 'button';
+              b.className = 'tf-choice';
+              b.id = 'tfbtn_' + sq.id + '_' + val;
+              b.textContent = val === 'True' ? 'Đúng' : 'Sai';
+              b.addEventListener('click', function() {
+                if (submitted) return;
+                if (!userAnswers[q.id] || typeof userAnswers[q.id] !== 'object') userAnswers[q.id] = {};
+                userAnswers[q.id][sq.id] = val;
+                var bt = document.getElementById('tfbtn_' + sq.id + '_True');
+                var bf = document.getElementById('tfbtn_' + sq.id + '_False');
+                if (bt) bt.classList.toggle('active', val === 'True');
+                if (bf) bf.classList.toggle('active', val === 'False');
+                updateProgress();
+              });
+              actions.appendChild(b);
+            });
+            row.appendChild(actions);
+            list.appendChild(row);
+          });
+          card.appendChild(list);
+        } else {
+          var sBox = document.createElement('div');
+          sBox.className = 'short-box';
+          var inp = document.createElement('input');
+          inp.type = 'text';
+          inp.className = 'short-input';
+          inp.id = 'short_' + q.id;
+          inp.placeholder = 'Nhập đáp số (vd: 2.6 hoặc 36)';
+          inp.addEventListener('input', function() {
+            if (submitted) return;
+            userAnswers[q.id] = inp.value;
+            updateProgress();
+          });
+          var fb = document.createElement('span');
+          fb.id = 'shortfb_' + q.id;
+          fb.className = 'short-feedback';
+          sBox.appendChild(inp);
+          sBox.appendChild(fb);
+          card.appendChild(sBox);
+        }
+
+        if (q.solutionHtml) {
+          var sol = document.createElement('div');
+          sol.className = 'solution-box';
+          sol.id = 'sol_' + q.id;
+          sol.innerHTML = '<strong>Lời giải chi tiết:</strong><div style="margin-top:4px;">' + q.solutionHtml + '</div>';
+          card.appendChild(sol);
+        }
+
+        return card;
+      }
+
+      function renderExam() {
+        var root = document.getElementById('questionsRoot');
+        var pal = document.getElementById('paletteRoot');
+        root.innerHTML = '';
+        pal.innerHTML = '';
+
+        blocks.forEach(function(block) {
+          if (block.contextHtml || block.sharedImageUrl) {
+            var groupEl = document.createElement('section');
+            groupEl.className = 'context-group';
+
+            var head = document.createElement('div');
+            head.className = 'context-header';
+            var firstNum = block.questions[0].displayNumber;
+            var lastNum = block.questions[block.questions.length - 1].displayNumber;
+            var labelText = block.questions.length > 1
+              ? 'Dữ liệu dùng chung cho Câu ' + firstNum + ' – Câu ' + lastNum
+              : 'Dữ liệu đề bài (Câu ' + firstNum + ')';
+            var html = '<div class="context-label">' + labelText + '</div>';
+            if (block.contextHtml) {
+              html += '<div class="context-body">' + block.contextHtml + '</div>';
+            }
+            head.innerHTML = html;
+            if (block.sharedImageUrl) {
+              var fig = document.createElement('div');
+              fig.className = 'q-figure';
+              var img = document.createElement('img');
+              img.src = block.sharedImageUrl;
+              img.alt = labelText;
+              fig.appendChild(img);
+              head.appendChild(fig);
+            }
+            groupEl.appendChild(head);
+
+            var inner = document.createElement('div');
+            inner.className = 'context-questions';
+            block.questions.forEach(function(q) {
+              inner.appendChild(buildQuestionEl(q));
+            });
+            groupEl.appendChild(inner);
+            root.appendChild(groupEl);
+          } else {
+            block.questions.forEach(function(q) {
+              root.appendChild(buildQuestionEl(q));
+            });
+          }
+        });
+
+        flatQuestions.forEach(function(q) {
+          var b = document.createElement('button');
+          b.type = 'button';
+          b.className = 'p-btn mono';
+          b.id = 'pbtn_' + q.displayNumber;
+          b.textContent = String(q.displayNumber);
+          b.addEventListener('click', function() {
+            var target = document.getElementById('qcard_' + q.displayNumber);
+            if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          });
+          pal.appendChild(b);
+        });
+
+        updateProgress();
+        if (window.MathJax && window.MathJax.typesetPromise) {
+          window.MathJax.typesetPromise().catch(function() {});
+        }
+      }
+
+      function normalizeShort(val) {
+        return String(val || '').trim().replace(/,/g, '.').replace(/\s+/g, '').toLowerCase();
+      }
+
+      function isShortMatch(userVal, expectedVal) {
+        var u = normalizeShort(userVal);
+        var e = normalizeShort(expectedVal);
+        if (!u) return false;
+        if (u === e) return true;
+        var nu = parseFloat(u);
+        var ne = parseFloat(e);
+        if (!isNaN(nu) && !isNaN(ne) && String(nu) === u || !isNaN(nu) && !isNaN(ne)) {
+          if (/^-?\d+(?:\.\d+)?$/.test(u) && /^-?\d+(?:\.\d+)?$/.test(e)) {
+            return Math.abs(nu - ne) < 1e-6;
+          }
+        }
+        return false;
+      }
+
+      function gradeAndSubmit(force) {
+        if (submitted) return;
+        var answered = flatQuestions.filter(isQuestionAnswered).length;
+        if (!force && answered < flatQuestions.length) {
+          document.getElementById('confirmMsg').textContent =
+            'Bạn mới làm ' + answered + '/' + flatQuestions.length + ' câu. Bạn có chắc muốn nộp bài ngay?';
+          document.getElementById('confirmBar').classList.add('visible');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+          return;
+        }
+        document.getElementById('confirmBar').classList.remove('visible');
+        submitted = true;
+        if (timerHandle) clearInterval(timerHandle);
+
+        var totalScore = 0;
+        var maxScore = EXAM.maxScore || 10;
+        var correctQuestions = 0;
+        var answerDetails = [];
+
+        flatQuestions.forEach(function(q) {
+          var qCorrect = false;
+          var pBtn = document.getElementById('pbtn_' + q.displayNumber);
+          var stEl = document.getElementById('qstatus_' + q.displayNumber);
+          var solEl = document.getElementById('sol_' + q.id);
+          if (solEl) solEl.classList.add('visible');
+
+          if (q.type === 'mcq') {
+            var chosen = typeof userAnswers[q.id] === 'number' ? userAnswers[q.id] : -1;
+            qCorrect = chosen === q.correctIndex;
+            if (qCorrect) {
+              totalScore += q.points;
+              correctQuestions++;
+            }
+            q.optionsHtml.forEach(function(_, i) {
+              var ob = document.getElementById('opt_' + q.id + '_' + i);
+              if (!ob) return;
+              ob.disabled = true;
+              ob.classList.remove('selected');
+              if (i === q.correctIndex) ob.classList.add('correct');
+              else if (i === chosen) ob.classList.add('wrong');
+            });
+            if (stEl) {
+              stEl.textContent = qCorrect ? ('Đúng (+' + q.points + 'đ)') : 'Sai (0đ)';
+              stEl.className = 'q-status ' + (qCorrect ? 'ok' : 'bad');
+            }
+            answerDetails.push({
+              orderIndex: answerDetails.length,
+              questionText: 'Câu ' + q.displayNumber + ': ' + q.rawText,
+              options: q.optionsRaw,
+              selectedIndex: chosen,
+              correctIndex: q.correctIndex,
+              isCorrect: qCorrect,
+              explanation: q.rawSolution
+            });
+          } else if (q.type === 'group-tf') {
+            var tfMap = (userAnswers[q.id] && typeof userAnswers[q.id] === 'object') ? userAnswers[q.id] : {};
+            var rightSubs = 0;
+            q.subQuestions.forEach(function(sq, sIdx) {
+              var picked = tfMap[sq.id] || '';
+              var subOk = picked === sq.correctAnswer;
+              if (subOk) rightSubs++;
+              var row = document.getElementById('tfrow_' + sq.id);
+              if (row) row.classList.add(subOk ? 'ok' : 'bad');
+              ['True', 'False'].forEach(function(v) {
+                var btn = document.getElementById('tfbtn_' + sq.id + '_' + v);
+                if (!btn) return;
+                btn.disabled = true;
+                if (v === sq.correctAnswer) btn.classList.add('right-ans');
+              });
+              answerDetails.push({
+                orderIndex: answerDetails.length,
+                questionText: 'Câu ' + q.displayNumber + (TF_LABELS[sIdx] || '') + ': ' + sq.rawText,
+                options: ['Đúng', 'Sai'],
+                selectedIndex: picked === 'True' ? 0 : (picked === 'False' ? 1 : -1),
+                correctIndex: sq.correctAnswer === 'True' ? 0 : 1,
+                isCorrect: subOk,
+                explanation: sIdx === q.subQuestions.length - 1 ? q.rawSolution : ''
+              });
+            });
+            var earnedRatio = 0;
+            if (q.subQuestions.length === 4) {
+              earnedRatio = rightSubs === 1 ? 0.1 : rightSubs === 2 ? 0.25 : rightSubs === 3 ? 0.5 : rightSubs === 4 ? 1 : 0;
+            } else if (q.subQuestions.length > 0) {
+              earnedRatio = rightSubs / q.subQuestions.length;
+            }
+            var earned = Math.round(q.points * earnedRatio * 100) / 100;
+            totalScore += earned;
+            qCorrect = rightSubs === q.subQuestions.length;
+            if (qCorrect) correctQuestions++;
+            if (stEl) {
+              stEl.textContent = 'Đúng ' + rightSubs + '/' + q.subQuestions.length + ' ý (+' + earned + 'đ)';
+              stEl.className = 'q-status ' + (qCorrect ? 'ok' : 'bad');
+            }
+          } else {
+            var rawInput = document.getElementById('short_' + q.id);
+            var typed = rawInput ? rawInput.value.trim() : '';
+            if (rawInput) rawInput.disabled = true;
+            qCorrect = isShortMatch(typed, q.correctAnswer);
+            if (qCorrect) {
+              totalScore += q.points;
+              correctQuestions++;
+            }
+            var fbEl = document.getElementById('shortfb_' + q.id);
+            if (fbEl) {
+              fbEl.textContent = qCorrect
+                ? ('Chính xác (+' + q.points + 'đ)')
+                : ('Đáp án đúng: ' + q.correctAnswer);
+              fbEl.style.color = qCorrect ? 'var(--ok)' : 'var(--bad)';
+            }
+            if (stEl) {
+              stEl.textContent = qCorrect ? ('Đúng (+' + q.points + 'đ)') : 'Sai (0đ)';
+              stEl.className = 'q-status ' + (qCorrect ? 'ok' : 'bad');
+            }
+            answerDetails.push({
+              orderIndex: answerDetails.length,
+              questionText: 'Câu ' + q.displayNumber + ': ' + q.rawText,
+              options: ['Bài làm: ' + (typed || '(bỏ trống)'), 'Đáp án chuẩn: ' + q.correctAnswer],
+              selectedIndex: qCorrect ? 1 : 0,
+              correctIndex: 1,
+              isCorrect: qCorrect,
+              explanation: q.rawSolution
+            });
+          }
+
+          if (pBtn) {
+            pBtn.className = 'p-btn mono ' + (qCorrect ? 'ok' : 'bad');
+          }
+        });
+
+        totalScore = Math.round(totalScore * 100) / 100;
+        var pct = maxScore > 0 ? Math.round((totalScore / maxScore) * 1000) / 10 : 0;
+
+        document.getElementById('scoreText').textContent = totalScore + ' / ' + maxScore + ' điểm';
+        document.getElementById('correctText').textContent =
+          'Đúng hoàn toàn ' + correctQuestions + ' / ' + flatQuestions.length + ' câu (' + pct + '%)';
+        document.getElementById('resultScreen').classList.add('visible');
+        document.getElementById('topSubmitBtn').style.display = 'none';
+        document.getElementById('sideSubmitBtn').style.display = 'none';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+
+        if (window.MathJax && window.MathJax.typesetPromise) {
+          window.MathJax.typesetPromise().catch(function() {});
+        }
+
+        if (typeof window.EduSyncSubmitScore === 'function') {
+          window.EduSyncSubmitScore(totalScore, maxScore, correctQuestions, flatQuestions.length, answerDetails);
+        } else if (window.parent && window.parent !== window) {
+          window.parent.postMessage({
+            type: 'QUIZ_RESULT',
+            score: totalScore,
+            maxScore: maxScore,
+            correctCount: correctQuestions,
+            totalQuestions: flatQuestions.length,
+            answerDetails: answerDetails
+          }, '*');
+        }
+      }
+
+      document.getElementById('topSubmitBtn').addEventListener('click', function() { gradeAndSubmit(false); });
+      document.getElementById('sideSubmitBtn').addEventListener('click', function() { gradeAndSubmit(false); });
+      document.getElementById('confirmYesBtn').addEventListener('click', function() { gradeAndSubmit(true); });
+      document.getElementById('confirmCancelBtn').addEventListener('click', function() {
+        document.getElementById('confirmBar').classList.remove('visible');
+      });
+
+      function tickTimer() {
+        if (submitted) return;
+        var elapsed = Math.floor((Date.now() - startTime) / 1000);
+        var box = document.getElementById('timerBox');
+        if (durationLimit > 0) {
+          var rem = Math.max(0, durationLimit - elapsed);
+          box.textContent = fmtTime(rem);
+          box.classList.toggle('urgent', rem <= 60);
+          if (rem <= 0) gradeAndSubmit(true);
+        } else {
+          box.textContent = fmtTime(elapsed);
+        }
+      }
+
+      renderExam();
+      tickTimer();
+      timerHandle = setInterval(tickTimer, 1000);
+    })();
+  </script>
+</body>
+</html>
