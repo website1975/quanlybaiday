@@ -1,0 +1,1154 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sai số phép đo Vật lý</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true
+      },
+      options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre'] }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --border: #e2e8f0;
+      --text: #0f172a;
+      --muted: #64748b;
+      --accent: #1d4ed8;
+      --accent-hover: #1e40af;
+      --accent-soft: #eff6ff;
+      --ok: #047857;
+      --ok-bg: #ecfdf5;
+      --ok-border: #6ee7b7;
+      --bad: #dc2626;
+      --bad-bg: #fef2f2;
+      --bad-border: #fca5a5;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.55;
+    }
+    .mono { font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace; font-variant-numeric: tabular-nums; }
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+    }
+    .topbar-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .exam-title { font-size: 16px; font-weight: 700; margin: 0; color: var(--text); }
+    .exam-meta { font-size: 12px; color: var(--muted); margin-top: 2px; }
+    .topbar-actions { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+    .timer-box {
+      padding: 6px 12px;
+      border-radius: 8px;
+      background: #f1f5f9;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .timer-box.urgent {
+      background: var(--bad-bg);
+      color: var(--bad);
+      border: 1px solid var(--bad-border);
+    }
+    .btn {
+      border: 1px solid transparent;
+      border-radius: 8px;
+      padding: 8px 16px;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background-color 0.15s ease, border-color 0.15s ease;
+    }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-primary:hover { background: var(--accent-hover); }
+    .btn-secondary { background: #fff; border-color: #cbd5e1; color: #334155; }
+    .btn-secondary:hover { background: #f8fafc; }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 280px;
+      gap: 20px;
+      align-items: start;
+    }
+    @media (max-width: 960px) {
+      .container { grid-template-columns: 1fr; }
+    }
+    .main-col { display: flex; flex-direction: column; gap: 18px; }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+    }
+    .result-card {
+      background: var(--ok-bg);
+      border: 1px solid var(--ok-border);
+      border-radius: 12px;
+      padding: 20px;
+      display: none;
+    }
+    .result-card.visible { display: block; }
+    .result-score { font-size: 26px; font-weight: 700; color: var(--ok); margin: 4px 0; }
+    .result-sub { font-size: 13px; color: #065f46; }
+    .confirm-bar {
+      display: none;
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      border-radius: 10px;
+      padding: 14px 16px;
+      margin-bottom: 4px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      font-size: 13px;
+      color: #92400e;
+    }
+    .confirm-bar.visible { display: flex; }
+    .context-group {
+      background: var(--surface);
+      border: 1px solid #cbd5e1;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .context-header {
+      background: #f1f5f9;
+      border-bottom: 1px solid var(--border);
+      padding: 16px 20px;
+    }
+    .context-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 6px;
+    }
+    .context-body { font-size: 14px; color: #1e293b; }
+    .context-questions {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      background: #f8fafc;
+    }
+    .q-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 18px;
+      scroll-margin-top: 84px;
+    }
+    .q-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding-bottom: 10px;
+      margin-bottom: 12px;
+      border-bottom: 1px solid #f1f5f9;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .q-num { font-size: 14px; font-weight: 700; color: var(--text); }
+    .q-status { font-weight: 600; }
+    .q-status.ok { color: var(--ok); }
+    .q-status.bad { color: var(--bad); }
+    .q-text { font-size: 15px; font-weight: 500; color: var(--text); margin-bottom: 14px; }
+    .q-figure {
+      margin: 12px 0;
+      text-align: center;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px;
+    }
+    .q-figure img { max-width: 100%; max-height: 360px; height: auto; border-radius: 4px; }
+    .options-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+    @media (max-width: 640px) {
+      .options-grid { grid-template-columns: 1fr; }
+    }
+    .opt-btn {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      text-align: left;
+      padding: 11px 13px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #fff;
+      font-family: inherit;
+      font-size: 14px;
+      color: #1e293b;
+      cursor: pointer;
+      transition: border-color 0.15s ease, background-color 0.15s ease;
+    }
+    .opt-btn:hover:not(:disabled) { border-color: #94a3b8; background: #f8fafc; }
+    .opt-btn.selected { border-color: var(--accent); background: var(--accent-soft); color: #1e3a8a; font-weight: 500; }
+    .opt-btn.correct { border-color: var(--ok-border); background: var(--ok-bg); color: #064e3b; font-weight: 600; }
+    .opt-btn.wrong { border-color: var(--bad-border); background: var(--bad-bg); color: #7f1d1d; }
+    .opt-letter {
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      border: 1px solid #cbd5e1;
+      background: #fff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .opt-btn.selected .opt-letter { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .tf-list { display: flex; flex-direction: column; gap: 10px; }
+    .tf-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #fff;
+    }
+    .tf-row.ok { border-color: var(--ok-border); background: var(--ok-bg); }
+    .tf-row.bad { border-color: var(--bad-border); background: var(--bad-bg); }
+    .tf-text { font-size: 14px; flex: 1; }
+    .tf-actions { display: flex; gap: 6px; flex-shrink: 0; }
+    .tf-choice {
+      padding: 6px 12px;
+      border-radius: 6px;
+      border: 1px solid #cbd5e1;
+      background: #fff;
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .tf-choice.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .tf-choice.right-ans { border-color: var(--ok); color: var(--ok); }
+    .short-box { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+    .short-input {
+      width: 240px;
+      max-width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px;
+    }
+    .short-input:focus { outline: 2px solid var(--accent); border-color: var(--accent); }
+    .short-feedback { font-size: 13px; font-weight: 600; }
+    .solution-box {
+      display: none;
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: 8px;
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      font-size: 13px;
+      color: #334155;
+    }
+    .solution-box.visible { display: block; }
+    .sidebar {
+      position: sticky;
+      top: 76px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+    }
+    .palette-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 6px;
+      margin: 12px 0 16px;
+    }
+    .p-btn {
+      height: 34px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: #f8fafc;
+      font-size: 12px;
+      font-weight: 700;
+      color: #334155;
+      cursor: pointer;
+    }
+    .p-btn.done { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .p-btn.ok { background: var(--ok); color: #fff; border-color: var(--ok); }
+    .p-btn.bad { background: var(--bad); color: #fff; border-color: var(--bad); }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div>
+        <h1 class="exam-title">Sai số phép đo Vật lý</h1>
+        <div class="exam-meta">Vật Lý · Khối 10 · CHƯƠNG 1: MỞ ĐẦU · 20 câu · Thang 10 điểm</div>
+      </div>
+      <div class="topbar-actions">
+        <span id="progressLabel" class="exam-meta mono">0/20</span>
+        <div id="timerBox" class="timer-box mono">00:00</div>
+        <button id="topSubmitBtn" type="button" class="btn btn-primary">Nộp bài</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <main class="main-col">
+      <div id="confirmBar" class="confirm-bar">
+        <span id="confirmMsg">Bạn vẫn còn câu chưa trả lời. Xác nhận nộp bài ngay?</span>
+        <div style="display:flex;gap:8px;">
+          <button id="confirmCancelBtn" type="button" class="btn btn-secondary">Làm tiếp</button>
+          <button id="confirmYesBtn" type="button" class="btn btn-primary">Xác nhận nộp</button>
+        </div>
+      </div>
+
+      <section id="resultScreen" class="result-card">
+        <div style="font-size:12px;font-weight:700;color:#047857;">KẾT QUẢ BÀI LÀM</div>
+        <div id="scoreText" class="result-score mono">0 / 10</div>
+        <div id="correctText" class="result-sub mono">0 / 20</div>
+        <div id="explanationsSection" class="result-sub" style="margin-top:6px;">
+          Xem lại từng câu và lời giải chi tiết ở bên dưới.
+        </div>
+      </section>
+
+      <div id="questionsRoot" class="main-col"></div>
+    </main>
+
+    <aside class="sidebar">
+      <div style="font-size:14px;font-weight:700;">Bảng câu hỏi</div>
+      <div id="sidebarCount" class="exam-meta mono">Đã làm 0/20</div>
+      <div id="paletteRoot" class="palette-grid"></div>
+      <button id="sideSubmitBtn" type="button" class="btn btn-primary" style="width:100%;">Nộp bài &amp; Chấm điểm</button>
+    </aside>
+  </div>
+
+  <script type="application/json" id="edusync-exam-json">{
+  "id": "e223852c-2514-4e64-883b-e6df0677c4ac",
+  "title": "Sai số phép đo Vật lý",
+  "subject": "Vật Lý",
+  "grade": "10",
+  "type": "test",
+  "category": "CHƯƠNG 1: MỞ ĐẦU",
+  "durationMinutes": 25,
+  "shuffleQuestions": false,
+  "shuffleOptions": false,
+  "questionCount": 20,
+  "questions": [
+    {
+      "id": "232c480b-232e-4199-a4f2-de88ebd64eb6",
+      "index": 1,
+      "type": "mcq",
+      "level": "B",
+      "text": "Theo SGK, sai số ngẫu nhiên tuyệt đối của lần đo thứ $i$ (ký hiệu là $\\Delta A_i$) trong phép đo trực tiếp đại lượng $A$ được tính theo công thức nào?",
+      "options": [
+        "$\\Delta A_i = \\overline{A} - A_i$",
+        "$\\Delta A_i = |\\overline{A} - A_i|$",
+        "$\\Delta A_i = \\frac{\\overline{A} + A_i}{2}$",
+        "$\\Delta A_i = \\frac{|\\overline{A} - A_i|}{n}$"
+      ],
+      "correctAnswer": "$\\Delta A_i = |\\overline{A} - A_i|$",
+      "solution": "Theo công thức (3.1) trong bài học: Sai số ngẫu nhiên tuyệt đối của từng lần đo là trị tuyệt đối của hiệu số giữa giá trị trung bình các lần đo và giá trị của mỗi lần đo: $\\Delta A_i = |\\overline{A} - A_i|$.",
+      "points": 0.5
+    },
+    {
+      "id": "4130b8fe-4668-4410-864d-e05f7e6443b9",
+      "index": 2,
+      "type": "mcq",
+      "level": "B",
+      "text": "Sai số tuyệt đối của phép đo trực tiếp ($\\Delta A$) được xác định bằng tổng của các đại lượng nào?",
+      "options": [
+        "Sai số ngẫu nhiên tuyệt đối trung bình $\\overline{\\Delta A}$ và sai số dụng cụ $\\Delta A_{dc}$.",
+        "Sai số hệ thống và sai số tỉ đối.",
+        "Sai số ngẫu nhiên lần đo thứ nhất và sai số dụng cụ.",
+        "Sai số tỉ đối $\\delta A$ và giá trị trung bình $\\overline{A}$."
+      ],
+      "correctAnswer": "Sai số ngẫu nhiên tuyệt đối trung bình $\\overline{\\Delta A}$ và sai số dụng cụ $\\Delta A_{dc}$.",
+      "solution": "Theo tài liệu bài học: Sai số tuyệt đối của phép đo là tổng sai số ngẫu nhiên và sai số dụng cụ: $\\Delta A = \\overline{\\Delta A} + \\Delta A_{dc}$.",
+      "points": 0.5
+    },
+    {
+      "id": "13c3aaab-d417-47db-a50e-8642fb125239",
+      "index": 3,
+      "type": "mcq",
+      "level": "B",
+      "text": "Công thức tính sai số tỉ đối $\\delta A$ của phép đo đại lượng $A$ là:",
+      "options": [
+        "$\\delta A = \\frac{\\overline{A}}{\\Delta A} \\cdot 100\\%$",
+        "$\\delta A = \\frac{\\Delta A}{\\overline{A}} \\cdot 100\\%$",
+        "$\\delta A = (\\overline{A} + \\Delta A) \\cdot 100\\%$",
+        "$\\delta A = \\frac{\\overline{\\Delta A}}{\\Delta A_{dc}} \\cdot 100\\%$"
+      ],
+      "correctAnswer": "$\\delta A = \\frac{\\Delta A}{\\overline{A}} \\cdot 100\\%$",
+      "solution": "Theo công thức (3.3): Sai số tỉ đối của phép đo là tỉ lệ phần trăm giữa sai số tuyệt đối và giá trị trung bình của đại lượng đo: $\\delta A = \\frac{\\Delta A}{\\overline{A}} \\cdot 100\\%$.",
+      "points": 0.5
+    },
+    {
+      "id": "349cf7d4-4189-45cf-8d73-197671272583",
+      "index": 4,
+      "type": "mcq",
+      "level": "B",
+      "text": "Kết quả đo của một đại lượng Vật lý $A$ được ghi dưới dạng chuẩn nào sau đây?",
+      "options": [
+        "$A = \\overline{A} \\pm \\Delta A$",
+        "$A = \\overline{A} \\cdot \\delta A$",
+        "$A = \\overline{\\Delta A} \\pm \\Delta A_{dc}$",
+        "$A = \\overline{A} + \\delta A$"
+      ],
+      "correctAnswer": "$A = \\overline{A} \\pm \\Delta A$",
+      "solution": "Theo mục 'Cách ghi kết quả đó: Kết quả đo đại lượng $A$ được ghi dưới dạng khoảng giá trị $(\\overline{A} - \\Delta A) \\le A \\le (\\overline{A} + \\Delta A)$ hoặc $A = \\overline{A} \\pm \\Delta A$.",
+      "points": 0.5
+    },
+    {
+      "id": "a69d3b70-1c4a-49e8-8994-86d961ae4e61",
+      "index": 5,
+      "type": "mcq",
+      "level": "B",
+      "text": "Khi tính sai số của phép đo gián tiếp đại lượng tổng $A = B + C$, sai số tuyệt đối $\\Delta A$ được xác định bằng:",
+      "options": [
+        "$\\Delta A = \\Delta B \\cdot \\Delta C$",
+        "$\\Delta A = \\Delta B + \\Delta C$",
+        "$\\Delta A = \\Delta B - \\Delta C$",
+        "$\\Delta A = \\frac{\\Delta B + \\Delta C}{2}$"
+      ],
+      "correctAnswer": "$\\Delta A = \\Delta B + \\Delta C$",
+      "solution": "Theo quy tắc tính sai số phép đo gián tiếp: Sai số tuyệt đối của một tổng hay hiệu bằng tổng các sai số tuyệt đối của các số hạng. Do đó với $A = B + C$ thì $\\Delta A = \\Delta B + \\Delta C$.",
+      "points": 0.5
+    },
+    {
+      "id": "0ecc5c6c-d5fe-4f3e-846d-9ee793a51b7e",
+      "index": 6,
+      "type": "mcq",
+      "level": "B",
+      "text": "Trong phép đo gián tiếp đại lượng tích hoặc thương (như $A = B \\cdot C$ hoặc $v = \\frac{s}{t}$), sai số tỉ đối $\\delta A$ được tính theo quy tắc nào?",
+      "options": [
+        "Bằng tổng các sai số tỉ đối của các thừa số: $\\delta A = \\delta B + \\delta C$",
+        "Bằng tích các sai số tỉ đối của các thừa số: $\\delta A = \\delta B \\cdot \\delta C$",
+        "Bằng tổng các sai số tuyệt đối: $\\delta A = \\Delta B + \\Delta C$",
+        "Bằng thương hai sai số tỉ đối: $\\delta A = \\frac{\\delta B}{\\delta C}$"
+      ],
+      "correctAnswer": "Bằng tổng các sai số tỉ đối của các thừa số: $\\delta A = \\delta B + \\delta C$",
+      "solution": "Theo tài liệu bài học: Sai số tỉ đối của một tích hay thương thì bằng tổng các sai số tỉ đối của các thừa số.",
+      "points": 0.5
+    },
+    {
+      "id": "e82c7ed1-1971-4f59-b00e-045a872821d6",
+      "index": 7,
+      "type": "mcq",
+      "level": "B",
+      "text": "Có mấy loại sai số chính trong phép đo các đại lượng Vật lý?",
+      "options": [
+        "loại: sai số hệ thống và sai số ngẫu nhiên.",
+        "loại: sai số tuyệt đối, sai số tương đối và sai số tỉ đối.",
+        "loại: sai số dụng cụ.",
+        "loại: sai số trực tiếp, gián tiếp, hệ thống và ngẫu nhiên."
+      ],
+      "correctAnswer": "loại: sai số hệ thống và sai số ngẫu nhiên.",
+      "solution": "Theo mục 'EM ĐÃ HỌC': Hai loại sai số gồm sai số hệ thống và sai số ngẫu nhiên.",
+      "points": 0.5
+    },
+    {
+      "id": "74bf57be-a9f4-408d-a73a-7764f84133c0",
+      "index": 8,
+      "type": "mcq",
+      "level": "B",
+      "text": "Phép đo nào sau đây thuộc loại phép đo trực tiếp?",
+      "options": [
+        "Đo tốc độ trung bình $v = \\frac{s}{t}$ bằng thước và đồng hồ.",
+        "Đo diện tích mặt bàn bằng cách đo chiều dài và chiều rộng.",
+        "Dùng thước kẹp đo trực tiếp đường kính của một viên bi.",
+        "Xác định thể tích hình lập phương qua độ dài cạnh."
+      ],
+      "correctAnswer": "Dùng thước kẹp đo trực tiếp đường kính của một viên bi.",
+      "solution": "Phép đo trực tiếp là phép đo đọc trực tiếp giá trị đại lượng cần đo trên dụng cụ đo (dùng thước kẹp đọc đường kính viên bi). Các phép đo còn lại qua công thức tính toán là phép đo gián tiếp.",
+      "points": 0.5
+    },
+    {
+      "id": "a93cbe60-0929-4db1-afdd-a3011506c920",
+      "index": 9,
+      "type": "mcq",
+      "level": "H",
+      "text": "Đại lượng nào sau đây cho biết mức độ chính xác của một phép đo Vật lý?",
+      "options": [
+        "Giá trị trung bình $\\overline{A}$.",
+        "Sai số tỉ đối $\\delta A$.",
+        "Số lần thực hiện phép đo $n$.",
+        "Độ chia nhỏ nhất của dụng cụ đo."
+      ],
+      "correctAnswer": "Sai số tỉ đối $\\delta A$.",
+      "solution": "Theo định nghĩa công thức (3.3) trong SGK: Sai số tỉ đối của phép đo cho biết mức độ chính xác của phép đo.",
+      "points": 0.5
+    },
+    {
+      "id": "4527f85b-a75f-435b-8e5f-9f14e97b7c47",
+      "index": 10,
+      "type": "mcq",
+      "level": "H",
+      "text": "Theo quy tắc làm tròn số được nêu trong SGK, nếu giá trị tính toán tốc độ thu được là $v = 3{,}4567$ m/s và cần làm tròn đến 2 chữ số thập phân thì kết quả là:",
+      "options": [
+        "$3{,}45$ m/s",
+        "$3{,}46$ m/s",
+        "$3{,}50$ m/s",
+        "$3{,}40$ m/s"
+      ],
+      "correctAnswer": "$3{,}46$ m/s",
+      "solution": "Chữ số ở hàng bỏ đi là 6 (lớn hơn 5), do đó chữ số bên trái (chữ số 5) tăng thêm 1 đơn vị thành 6. Kết quả làm tròn là $3{,}46$ m/s.",
+      "points": 0.5
+    },
+    {
+      "id": "f431cc23-204b-4789-9ee1-3b6e220f81bb",
+      "index": 11,
+      "type": "mcq",
+      "level": "H",
+      "text": "Một học sinh đo 5 lần thời gian chuyển động thu được các kết quả (tính bằng giây): $t_1 = 0{,}40$ s; $t_2 = 0{,}41$ s; $t_3 = 0{,}39$ s; $t_4 = 0{,}42$ s; $t_5 = 0{,}38$ s. Giá trị trung bình $\\overline{t}$ và sai số ngẫu nhiên trung bình $\\overline{\\Delta t}$ lần lượt là:",
+      "options": [
+        "$\\overline{t} = 0{,}40$ s và $\\overline{\\Delta t} = 0{,}012$ s",
+        "$\\overline{t} = 0{,}40$ s và $\\overline{\\Delta t} = 0{,}020$ s",
+        "$\\overline{t} = 0{,}41$ s và $\\overline{\\Delta t} = 0{,}010$ s",
+        "$\\overline{t} = 0{,}39$ s và $\\overline{\\Delta t} = 0{,}015$ s"
+      ],
+      "correctAnswer": "$\\overline{t} = 0{,}40$ s và $\\overline{\\Delta t} = 0{,}012$ s",
+      "solution": "1) Giá trị trung bình: $\\overline{t} = \\frac{0{,}40 + 0{,}41 + 0{,}39 + 0{,}42 + 0{,}38}{5} = 0{,}40$ s.\n2) Các sai số ngẫu nhiên tuyệt đối:\n$\\Delta t_1 = |0{,}40 - 0{,}40| = 0{,}00$ s;\n$\\Delta t_2 = |0{,}40 - 0{,}41| = 0{,}01$ s;\n$\\Delta t_3 = |0{,}40 - 0{,}39| = 0{,}01$ s;\n$\\Delta t_4 = |0{,}40 - 0{,}42| = 0{,}02$ s;\n$\\Delta t_5 = |0{,}40 - 0{,}38| = 0{,}02$ s.\n3) Sai số ngẫu nhiên trung bình: $\\overline{\\Delta t} = \\frac{0{,}00 + 0{,}01 + 0{,}01 + 0{,}02 + 0{,}02}{5} = 0{,}012$ s.",
+      "points": 0.5
+    },
+    {
+      "id": "a43bc36a-0274-4465-9aa1-621d34d233bc",
+      "index": 12,
+      "type": "mcq",
+      "level": "H",
+      "text": "Cho hai đại lượng đo trực tiếp $B = 10{,}0 \\pm 0{,}2$ cm và $C = 4{,}0 \\pm 0{,}1$ cm. Xác định đại lượng hiệu $A = B - C$. Giá trị trung bình $\\overline{A}$ và sai số tuyệt đối $\\Delta A$ lần lượt là:",
+      "options": [
+        "$\\overline{A} = 6{,}0$ cm và $\\Delta A = 0{,}1$ cm",
+        "$\\overline{A} = 6{,}0$ cm và $\\Delta A = 0{,}3$ cm",
+        "$\\overline{A} = 14{,}0$ cm và $\\Delta A = 0{,}3$ cm",
+        "$\\overline{A} = 6{,}0$ cm và $\\Delta A = 0{,}2$ cm"
+      ],
+      "correctAnswer": "$\\overline{A} = 6{,}0$ cm và $\\Delta A = 0{,}3$ cm",
+      "solution": "Giá trị trung bình: $\\overline{A} = \\overline{B} - \\overline{C} = 10{,}0 - 4{,}0 = 6{,}0$ cm.\nSai số tuyệt đối của tổng hay hiệu đều bằng TỔNG các sai số tuyệt đối: $\\Delta A = \\Delta B + \\Delta C = 0{,}2 + 0{,}1 = 0{,}3$ cm.",
+      "points": 0.5
+    },
+    {
+      "id": "05495611-b259-4a0f-8915-e7d3fe201650",
+      "index": 13,
+      "type": "mcq",
+      "level": "H",
+      "text": "Khi biểu diễn sai số bằng đồ thị sự phụ thuộc của đại lượng $y$ vào đại lượng $x$ (Hình 3.2 trong bài học), mỗi điểm thực nghiệm có sai số $\\pm\\Delta x$ và $\\pm\\Delta y$ được biểu diễn bằng hình gì?",
+      "options": [
+        "Hình tròn có bán kính bằng $\\Delta x + \\Delta y$.",
+        "Hình vuông có cạnh bằng $\\Delta x$.",
+        "Hình chữ nhật (ô bao sai số) có kích thước hai cạnh là $2\\Delta x$ và $2\\Delta y$.",
+        "Hình tam giác có đáy $2\\Delta x$ và chiều cao $2\\Delta y$."
+      ],
+      "correctAnswer": "Hình chữ nhật (ô bao sai số) có kích thước hai cạnh là $2\\Delta x$ và $2\\Delta y$.",
+      "solution": "Theo SGK mục 'EM CÓ BIẾT?': Trên đồ thị, mỗi giá trị sẽ được biểu diễn bằng một điểm nằm trong ô chữ nhật có cạnh là $2\\Delta x$ và $2\\Delta y$ (gọi là ô bao sai số).",
+      "points": 0.5
+    },
+    {
+      "id": "13c0a41b-4eac-4278-9d47-c2e046834e7c",
+      "index": 14,
+      "type": "mcq",
+      "level": "H",
+      "text": "Tại sao để đo một đại lượng vật lý chính xác người ta cần phải tiến hành lặp lại phép đo nhiều lần?",
+      "options": [
+        "Để loại bỏ hoàn toàn sai số dụng cụ.",
+        "Để giảm thiểu ảnh hưởng của sai số ngẫu nhiên và tìm được giá trị trung bình gần đúng nhất với giá trị thực.",
+        "Để giảm độ chia nhỏ nhất của dụng cụ đo.",
+        "Để chuyển từ phép đo trực tiếp thành phép đo gián tiếp."
+      ],
+      "correctAnswer": "Để giảm thiểu ảnh hưởng của sai số ngẫu nhiên và tìm được giá trị trung bình gần đúng nhất với giá trị thực.",
+      "solution": "Sai số ngẫu nhiên do các yếu tố ngẫu nhiên gây ra làm kết quả biến đổi khi đo lại. Lặp lại phép đo nhiều lần và lấy giá trị trung bình giúp làm giảm bớt ảnh hưởng của sai số ngẫu nhiên.",
+      "points": 0.5
+    },
+    {
+      "id": "15e3818d-4ab9-4239-b946-72b256a9f675",
+      "index": 15,
+      "type": "mcq",
+      "level": "H",
+      "text": "Một phép đo đại lượng $A$ cho giá trị trung bình $\\overline{A} = 50{,}0$ g và sai số tuyệt đối $\\Delta A = 0{,}5$ g. Sai số tỉ đối $\\delta A$ của phép đo này là:",
+      "options": [
+        "$1{,}0\\%$",
+        "$0{,}1\\%$",
+        "$5{,}0\\%$",
+        "$0{,}5\\%$"
+      ],
+      "correctAnswer": "$1{,}0\\%$",
+      "solution": "Áp dụng công thức (3.3): $\\delta A = \\frac{\\Delta A}{\\overline{A}} \\cdot 100\\% = \\frac{0{,}5}{50{,}0} \\cdot 100\\% = 1{,}0\\%$.",
+      "points": 0.5
+    },
+    {
+      "id": "f914da9e-82bf-4418-b3cf-06d499825e57",
+      "index": 16,
+      "type": "mcq",
+      "level": "VD",
+      "text": "Khi đo tốc độ chuyển động bằng công thức $v = \\frac{s}{t}$, thu được quãng đường $s = 100 \\pm 1$ cm và thời gian $t = 2{,}00 \\pm 0{,}04$ s. Sai số tỉ đối $\\delta v$ của phép đo tốc độ là bao nhiêu?",
+      "options": [
+        "$1{,}0\\%$",
+        "$2{,}0\\%$",
+        "$3{,}0\\%$",
+        "$4{,}0\\%$"
+      ],
+      "correctAnswer": "$3{,}0\\%$",
+      "solution": "1) Sai số tỉ đối của quãng đường: $\\delta s = \\frac{\\Delta s}{\\overline{s}} \\cdot 100\\% = \\frac{1}{100} \\cdot 100\\% = 1{,}0\\%$.\n2) Sai số tỉ đối của thời gian: $\\delta t = \\frac{\\Delta t}{\\overline{t}} \\cdot 100\\% = \\frac{0{,}04}{2{,}00} \\cdot 100\\% = 2{,}0\\%$.\n3) Vì $v = \\frac{s}{t}$ nên sai số tỉ đối $\\delta v = \\delta s + \\delta t = 1{,}0\\% + 2{,}0\\% = 3{,}0\\%$.",
+      "points": 0.5
+    },
+    {
+      "id": "0916c045-e50a-4534-86ce-18ac5bbdeba5",
+      "index": 17,
+      "type": "mcq",
+      "level": "VD",
+      "text": "Đo quãng đường $s$ từ A đến C gồm 2 đoạn: $s_1$ (từ A đến B) và $s_2$ (từ B đến C). Kết quả đo lần lượt là $s_1 = 20{,}4 \\pm 0{,}2$ cm và $s_2 = 15{,}6 \\pm 0{,}3$ cm. Kết quả đo quãng đường $s$ được ghi đúng chuẩn là:",
+      "options": [
+        "$s = 36{,}0 \\pm 0{,}5$ cm",
+        "$s = 36{,}0 \\pm 0{,}1$ cm",
+        "$s = 36{,}0 \\pm 0{,}6$ cm",
+        "$s = 36{,}0 \\pm 0{,}25$ cm"
+      ],
+      "correctAnswer": "$s = 36{,}0 \\pm 0{,}5$ cm",
+      "solution": "1) Giá trị trung bình: $\\overline{s} = \\overline{s_1} + \\overline{s_2} = 20{,}4 + 15{,}6 = 36{,}0$ cm.\n2) Sai số tuyệt đối: $\\Delta s = \\Delta s_1 + \\Delta s_2 = 0{,}2 + 0{,}3 = 0{,}5$ cm.\n3) Kết quả đo ghi dạng $s = \\overline{s} \\pm \\Delta s = 36{,}0 \\pm 0{,}5$ cm.",
+      "points": 0.5
+    },
+    {
+      "id": "f390530f-a687-4081-87cd-9fcc82f1cc89",
+      "index": 18,
+      "type": "mcq",
+      "level": "VD",
+      "text": "Một học sinh đo tốc độ theo công thức $v = \\frac{s}{t}$. Biết giá trị trung bình $\\overline{s} = 2{,}00$ m, sai số tuyệt đối $\\Delta s = 0{,}02$ m; giá trị trung bình $\\overline{t} = 1{,}00$ s, sai số tuyệt đối $\\Delta t = 0{,}02$ s. Kết quả đo tốc độ $v$ được biểu diễn dưới dạng $\\overline{v} \\pm \\Delta v$ là:",
+      "options": [
+        "$v = 2{,}00 \\pm 0{,}06$ m/s",
+        "$v = 2{,}00 \\pm 0{,}04$ m/s",
+        "$v = 2{,}00 \\pm 0{,}02$ m/s",
+        "$v = 2{,}00 \\pm 0{,}08$ m/s"
+      ],
+      "correctAnswer": "$v = 2{,}00 \\pm 0{,}06$ m/s",
+      "solution": "1) Giá trị trung bình tốc độ: $\\overline{v} = \\frac{\\overline{s}}{\\overline{t}} = \\frac{2{,}00}{1{,}00} = 2{,}00$ m/s.\n2) Sai số tỉ đối: $\\delta s = \\frac{0{,}02}{2{,}00} \\cdot 100\\% = 1\\%$; $\\delta t = \\frac{0{,}02}{1{,}00} \\cdot 100\\% = 2\\% \\implies \\delta v = 1\\% + 2\\% = 3\\%$.\n3) Sai số tuyệt đối: $\\Delta v = \\delta v \\cdot \\overline{v} = 3\\% \\cdot 2{,}00 = 0{,}06$ m/s.\n4) Kết quả: $v = 2{,}00 \\pm 0{,}06$ m/s.",
+      "points": 0.5
+    },
+    {
+      "id": "d762bc71-69ec-4387-9002-3ca7367cf9c0",
+      "index": 19,
+      "type": "mcq",
+      "level": "VD",
+      "text": "Cho đại lượng gián tiếp $A$ phụ thuộc vào hai đại lượng đo trực tiếp $B$ và $C$ theo công thức $A = B \\cdot \\sqrt{C}$. Biết kết quả đo $B = 10{,}0 \\pm 0{,}2$ và $C = 16{,}00 \\pm 0{,}32$. Sai số tỉ đối $\\delta A$ và sai số tuyệt đối $\\Delta A$ của đại lượng $A$ là:",
+      "options": [
+        "$\\delta A = 3{,}0\\%$ và $\\Delta A = 1{,}2$",
+        "$\\delta A = 4{,}0\\%$ và $\\Delta A = 1{,}6$",
+        "$\\delta A = 2{,}5\\%$ và $\\Delta A = 1{,}0$",
+        "$\\delta A = 3{,}0\\%$ và $\\Delta A = 0{,}8$"
+      ],
+      "correctAnswer": "$\\delta A = 3{,}0\\%$ và $\\Delta A = 1{,}2$",
+      "solution": "1) Giá trị trung bình $\\overline{A} = \\overline{B} \\cdot \\sqrt{\\overline{C}} = 10{,}0 \\cdot \\sqrt{16{,}00} = 40{,}0$.\n2) Sai số tỉ đối các đại lượng:\n$\\delta B = \\frac{0{,}2}{10{,}0} \\cdot 100\\% = 2{,}0\\%$.\n$\\delta C = \\frac{0{,}32}{16{,}00} \\cdot 100\\% = 2{,}0\\%$.\n3) Áp dụng quy tắc sai số lũy thừa: Với $A = B \\cdot \\sqrt{C}$ thì $\\delta A = \\delta B + \\frac{1}{2}\\delta C = 2{,}0\\% + \\frac{1}{2}(2{,}0\\%) = 3{,}0\\%$.\n4) Sai số tuyệt đối: $\\Delta A = \\delta A \\cdot \\overline{A} = 3{,}0\\% \\cdot 40{,}0 = 1{,}2$.",
+      "points": 0.5
+    },
+    {
+      "id": "d895976f-fc32-4805-ac2c-5d2308073ea8",
+      "index": 20,
+      "type": "mcq",
+      "level": "VD",
+      "text": "Học sinh tiến hành thí nghiệm đo tốc độ xe đồ chơi. Đo quãng đường thu được $\\overline{s} = 0{,}800$ m với $\\Delta s = 0{,}004$ m. Thực hiện đo thời gian 5 lần thu được các giá trị (tính bằng giây): $1{,}58; 1{,}62; 1{,}60; 1{,}59; 1{,}61$. Bỏ qua sai số dụng cụ đo thời gian ($\\Delta t_{dc} = 0$). Kết quả đo tốc độ $v = \\frac{s}{t}$ biểu diễn theo chuẩn quy định là:",
+      "options": [
+        "$v = 0{,}500 \\pm 0{,}006$ m/s",
+        "$v = 0{,}500 \\pm 0{,}010$ m/s",
+        "$v = 0{,}500 \\pm 0{,}003$ m/s",
+        "$v = 0{,}500 \\pm 0{,}015$ m/s"
+      ],
+      "correctAnswer": "$v = 0{,}500 \\pm 0{,}006$ m/s",
+      "solution": "1) Thời gian trung bình: $\\overline{t} = \\frac{1{,}58 + 1{,}62 + 1{,}60 + 1{,}59 + 1{,}61}{5} = 1{,}60$ s.\n2) Sai số tuyệt đối ngẫu nhiên trung bình thời gian:\n$\\overline{\\Delta t} = \\frac{|1{,}60-1{,}58| + |1{,}60-1{,}62| + |1{,}60-1{,}60| + |1{,}60-1{,}59| + |1{,}60-1{,}61|}{5} = \\frac{0{,}02 + 0{,}02 + 0 + 0{,}01 + 0{,}01}{5} = 0{,}012$ s.\n3) Do $\\Delta t_{dc} = 0$ nên $\\Delta t = 0{,}012$ s.\n4) Tốc độ trung bình: $\\overline{v} = \\frac{\\overline{s}}{\\overline{t}} = \\frac{0{,}800}{1{,}60} = 0{,}500$ m/s.\n5) Sai số tỉ đối: $\\delta s = \\frac{0{,}004}{0{,}800} = 0{,}5\\%$; $\\delta t = \\frac{0{,}012}{1{,}60} = 0{,}75\\% \\implies \\delta v = 0{,}5\\% + 0{,}75\\% = 1{,}25\\%$.\n6) Sai số tuyệt đối tốc độ: $\\Delta v = \\delta v \\cdot \\overline{v} = 1{,}25\\% \\cdot 0{,}500 = 0{,}00625 \\approx 0{,}006$ m/s.\n7) Kết quả: $v = 0{,}500 \\pm 0{,}006$ m/s.",
+      "points": 0.5
+    }
+  ]
+}</script>
+  <script id="edusync-runtime-data" type="application/json">{"examId":"e223852c-2514-4e64-883b-e6df0677c4ac","title":"Sai số phép đo Vật lý","subject":"Vật Lý","grade":"10","category":"CHƯƠNG 1: MỞ ĐẦU","durationMinutes":25,"maxScore":10,"shuffleQuestions":false,"shuffleOptions":false,"blocks":[{"blockId":"single_232c480b-232e-4199-a4f2-de88ebd64eb6_0","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"232c480b-232e-4199-a4f2-de88ebd64eb6","type":"mcq","level":"B","chapterName":"","points":0.5,"textHtml":"Theo SGK, sai số ngẫu nhiên tuyệt đối của lần đo thứ $i$ (ký hiệu là $\\Delta A_i$) trong phép đo trực tiếp đại lượng $A$ được tính theo công thức nào?","rawText":"Theo SGK, sai số ngẫu nhiên tuyệt đối của lần đo thứ $i$ (ký hiệu là $\\Delta A_i$) trong phép đo trực tiếp đại lượng $A$ được tính theo công thức nào?","ownImageUrl":"","optionsHtml":["$\\Delta A_i = \\overline{A} - A_i$","$\\Delta A_i = |\\overline{A} - A_i|$","$\\Delta A_i = \\frac{\\overline{A} + A_i}{2}$","$\\Delta A_i = \\frac{|\\overline{A} - A_i|}{n}$"],"optionsRaw":["$\\Delta A_i = \\overline{A} - A_i$","$\\Delta A_i = |\\overline{A} - A_i|$","$\\Delta A_i = \\frac{\\overline{A} + A_i}{2}$","$\\Delta A_i = \\frac{|\\overline{A} - A_i|}{n}$"],"correctIndex":1,"correctAnswer":"$\\Delta A_i = |\\overline{A} - A_i|$","subQuestions":[],"solutionHtml":"Theo công thức (3.1) trong bài học: Sai số ngẫu nhiên tuyệt đối của từng lần đo là trị tuyệt đối của hiệu số giữa giá trị trung bình các lần đo và giá trị của mỗi lần đo: $\\Delta A_i = |\\overline{A} - A_i|$.","rawSolution":"Theo công thức (3.1) trong bài học: Sai số ngẫu nhiên tuyệt đối của từng lần đo là trị tuyệt đối của hiệu số giữa giá trị trung bình các lần đo và giá trị của mỗi lần đo: $\\Delta A_i = |\\overline{A} - A_i|$."}]},{"blockId":"single_4130b8fe-4668-4410-864d-e05f7e6443b9_1","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"4130b8fe-4668-4410-864d-e05f7e6443b9","type":"mcq","level":"B","chapterName":"","points":0.5,"textHtml":"Sai số tuyệt đối của phép đo trực tiếp ($\\Delta A$) được xác định bằng tổng của các đại lượng nào?","rawText":"Sai số tuyệt đối của phép đo trực tiếp ($\\Delta A$) được xác định bằng tổng của các đại lượng nào?","ownImageUrl":"","optionsHtml":["Sai số ngẫu nhiên tuyệt đối trung bình $\\overline{\\Delta A}$ và sai số dụng cụ $\\Delta A_{dc}$.","Sai số hệ thống và sai số tỉ đối.","Sai số ngẫu nhiên lần đo thứ nhất và sai số dụng cụ.","Sai số tỉ đối $\\delta A$ và giá trị trung bình $\\overline{A}$."],"optionsRaw":["Sai số ngẫu nhiên tuyệt đối trung bình $\\overline{\\Delta A}$ và sai số dụng cụ $\\Delta A_{dc}$.","Sai số hệ thống và sai số tỉ đối.","Sai số ngẫu nhiên lần đo thứ nhất và sai số dụng cụ.","Sai số tỉ đối $\\delta A$ và giá trị trung bình $\\overline{A}$."],"correctIndex":0,"correctAnswer":"Sai số ngẫu nhiên tuyệt đối trung bình $\\overline{\\Delta A}$ và sai số dụng cụ $\\Delta A_{dc}$.","subQuestions":[],"solutionHtml":"Theo tài liệu bài học: Sai số tuyệt đối của phép đo là tổng sai số ngẫu nhiên và sai số dụng cụ: $\\Delta A = \\overline{\\Delta A} + \\Delta A_{dc}$.","rawSolution":"Theo tài liệu bài học: Sai số tuyệt đối của phép đo là tổng sai số ngẫu nhiên và sai số dụng cụ: $\\Delta A = \\overline{\\Delta A} + \\Delta A_{dc}$."}]},{"blockId":"single_13c3aaab-d417-47db-a50e-8642fb125239_2","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"13c3aaab-d417-47db-a50e-8642fb125239","type":"mcq","level":"B","chapterName":"","points":0.5,"textHtml":"Công thức tính sai số tỉ đối $\\delta A$ của phép đo đại lượng $A$ là:","rawText":"Công thức tính sai số tỉ đối $\\delta A$ của phép đo đại lượng $A$ là:","ownImageUrl":"","optionsHtml":["$\\delta A = \\frac{\\overline{A}}{\\Delta A} \\cdot 100\\%$","$\\delta A = \\frac{\\Delta A}{\\overline{A}} \\cdot 100\\%$","$\\delta A = (\\overline{A} + \\Delta A) \\cdot 100\\%$","$\\delta A = \\frac{\\overline{\\Delta A}}{\\Delta A_{dc}} \\cdot 100\\%$"],"optionsRaw":["$\\delta A = \\frac{\\overline{A}}{\\Delta A} \\cdot 100\\%$","$\\delta A = \\frac{\\Delta A}{\\overline{A}} \\cdot 100\\%$","$\\delta A = (\\overline{A} + \\Delta A) \\cdot 100\\%$","$\\delta A = \\frac{\\overline{\\Delta A}}{\\Delta A_{dc}} \\cdot 100\\%$"],"correctIndex":1,"correctAnswer":"$\\delta A = \\frac{\\Delta A}{\\overline{A}} \\cdot 100\\%$","subQuestions":[],"solutionHtml":"Theo công thức (3.3): Sai số tỉ đối của phép đo là tỉ lệ phần trăm giữa sai số tuyệt đối và giá trị trung bình của đại lượng đo: $\\delta A = \\frac{\\Delta A}{\\overline{A}} \\cdot 100\\%$.","rawSolution":"Theo công thức (3.3): Sai số tỉ đối của phép đo là tỉ lệ phần trăm giữa sai số tuyệt đối và giá trị trung bình của đại lượng đo: $\\delta A = \\frac{\\Delta A}{\\overline{A}} \\cdot 100\\%$."}]},{"blockId":"single_349cf7d4-4189-45cf-8d73-197671272583_3","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"349cf7d4-4189-45cf-8d73-197671272583","type":"mcq","level":"B","chapterName":"","points":0.5,"textHtml":"Kết quả đo của một đại lượng Vật lý $A$ được ghi dưới dạng chuẩn nào sau đây?","rawText":"Kết quả đo của một đại lượng Vật lý $A$ được ghi dưới dạng chuẩn nào sau đây?","ownImageUrl":"","optionsHtml":["$A = \\overline{A} \\pm \\Delta A$","$A = \\overline{A} \\cdot \\delta A$","$A = \\overline{\\Delta A} \\pm \\Delta A_{dc}$","$A = \\overline{A} + \\delta A$"],"optionsRaw":["$A = \\overline{A} \\pm \\Delta A$","$A = \\overline{A} \\cdot \\delta A$","$A = \\overline{\\Delta A} \\pm \\Delta A_{dc}$","$A = \\overline{A} + \\delta A$"],"correctIndex":0,"correctAnswer":"$A = \\overline{A} \\pm \\Delta A$","subQuestions":[],"solutionHtml":"Theo mục &#39;Cách ghi kết quả đó: Kết quả đo đại lượng $A$ được ghi dưới dạng khoảng giá trị $(\\overline{A} - \\Delta A) \\le A \\le (\\overline{A} + \\Delta A)$ hoặc $A = \\overline{A} \\pm \\Delta A$.","rawSolution":"Theo mục 'Cách ghi kết quả đó: Kết quả đo đại lượng $A$ được ghi dưới dạng khoảng giá trị $(\\overline{A} - \\Delta A) \\le A \\le (\\overline{A} + \\Delta A)$ hoặc $A = \\overline{A} \\pm \\Delta A$."}]},{"blockId":"single_a69d3b70-1c4a-49e8-8994-86d961ae4e61_4","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"a69d3b70-1c4a-49e8-8994-86d961ae4e61","type":"mcq","level":"B","chapterName":"","points":0.5,"textHtml":"Khi tính sai số của phép đo gián tiếp đại lượng tổng $A = B + C$, sai số tuyệt đối $\\Delta A$ được xác định bằng:","rawText":"Khi tính sai số của phép đo gián tiếp đại lượng tổng $A = B + C$, sai số tuyệt đối $\\Delta A$ được xác định bằng:","ownImageUrl":"","optionsHtml":["$\\Delta A = \\Delta B \\cdot \\Delta C$","$\\Delta A = \\Delta B + \\Delta C$","$\\Delta A = \\Delta B - \\Delta C$","$\\Delta A = \\frac{\\Delta B + \\Delta C}{2}$"],"optionsRaw":["$\\Delta A = \\Delta B \\cdot \\Delta C$","$\\Delta A = \\Delta B + \\Delta C$","$\\Delta A = \\Delta B - \\Delta C$","$\\Delta A = \\frac{\\Delta B + \\Delta C}{2}$"],"correctIndex":1,"correctAnswer":"$\\Delta A = \\Delta B + \\Delta C$","subQuestions":[],"solutionHtml":"Theo quy tắc tính sai số phép đo gián tiếp: Sai số tuyệt đối của một tổng hay hiệu bằng tổng các sai số tuyệt đối của các số hạng. Do đó với $A = B + C$ thì $\\Delta A = \\Delta B + \\Delta C$.","rawSolution":"Theo quy tắc tính sai số phép đo gián tiếp: Sai số tuyệt đối của một tổng hay hiệu bằng tổng các sai số tuyệt đối của các số hạng. Do đó với $A = B + C$ thì $\\Delta A = \\Delta B + \\Delta C$."}]},{"blockId":"single_0ecc5c6c-d5fe-4f3e-846d-9ee793a51b7e_5","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"0ecc5c6c-d5fe-4f3e-846d-9ee793a51b7e","type":"mcq","level":"B","chapterName":"","points":0.5,"textHtml":"Trong phép đo gián tiếp đại lượng tích hoặc thương (như $A = B \\cdot C$ hoặc $v = \\frac{s}{t}$), sai số tỉ đối $\\delta A$ được tính theo quy tắc nào?","rawText":"Trong phép đo gián tiếp đại lượng tích hoặc thương (như $A = B \\cdot C$ hoặc $v = \\frac{s}{t}$), sai số tỉ đối $\\delta A$ được tính theo quy tắc nào?","ownImageUrl":"","optionsHtml":["Bằng tổng các sai số tỉ đối của các thừa số: $\\delta A = \\delta B + \\delta C$","Bằng tích các sai số tỉ đối của các thừa số: $\\delta A = \\delta B \\cdot \\delta C$","Bằng tổng các sai số tuyệt đối: $\\delta A = \\Delta B + \\Delta C$","Bằng thương hai sai số tỉ đối: $\\delta A = \\frac{\\delta B}{\\delta C}$"],"optionsRaw":["Bằng tổng các sai số tỉ đối của các thừa số: $\\delta A = \\delta B + \\delta C$","Bằng tích các sai số tỉ đối của các thừa số: $\\delta A = \\delta B \\cdot \\delta C$","Bằng tổng các sai số tuyệt đối: $\\delta A = \\Delta B + \\Delta C$","Bằng thương hai sai số tỉ đối: $\\delta A = \\frac{\\delta B}{\\delta C}$"],"correctIndex":0,"correctAnswer":"Bằng tổng các sai số tỉ đối của các thừa số: $\\delta A = \\delta B + \\delta C$","subQuestions":[],"solutionHtml":"Theo tài liệu bài học: Sai số tỉ đối của một tích hay thương thì bằng tổng các sai số tỉ đối của các thừa số.","rawSolution":"Theo tài liệu bài học: Sai số tỉ đối của một tích hay thương thì bằng tổng các sai số tỉ đối của các thừa số."}]},{"blockId":"single_e82c7ed1-1971-4f59-b00e-045a872821d6_6","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"e82c7ed1-1971-4f59-b00e-045a872821d6","type":"mcq","level":"B","chapterName":"","points":0.5,"textHtml":"Có mấy loại sai số chính trong phép đo các đại lượng Vật lý?","rawText":"Có mấy loại sai số chính trong phép đo các đại lượng Vật lý?","ownImageUrl":"","optionsHtml":["loại: sai số hệ thống và sai số ngẫu nhiên.","loại: sai số tuyệt đối, sai số tương đối và sai số tỉ đối.","loại: sai số dụng cụ.","loại: sai số trực tiếp, gián tiếp, hệ thống và ngẫu nhiên."],"optionsRaw":["loại: sai số hệ thống và sai số ngẫu nhiên.","loại: sai số tuyệt đối, sai số tương đối và sai số tỉ đối.","loại: sai số dụng cụ.","loại: sai số trực tiếp, gián tiếp, hệ thống và ngẫu nhiên."],"correctIndex":0,"correctAnswer":"loại: sai số hệ thống và sai số ngẫu nhiên.","subQuestions":[],"solutionHtml":"Theo mục &#39;EM ĐÃ HỌC&#39;: Hai loại sai số gồm sai số hệ thống và sai số ngẫu nhiên.","rawSolution":"Theo mục 'EM ĐÃ HỌC': Hai loại sai số gồm sai số hệ thống và sai số ngẫu nhiên."}]},{"blockId":"single_74bf57be-a9f4-408d-a73a-7764f84133c0_7","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"74bf57be-a9f4-408d-a73a-7764f84133c0","type":"mcq","level":"B","chapterName":"","points":0.5,"textHtml":"Phép đo nào sau đây thuộc loại phép đo trực tiếp?","rawText":"Phép đo nào sau đây thuộc loại phép đo trực tiếp?","ownImageUrl":"","optionsHtml":["Đo tốc độ trung bình $v = \\frac{s}{t}$ bằng thước và đồng hồ.","Đo diện tích mặt bàn bằng cách đo chiều dài và chiều rộng.","Dùng thước kẹp đo trực tiếp đường kính của một viên bi.","Xác định thể tích hình lập phương qua độ dài cạnh."],"optionsRaw":["Đo tốc độ trung bình $v = \\frac{s}{t}$ bằng thước và đồng hồ.","Đo diện tích mặt bàn bằng cách đo chiều dài và chiều rộng.","Dùng thước kẹp đo trực tiếp đường kính của một viên bi.","Xác định thể tích hình lập phương qua độ dài cạnh."],"correctIndex":2,"correctAnswer":"Dùng thước kẹp đo trực tiếp đường kính của một viên bi.","subQuestions":[],"solutionHtml":"Phép đo trực tiếp là phép đo đọc trực tiếp giá trị đại lượng cần đo trên dụng cụ đo (dùng thước kẹp đọc đường kính viên bi). Các phép đo còn lại qua công thức tính toán là phép đo gián tiếp.","rawSolution":"Phép đo trực tiếp là phép đo đọc trực tiếp giá trị đại lượng cần đo trên dụng cụ đo (dùng thước kẹp đọc đường kính viên bi). Các phép đo còn lại qua công thức tính toán là phép đo gián tiếp."}]},{"blockId":"single_a93cbe60-0929-4db1-afdd-a3011506c920_8","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"a93cbe60-0929-4db1-afdd-a3011506c920","type":"mcq","level":"H","chapterName":"","points":0.5,"textHtml":"Đại lượng nào sau đây cho biết mức độ chính xác của một phép đo Vật lý?","rawText":"Đại lượng nào sau đây cho biết mức độ chính xác của một phép đo Vật lý?","ownImageUrl":"","optionsHtml":["Giá trị trung bình $\\overline{A}$.","Sai số tỉ đối $\\delta A$.","Số lần thực hiện phép đo $n$.","Độ chia nhỏ nhất của dụng cụ đo."],"optionsRaw":["Giá trị trung bình $\\overline{A}$.","Sai số tỉ đối $\\delta A$.","Số lần thực hiện phép đo $n$.","Độ chia nhỏ nhất của dụng cụ đo."],"correctIndex":1,"correctAnswer":"Sai số tỉ đối $\\delta A$.","subQuestions":[],"solutionHtml":"Theo định nghĩa công thức (3.3) trong SGK: Sai số tỉ đối của phép đo cho biết mức độ chính xác của phép đo.","rawSolution":"Theo định nghĩa công thức (3.3) trong SGK: Sai số tỉ đối của phép đo cho biết mức độ chính xác của phép đo."}]},{"blockId":"single_4527f85b-a75f-435b-8e5f-9f14e97b7c47_9","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"4527f85b-a75f-435b-8e5f-9f14e97b7c47","type":"mcq","level":"H","chapterName":"","points":0.5,"textHtml":"Theo quy tắc làm tròn số được nêu trong SGK, nếu giá trị tính toán tốc độ thu được là $v = 3{,}4567$ m/s và cần làm tròn đến 2 chữ số thập phân thì kết quả là:","rawText":"Theo quy tắc làm tròn số được nêu trong SGK, nếu giá trị tính toán tốc độ thu được là $v = 3{,}4567$ m/s và cần làm tròn đến 2 chữ số thập phân thì kết quả là:","ownImageUrl":"","optionsHtml":["$3{,}45$ m/s","$3{,}46$ m/s","$3{,}50$ m/s","$3{,}40$ m/s"],"optionsRaw":["$3{,}45$ m/s","$3{,}46$ m/s","$3{,}50$ m/s","$3{,}40$ m/s"],"correctIndex":1,"correctAnswer":"$3{,}46$ m/s","subQuestions":[],"solutionHtml":"Chữ số ở hàng bỏ đi là 6 (lớn hơn 5), do đó chữ số bên trái (chữ số 5) tăng thêm 1 đơn vị thành 6. Kết quả làm tròn là $3{,}46$ m/s.","rawSolution":"Chữ số ở hàng bỏ đi là 6 (lớn hơn 5), do đó chữ số bên trái (chữ số 5) tăng thêm 1 đơn vị thành 6. Kết quả làm tròn là $3{,}46$ m/s."}]},{"blockId":"single_f431cc23-204b-4789-9ee1-3b6e220f81bb_10","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"f431cc23-204b-4789-9ee1-3b6e220f81bb","type":"mcq","level":"H","chapterName":"","points":0.5,"textHtml":"Một học sinh đo 5 lần thời gian chuyển động thu được các kết quả (tính bằng giây): $t_1 = 0{,}40$ s; $t_2 = 0{,}41$ s; $t_3 = 0{,}39$ s; $t_4 = 0{,}42$ s; $t_5 = 0{,}38$ s. Giá trị trung bình $\\overline{t}$ và sai số ngẫu nhiên trung bình $\\overline{\\Delta t}$ lần lượt là:","rawText":"Một học sinh đo 5 lần thời gian chuyển động thu được các kết quả (tính bằng giây): $t_1 = 0{,}40$ s; $t_2 = 0{,}41$ s; $t_3 = 0{,}39$ s; $t_4 = 0{,}42$ s; $t_5 = 0{,}38$ s. Giá trị trung bình $\\overline{t}$ và sai số ngẫu nhiên trung bình $\\overline{\\Delta t}$ lần lượt là:","ownImageUrl":"","optionsHtml":["$\\overline{t} = 0{,}40$ s và $\\overline{\\Delta t} = 0{,}012$ s","$\\overline{t} = 0{,}40$ s và $\\overline{\\Delta t} = 0{,}020$ s","$\\overline{t} = 0{,}41$ s và $\\overline{\\Delta t} = 0{,}010$ s","$\\overline{t} = 0{,}39$ s và $\\overline{\\Delta t} = 0{,}015$ s"],"optionsRaw":["$\\overline{t} = 0{,}40$ s và $\\overline{\\Delta t} = 0{,}012$ s","$\\overline{t} = 0{,}40$ s và $\\overline{\\Delta t} = 0{,}020$ s","$\\overline{t} = 0{,}41$ s và $\\overline{\\Delta t} = 0{,}010$ s","$\\overline{t} = 0{,}39$ s và $\\overline{\\Delta t} = 0{,}015$ s"],"correctIndex":0,"correctAnswer":"$\\overline{t} = 0{,}40$ s và $\\overline{\\Delta t} = 0{,}012$ s","subQuestions":[],"solutionHtml":"1) Giá trị trung bình: $\\overline{t} = \\frac{0{,}40 + 0{,}41 + 0{,}39 + 0{,}42 + 0{,}38}{5} = 0{,}40$ s.<br>2) Các sai số ngẫu nhiên tuyệt đối:<br>$\\Delta t_1 = |0{,}40 - 0{,}40| = 0{,}00$ s;<br>$\\Delta t_2 = |0{,}40 - 0{,}41| = 0{,}01$ s;<br>$\\Delta t_3 = |0{,}40 - 0{,}39| = 0{,}01$ s;<br>$\\Delta t_4 = |0{,}40 - 0{,}42| = 0{,}02$ s;<br>$\\Delta t_5 = |0{,}40 - 0{,}38| = 0{,}02$ s.<br>3) Sai số ngẫu nhiên trung bình: $\\overline{\\Delta t} = \\frac{0{,}00 + 0{,}01 + 0{,}01 + 0{,}02 + 0{,}02}{5} = 0{,}012$ s.","rawSolution":"1) Giá trị trung bình: $\\overline{t} = \\frac{0{,}40 + 0{,}41 + 0{,}39 + 0{,}42 + 0{,}38}{5} = 0{,}40$ s.\n2) Các sai số ngẫu nhiên tuyệt đối:\n$\\Delta t_1 = |0{,}40 - 0{,}40| = 0{,}00$ s;\n$\\Delta t_2 = |0{,}40 - 0{,}41| = 0{,}01$ s;\n$\\Delta t_3 = |0{,}40 - 0{,}39| = 0{,}01$ s;\n$\\Delta t_4 = |0{,}40 - 0{,}42| = 0{,}02$ s;\n$\\Delta t_5 = |0{,}40 - 0{,}38| = 0{,}02$ s.\n3) Sai số ngẫu nhiên trung bình: $\\overline{\\Delta t} = \\frac{0{,}00 + 0{,}01 + 0{,}01 + 0{,}02 + 0{,}02}{5} = 0{,}012$ s."}]},{"blockId":"single_a43bc36a-0274-4465-9aa1-621d34d233bc_11","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"a43bc36a-0274-4465-9aa1-621d34d233bc","type":"mcq","level":"H","chapterName":"","points":0.5,"textHtml":"Cho hai đại lượng đo trực tiếp $B = 10{,}0 \\pm 0{,}2$ cm và $C = 4{,}0 \\pm 0{,}1$ cm. Xác định đại lượng hiệu $A = B - C$. Giá trị trung bình $\\overline{A}$ và sai số tuyệt đối $\\Delta A$ lần lượt là:","rawText":"Cho hai đại lượng đo trực tiếp $B = 10{,}0 \\pm 0{,}2$ cm và $C = 4{,}0 \\pm 0{,}1$ cm. Xác định đại lượng hiệu $A = B - C$. Giá trị trung bình $\\overline{A}$ và sai số tuyệt đối $\\Delta A$ lần lượt là:","ownImageUrl":"","optionsHtml":["$\\overline{A} = 6{,}0$ cm và $\\Delta A = 0{,}1$ cm","$\\overline{A} = 6{,}0$ cm và $\\Delta A = 0{,}3$ cm","$\\overline{A} = 14{,}0$ cm và $\\Delta A = 0{,}3$ cm","$\\overline{A} = 6{,}0$ cm và $\\Delta A = 0{,}2$ cm"],"optionsRaw":["$\\overline{A} = 6{,}0$ cm và $\\Delta A = 0{,}1$ cm","$\\overline{A} = 6{,}0$ cm và $\\Delta A = 0{,}3$ cm","$\\overline{A} = 14{,}0$ cm và $\\Delta A = 0{,}3$ cm","$\\overline{A} = 6{,}0$ cm và $\\Delta A = 0{,}2$ cm"],"correctIndex":1,"correctAnswer":"$\\overline{A} = 6{,}0$ cm và $\\Delta A = 0{,}3$ cm","subQuestions":[],"solutionHtml":"Giá trị trung bình: $\\overline{A} = \\overline{B} - \\overline{C} = 10{,}0 - 4{,}0 = 6{,}0$ cm.<br>Sai số tuyệt đối của tổng hay hiệu đều bằng TỔNG các sai số tuyệt đối: $\\Delta A = \\Delta B + \\Delta C = 0{,}2 + 0{,}1 = 0{,}3$ cm.","rawSolution":"Giá trị trung bình: $\\overline{A} = \\overline{B} - \\overline{C} = 10{,}0 - 4{,}0 = 6{,}0$ cm.\nSai số tuyệt đối của tổng hay hiệu đều bằng TỔNG các sai số tuyệt đối: $\\Delta A = \\Delta B + \\Delta C = 0{,}2 + 0{,}1 = 0{,}3$ cm."}]},{"blockId":"single_05495611-b259-4a0f-8915-e7d3fe201650_12","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"05495611-b259-4a0f-8915-e7d3fe201650","type":"mcq","level":"H","chapterName":"","points":0.5,"textHtml":"Khi biểu diễn sai số bằng đồ thị sự phụ thuộc của đại lượng $y$ vào đại lượng $x$ (Hình 3.2 trong bài học), mỗi điểm thực nghiệm có sai số $\\pm\\Delta x$ và $\\pm\\Delta y$ được biểu diễn bằng hình gì?","rawText":"Khi biểu diễn sai số bằng đồ thị sự phụ thuộc của đại lượng $y$ vào đại lượng $x$ (Hình 3.2 trong bài học), mỗi điểm thực nghiệm có sai số $\\pm\\Delta x$ và $\\pm\\Delta y$ được biểu diễn bằng hình gì?","ownImageUrl":"","optionsHtml":["Hình tròn có bán kính bằng $\\Delta x + \\Delta y$.","Hình vuông có cạnh bằng $\\Delta x$.","Hình chữ nhật (ô bao sai số) có kích thước hai cạnh là $2\\Delta x$ và $2\\Delta y$.","Hình tam giác có đáy $2\\Delta x$ và chiều cao $2\\Delta y$."],"optionsRaw":["Hình tròn có bán kính bằng $\\Delta x + \\Delta y$.","Hình vuông có cạnh bằng $\\Delta x$.","Hình chữ nhật (ô bao sai số) có kích thước hai cạnh là $2\\Delta x$ và $2\\Delta y$.","Hình tam giác có đáy $2\\Delta x$ và chiều cao $2\\Delta y$."],"correctIndex":2,"correctAnswer":"Hình chữ nhật (ô bao sai số) có kích thước hai cạnh là $2\\Delta x$ và $2\\Delta y$.","subQuestions":[],"solutionHtml":"Theo SGK mục &#39;EM CÓ BIẾT?&#39;: Trên đồ thị, mỗi giá trị sẽ được biểu diễn bằng một điểm nằm trong ô chữ nhật có cạnh là $2\\Delta x$ và $2\\Delta y$ (gọi là ô bao sai số).","rawSolution":"Theo SGK mục 'EM CÓ BIẾT?': Trên đồ thị, mỗi giá trị sẽ được biểu diễn bằng một điểm nằm trong ô chữ nhật có cạnh là $2\\Delta x$ và $2\\Delta y$ (gọi là ô bao sai số)."}]},{"blockId":"single_13c0a41b-4eac-4278-9d47-c2e046834e7c_13","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"13c0a41b-4eac-4278-9d47-c2e046834e7c","type":"mcq","level":"H","chapterName":"","points":0.5,"textHtml":"Tại sao để đo một đại lượng vật lý chính xác người ta cần phải tiến hành lặp lại phép đo nhiều lần?","rawText":"Tại sao để đo một đại lượng vật lý chính xác người ta cần phải tiến hành lặp lại phép đo nhiều lần?","ownImageUrl":"","optionsHtml":["Để loại bỏ hoàn toàn sai số dụng cụ.","Để giảm thiểu ảnh hưởng của sai số ngẫu nhiên và tìm được giá trị trung bình gần đúng nhất với giá trị thực.","Để giảm độ chia nhỏ nhất của dụng cụ đo.","Để chuyển từ phép đo trực tiếp thành phép đo gián tiếp."],"optionsRaw":["Để loại bỏ hoàn toàn sai số dụng cụ.","Để giảm thiểu ảnh hưởng của sai số ngẫu nhiên và tìm được giá trị trung bình gần đúng nhất với giá trị thực.","Để giảm độ chia nhỏ nhất của dụng cụ đo.","Để chuyển từ phép đo trực tiếp thành phép đo gián tiếp."],"correctIndex":1,"correctAnswer":"Để giảm thiểu ảnh hưởng của sai số ngẫu nhiên và tìm được giá trị trung bình gần đúng nhất với giá trị thực.","subQuestions":[],"solutionHtml":"Sai số ngẫu nhiên do các yếu tố ngẫu nhiên gây ra làm kết quả biến đổi khi đo lại. Lặp lại phép đo nhiều lần và lấy giá trị trung bình giúp làm giảm bớt ảnh hưởng của sai số ngẫu nhiên.","rawSolution":"Sai số ngẫu nhiên do các yếu tố ngẫu nhiên gây ra làm kết quả biến đổi khi đo lại. Lặp lại phép đo nhiều lần và lấy giá trị trung bình giúp làm giảm bớt ảnh hưởng của sai số ngẫu nhiên."}]},{"blockId":"single_15e3818d-4ab9-4239-b946-72b256a9f675_14","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"15e3818d-4ab9-4239-b946-72b256a9f675","type":"mcq","level":"H","chapterName":"","points":0.5,"textHtml":"Một phép đo đại lượng $A$ cho giá trị trung bình $\\overline{A} = 50{,}0$ g và sai số tuyệt đối $\\Delta A = 0{,}5$ g. Sai số tỉ đối $\\delta A$ của phép đo này là:","rawText":"Một phép đo đại lượng $A$ cho giá trị trung bình $\\overline{A} = 50{,}0$ g và sai số tuyệt đối $\\Delta A = 0{,}5$ g. Sai số tỉ đối $\\delta A$ của phép đo này là:","ownImageUrl":"","optionsHtml":["$1{,}0\\%$","$0{,}1\\%$","$5{,}0\\%$","$0{,}5\\%$"],"optionsRaw":["$1{,}0\\%$","$0{,}1\\%$","$5{,}0\\%$","$0{,}5\\%$"],"correctIndex":0,"correctAnswer":"$1{,}0\\%$","subQuestions":[],"solutionHtml":"Áp dụng công thức (3.3): $\\delta A = \\frac{\\Delta A}{\\overline{A}} \\cdot 100\\% = \\frac{0{,}5}{50{,}0} \\cdot 100\\% = 1{,}0\\%$.","rawSolution":"Áp dụng công thức (3.3): $\\delta A = \\frac{\\Delta A}{\\overline{A}} \\cdot 100\\% = \\frac{0{,}5}{50{,}0} \\cdot 100\\% = 1{,}0\\%$."}]},{"blockId":"single_f914da9e-82bf-4418-b3cf-06d499825e57_15","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"f914da9e-82bf-4418-b3cf-06d499825e57","type":"mcq","level":"VD","chapterName":"","points":0.5,"textHtml":"Khi đo tốc độ chuyển động bằng công thức $v = \\frac{s}{t}$, thu được quãng đường $s = 100 \\pm 1$ cm và thời gian $t = 2{,}00 \\pm 0{,}04$ s. Sai số tỉ đối $\\delta v$ của phép đo tốc độ là bao nhiêu?","rawText":"Khi đo tốc độ chuyển động bằng công thức $v = \\frac{s}{t}$, thu được quãng đường $s = 100 \\pm 1$ cm và thời gian $t = 2{,}00 \\pm 0{,}04$ s. Sai số tỉ đối $\\delta v$ của phép đo tốc độ là bao nhiêu?","ownImageUrl":"","optionsHtml":["$1{,}0\\%$","$2{,}0\\%$","$3{,}0\\%$","$4{,}0\\%$"],"optionsRaw":["$1{,}0\\%$","$2{,}0\\%$","$3{,}0\\%$","$4{,}0\\%$"],"correctIndex":2,"correctAnswer":"$3{,}0\\%$","subQuestions":[],"solutionHtml":"1) Sai số tỉ đối của quãng đường: $\\delta s = \\frac{\\Delta s}{\\overline{s}} \\cdot 100\\% = \\frac{1}{100} \\cdot 100\\% = 1{,}0\\%$.<br>2) Sai số tỉ đối của thời gian: $\\delta t = \\frac{\\Delta t}{\\overline{t}} \\cdot 100\\% = \\frac{0{,}04}{2{,}00} \\cdot 100\\% = 2{,}0\\%$.<br>3) Vì $v = \\frac{s}{t}$ nên sai số tỉ đối $\\delta v = \\delta s + \\delta t = 1{,}0\\% + 2{,}0\\% = 3{,}0\\%$.","rawSolution":"1) Sai số tỉ đối của quãng đường: $\\delta s = \\frac{\\Delta s}{\\overline{s}} \\cdot 100\\% = \\frac{1}{100} \\cdot 100\\% = 1{,}0\\%$.\n2) Sai số tỉ đối của thời gian: $\\delta t = \\frac{\\Delta t}{\\overline{t}} \\cdot 100\\% = \\frac{0{,}04}{2{,}00} \\cdot 100\\% = 2{,}0\\%$.\n3) Vì $v = \\frac{s}{t}$ nên sai số tỉ đối $\\delta v = \\delta s + \\delta t = 1{,}0\\% + 2{,}0\\% = 3{,}0\\%$."}]},{"blockId":"single_0916c045-e50a-4534-86ce-18ac5bbdeba5_16","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"0916c045-e50a-4534-86ce-18ac5bbdeba5","type":"mcq","level":"VD","chapterName":"","points":0.5,"textHtml":"Đo quãng đường $s$ từ A đến C gồm 2 đoạn: $s_1$ (từ A đến B) và $s_2$ (từ B đến C). Kết quả đo lần lượt là $s_1 = 20{,}4 \\pm 0{,}2$ cm và $s_2 = 15{,}6 \\pm 0{,}3$ cm. Kết quả đo quãng đường $s$ được ghi đúng chuẩn là:","rawText":"Đo quãng đường $s$ từ A đến C gồm 2 đoạn: $s_1$ (từ A đến B) và $s_2$ (từ B đến C). Kết quả đo lần lượt là $s_1 = 20{,}4 \\pm 0{,}2$ cm và $s_2 = 15{,}6 \\pm 0{,}3$ cm. Kết quả đo quãng đường $s$ được ghi đúng chuẩn là:","ownImageUrl":"","optionsHtml":["$s = 36{,}0 \\pm 0{,}5$ cm","$s = 36{,}0 \\pm 0{,}1$ cm","$s = 36{,}0 \\pm 0{,}6$ cm","$s = 36{,}0 \\pm 0{,}25$ cm"],"optionsRaw":["$s = 36{,}0 \\pm 0{,}5$ cm","$s = 36{,}0 \\pm 0{,}1$ cm","$s = 36{,}0 \\pm 0{,}6$ cm","$s = 36{,}0 \\pm 0{,}25$ cm"],"correctIndex":0,"correctAnswer":"$s = 36{,}0 \\pm 0{,}5$ cm","subQuestions":[],"solutionHtml":"1) Giá trị trung bình: $\\overline{s} = \\overline{s_1} + \\overline{s_2} = 20{,}4 + 15{,}6 = 36{,}0$ cm.<br>2) Sai số tuyệt đối: $\\Delta s = \\Delta s_1 + \\Delta s_2 = 0{,}2 + 0{,}3 = 0{,}5$ cm.<br>3) Kết quả đo ghi dạng $s = \\overline{s} \\pm \\Delta s = 36{,}0 \\pm 0{,}5$ cm.","rawSolution":"1) Giá trị trung bình: $\\overline{s} = \\overline{s_1} + \\overline{s_2} = 20{,}4 + 15{,}6 = 36{,}0$ cm.\n2) Sai số tuyệt đối: $\\Delta s = \\Delta s_1 + \\Delta s_2 = 0{,}2 + 0{,}3 = 0{,}5$ cm.\n3) Kết quả đo ghi dạng $s = \\overline{s} \\pm \\Delta s = 36{,}0 \\pm 0{,}5$ cm."}]},{"blockId":"single_f390530f-a687-4081-87cd-9fcc82f1cc89_17","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"f390530f-a687-4081-87cd-9fcc82f1cc89","type":"mcq","level":"VD","chapterName":"","points":0.5,"textHtml":"Một học sinh đo tốc độ theo công thức $v = \\frac{s}{t}$. Biết giá trị trung bình $\\overline{s} = 2{,}00$ m, sai số tuyệt đối $\\Delta s = 0{,}02$ m; giá trị trung bình $\\overline{t} = 1{,}00$ s, sai số tuyệt đối $\\Delta t = 0{,}02$ s. Kết quả đo tốc độ $v$ được biểu diễn dưới dạng $\\overline{v} \\pm \\Delta v$ là:","rawText":"Một học sinh đo tốc độ theo công thức $v = \\frac{s}{t}$. Biết giá trị trung bình $\\overline{s} = 2{,}00$ m, sai số tuyệt đối $\\Delta s = 0{,}02$ m; giá trị trung bình $\\overline{t} = 1{,}00$ s, sai số tuyệt đối $\\Delta t = 0{,}02$ s. Kết quả đo tốc độ $v$ được biểu diễn dưới dạng $\\overline{v} \\pm \\Delta v$ là:","ownImageUrl":"","optionsHtml":["$v = 2{,}00 \\pm 0{,}06$ m/s","$v = 2{,}00 \\pm 0{,}04$ m/s","$v = 2{,}00 \\pm 0{,}02$ m/s","$v = 2{,}00 \\pm 0{,}08$ m/s"],"optionsRaw":["$v = 2{,}00 \\pm 0{,}06$ m/s","$v = 2{,}00 \\pm 0{,}04$ m/s","$v = 2{,}00 \\pm 0{,}02$ m/s","$v = 2{,}00 \\pm 0{,}08$ m/s"],"correctIndex":0,"correctAnswer":"$v = 2{,}00 \\pm 0{,}06$ m/s","subQuestions":[],"solutionHtml":"1) Giá trị trung bình tốc độ: $\\overline{v} = \\frac{\\overline{s}}{\\overline{t}} = \\frac{2{,}00}{1{,}00} = 2{,}00$ m/s.<br>2) Sai số tỉ đối: $\\delta s = \\frac{0{,}02}{2{,}00} \\cdot 100\\% = 1\\%$; $\\delta t = \\frac{0{,}02}{1{,}00} \\cdot 100\\% = 2\\% \\implies \\delta v = 1\\% + 2\\% = 3\\%$.<br>3) Sai số tuyệt đối: $\\Delta v = \\delta v \\cdot \\overline{v} = 3\\% \\cdot 2{,}00 = 0{,}06$ m/s.<br>4) Kết quả: $v = 2{,}00 \\pm 0{,}06$ m/s.","rawSolution":"1) Giá trị trung bình tốc độ: $\\overline{v} = \\frac{\\overline{s}}{\\overline{t}} = \\frac{2{,}00}{1{,}00} = 2{,}00$ m/s.\n2) Sai số tỉ đối: $\\delta s = \\frac{0{,}02}{2{,}00} \\cdot 100\\% = 1\\%$; $\\delta t = \\frac{0{,}02}{1{,}00} \\cdot 100\\% = 2\\% \\implies \\delta v = 1\\% + 2\\% = 3\\%$.\n3) Sai số tuyệt đối: $\\Delta v = \\delta v \\cdot \\overline{v} = 3\\% \\cdot 2{,}00 = 0{,}06$ m/s.\n4) Kết quả: $v = 2{,}00 \\pm 0{,}06$ m/s."}]},{"blockId":"single_d762bc71-69ec-4387-9002-3ca7367cf9c0_18","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"d762bc71-69ec-4387-9002-3ca7367cf9c0","type":"mcq","level":"VD","chapterName":"","points":0.5,"textHtml":"Cho đại lượng gián tiếp $A$ phụ thuộc vào hai đại lượng đo trực tiếp $B$ và $C$ theo công thức $A = B \\cdot \\sqrt{C}$. Biết kết quả đo $B = 10{,}0 \\pm 0{,}2$ và $C = 16{,}00 \\pm 0{,}32$. Sai số tỉ đối $\\delta A$ và sai số tuyệt đối $\\Delta A$ của đại lượng $A$ là:","rawText":"Cho đại lượng gián tiếp $A$ phụ thuộc vào hai đại lượng đo trực tiếp $B$ và $C$ theo công thức $A = B \\cdot \\sqrt{C}$. Biết kết quả đo $B = 10{,}0 \\pm 0{,}2$ và $C = 16{,}00 \\pm 0{,}32$. Sai số tỉ đối $\\delta A$ và sai số tuyệt đối $\\Delta A$ của đại lượng $A$ là:","ownImageUrl":"","optionsHtml":["$\\delta A = 3{,}0\\%$ và $\\Delta A = 1{,}2$","$\\delta A = 4{,}0\\%$ và $\\Delta A = 1{,}6$","$\\delta A = 2{,}5\\%$ và $\\Delta A = 1{,}0$","$\\delta A = 3{,}0\\%$ và $\\Delta A = 0{,}8$"],"optionsRaw":["$\\delta A = 3{,}0\\%$ và $\\Delta A = 1{,}2$","$\\delta A = 4{,}0\\%$ và $\\Delta A = 1{,}6$","$\\delta A = 2{,}5\\%$ và $\\Delta A = 1{,}0$","$\\delta A = 3{,}0\\%$ và $\\Delta A = 0{,}8$"],"correctIndex":0,"correctAnswer":"$\\delta A = 3{,}0\\%$ và $\\Delta A = 1{,}2$","subQuestions":[],"solutionHtml":"1) Giá trị trung bình $\\overline{A} = \\overline{B} \\cdot \\sqrt{\\overline{C}} = 10{,}0 \\cdot \\sqrt{16{,}00} = 40{,}0$.<br>2) Sai số tỉ đối các đại lượng:<br>$\\delta B = \\frac{0{,}2}{10{,}0} \\cdot 100\\% = 2{,}0\\%$.<br>$\\delta C = \\frac{0{,}32}{16{,}00} \\cdot 100\\% = 2{,}0\\%$.<br>3) Áp dụng quy tắc sai số lũy thừa: Với $A = B \\cdot \\sqrt{C}$ thì $\\delta A = \\delta B + \\frac{1}{2}\\delta C = 2{,}0\\% + \\frac{1}{2}(2{,}0\\%) = 3{,}0\\%$.<br>4) Sai số tuyệt đối: $\\Delta A = \\delta A \\cdot \\overline{A} = 3{,}0\\% \\cdot 40{,}0 = 1{,}2$.","rawSolution":"1) Giá trị trung bình $\\overline{A} = \\overline{B} \\cdot \\sqrt{\\overline{C}} = 10{,}0 \\cdot \\sqrt{16{,}00} = 40{,}0$.\n2) Sai số tỉ đối các đại lượng:\n$\\delta B = \\frac{0{,}2}{10{,}0} \\cdot 100\\% = 2{,}0\\%$.\n$\\delta C = \\frac{0{,}32}{16{,}00} \\cdot 100\\% = 2{,}0\\%$.\n3) Áp dụng quy tắc sai số lũy thừa: Với $A = B \\cdot \\sqrt{C}$ thì $\\delta A = \\delta B + \\frac{1}{2}\\delta C = 2{,}0\\% + \\frac{1}{2}(2{,}0\\%) = 3{,}0\\%$.\n4) Sai số tuyệt đối: $\\Delta A = \\delta A \\cdot \\overline{A} = 3{,}0\\% \\cdot 40{,}0 = 1{,}2$."}]},{"blockId":"single_d895976f-fc32-4805-ac2c-5d2308073ea8_19","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"d895976f-fc32-4805-ac2c-5d2308073ea8","type":"mcq","level":"VD","chapterName":"","points":0.5,"textHtml":"Học sinh tiến hành thí nghiệm đo tốc độ xe đồ chơi. Đo quãng đường thu được $\\overline{s} = 0{,}800$ m với $\\Delta s = 0{,}004$ m. Thực hiện đo thời gian 5 lần thu được các giá trị (tính bằng giây): $1{,}58; 1{,}62; 1{,}60; 1{,}59; 1{,}61$. Bỏ qua sai số dụng cụ đo thời gian ($\\Delta t_{dc} = 0$). Kết quả đo tốc độ $v = \\frac{s}{t}$ biểu diễn theo chuẩn quy định là:","rawText":"Học sinh tiến hành thí nghiệm đo tốc độ xe đồ chơi. Đo quãng đường thu được $\\overline{s} = 0{,}800$ m với $\\Delta s = 0{,}004$ m. Thực hiện đo thời gian 5 lần thu được các giá trị (tính bằng giây): $1{,}58; 1{,}62; 1{,}60; 1{,}59; 1{,}61$. Bỏ qua sai số dụng cụ đo thời gian ($\\Delta t_{dc} = 0$). Kết quả đo tốc độ $v = \\frac{s}{t}$ biểu diễn theo chuẩn quy định là:","ownImageUrl":"","optionsHtml":["$v = 0{,}500 \\pm 0{,}006$ m/s","$v = 0{,}500 \\pm 0{,}010$ m/s","$v = 0{,}500 \\pm 0{,}003$ m/s","$v = 0{,}500 \\pm 0{,}015$ m/s"],"optionsRaw":["$v = 0{,}500 \\pm 0{,}006$ m/s","$v = 0{,}500 \\pm 0{,}010$ m/s","$v = 0{,}500 \\pm 0{,}003$ m/s","$v = 0{,}500 \\pm 0{,}015$ m/s"],"correctIndex":0,"correctAnswer":"$v = 0{,}500 \\pm 0{,}006$ m/s","subQuestions":[],"solutionHtml":"1) Thời gian trung bình: $\\overline{t} = \\frac{1{,}58 + 1{,}62 + 1{,}60 + 1{,}59 + 1{,}61}{5} = 1{,}60$ s.<br>2) Sai số tuyệt đối ngẫu nhiên trung bình thời gian:<br>$\\overline{\\Delta t} = \\frac{|1{,}60-1{,}58| + |1{,}60-1{,}62| + |1{,}60-1{,}60| + |1{,}60-1{,}59| + |1{,}60-1{,}61|}{5} = \\frac{0{,}02 + 0{,}02 + 0 + 0{,}01 + 0{,}01}{5} = 0{,}012$ s.<br>3) Do $\\Delta t_{dc} = 0$ nên $\\Delta t = 0{,}012$ s.<br>4) Tốc độ trung bình: $\\overline{v} = \\frac{\\overline{s}}{\\overline{t}} = \\frac{0{,}800}{1{,}60} = 0{,}500$ m/s.<br>5) Sai số tỉ đối: $\\delta s = \\frac{0{,}004}{0{,}800} = 0{,}5\\%$; $\\delta t = \\frac{0{,}012}{1{,}60} = 0{,}75\\% \\implies \\delta v = 0{,}5\\% + 0{,}75\\% = 1{,}25\\%$.<br>6) Sai số tuyệt đối tốc độ: $\\Delta v = \\delta v \\cdot \\overline{v} = 1{,}25\\% \\cdot 0{,}500 = 0{,}00625 \\approx 0{,}006$ m/s.<br>7) Kết quả: $v = 0{,}500 \\pm 0{,}006$ m/s.","rawSolution":"1) Thời gian trung bình: $\\overline{t} = \\frac{1{,}58 + 1{,}62 + 1{,}60 + 1{,}59 + 1{,}61}{5} = 1{,}60$ s.\n2) Sai số tuyệt đối ngẫu nhiên trung bình thời gian:\n$\\overline{\\Delta t} = \\frac{|1{,}60-1{,}58| + |1{,}60-1{,}62| + |1{,}60-1{,}60| + |1{,}60-1{,}59| + |1{,}60-1{,}61|}{5} = \\frac{0{,}02 + 0{,}02 + 0 + 0{,}01 + 0{,}01}{5} = 0{,}012$ s.\n3) Do $\\Delta t_{dc} = 0$ nên $\\Delta t = 0{,}012$ s.\n4) Tốc độ trung bình: $\\overline{v} = \\frac{\\overline{s}}{\\overline{t}} = \\frac{0{,}800}{1{,}60} = 0{,}500$ m/s.\n5) Sai số tỉ đối: $\\delta s = \\frac{0{,}004}{0{,}800} = 0{,}5\\%$; $\\delta t = \\frac{0{,}012}{1{,}60} = 0{,}75\\% \\implies \\delta v = 0{,}5\\% + 0{,}75\\% = 1{,}25\\%$.\n6) Sai số tuyệt đối tốc độ: $\\Delta v = \\delta v \\cdot \\overline{v} = 1{,}25\\% \\cdot 0{,}500 = 0{,}00625 \\approx 0{,}006$ m/s.\n7) Kết quả: $v = 0{,}500 \\pm 0{,}006$ m/s."}]}]}</script>
+  <script>
+    (function() {
+      var dataEl = document.getElementById('edusync-runtime-data');
+      var EXAM = JSON.parse(dataEl.textContent || '{}');
+      var LETTERS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+      var TF_LABELS = ['a', 'b', 'c', 'd', 'e', 'f'];
+
+      function shuffle(arr) {
+        var copy = arr.slice();
+        for (var i = copy.length - 1; i > 0; i--) {
+          var j = Math.floor(Math.random() * (i + 1));
+          var tmp = copy[i]; copy[i] = copy[j]; copy[j] = tmp;
+        }
+        return copy;
+      }
+
+      var blocks = EXAM.shuffleQuestions ? shuffle(EXAM.blocks || []) : (EXAM.blocks || []);
+      var flatQuestions = [];
+      blocks.forEach(function(block) {
+        block.questions.forEach(function(q) {
+          if (q.type === 'mcq' && EXAM.shuffleOptions && Array.isArray(q.optionsHtml)) {
+            var tagged = q.optionsHtml.map(function(html, idx) {
+              return { html: html, raw: q.optionsRaw[idx], isCorrect: idx === q.correctIndex };
+            });
+            var mixed = shuffle(tagged);
+            q.optionsHtml = mixed.map(function(m) { return m.html; });
+            q.optionsRaw = mixed.map(function(m) { return m.raw; });
+            q.correctIndex = Math.max(0, mixed.findIndex(function(m) { return m.isCorrect; }));
+          }
+          q.displayNumber = flatQuestions.length + 1;
+          flatQuestions.push(q);
+        });
+      });
+
+      var userAnswers = {};
+      var submitted = false;
+      var durationLimit = (EXAM.durationMinutes || 0) > 0 ? EXAM.durationMinutes * 60 : 0;
+      var startTime = Date.now();
+      var timerHandle = null;
+
+      function fmtTime(sec) {
+        var s = Math.max(0, Math.floor(sec));
+        var m = Math.floor(s / 60);
+        var r = s % 60;
+        return String(m).padStart(2, '0') + ':' + String(r).padStart(2, '0');
+      }
+
+      function isQuestionAnswered(q) {
+        var ans = userAnswers[q.id];
+        if (q.type === 'mcq') return typeof ans === 'number';
+        if (q.type === 'short') return typeof ans === 'string' && ans.trim().length > 0;
+        if (q.type === 'group-tf') {
+          if (!ans || typeof ans !== 'object') return false;
+          return q.subQuestions.some(function(sq) { return ans[sq.id] === 'True' || ans[sq.id] === 'False'; });
+        }
+        return false;
+      }
+
+      function updateProgress() {
+        var done = flatQuestions.filter(isQuestionAnswered).length;
+        document.getElementById('progressLabel').textContent = done + '/' + flatQuestions.length;
+        document.getElementById('sidebarCount').textContent = 'Đã làm ' + done + '/' + flatQuestions.length;
+        flatQuestions.forEach(function(q) {
+          var pBtn = document.getElementById('pbtn_' + q.displayNumber);
+          if (!pBtn || submitted) return;
+          pBtn.className = 'p-btn mono' + (isQuestionAnswered(q) ? ' done' : '');
+        });
+      }
+
+      function buildQuestionEl(q) {
+        var card = document.createElement('article');
+        card.className = 'q-card';
+        card.id = 'qcard_' + q.displayNumber;
+
+        var header = document.createElement('div');
+        header.className = 'q-header';
+        var leftMeta = '<span class="q-num">Câu ' + q.displayNumber + '</span>';
+        var tags = [q.level ? ('Mức ' + q.level) : '', q.points + ' đ', q.chapterName || ''].filter(Boolean).join(' · ');
+        header.innerHTML = leftMeta + '<span id="qstatus_' + q.displayNumber + '" class="q-status">' + tags + '</span>';
+        card.appendChild(header);
+
+        var qTextEl = document.createElement('div');
+        qTextEl.className = 'q-text';
+        qTextEl.innerHTML = q.textHtml;
+        card.appendChild(qTextEl);
+
+        if (q.ownImageUrl) {
+          var fig = document.createElement('div');
+          fig.className = 'q-figure';
+          var img = document.createElement('img');
+          img.src = q.ownImageUrl;
+          img.alt = 'Hình minh họa câu ' + q.displayNumber;
+          fig.appendChild(img);
+          card.appendChild(fig);
+        }
+
+        if (q.type === 'mcq') {
+          var grid = document.createElement('div');
+          grid.className = 'options-grid';
+          q.optionsHtml.forEach(function(optHtml, optIdx) {
+            var btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'opt-btn';
+            btn.id = 'opt_' + q.id + '_' + optIdx;
+            btn.innerHTML = '<span class="opt-letter mono">' + (LETTERS[optIdx] || optIdx + 1) + '</span><span style="flex:1;">' + optHtml + '</span>';
+            btn.addEventListener('click', function() {
+              if (submitted) return;
+              userAnswers[q.id] = optIdx;
+              q.optionsHtml.forEach(function(_, i2) {
+                var el = document.getElementById('opt_' + q.id + '_' + i2);
+                if (el) el.classList.toggle('selected', i2 === optIdx);
+              });
+              updateProgress();
+            });
+            grid.appendChild(btn);
+          });
+          card.appendChild(grid);
+        } else if (q.type === 'group-tf') {
+          var list = document.createElement('div');
+          list.className = 'tf-list';
+          q.subQuestions.forEach(function(sq, sIdx) {
+            var row = document.createElement('div');
+            row.className = 'tf-row';
+            row.id = 'tfrow_' + sq.id;
+
+            var txt = document.createElement('div');
+            txt.className = 'tf-text';
+            txt.innerHTML = '<strong>' + (TF_LABELS[sIdx] || (sIdx + 1)) + ')</strong> ' + sq.textHtml;
+            row.appendChild(txt);
+
+            var actions = document.createElement('div');
+            actions.className = 'tf-actions';
+            ['True', 'False'].forEach(function(val) {
+              var b = document.createElement('button');
+              b.type = 'button';
+              b.className = 'tf-choice';
+              b.id = 'tfbtn_' + sq.id + '_' + val;
+              b.textContent = val === 'True' ? 'Đúng' : 'Sai';
+              b.addEventListener('click', function() {
+                if (submitted) return;
+                if (!userAnswers[q.id] || typeof userAnswers[q.id] !== 'object') userAnswers[q.id] = {};
+                userAnswers[q.id][sq.id] = val;
+                var bt = document.getElementById('tfbtn_' + sq.id + '_True');
+                var bf = document.getElementById('tfbtn_' + sq.id + '_False');
+                if (bt) bt.classList.toggle('active', val === 'True');
+                if (bf) bf.classList.toggle('active', val === 'False');
+                updateProgress();
+              });
+              actions.appendChild(b);
+            });
+            row.appendChild(actions);
+            list.appendChild(row);
+          });
+          card.appendChild(list);
+        } else {
+          var sBox = document.createElement('div');
+          sBox.className = 'short-box';
+          var inp = document.createElement('input');
+          inp.type = 'text';
+          inp.className = 'short-input';
+          inp.id = 'short_' + q.id;
+          inp.placeholder = 'Nhập đáp số (vd: 2.6 hoặc 36)';
+          inp.addEventListener('input', function() {
+            if (submitted) return;
+            userAnswers[q.id] = inp.value;
+            updateProgress();
+          });
+          var fb = document.createElement('span');
+          fb.id = 'shortfb_' + q.id;
+          fb.className = 'short-feedback';
+          sBox.appendChild(inp);
+          sBox.appendChild(fb);
+          card.appendChild(sBox);
+        }
+
+        if (q.solutionHtml) {
+          var sol = document.createElement('div');
+          sol.className = 'solution-box';
+          sol.id = 'sol_' + q.id;
+          sol.innerHTML = '<strong>Lời giải chi tiết:</strong><div style="margin-top:4px;">' + q.solutionHtml + '</div>';
+          card.appendChild(sol);
+        }
+
+        return card;
+      }
+
+      function renderExam() {
+        var root = document.getElementById('questionsRoot');
+        var pal = document.getElementById('paletteRoot');
+        root.innerHTML = '';
+        pal.innerHTML = '';
+
+        blocks.forEach(function(block) {
+          if (block.contextHtml || block.sharedImageUrl) {
+            var groupEl = document.createElement('section');
+            groupEl.className = 'context-group';
+
+            var head = document.createElement('div');
+            head.className = 'context-header';
+            var firstNum = block.questions[0].displayNumber;
+            var lastNum = block.questions[block.questions.length - 1].displayNumber;
+            var labelText = block.questions.length > 1
+              ? 'Dữ liệu dùng chung cho Câu ' + firstNum + ' – Câu ' + lastNum
+              : 'Dữ liệu đề bài (Câu ' + firstNum + ')';
+            var html = '<div class="context-label">' + labelText + '</div>';
+            if (block.contextHtml) {
+              html += '<div class="context-body">' + block.contextHtml + '</div>';
+            }
+            head.innerHTML = html;
+            if (block.sharedImageUrl) {
+              var fig = document.createElement('div');
+              fig.className = 'q-figure';
+              var img = document.createElement('img');
+              img.src = block.sharedImageUrl;
+              img.alt = labelText;
+              fig.appendChild(img);
+              head.appendChild(fig);
+            }
+            groupEl.appendChild(head);
+
+            var inner = document.createElement('div');
+            inner.className = 'context-questions';
+            block.questions.forEach(function(q) {
+              inner.appendChild(buildQuestionEl(q));
+            });
+            groupEl.appendChild(inner);
+            root.appendChild(groupEl);
+          } else {
+            block.questions.forEach(function(q) {
+              root.appendChild(buildQuestionEl(q));
+            });
+          }
+        });
+
+        flatQuestions.forEach(function(q) {
+          var b = document.createElement('button');
+          b.type = 'button';
+          b.className = 'p-btn mono';
+          b.id = 'pbtn_' + q.displayNumber;
+          b.textContent = String(q.displayNumber);
+          b.addEventListener('click', function() {
+            var target = document.getElementById('qcard_' + q.displayNumber);
+            if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          });
+          pal.appendChild(b);
+        });
+
+        updateProgress();
+        if (window.MathJax && window.MathJax.typesetPromise) {
+          window.MathJax.typesetPromise().catch(function() {});
+        }
+      }
+
+      function normalizeShort(val) {
+        return String(val || '').trim().replace(/,/g, '.').replace(/\s+/g, '').toLowerCase();
+      }
+
+      function isShortMatch(userVal, expectedVal) {
+        var u = normalizeShort(userVal);
+        var e = normalizeShort(expectedVal);
+        if (!u) return false;
+        if (u === e) return true;
+        var nu = parseFloat(u);
+        var ne = parseFloat(e);
+        if (!isNaN(nu) && !isNaN(ne) && String(nu) === u || !isNaN(nu) && !isNaN(ne)) {
+          if (/^-?\d+(?:\.\d+)?$/.test(u) && /^-?\d+(?:\.\d+)?$/.test(e)) {
+            return Math.abs(nu - ne) < 1e-6;
+          }
+        }
+        return false;
+      }
+
+      function gradeAndSubmit(force) {
+        if (submitted) return;
+        var answered = flatQuestions.filter(isQuestionAnswered).length;
+        if (!force && answered < flatQuestions.length) {
+          document.getElementById('confirmMsg').textContent =
+            'Bạn mới làm ' + answered + '/' + flatQuestions.length + ' câu. Bạn có chắc muốn nộp bài ngay?';
+          document.getElementById('confirmBar').classList.add('visible');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+          return;
+        }
+        document.getElementById('confirmBar').classList.remove('visible');
+        submitted = true;
+        if (timerHandle) clearInterval(timerHandle);
+
+        var totalScore = 0;
+        var maxScore = EXAM.maxScore || 10;
+        var correctQuestions = 0;
+        var answerDetails = [];
+
+        flatQuestions.forEach(function(q) {
+          var qCorrect = false;
+          var pBtn = document.getElementById('pbtn_' + q.displayNumber);
+          var stEl = document.getElementById('qstatus_' + q.displayNumber);
+          var solEl = document.getElementById('sol_' + q.id);
+          if (solEl) solEl.classList.add('visible');
+
+          if (q.type === 'mcq') {
+            var chosen = typeof userAnswers[q.id] === 'number' ? userAnswers[q.id] : -1;
+            qCorrect = chosen === q.correctIndex;
+            if (qCorrect) {
+              totalScore += q.points;
+              correctQuestions++;
+            }
+            q.optionsHtml.forEach(function(_, i) {
+              var ob = document.getElementById('opt_' + q.id + '_' + i);
+              if (!ob) return;
+              ob.disabled = true;
+              ob.classList.remove('selected');
+              if (i === q.correctIndex) ob.classList.add('correct');
+              else if (i === chosen) ob.classList.add('wrong');
+            });
+            if (stEl) {
+              stEl.textContent = qCorrect ? ('Đúng (+' + q.points + 'đ)') : 'Sai (0đ)';
+              stEl.className = 'q-status ' + (qCorrect ? 'ok' : 'bad');
+            }
+            answerDetails.push({
+              orderIndex: answerDetails.length,
+              questionText: 'Câu ' + q.displayNumber + ': ' + q.rawText,
+              options: q.optionsRaw,
+              selectedIndex: chosen,
+              correctIndex: q.correctIndex,
+              isCorrect: qCorrect,
+              explanation: q.rawSolution
+            });
+          } else if (q.type === 'group-tf') {
+            var tfMap = (userAnswers[q.id] && typeof userAnswers[q.id] === 'object') ? userAnswers[q.id] : {};
+            var rightSubs = 0;
+            q.subQuestions.forEach(function(sq, sIdx) {
+              var picked = tfMap[sq.id] || '';
+              var subOk = picked === sq.correctAnswer;
+              if (subOk) rightSubs++;
+              var row = document.getElementById('tfrow_' + sq.id);
+              if (row) row.classList.add(subOk ? 'ok' : 'bad');
+              ['True', 'False'].forEach(function(v) {
+                var btn = document.getElementById('tfbtn_' + sq.id + '_' + v);
+                if (!btn) return;
+                btn.disabled = true;
+                if (v === sq.correctAnswer) btn.classList.add('right-ans');
+              });
+              answerDetails.push({
+                orderIndex: answerDetails.length,
+                questionText: 'Câu ' + q.displayNumber + (TF_LABELS[sIdx] || '') + ': ' + sq.rawText,
+                options: ['Đúng', 'Sai'],
+                selectedIndex: picked === 'True' ? 0 : (picked === 'False' ? 1 : -1),
+                correctIndex: sq.correctAnswer === 'True' ? 0 : 1,
+                isCorrect: subOk,
+                explanation: sIdx === q.subQuestions.length - 1 ? q.rawSolution : ''
+              });
+            });
+            var earnedRatio = 0;
+            if (q.subQuestions.length === 4) {
+              earnedRatio = rightSubs === 1 ? 0.1 : rightSubs === 2 ? 0.25 : rightSubs === 3 ? 0.5 : rightSubs === 4 ? 1 : 0;
+            } else if (q.subQuestions.length > 0) {
+              earnedRatio = rightSubs / q.subQuestions.length;
+            }
+            var earned = Math.round(q.points * earnedRatio * 100) / 100;
+            totalScore += earned;
+            qCorrect = rightSubs === q.subQuestions.length;
+            if (qCorrect) correctQuestions++;
+            if (stEl) {
+              stEl.textContent = 'Đúng ' + rightSubs + '/' + q.subQuestions.length + ' ý (+' + earned + 'đ)';
+              stEl.className = 'q-status ' + (qCorrect ? 'ok' : 'bad');
+            }
+          } else {
+            var rawInput = document.getElementById('short_' + q.id);
+            var typed = rawInput ? rawInput.value.trim() : '';
+            if (rawInput) rawInput.disabled = true;
+            qCorrect = isShortMatch(typed, q.correctAnswer);
+            if (qCorrect) {
+              totalScore += q.points;
+              correctQuestions++;
+            }
+            var fbEl = document.getElementById('shortfb_' + q.id);
+            if (fbEl) {
+              fbEl.textContent = qCorrect
+                ? ('Chính xác (+' + q.points + 'đ)')
+                : ('Đáp án đúng: ' + q.correctAnswer);
+              fbEl.style.color = qCorrect ? 'var(--ok)' : 'var(--bad)';
+            }
+            if (stEl) {
+              stEl.textContent = qCorrect ? ('Đúng (+' + q.points + 'đ)') : 'Sai (0đ)';
+              stEl.className = 'q-status ' + (qCorrect ? 'ok' : 'bad');
+            }
+            answerDetails.push({
+              orderIndex: answerDetails.length,
+              questionText: 'Câu ' + q.displayNumber + ': ' + q.rawText,
+              options: ['Bài làm: ' + (typed || '(bỏ trống)'), 'Đáp án chuẩn: ' + q.correctAnswer],
+              selectedIndex: qCorrect ? 1 : 0,
+              correctIndex: 1,
+              isCorrect: qCorrect,
+              explanation: q.rawSolution
+            });
+          }
+
+          if (pBtn) {
+            pBtn.className = 'p-btn mono ' + (qCorrect ? 'ok' : 'bad');
+          }
+        });
+
+        totalScore = Math.round(totalScore * 100) / 100;
+        var pct = maxScore > 0 ? Math.round((totalScore / maxScore) * 1000) / 10 : 0;
+
+        document.getElementById('scoreText').textContent = totalScore + ' / ' + maxScore + ' điểm';
+        document.getElementById('correctText').textContent =
+          'Đúng hoàn toàn ' + correctQuestions + ' / ' + flatQuestions.length + ' câu (' + pct + '%)';
+        document.getElementById('resultScreen').classList.add('visible');
+        document.getElementById('topSubmitBtn').style.display = 'none';
+        document.getElementById('sideSubmitBtn').style.display = 'none';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+
+        if (window.MathJax && window.MathJax.typesetPromise) {
+          window.MathJax.typesetPromise().catch(function() {});
+        }
+
+        if (typeof window.EduSyncSubmitScore === 'function') {
+          window.EduSyncSubmitScore(totalScore, maxScore, correctQuestions, flatQuestions.length, answerDetails);
+        } else if (window.parent && window.parent !== window) {
+          window.parent.postMessage({
+            type: 'QUIZ_RESULT',
+            score: totalScore,
+            maxScore: maxScore,
+            correctCount: correctQuestions,
+            totalQuestions: flatQuestions.length,
+            answerDetails: answerDetails
+          }, '*');
+        }
+      }
+
+      document.getElementById('topSubmitBtn').addEventListener('click', function() { gradeAndSubmit(false); });
+      document.getElementById('sideSubmitBtn').addEventListener('click', function() { gradeAndSubmit(false); });
+      document.getElementById('confirmYesBtn').addEventListener('click', function() { gradeAndSubmit(true); });
+      document.getElementById('confirmCancelBtn').addEventListener('click', function() {
+        document.getElementById('confirmBar').classList.remove('visible');
+      });
+
+      function tickTimer() {
+        if (submitted) return;
+        var elapsed = Math.floor((Date.now() - startTime) / 1000);
+        var box = document.getElementById('timerBox');
+        if (durationLimit > 0) {
+          var rem = Math.max(0, durationLimit - elapsed);
+          box.textContent = fmtTime(rem);
+          box.classList.toggle('urgent', rem <= 60);
+          if (rem <= 0) gradeAndSubmit(true);
+        } else {
+          box.textContent = fmtTime(elapsed);
+        }
+      }
+
+      renderExam();
+      tickTimer();
+      timerHandle = setInterval(tickTimer, 1000);
+    })();
+  </script>
+</body>
+</html>
