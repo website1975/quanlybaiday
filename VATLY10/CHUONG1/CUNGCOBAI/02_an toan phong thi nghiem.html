@@ -1,0 +1,1174 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>qtat TRONG PHÒNG thvl</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true
+      },
+      options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre'] }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --border: #e2e8f0;
+      --text: #0f172a;
+      --muted: #64748b;
+      --accent: #1d4ed8;
+      --accent-hover: #1e40af;
+      --accent-soft: #eff6ff;
+      --ok: #047857;
+      --ok-bg: #ecfdf5;
+      --ok-border: #6ee7b7;
+      --bad: #dc2626;
+      --bad-bg: #fef2f2;
+      --bad-border: #fca5a5;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.55;
+    }
+    .mono { font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace; font-variant-numeric: tabular-nums; }
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+    }
+    .topbar-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .exam-title { font-size: 16px; font-weight: 700; margin: 0; color: var(--text); }
+    .exam-meta { font-size: 12px; color: var(--muted); margin-top: 2px; }
+    .topbar-actions { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+    .timer-box {
+      padding: 6px 12px;
+      border-radius: 8px;
+      background: #f1f5f9;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .timer-box.urgent {
+      background: var(--bad-bg);
+      color: var(--bad);
+      border: 1px solid var(--bad-border);
+    }
+    .btn {
+      border: 1px solid transparent;
+      border-radius: 8px;
+      padding: 8px 16px;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background-color 0.15s ease, border-color 0.15s ease;
+    }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-primary:hover { background: var(--accent-hover); }
+    .btn-secondary { background: #fff; border-color: #cbd5e1; color: #334155; }
+    .btn-secondary:hover { background: #f8fafc; }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 280px;
+      gap: 20px;
+      align-items: start;
+    }
+    @media (max-width: 960px) {
+      .container { grid-template-columns: 1fr; }
+    }
+    .main-col { display: flex; flex-direction: column; gap: 18px; }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+    }
+    .result-card {
+      background: var(--ok-bg);
+      border: 1px solid var(--ok-border);
+      border-radius: 12px;
+      padding: 20px;
+      display: none;
+    }
+    .result-card.visible { display: block; }
+    .result-score { font-size: 26px; font-weight: 700; color: var(--ok); margin: 4px 0; }
+    .result-sub { font-size: 13px; color: #065f46; }
+    .confirm-bar {
+      display: none;
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      border-radius: 10px;
+      padding: 14px 16px;
+      margin-bottom: 4px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      font-size: 13px;
+      color: #92400e;
+    }
+    .confirm-bar.visible { display: flex; }
+    .context-group {
+      background: var(--surface);
+      border: 1px solid #cbd5e1;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .context-header {
+      background: #f1f5f9;
+      border-bottom: 1px solid var(--border);
+      padding: 16px 20px;
+    }
+    .context-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 6px;
+    }
+    .context-body { font-size: 14px; color: #1e293b; }
+    .context-questions {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      background: #f8fafc;
+    }
+    .q-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 18px;
+      scroll-margin-top: 84px;
+    }
+    .q-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding-bottom: 10px;
+      margin-bottom: 12px;
+      border-bottom: 1px solid #f1f5f9;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .q-num { font-size: 14px; font-weight: 700; color: var(--text); }
+    .q-status { font-weight: 600; }
+    .q-status.ok { color: var(--ok); }
+    .q-status.bad { color: var(--bad); }
+    .q-text { font-size: 15px; font-weight: 500; color: var(--text); margin-bottom: 14px; }
+    .q-figure {
+      margin: 12px 0;
+      text-align: center;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px;
+    }
+    .q-figure img { max-width: 100%; max-height: 360px; height: auto; border-radius: 4px; }
+    .options-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+    @media (max-width: 640px) {
+      .options-grid { grid-template-columns: 1fr; }
+    }
+    .opt-btn {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      text-align: left;
+      padding: 11px 13px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #fff;
+      font-family: inherit;
+      font-size: 14px;
+      color: #1e293b;
+      cursor: pointer;
+      transition: border-color 0.15s ease, background-color 0.15s ease;
+    }
+    .opt-btn:hover:not(:disabled) { border-color: #94a3b8; background: #f8fafc; }
+    .opt-btn.selected { border-color: var(--accent); background: var(--accent-soft); color: #1e3a8a; font-weight: 500; }
+    .opt-btn.correct { border-color: var(--ok-border); background: var(--ok-bg); color: #064e3b; font-weight: 600; }
+    .opt-btn.wrong { border-color: var(--bad-border); background: var(--bad-bg); color: #7f1d1d; }
+    .opt-letter {
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      border: 1px solid #cbd5e1;
+      background: #fff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .opt-btn.selected .opt-letter { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .tf-list { display: flex; flex-direction: column; gap: 10px; }
+    .tf-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #fff;
+    }
+    .tf-row.ok { border-color: var(--ok-border); background: var(--ok-bg); }
+    .tf-row.bad { border-color: var(--bad-border); background: var(--bad-bg); }
+    .tf-text { font-size: 14px; flex: 1; }
+    .tf-actions { display: flex; gap: 6px; flex-shrink: 0; }
+    .tf-choice {
+      padding: 6px 12px;
+      border-radius: 6px;
+      border: 1px solid #cbd5e1;
+      background: #fff;
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .tf-choice.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .tf-choice.right-ans { border-color: var(--ok); color: var(--ok); }
+    .short-box { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+    .short-input {
+      width: 240px;
+      max-width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px;
+    }
+    .short-input:focus { outline: 2px solid var(--accent); border-color: var(--accent); }
+    .short-feedback { font-size: 13px; font-weight: 600; }
+    .solution-box {
+      display: none;
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: 8px;
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      font-size: 13px;
+      color: #334155;
+    }
+    .solution-box.visible { display: block; }
+    .sidebar {
+      position: sticky;
+      top: 76px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+    }
+    .palette-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 6px;
+      margin: 12px 0 16px;
+    }
+    .p-btn {
+      height: 34px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: #f8fafc;
+      font-size: 12px;
+      font-weight: 700;
+      color: #334155;
+      cursor: pointer;
+    }
+    .p-btn.done { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .p-btn.ok { background: var(--ok); color: #fff; border-color: var(--ok); }
+    .p-btn.bad { background: var(--bad); color: #fff; border-color: var(--bad); }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div>
+        <h1 class="exam-title">qtat TRONG PHÒNG thvl</h1>
+        <div class="exam-meta">Vật Lý · Khối 10 · CHƯƠNG 1: MỞ ĐẦU · 20 câu · Thang 10 điểm</div>
+      </div>
+      <div class="topbar-actions">
+        <span id="progressLabel" class="exam-meta mono">0/20</span>
+        <div id="timerBox" class="timer-box mono">00:00</div>
+        <button id="topSubmitBtn" type="button" class="btn btn-primary">Nộp bài</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <main class="main-col">
+      <div id="confirmBar" class="confirm-bar">
+        <span id="confirmMsg">Bạn vẫn còn câu chưa trả lời. Xác nhận nộp bài ngay?</span>
+        <div style="display:flex;gap:8px;">
+          <button id="confirmCancelBtn" type="button" class="btn btn-secondary">Làm tiếp</button>
+          <button id="confirmYesBtn" type="button" class="btn btn-primary">Xác nhận nộp</button>
+        </div>
+      </div>
+
+      <section id="resultScreen" class="result-card">
+        <div style="font-size:12px;font-weight:700;color:#047857;">KẾT QUẢ BÀI LÀM</div>
+        <div id="scoreText" class="result-score mono">0 / 10</div>
+        <div id="correctText" class="result-sub mono">0 / 20</div>
+        <div id="explanationsSection" class="result-sub" style="margin-top:6px;">
+          Xem lại từng câu và lời giải chi tiết ở bên dưới.
+        </div>
+      </section>
+
+      <div id="questionsRoot" class="main-col"></div>
+    </main>
+
+    <aside class="sidebar">
+      <div style="font-size:14px;font-weight:700;">Bảng câu hỏi</div>
+      <div id="sidebarCount" class="exam-meta mono">Đã làm 0/20</div>
+      <div id="paletteRoot" class="palette-grid"></div>
+      <button id="sideSubmitBtn" type="button" class="btn btn-primary" style="width:100%;">Nộp bài &amp; Chấm điểm</button>
+    </aside>
+  </div>
+
+  <script type="application/json" id="edusync-exam-json">{
+  "id": "1af36334-e5a5-430a-93d8-fdbfde5fb6a0",
+  "title": "qtat TRONG PHÒNG thvl",
+  "subject": "Vật Lý",
+  "grade": "10",
+  "type": "test",
+  "category": "CHƯƠNG 1: MỞ ĐẦU",
+  "durationMinutes": 25,
+  "shuffleQuestions": false,
+  "shuffleOptions": false,
+  "questionCount": 20,
+  "questions": [
+    {
+      "id": "60b58439-165e-4f6b-a540-68d0b1a5ca95",
+      "index": 1,
+      "type": "mcq",
+      "level": "B",
+      "text": "Trong phòng thực hành Vật lí, kí hiệu $\\text{AC}$ (hoặc dấu $\\sim$) trên thiết bị điện đại diện cho loại dòng điện nào?",
+      "options": [
+        "Dòng điện xoay chiều",
+        "Dòng điện một chiều",
+        "Dòng điện không đổi có cường độ lớn",
+        "Dòng điện cảm ứng từ cực âm sang cực dương"
+      ],
+      "correctAnswer": "Dòng điện xoay chiều",
+      "solution": "Theo Bảng 2.1 SGK: Kí hiệu $\\text{AC}$ hoặc dấu $\\sim$ đại diện cho dòng điện xoay chiều (Alternating Current).",
+      "points": 0.5,
+      "chapterName": "CHƯƠNG 1: MỞ ĐẦU"
+    },
+    {
+      "id": "9063557c-0cb9-477c-8768-351b7e4fceed",
+      "index": 2,
+      "type": "mcq",
+      "level": "B",
+      "text": "Trên các nguồn điện một chiều $\\text{DC}$ trong phòng thực hành, cực dương được quy ước bằng kí hiệu và màu sắc nào?",
+      "options": [
+        "Kí hiệu \"-\" và vỏ màu đen",
+        "Kí hiệu \"+\" và vỏ màu đỏ",
+        "Kí hiệu \"+\" và vỏ màu xanh",
+        "Kí hiệu \"$\\sim$\" và vỏ màu vàng"
+      ],
+      "correctAnswer": "Kí hiệu \"+\" và vỏ màu đỏ",
+      "solution": "Theo Bảng 2.1 SGK: Cực dương được quy ước bằng dấu \"+\" hoặc chốt cắm màu đỏ, cực âm mang dấu \"-\" hoặc màu xanh/đen.",
+      "points": 0.5,
+      "chapterName": "CHƯƠNG 1: MỞ ĐẦU"
+    },
+    {
+      "id": "9034b7b2-08c8-4ce5-85ec-750642df2c51",
+      "index": 3,
+      "type": "mcq",
+      "level": "B",
+      "text": "Thiết bị thí nghiệm nào dưới đây có chức năng biến đổi hiệu điện thế xoay chiều và chọn được các mức điện áp đầu ra thích hợp?",
+      "options": [
+        "Ampe kế kim khung quay",
+        "Bộ chuyển đổi điện áp (AC/DC Power Supply)",
+        "Nhiệt kế thủy ngân",
+        "Kính hiển vi quang học"
+      ],
+      "correctAnswer": "Bộ chuyển đổi điện áp (AC/DC Power Supply)",
+      "solution": "Hình 2.1 SGK giới thiệu bộ chuyển đổi điện áp có chức năng biến đổi nguồn điện vào (ví dụ $220\\text{ V AC}$) thành các mức điện áp đầu ra $\\text{AC}$ hoặc $\\text{DC}$ từ $3\\text{ V}$ đến $24\\text{ V}$.",
+      "points": 0.5,
+      "chapterName": "CHƯƠNG 1: MỞ ĐẦU"
+    },
+    {
+      "id": "38fa0540-6bfc-48d6-a71c-9dd2f78d6883",
+      "index": 4,
+      "type": "mcq",
+      "level": "B",
+      "text": "Khi tiến hành thí nghiệm đo nhiệt độ sôi của nước (Hình 2.2 SGK), dụng cụ dùng để chứa nước đun trực tiếp trên đèn cồn là gì?",
+      "options": [
+        "Ống nghiệm nhựa trong suốt",
+        "Bình thủy tinh chịu nhiệt",
+        "Cốc nhôm mỏng không nắp",
+        "Bình chứa khí nén áp suất cao"
+      ],
+      "correctAnswer": "Bình thủy tinh chịu nhiệt",
+      "solution": "Theo Hình 2.2 SGK: Thí nghiệm đun nước dùng bình thủy tinh chịu nhiệt để tránh nguy cơ vỡ nứt do nhiệt độ cao.",
+      "points": 0.5,
+      "chapterName": "CHƯƠNG 1: MỞ ĐẦU"
+    },
+    {
+      "id": "de381bbc-46e7-47db-9e6b-cb9f8afea914",
+      "index": 5,
+      "type": "mcq",
+      "level": "B",
+      "text": "Kí hiệu hình chiếc ly bị rạn nứt trên vỏ thiết bị thí nghiệm mang ý nghĩa cảnh báo gì?",
+      "options": [
+        "Dụng cụ chịu được áp suất cao",
+        "Dụng cụ chứa chất độc hại",
+        "Dụng cụ dễ vỡ, cần thao tác cẩn thận",
+        "Dụng cụ phát ra tia laser dangerous"
+      ],
+      "correctAnswer": "Dụng cụ dễ vỡ, cần thao tác cẩn thận",
+      "solution": "Theo Bảng 2.1 SGK: Kí hiệu chiếc ly nứt cảnh báo \"Dụng cụ dễ vỡ\", người làm thí nghiệm phải nâng nhẹ tay.",
+      "points": 0.5,
+      "chapterName": "CHƯƠNG 1: MỞ ĐẦU"
+    },
+    {
+      "id": "c6c10f07-33c2-443f-a54a-f5e4d7db68bd",
+      "index": 6,
+      "type": "mcq",
+      "level": "B",
+      "text": "Dụng cụ đo điện đa năng (Multimeter) hiển thị số thường có chốt cắm chung cho tất cả các phép đo mang kí hiệu là gì?",
+      "options": [
+        "Output",
+        "Input",
+        "COM",
+        "AC"
+      ],
+      "correctAnswer": "COM",
+      "solution": "Theo Hình 2.6 SGK: Chốt cắm màu đen dùng chung cho các phép đo trên đồng hồ đo điện đa năng hiện số mang kí hiệu $\\text{COM}$ (Common).",
+      "points": 0.5,
+      "chapterName": "CHƯƠNG 1: MỞ ĐẦU"
+    },
+    {
+      "id": "45a9a459-e17e-4d5a-b422-e092c327c026",
+      "index": 7,
+      "type": "mcq",
+      "level": "B",
+      "text": "Các thiết bị quang học như thấu kính, gương phẳng, màn ảnh nếu bị dính bụi bẩn hay mốc xước sẽ gây ra hậu quả trực tiếp nào?",
+      "options": [
+        "Gây chập điện cho nguồn sáng",
+        "Làm ảnh hưởng đến đường truyền tia sáng và gây sai lệch kết quả thí nghiệm",
+        "Gây nổ bình thủy tinh",
+        "Làm đứt cầu chì nguồn điện"
+      ],
+      "correctAnswer": "Làm ảnh hưởng đến đường truyền tia sáng và gây sai lệch kết quả thí nghiệm",
+      "solution": "SGK Mục I.3 nêu rõ: Các thiết bị quang học rất dễ mốc, xước, dính bụi bẩn làm ảnh hưởng đường truyền tia sáng và sai lệch kết quả.",
+      "points": 0.5,
+      "chapterName": "CHƯƠNG 1: MỞ ĐẦU"
+    },
+    {
+      "id": "78b8fcd9-561f-4f39-9f5b-282156281eb2",
+      "index": 8,
+      "type": "mcq",
+      "level": "B",
+      "text": "Kí hiệu hai mũi tên đứng trên mặt phẳng nằm ngang (như biểu tượng hình hộp) mang ý nghĩa thao tác nào?",
+      "options": [
+        "Dụng cụ đặt đúng chiều thẳng đứng",
+        "Tránh ánh nắng chiếu trực tiếp",
+        "Không được bỏ vào thùng rác",
+        "Thiết bị có từ trường mạnh"
+      ],
+      "correctAnswer": "Dụng cụ đặt đúng chiều thẳng đứng",
+      "solution": "Theo Bảng 2.1 SGK: Kí hiệu hai mũi tên hướng lên biểu thị \"Dụng cụ đặt đúng\" (luôn đặt đứng theo chiều mũi tên).",
+      "points": 0.5,
+      "chapterName": "CHƯƠNG 1: MỞ ĐẦU"
+    },
+    {
+      "id": "10b006e0-c0d8-4f05-adc9-ae3bbfdc5622",
+      "index": 9,
+      "type": "mcq",
+      "level": "B",
+      "text": "Khi rút phích cắm điện từ ổ cắm nguồn ra (Hình 2.4b SGK), thao tác nào sau đây là ĐÚNG quy tắc an toàn?",
+      "options": [
+        "Cầm chắc vào dây điện và giật mạnh ra",
+        "Cầm trực tiếp vào phần thân bằng nhựa cách điện của phích cắm và rút thẳng ra",
+        "Dùng hai ngón tay chạm vào phần chân kim loại khi đang rút",
+        "Lấy vòi nước xịt vào ổ cắm trước khi rút"
+      ],
+      "correctAnswer": "Cầm trực tiếp vào phần thân bằng nhựa cách điện của phích cắm và rút thẳng ra",
+      "solution": "Cầm vào dây điện giật ra có thể làm đứt gãy lõi dây điện bên trong hoặc bong tróc vỏ cách điện gây rò điện. Phải cầm chắc thân nhựa cách điện của phích cắm.",
+      "points": 0.5,
+      "chapterName": "CHƯƠNG 1: MỞ ĐẦU"
+    },
+    {
+      "id": "8800cd59-b92d-4691-b29c-fc23249e58db",
+      "index": 10,
+      "type": "mcq",
+      "level": "H",
+      "text": "Vì sao trong các thí nghiệm quang học tuyệt đối không được nhìn trực tiếp hoặc chiếu tia laser vào mắt người khác?",
+      "options": [
+        "Tia laser làm thấu kính bị rạn nứt lập tức",
+        "Tia laser có mật độ năng lượng và cường độ sáng cao, có thể gây tổn thương võng mạc hoặc hỏng mắt",
+        "Tia laser làm biến đổi dòng điện một chiều thành xoay chiều",
+        "Tia laser làm nước trong mắt bị đóng băng"
+      ],
+      "correctAnswer": "Tia laser có mật độ năng lượng và cường độ sáng cao, có thể gây tổn thương võng mạc hoặc hỏng mắt",
+      "solution": "Tia laser có tính định hướng và năng lượng tập trung cao. Chiếu trực tiếp vào mắt sẽ đốt cháy hoặc gây tổn thương vĩnh viễn cho tế bào võng mạc.",
+      "points": 0.5,
+      "chapterName": "CHƯƠNG 1: MỞ ĐẦU"
+    },
+    {
+      "id": "560474ff-0130-4999-8f14-e607a73a7fee",
+      "index": 11,
+      "type": "mcq",
+      "level": "H",
+      "text": "Một học sinh dùng Ampe kế có giới hạn đo (GHĐ) là $0,6\\text{ A}$ để đo cường độ dòng điện chạy qua một mạch điện có giá trị khoảng $2,5\\text{ A}$. Nguy cơ nguy hiểm nhất là gì?",
+      "options": [
+        "Đồng hồ hiển thị kết quả $0\\text{ A}$ và không sao",
+        "Dòng điện quá lớn làm vọt kim, gây cong kim, cháy cuộn dây đo hoặc đứt cầu chì bảo vệ của ampe kế",
+        "Nguồn điện tự động tăng hiệu điện thế lên $220\\text{ V}$",
+        "Ngăn chặn hoàn toàn dòng điện chạy trong mạch"
+      ],
+      "correctAnswer": "Dòng điện quá lớn làm vọt kim, gây cong kim, cháy cuộn dây đo hoặc đứt cầu chì bảo vệ của ampe kế",
+      "solution": "Mục II.2 SGK nêu rõ: Nếu dòng điện đo vượt quá GHĐ của ampe kế, cường độ dòng điện quá tải sẽ làm hỏng kim đo, đứt cầu chì hoặc làm cháy cuộn dây đo bên trong.",
+      "points": 0.5,
+      "chapterName": "CHƯƠNG 1: MỞ ĐẦU"
+    },
+    {
+      "id": "cbec319d-51e2-4705-8f4f-398a49ee311c",
+      "index": 12,
+      "type": "mcq",
+      "level": "H",
+      "text": "Khi sử dụng đồng hồ đo điện đa năng để đo hiệu điện thế xoay chiều của nguồn điện, ta cần xoay núm chọn về thang đo nào?",
+      "options": [
+        "Thang đo $\\text{DCA}$ hoặc $\\text{A}=$",
+        "Thang đo $\\text{ACV}$ hoặc $\\text{V}\\sim$",
+        "Thang đo điện trở $\\Omega$",
+        "Thang đo $\\text{DCV}$ hoặc $\\text{V}=$"
+      ],
+      "correctAnswer": "Thang đo $\\text{ACV}$ hoặc $\\text{V}\\sim$",
+      "solution": "Đo hiệu điện thế xoay chiều cần chọn thang Volt xoay chiều, kí hiệu là $\\text{ACV}$ hoặc $\\text{V}\\sim$.",
+      "points": 0.5,
+      "chapterName": "CHƯƠNG 1: MỞ ĐẦU"
+    },
+    {
+      "id": "a3c418b1-2c11-4f1c-9c3e-6b8edb8d0a8a",
+      "index": 13,
+      "type": "mcq",
+      "level": "H",
+      "text": "Tại sao khi đun sôi nước trên đèn cồn quy tắc an toàn yêu cầu học sinh không chạm tay trực tiếp vào bình thủy tinh mà phải đeo găng tay chịu nhiệt hoặc dùng kẹp?",
+      "options": [
+        "Để tránh dòng điện từ đèn cồn truyền vào tay",
+        "Nhiệt độ của bình thủy tinh rất cao, chạm trực tiếp gây bỏng nhiệt nặng",
+        "Để tránh làm nước bị nhiễm bẩn vân tay",
+        "Tránh cho không khí xung quanh bình bị ngưng tụ"
+      ],
+      "correctAnswer": "Nhiệt độ của bình thủy tinh rất cao, chạm trực tiếp gây bỏng nhiệt nặng",
+      "solution": "Hình 2.7c lưu ý: Không đeo găng tay chịu nhiệt khi làm việc với thiết bị nhiệt độ cao dễ gây bỏng da nghiêm trọng.",
+      "points": 0.5,
+      "chapterName": "CHƯƠNG 1: MỞ ĐẦU"
+    },
+    {
+      "id": "d13729f5-c16e-4d0f-984c-73dc9fb3092e",
+      "index": 14,
+      "type": "mcq",
+      "level": "H",
+      "text": "Cảnh báo tình huống \"Để các kẹp điện (kẹp cá sấu) gần nhau\". Nguy cơ mất an toàn chính của tình huống này là gì?",
+      "options": [
+        "Làm giảm cường độ dòng điện trong mạch",
+        "Các kẹp điện kim loại vô tình chạm vào nhau gây hiện tượng ngắn mạch (chập điện), sinh tia lửa điện và cháy nổ",
+        "Làm bóng đèn bị mờ đi do từ trường",
+        "Làm tăng nhiệt độ phòng thí nghiệm"
+      ],
+      "correctAnswer": "Các kẹp điện kim loại vô tình chạm vào nhau gây hiện tượng ngắn mạch (chập điện), sinh tia lửa điện và cháy nổ",
+      "solution": "Nếu hai kẹp điện mang cực khác nhau chạm vào nhau sẽ gây ngắn mạch (chập mạch), dòng điện tăng đột ngột sinh nhiệt cao gây cháy nổ.",
+      "points": 0.5,
+      "chapterName": "CHƯƠNG 1: MỞ ĐẦU"
+    },
+    {
+      "id": "c2bfa621-2130-4096-b58d-e2617e47017b",
+      "index": 15,
+      "type": "mcq",
+      "level": "H",
+      "text": "Trong thí nghiệm đun nóng chất lỏng bằng đèn cồn, việc đặt chất dễ cháy (như chai cồn dự trữ, giấy) gần mạch điện hoặc nguồn nhiệt (Hình 2.7b SGK) nguy hiểm vì lý do nào?",
+      "options": [
+        "Tia lửa điện hoặc nhiệt độ cao dễ làm chất bắt cháy phát hỏa, gây đám cháy lớn",
+        "Làm cồn bị bay hơi mất bớt thể tích",
+        "Làm cho nguồn điện bị tụt áp",
+        "Làm cho mặt bàn bị ẩm ướt"
+      ],
+      "correctAnswer": "Tia lửa điện hoặc nhiệt độ cao dễ làm chất bắt cháy phát hỏa, gây đám cháy lớn",
+      "solution": "Để chất dễ cháy gần nguồn nhiệt/điện có nguy cơ bùng phát đám cháy nhanh chóng khi có sự cố tia lửa hoặc nhiệt độ cao tỏa ra.",
+      "points": 0.5,
+      "chapterName": "CHƯƠNG 1: MỞ ĐẦU"
+    },
+    {
+      "id": "6d3af8cd-dd63-48a7-8148-db4059e2b4f8",
+      "index": 16,
+      "type": "mcq",
+      "level": "H",
+      "text": "Để đo một dòng điện một chiều chưa biết rõ giá trị xấp xỉ bằng đồng hồ đa năng hiện số, thao tác lựa chọn thang đo nào là an toàn nhất cho đồng hồ?",
+      "options": [
+        "Chọn ngay thang đo nhỏ nhất $200\\mu\\text{A}$ để đạt độ chính xác cao nhất",
+        "Chọn thang đo $\\text{DCA}$ ở giá trị lớn nhất (ví dụ $10\\text{ A}$), sau đó giảm dần thang đo nếu tín hiệu nhỏ",
+        "Chọn thang đo điện trở $\\Omega$ để đo trước",
+        "Chọn thang đo điện áp xoay chiều $750\\text{ V AC}$"
+      ],
+      "correctAnswer": "Chọn thang đo $\\text{DCA}$ ở giá trị lớn nhất (ví dụ $10\\text{ A}$), sau đó giảm dần thang đo nếu tín hiệu nhỏ",
+      "solution": "Quy tắc an toàn khi đo đại lượng chưa biết giá trị: Luôn chọn thang đo lớn nhất để tránh quá tải gây cháy đứt đồng hồ, sau đó hạ dần thang đo để đọc kết quả chính xác.",
+      "points": 0.5,
+      "chapterName": "CHƯƠNG 1: MỞ ĐẦU"
+    },
+    {
+      "id": "de1239a9-8214-4a0f-a9bc-26aa7ee52e67",
+      "index": 17,
+      "type": "mcq",
+      "level": "H",
+      "text": "Khi phát hiện một dây dẫn điện nối thiết bị thí nghiệm bị sờn rách, hở lớp vỏ cao su cách điện để lộ lõi đồng , học sinh cần làm gì?",
+      "options": [
+        "Dùng tay trần dán tạm băng dính đen và tiếp tục thí nghiệm mà không báo giáo viên",
+        "Tắt nguồn điện lập tức, báo ngay cho giáo viên hướng dẫn để thay thế dây dẫn an toàn mới",
+        "Tiếp tục cắm điện sử dụng vì lõi đồng chưa bị đứt",
+        "Đổ nước vào chỗ dây sờn để làm mát"
+      ],
+      "correctAnswer": "Tắt nguồn điện lập tức, báo ngay cho giáo viên hướng dẫn để thay thế dây dẫn an toàn mới",
+      "solution": "Dây điện sờn hở lõi copper tiềm ẩn nguy cơ giật điện nguy hiểm và chập cháy. Cần ngắt nguồn điện và báo giáo viên thay thế ngay.",
+      "points": 0.5,
+      "chapterName": "CHƯƠNG 1: MỞ ĐẦU"
+    },
+    {
+      "id": "6cec643d-3c46-4fba-8384-8b31bddc0986",
+      "index": 18,
+      "type": "mcq",
+      "level": "H",
+      "text": "Bộ chuyển đổi điện áp trong thí nghiệm quang hình ghi thông số: Đầu vào $\\text{Input: } 220\\text{ V AC}$, Đầu ra $\\text{Output: } 12\\text{ V DC}$. Nếu học sinh cắm nhầm bóng đèn thí nghiệm $12\\text{ V}$ trực tiếp vào ổ cắm điện lưới $220\\text{ V}$ thì sự cố nào xảy ra?",
+      "options": [
+        "Bóng đèn sáng bình thường và tiết kiệm điện",
+        "Bóng đèn bị cháy nổ lập tức do hiệu điện thế đặt vào vượt quá giới hạn định mức rất nhiều lần",
+        "Bóng đèn không sáng do điện áp quá cao",
+        "Không có hiện tượng gì xảy ra"
+      ],
+      "correctAnswer": "Bóng đèn bị cháy nổ lập tức do hiệu điện thế đặt vào vượt quá giới hạn định mức rất nhiều lần",
+      "solution": "Bóng đèn chỉ chịu được $12\\text{ V}$. Đưa trực tiếp hiệu điện thế $220\\text{ V}$ vào sẽ gây quá dòng đột ngột làm nổ cháy bóng đèn lập tức.",
+      "points": 0.5,
+      "chapterName": "CHƯƠNG 1: MỞ ĐẦU"
+    },
+    {
+      "id": "1a99069f-1c8a-46da-9eaa-8213ef96eb8b",
+      "index": 19,
+      "type": "mcq",
+      "level": "H",
+      "text": "Trong phòng thực hành Vật lí bất ngờ xảy ra sự cố cháy do cồn đổ ra mặt bàn khi đun nước. Hành động dập lửa nào sau đây là **SAI VÀ NGUY HIỂM NHẤT**?",
+      "options": [
+        "Dùng chăn/mền ẩm phủ kín lên khu vực cồn đang cháy để cách ly oxygen",
+        "Sử dụng bình chữa cháy dạng bột xịt vào gốc lửa",
+        "Lấy một chậu nước đầy xối mạnh trực tiếp vào đám cháy cồn",
+        "Ngắt toàn bộ hệ thống điện phòng thực hành và hô khoán cứu hộ"
+      ],
+      "correctAnswer": "Lấy một chậu nước đầy xối mạnh trực tiếp vào đám cháy cồn",
+      "solution": "SGK Mục II.3 quy định rõ: \"Không được sử dụng nước dập đám cháy... cồn... vì cồn nhẹ hơn nước và hòa tan/nổi trên nước, xối nước sẽ làm cồn cháy lan rộng hơn ra khắp phòng!\"",
+      "points": 0.5,
+      "chapterName": "CHƯƠNG 1: MỞ ĐẦU"
+    },
+    {
+      "id": "7b489bf1-6d60-4149-bc9c-e6a98d187481",
+      "index": 20,
+      "type": "mcq",
+      "level": "H",
+      "text": "Khi phòng thực hành xảy ra hỏa hoạn có liên quan đến thiết bị đang cắm điện và các kim loại kiềm (như Magnesium), quy trình xử lý PCCC nào sau đây tuân thủ đúng nguyên tắc an toàn?",
+      "options": [
+        "Dùng bình khí $\\text{CO}_2$ xịt trực tiếp vào kim loại kiềm đang cháy",
+        "Dùng nước xối vào thiết bị điện đang cắm nguồn",
+        "Lập tức ngắt cầu dao điện tổng, sơ tán học sinh, di dời hóa chất dễ cháy ra xa; **không** dùng $\\text{CO}_2$ dập cháy kim loại kiềm và **không** dùng nước dập cháy điện",
+        "Đóng chặt tất cả cửa phòng thực hành và tiếp tục làm thí nghiệm"
+      ],
+      "correctAnswer": "Lập tức ngắt cầu dao điện tổng, sơ tán học sinh, di dời hóa chất dễ cháy ra xa; **không** dùng $\\text{CO}_2$ dập cháy kim loại kiềm và **không** dùng nước dập cháy điện",
+      "solution": "SGK Mục II.3 nêu rõ quy tắc PCCC: Ngắt điện tổng, sơ tán người. Tuyệt đối không dùng nước dập cháy thiết bị điện active; Không dùng bình $\\text{CO}_2$ dập cháy kim loại kiềm (Mg...) vì ở nhiệt độ cao kim loại kiềm sẽ phản ứng với $\\text{CO}_2$ sinh ra Carbon tỏa nhiệt cực dội.",
+      "points": 0.5,
+      "chapterName": "CHƯƠNG 1: MỞ ĐẦU"
+    }
+  ]
+}</script>
+  <script id="edusync-runtime-data" type="application/json">{"examId":"1af36334-e5a5-430a-93d8-fdbfde5fb6a0","title":"qtat TRONG PHÒNG thvl","subject":"Vật Lý","grade":"10","category":"CHƯƠNG 1: MỞ ĐẦU","durationMinutes":25,"maxScore":10,"shuffleQuestions":false,"shuffleOptions":false,"blocks":[{"blockId":"single_60b58439-165e-4f6b-a540-68d0b1a5ca95_0","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"60b58439-165e-4f6b-a540-68d0b1a5ca95","type":"mcq","level":"B","chapterName":"CHƯƠNG 1: MỞ ĐẦU","points":0.5,"textHtml":"Trong phòng thực hành Vật lí, kí hiệu $\\text{AC}$ (hoặc dấu $\\sim$) trên thiết bị điện đại diện cho loại dòng điện nào?","rawText":"Trong phòng thực hành Vật lí, kí hiệu $\\text{AC}$ (hoặc dấu $\\sim$) trên thiết bị điện đại diện cho loại dòng điện nào?","ownImageUrl":"","optionsHtml":["Dòng điện xoay chiều","Dòng điện một chiều","Dòng điện không đổi có cường độ lớn","Dòng điện cảm ứng từ cực âm sang cực dương"],"optionsRaw":["Dòng điện xoay chiều","Dòng điện một chiều","Dòng điện không đổi có cường độ lớn","Dòng điện cảm ứng từ cực âm sang cực dương"],"correctIndex":0,"correctAnswer":"Dòng điện xoay chiều","subQuestions":[],"solutionHtml":"Theo Bảng 2.1 SGK: Kí hiệu $\\text{AC}$ hoặc dấu $\\sim$ đại diện cho dòng điện xoay chiều (Alternating Current).","rawSolution":"Theo Bảng 2.1 SGK: Kí hiệu $\\text{AC}$ hoặc dấu $\\sim$ đại diện cho dòng điện xoay chiều (Alternating Current)."}]},{"blockId":"single_9063557c-0cb9-477c-8768-351b7e4fceed_1","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"9063557c-0cb9-477c-8768-351b7e4fceed","type":"mcq","level":"B","chapterName":"CHƯƠNG 1: MỞ ĐẦU","points":0.5,"textHtml":"Trên các nguồn điện một chiều $\\text{DC}$ trong phòng thực hành, cực dương được quy ước bằng kí hiệu và màu sắc nào?","rawText":"Trên các nguồn điện một chiều $\\text{DC}$ trong phòng thực hành, cực dương được quy ước bằng kí hiệu và màu sắc nào?","ownImageUrl":"","optionsHtml":["Kí hiệu &quot;-&quot; và vỏ màu đen","Kí hiệu &quot;+&quot; và vỏ màu đỏ","Kí hiệu &quot;+&quot; và vỏ màu xanh","Kí hiệu &quot;$\\sim$&quot; và vỏ màu vàng"],"optionsRaw":["Kí hiệu \"-\" và vỏ màu đen","Kí hiệu \"+\" và vỏ màu đỏ","Kí hiệu \"+\" và vỏ màu xanh","Kí hiệu \"$\\sim$\" và vỏ màu vàng"],"correctIndex":1,"correctAnswer":"Kí hiệu \"+\" và vỏ màu đỏ","subQuestions":[],"solutionHtml":"Theo Bảng 2.1 SGK: Cực dương được quy ước bằng dấu &quot;+&quot; hoặc chốt cắm màu đỏ, cực âm mang dấu &quot;-&quot; hoặc màu xanh/đen.","rawSolution":"Theo Bảng 2.1 SGK: Cực dương được quy ước bằng dấu \"+\" hoặc chốt cắm màu đỏ, cực âm mang dấu \"-\" hoặc màu xanh/đen."}]},{"blockId":"single_9034b7b2-08c8-4ce5-85ec-750642df2c51_2","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"9034b7b2-08c8-4ce5-85ec-750642df2c51","type":"mcq","level":"B","chapterName":"CHƯƠNG 1: MỞ ĐẦU","points":0.5,"textHtml":"Thiết bị thí nghiệm nào dưới đây có chức năng biến đổi hiệu điện thế xoay chiều và chọn được các mức điện áp đầu ra thích hợp?","rawText":"Thiết bị thí nghiệm nào dưới đây có chức năng biến đổi hiệu điện thế xoay chiều và chọn được các mức điện áp đầu ra thích hợp?","ownImageUrl":"","optionsHtml":["Ampe kế kim khung quay","Bộ chuyển đổi điện áp (AC/DC Power Supply)","Nhiệt kế thủy ngân","Kính hiển vi quang học"],"optionsRaw":["Ampe kế kim khung quay","Bộ chuyển đổi điện áp (AC/DC Power Supply)","Nhiệt kế thủy ngân","Kính hiển vi quang học"],"correctIndex":1,"correctAnswer":"Bộ chuyển đổi điện áp (AC/DC Power Supply)","subQuestions":[],"solutionHtml":"Hình 2.1 SGK giới thiệu bộ chuyển đổi điện áp có chức năng biến đổi nguồn điện vào (ví dụ $220\\text{ V AC}$) thành các mức điện áp đầu ra $\\text{AC}$ hoặc $\\text{DC}$ từ $3\\text{ V}$ đến $24\\text{ V}$.","rawSolution":"Hình 2.1 SGK giới thiệu bộ chuyển đổi điện áp có chức năng biến đổi nguồn điện vào (ví dụ $220\\text{ V AC}$) thành các mức điện áp đầu ra $\\text{AC}$ hoặc $\\text{DC}$ từ $3\\text{ V}$ đến $24\\text{ V}$."}]},{"blockId":"single_38fa0540-6bfc-48d6-a71c-9dd2f78d6883_3","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"38fa0540-6bfc-48d6-a71c-9dd2f78d6883","type":"mcq","level":"B","chapterName":"CHƯƠNG 1: MỞ ĐẦU","points":0.5,"textHtml":"Khi tiến hành thí nghiệm đo nhiệt độ sôi của nước (Hình 2.2 SGK), dụng cụ dùng để chứa nước đun trực tiếp trên đèn cồn là gì?","rawText":"Khi tiến hành thí nghiệm đo nhiệt độ sôi của nước (Hình 2.2 SGK), dụng cụ dùng để chứa nước đun trực tiếp trên đèn cồn là gì?","ownImageUrl":"","optionsHtml":["Ống nghiệm nhựa trong suốt","Bình thủy tinh chịu nhiệt","Cốc nhôm mỏng không nắp","Bình chứa khí nén áp suất cao"],"optionsRaw":["Ống nghiệm nhựa trong suốt","Bình thủy tinh chịu nhiệt","Cốc nhôm mỏng không nắp","Bình chứa khí nén áp suất cao"],"correctIndex":1,"correctAnswer":"Bình thủy tinh chịu nhiệt","subQuestions":[],"solutionHtml":"Theo Hình 2.2 SGK: Thí nghiệm đun nước dùng bình thủy tinh chịu nhiệt để tránh nguy cơ vỡ nứt do nhiệt độ cao.","rawSolution":"Theo Hình 2.2 SGK: Thí nghiệm đun nước dùng bình thủy tinh chịu nhiệt để tránh nguy cơ vỡ nứt do nhiệt độ cao."}]},{"blockId":"single_de381bbc-46e7-47db-9e6b-cb9f8afea914_4","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"de381bbc-46e7-47db-9e6b-cb9f8afea914","type":"mcq","level":"B","chapterName":"CHƯƠNG 1: MỞ ĐẦU","points":0.5,"textHtml":"Kí hiệu hình chiếc ly bị rạn nứt trên vỏ thiết bị thí nghiệm mang ý nghĩa cảnh báo gì?","rawText":"Kí hiệu hình chiếc ly bị rạn nứt trên vỏ thiết bị thí nghiệm mang ý nghĩa cảnh báo gì?","ownImageUrl":"","optionsHtml":["Dụng cụ chịu được áp suất cao","Dụng cụ chứa chất độc hại","Dụng cụ dễ vỡ, cần thao tác cẩn thận","Dụng cụ phát ra tia laser dangerous"],"optionsRaw":["Dụng cụ chịu được áp suất cao","Dụng cụ chứa chất độc hại","Dụng cụ dễ vỡ, cần thao tác cẩn thận","Dụng cụ phát ra tia laser dangerous"],"correctIndex":2,"correctAnswer":"Dụng cụ dễ vỡ, cần thao tác cẩn thận","subQuestions":[],"solutionHtml":"Theo Bảng 2.1 SGK: Kí hiệu chiếc ly nứt cảnh báo &quot;Dụng cụ dễ vỡ&quot;, người làm thí nghiệm phải nâng nhẹ tay.","rawSolution":"Theo Bảng 2.1 SGK: Kí hiệu chiếc ly nứt cảnh báo \"Dụng cụ dễ vỡ\", người làm thí nghiệm phải nâng nhẹ tay."}]},{"blockId":"single_c6c10f07-33c2-443f-a54a-f5e4d7db68bd_5","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"c6c10f07-33c2-443f-a54a-f5e4d7db68bd","type":"mcq","level":"B","chapterName":"CHƯƠNG 1: MỞ ĐẦU","points":0.5,"textHtml":"Dụng cụ đo điện đa năng (Multimeter) hiển thị số thường có chốt cắm chung cho tất cả các phép đo mang kí hiệu là gì?","rawText":"Dụng cụ đo điện đa năng (Multimeter) hiển thị số thường có chốt cắm chung cho tất cả các phép đo mang kí hiệu là gì?","ownImageUrl":"","optionsHtml":["Output","Input","COM","AC"],"optionsRaw":["Output","Input","COM","AC"],"correctIndex":2,"correctAnswer":"COM","subQuestions":[],"solutionHtml":"Theo Hình 2.6 SGK: Chốt cắm màu đen dùng chung cho các phép đo trên đồng hồ đo điện đa năng hiện số mang kí hiệu $\\text{COM}$ (Common).","rawSolution":"Theo Hình 2.6 SGK: Chốt cắm màu đen dùng chung cho các phép đo trên đồng hồ đo điện đa năng hiện số mang kí hiệu $\\text{COM}$ (Common)."}]},{"blockId":"single_45a9a459-e17e-4d5a-b422-e092c327c026_6","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"45a9a459-e17e-4d5a-b422-e092c327c026","type":"mcq","level":"B","chapterName":"CHƯƠNG 1: MỞ ĐẦU","points":0.5,"textHtml":"Các thiết bị quang học như thấu kính, gương phẳng, màn ảnh nếu bị dính bụi bẩn hay mốc xước sẽ gây ra hậu quả trực tiếp nào?","rawText":"Các thiết bị quang học như thấu kính, gương phẳng, màn ảnh nếu bị dính bụi bẩn hay mốc xước sẽ gây ra hậu quả trực tiếp nào?","ownImageUrl":"","optionsHtml":["Gây chập điện cho nguồn sáng","Làm ảnh hưởng đến đường truyền tia sáng và gây sai lệch kết quả thí nghiệm","Gây nổ bình thủy tinh","Làm đứt cầu chì nguồn điện"],"optionsRaw":["Gây chập điện cho nguồn sáng","Làm ảnh hưởng đến đường truyền tia sáng và gây sai lệch kết quả thí nghiệm","Gây nổ bình thủy tinh","Làm đứt cầu chì nguồn điện"],"correctIndex":1,"correctAnswer":"Làm ảnh hưởng đến đường truyền tia sáng và gây sai lệch kết quả thí nghiệm","subQuestions":[],"solutionHtml":"SGK Mục I.3 nêu rõ: Các thiết bị quang học rất dễ mốc, xước, dính bụi bẩn làm ảnh hưởng đường truyền tia sáng và sai lệch kết quả.","rawSolution":"SGK Mục I.3 nêu rõ: Các thiết bị quang học rất dễ mốc, xước, dính bụi bẩn làm ảnh hưởng đường truyền tia sáng và sai lệch kết quả."}]},{"blockId":"single_78b8fcd9-561f-4f39-9f5b-282156281eb2_7","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"78b8fcd9-561f-4f39-9f5b-282156281eb2","type":"mcq","level":"B","chapterName":"CHƯƠNG 1: MỞ ĐẦU","points":0.5,"textHtml":"Kí hiệu hai mũi tên đứng trên mặt phẳng nằm ngang (như biểu tượng hình hộp) mang ý nghĩa thao tác nào?","rawText":"Kí hiệu hai mũi tên đứng trên mặt phẳng nằm ngang (như biểu tượng hình hộp) mang ý nghĩa thao tác nào?","ownImageUrl":"","optionsHtml":["Dụng cụ đặt đúng chiều thẳng đứng","Tránh ánh nắng chiếu trực tiếp","Không được bỏ vào thùng rác","Thiết bị có từ trường mạnh"],"optionsRaw":["Dụng cụ đặt đúng chiều thẳng đứng","Tránh ánh nắng chiếu trực tiếp","Không được bỏ vào thùng rác","Thiết bị có từ trường mạnh"],"correctIndex":0,"correctAnswer":"Dụng cụ đặt đúng chiều thẳng đứng","subQuestions":[],"solutionHtml":"Theo Bảng 2.1 SGK: Kí hiệu hai mũi tên hướng lên biểu thị &quot;Dụng cụ đặt đúng&quot; (luôn đặt đứng theo chiều mũi tên).","rawSolution":"Theo Bảng 2.1 SGK: Kí hiệu hai mũi tên hướng lên biểu thị \"Dụng cụ đặt đúng\" (luôn đặt đứng theo chiều mũi tên)."}]},{"blockId":"single_10b006e0-c0d8-4f05-adc9-ae3bbfdc5622_8","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"10b006e0-c0d8-4f05-adc9-ae3bbfdc5622","type":"mcq","level":"B","chapterName":"CHƯƠNG 1: MỞ ĐẦU","points":0.5,"textHtml":"Khi rút phích cắm điện từ ổ cắm nguồn ra (Hình 2.4b SGK), thao tác nào sau đây là ĐÚNG quy tắc an toàn?","rawText":"Khi rút phích cắm điện từ ổ cắm nguồn ra (Hình 2.4b SGK), thao tác nào sau đây là ĐÚNG quy tắc an toàn?","ownImageUrl":"","optionsHtml":["Cầm chắc vào dây điện và giật mạnh ra","Cầm trực tiếp vào phần thân bằng nhựa cách điện của phích cắm và rút thẳng ra","Dùng hai ngón tay chạm vào phần chân kim loại khi đang rút","Lấy vòi nước xịt vào ổ cắm trước khi rút"],"optionsRaw":["Cầm chắc vào dây điện và giật mạnh ra","Cầm trực tiếp vào phần thân bằng nhựa cách điện của phích cắm và rút thẳng ra","Dùng hai ngón tay chạm vào phần chân kim loại khi đang rút","Lấy vòi nước xịt vào ổ cắm trước khi rút"],"correctIndex":1,"correctAnswer":"Cầm trực tiếp vào phần thân bằng nhựa cách điện của phích cắm và rút thẳng ra","subQuestions":[],"solutionHtml":"Cầm vào dây điện giật ra có thể làm đứt gãy lõi dây điện bên trong hoặc bong tróc vỏ cách điện gây rò điện. Phải cầm chắc thân nhựa cách điện của phích cắm.","rawSolution":"Cầm vào dây điện giật ra có thể làm đứt gãy lõi dây điện bên trong hoặc bong tróc vỏ cách điện gây rò điện. Phải cầm chắc thân nhựa cách điện của phích cắm."}]},{"blockId":"single_8800cd59-b92d-4691-b29c-fc23249e58db_9","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"8800cd59-b92d-4691-b29c-fc23249e58db","type":"mcq","level":"H","chapterName":"CHƯƠNG 1: MỞ ĐẦU","points":0.5,"textHtml":"Vì sao trong các thí nghiệm quang học tuyệt đối không được nhìn trực tiếp hoặc chiếu tia laser vào mắt người khác?","rawText":"Vì sao trong các thí nghiệm quang học tuyệt đối không được nhìn trực tiếp hoặc chiếu tia laser vào mắt người khác?","ownImageUrl":"","optionsHtml":["Tia laser làm thấu kính bị rạn nứt lập tức","Tia laser có mật độ năng lượng và cường độ sáng cao, có thể gây tổn thương võng mạc hoặc hỏng mắt","Tia laser làm biến đổi dòng điện một chiều thành xoay chiều","Tia laser làm nước trong mắt bị đóng băng"],"optionsRaw":["Tia laser làm thấu kính bị rạn nứt lập tức","Tia laser có mật độ năng lượng và cường độ sáng cao, có thể gây tổn thương võng mạc hoặc hỏng mắt","Tia laser làm biến đổi dòng điện một chiều thành xoay chiều","Tia laser làm nước trong mắt bị đóng băng"],"correctIndex":1,"correctAnswer":"Tia laser có mật độ năng lượng và cường độ sáng cao, có thể gây tổn thương võng mạc hoặc hỏng mắt","subQuestions":[],"solutionHtml":"Tia laser có tính định hướng và năng lượng tập trung cao. Chiếu trực tiếp vào mắt sẽ đốt cháy hoặc gây tổn thương vĩnh viễn cho tế bào võng mạc.","rawSolution":"Tia laser có tính định hướng và năng lượng tập trung cao. Chiếu trực tiếp vào mắt sẽ đốt cháy hoặc gây tổn thương vĩnh viễn cho tế bào võng mạc."}]},{"blockId":"single_560474ff-0130-4999-8f14-e607a73a7fee_10","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"560474ff-0130-4999-8f14-e607a73a7fee","type":"mcq","level":"H","chapterName":"CHƯƠNG 1: MỞ ĐẦU","points":0.5,"textHtml":"Một học sinh dùng Ampe kế có giới hạn đo (GHĐ) là $0,6\\text{ A}$ để đo cường độ dòng điện chạy qua một mạch điện có giá trị khoảng $2,5\\text{ A}$. Nguy cơ nguy hiểm nhất là gì?","rawText":"Một học sinh dùng Ampe kế có giới hạn đo (GHĐ) là $0,6\\text{ A}$ để đo cường độ dòng điện chạy qua một mạch điện có giá trị khoảng $2,5\\text{ A}$. Nguy cơ nguy hiểm nhất là gì?","ownImageUrl":"","optionsHtml":["Đồng hồ hiển thị kết quả $0\\text{ A}$ và không sao","Dòng điện quá lớn làm vọt kim, gây cong kim, cháy cuộn dây đo hoặc đứt cầu chì bảo vệ của ampe kế","Nguồn điện tự động tăng hiệu điện thế lên $220\\text{ V}$","Ngăn chặn hoàn toàn dòng điện chạy trong mạch"],"optionsRaw":["Đồng hồ hiển thị kết quả $0\\text{ A}$ và không sao","Dòng điện quá lớn làm vọt kim, gây cong kim, cháy cuộn dây đo hoặc đứt cầu chì bảo vệ của ampe kế","Nguồn điện tự động tăng hiệu điện thế lên $220\\text{ V}$","Ngăn chặn hoàn toàn dòng điện chạy trong mạch"],"correctIndex":1,"correctAnswer":"Dòng điện quá lớn làm vọt kim, gây cong kim, cháy cuộn dây đo hoặc đứt cầu chì bảo vệ của ampe kế","subQuestions":[],"solutionHtml":"Mục II.2 SGK nêu rõ: Nếu dòng điện đo vượt quá GHĐ của ampe kế, cường độ dòng điện quá tải sẽ làm hỏng kim đo, đứt cầu chì hoặc làm cháy cuộn dây đo bên trong.","rawSolution":"Mục II.2 SGK nêu rõ: Nếu dòng điện đo vượt quá GHĐ của ampe kế, cường độ dòng điện quá tải sẽ làm hỏng kim đo, đứt cầu chì hoặc làm cháy cuộn dây đo bên trong."}]},{"blockId":"single_cbec319d-51e2-4705-8f4f-398a49ee311c_11","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"cbec319d-51e2-4705-8f4f-398a49ee311c","type":"mcq","level":"H","chapterName":"CHƯƠNG 1: MỞ ĐẦU","points":0.5,"textHtml":"Khi sử dụng đồng hồ đo điện đa năng để đo hiệu điện thế xoay chiều của nguồn điện, ta cần xoay núm chọn về thang đo nào?","rawText":"Khi sử dụng đồng hồ đo điện đa năng để đo hiệu điện thế xoay chiều của nguồn điện, ta cần xoay núm chọn về thang đo nào?","ownImageUrl":"","optionsHtml":["Thang đo $\\text{DCA}$ hoặc $\\text{A}=$","Thang đo $\\text{ACV}$ hoặc $\\text{V}\\sim$","Thang đo điện trở $\\Omega$","Thang đo $\\text{DCV}$ hoặc $\\text{V}=$"],"optionsRaw":["Thang đo $\\text{DCA}$ hoặc $\\text{A}=$","Thang đo $\\text{ACV}$ hoặc $\\text{V}\\sim$","Thang đo điện trở $\\Omega$","Thang đo $\\text{DCV}$ hoặc $\\text{V}=$"],"correctIndex":1,"correctAnswer":"Thang đo $\\text{ACV}$ hoặc $\\text{V}\\sim$","subQuestions":[],"solutionHtml":"Đo hiệu điện thế xoay chiều cần chọn thang Volt xoay chiều, kí hiệu là $\\text{ACV}$ hoặc $\\text{V}\\sim$.","rawSolution":"Đo hiệu điện thế xoay chiều cần chọn thang Volt xoay chiều, kí hiệu là $\\text{ACV}$ hoặc $\\text{V}\\sim$."}]},{"blockId":"single_a3c418b1-2c11-4f1c-9c3e-6b8edb8d0a8a_12","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"a3c418b1-2c11-4f1c-9c3e-6b8edb8d0a8a","type":"mcq","level":"H","chapterName":"CHƯƠNG 1: MỞ ĐẦU","points":0.5,"textHtml":"Tại sao khi đun sôi nước trên đèn cồn quy tắc an toàn yêu cầu học sinh không chạm tay trực tiếp vào bình thủy tinh mà phải đeo găng tay chịu nhiệt hoặc dùng kẹp?","rawText":"Tại sao khi đun sôi nước trên đèn cồn quy tắc an toàn yêu cầu học sinh không chạm tay trực tiếp vào bình thủy tinh mà phải đeo găng tay chịu nhiệt hoặc dùng kẹp?","ownImageUrl":"","optionsHtml":["Để tránh dòng điện từ đèn cồn truyền vào tay","Nhiệt độ của bình thủy tinh rất cao, chạm trực tiếp gây bỏng nhiệt nặng","Để tránh làm nước bị nhiễm bẩn vân tay","Tránh cho không khí xung quanh bình bị ngưng tụ"],"optionsRaw":["Để tránh dòng điện từ đèn cồn truyền vào tay","Nhiệt độ của bình thủy tinh rất cao, chạm trực tiếp gây bỏng nhiệt nặng","Để tránh làm nước bị nhiễm bẩn vân tay","Tránh cho không khí xung quanh bình bị ngưng tụ"],"correctIndex":1,"correctAnswer":"Nhiệt độ của bình thủy tinh rất cao, chạm trực tiếp gây bỏng nhiệt nặng","subQuestions":[],"solutionHtml":"Hình 2.7c lưu ý: Không đeo găng tay chịu nhiệt khi làm việc với thiết bị nhiệt độ cao dễ gây bỏng da nghiêm trọng.","rawSolution":"Hình 2.7c lưu ý: Không đeo găng tay chịu nhiệt khi làm việc với thiết bị nhiệt độ cao dễ gây bỏng da nghiêm trọng."}]},{"blockId":"single_d13729f5-c16e-4d0f-984c-73dc9fb3092e_13","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"d13729f5-c16e-4d0f-984c-73dc9fb3092e","type":"mcq","level":"H","chapterName":"CHƯƠNG 1: MỞ ĐẦU","points":0.5,"textHtml":"Cảnh báo tình huống &quot;Để các kẹp điện (kẹp cá sấu) gần nhau&quot;. Nguy cơ mất an toàn chính của tình huống này là gì?","rawText":"Cảnh báo tình huống \"Để các kẹp điện (kẹp cá sấu) gần nhau\". Nguy cơ mất an toàn chính của tình huống này là gì?","ownImageUrl":"","optionsHtml":["Làm giảm cường độ dòng điện trong mạch","Các kẹp điện kim loại vô tình chạm vào nhau gây hiện tượng ngắn mạch (chập điện), sinh tia lửa điện và cháy nổ","Làm bóng đèn bị mờ đi do từ trường","Làm tăng nhiệt độ phòng thí nghiệm"],"optionsRaw":["Làm giảm cường độ dòng điện trong mạch","Các kẹp điện kim loại vô tình chạm vào nhau gây hiện tượng ngắn mạch (chập điện), sinh tia lửa điện và cháy nổ","Làm bóng đèn bị mờ đi do từ trường","Làm tăng nhiệt độ phòng thí nghiệm"],"correctIndex":1,"correctAnswer":"Các kẹp điện kim loại vô tình chạm vào nhau gây hiện tượng ngắn mạch (chập điện), sinh tia lửa điện và cháy nổ","subQuestions":[],"solutionHtml":"Nếu hai kẹp điện mang cực khác nhau chạm vào nhau sẽ gây ngắn mạch (chập mạch), dòng điện tăng đột ngột sinh nhiệt cao gây cháy nổ.","rawSolution":"Nếu hai kẹp điện mang cực khác nhau chạm vào nhau sẽ gây ngắn mạch (chập mạch), dòng điện tăng đột ngột sinh nhiệt cao gây cháy nổ."}]},{"blockId":"single_c2bfa621-2130-4096-b58d-e2617e47017b_14","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"c2bfa621-2130-4096-b58d-e2617e47017b","type":"mcq","level":"H","chapterName":"CHƯƠNG 1: MỞ ĐẦU","points":0.5,"textHtml":"Trong thí nghiệm đun nóng chất lỏng bằng đèn cồn, việc đặt chất dễ cháy (như chai cồn dự trữ, giấy) gần mạch điện hoặc nguồn nhiệt (Hình 2.7b SGK) nguy hiểm vì lý do nào?","rawText":"Trong thí nghiệm đun nóng chất lỏng bằng đèn cồn, việc đặt chất dễ cháy (như chai cồn dự trữ, giấy) gần mạch điện hoặc nguồn nhiệt (Hình 2.7b SGK) nguy hiểm vì lý do nào?","ownImageUrl":"","optionsHtml":["Tia lửa điện hoặc nhiệt độ cao dễ làm chất bắt cháy phát hỏa, gây đám cháy lớn","Làm cồn bị bay hơi mất bớt thể tích","Làm cho nguồn điện bị tụt áp","Làm cho mặt bàn bị ẩm ướt"],"optionsRaw":["Tia lửa điện hoặc nhiệt độ cao dễ làm chất bắt cháy phát hỏa, gây đám cháy lớn","Làm cồn bị bay hơi mất bớt thể tích","Làm cho nguồn điện bị tụt áp","Làm cho mặt bàn bị ẩm ướt"],"correctIndex":0,"correctAnswer":"Tia lửa điện hoặc nhiệt độ cao dễ làm chất bắt cháy phát hỏa, gây đám cháy lớn","subQuestions":[],"solutionHtml":"Để chất dễ cháy gần nguồn nhiệt/điện có nguy cơ bùng phát đám cháy nhanh chóng khi có sự cố tia lửa hoặc nhiệt độ cao tỏa ra.","rawSolution":"Để chất dễ cháy gần nguồn nhiệt/điện có nguy cơ bùng phát đám cháy nhanh chóng khi có sự cố tia lửa hoặc nhiệt độ cao tỏa ra."}]},{"blockId":"single_6d3af8cd-dd63-48a7-8148-db4059e2b4f8_15","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"6d3af8cd-dd63-48a7-8148-db4059e2b4f8","type":"mcq","level":"H","chapterName":"CHƯƠNG 1: MỞ ĐẦU","points":0.5,"textHtml":"Để đo một dòng điện một chiều chưa biết rõ giá trị xấp xỉ bằng đồng hồ đa năng hiện số, thao tác lựa chọn thang đo nào là an toàn nhất cho đồng hồ?","rawText":"Để đo một dòng điện một chiều chưa biết rõ giá trị xấp xỉ bằng đồng hồ đa năng hiện số, thao tác lựa chọn thang đo nào là an toàn nhất cho đồng hồ?","ownImageUrl":"","optionsHtml":["Chọn ngay thang đo nhỏ nhất $200\\mu\\text{A}$ để đạt độ chính xác cao nhất","Chọn thang đo $\\text{DCA}$ ở giá trị lớn nhất (ví dụ $10\\text{ A}$), sau đó giảm dần thang đo nếu tín hiệu nhỏ","Chọn thang đo điện trở $\\Omega$ để đo trước","Chọn thang đo điện áp xoay chiều $750\\text{ V AC}$"],"optionsRaw":["Chọn ngay thang đo nhỏ nhất $200\\mu\\text{A}$ để đạt độ chính xác cao nhất","Chọn thang đo $\\text{DCA}$ ở giá trị lớn nhất (ví dụ $10\\text{ A}$), sau đó giảm dần thang đo nếu tín hiệu nhỏ","Chọn thang đo điện trở $\\Omega$ để đo trước","Chọn thang đo điện áp xoay chiều $750\\text{ V AC}$"],"correctIndex":1,"correctAnswer":"Chọn thang đo $\\text{DCA}$ ở giá trị lớn nhất (ví dụ $10\\text{ A}$), sau đó giảm dần thang đo nếu tín hiệu nhỏ","subQuestions":[],"solutionHtml":"Quy tắc an toàn khi đo đại lượng chưa biết giá trị: Luôn chọn thang đo lớn nhất để tránh quá tải gây cháy đứt đồng hồ, sau đó hạ dần thang đo để đọc kết quả chính xác.","rawSolution":"Quy tắc an toàn khi đo đại lượng chưa biết giá trị: Luôn chọn thang đo lớn nhất để tránh quá tải gây cháy đứt đồng hồ, sau đó hạ dần thang đo để đọc kết quả chính xác."}]},{"blockId":"single_de1239a9-8214-4a0f-a9bc-26aa7ee52e67_16","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"de1239a9-8214-4a0f-a9bc-26aa7ee52e67","type":"mcq","level":"H","chapterName":"CHƯƠNG 1: MỞ ĐẦU","points":0.5,"textHtml":"Khi phát hiện một dây dẫn điện nối thiết bị thí nghiệm bị sờn rách, hở lớp vỏ cao su cách điện để lộ lõi đồng , học sinh cần làm gì?","rawText":"Khi phát hiện một dây dẫn điện nối thiết bị thí nghiệm bị sờn rách, hở lớp vỏ cao su cách điện để lộ lõi đồng , học sinh cần làm gì?","ownImageUrl":"","optionsHtml":["Dùng tay trần dán tạm băng dính đen và tiếp tục thí nghiệm mà không báo giáo viên","Tắt nguồn điện lập tức, báo ngay cho giáo viên hướng dẫn để thay thế dây dẫn an toàn mới","Tiếp tục cắm điện sử dụng vì lõi đồng chưa bị đứt","Đổ nước vào chỗ dây sờn để làm mát"],"optionsRaw":["Dùng tay trần dán tạm băng dính đen và tiếp tục thí nghiệm mà không báo giáo viên","Tắt nguồn điện lập tức, báo ngay cho giáo viên hướng dẫn để thay thế dây dẫn an toàn mới","Tiếp tục cắm điện sử dụng vì lõi đồng chưa bị đứt","Đổ nước vào chỗ dây sờn để làm mát"],"correctIndex":1,"correctAnswer":"Tắt nguồn điện lập tức, báo ngay cho giáo viên hướng dẫn để thay thế dây dẫn an toàn mới","subQuestions":[],"solutionHtml":"Dây điện sờn hở lõi copper tiềm ẩn nguy cơ giật điện nguy hiểm và chập cháy. Cần ngắt nguồn điện và báo giáo viên thay thế ngay.","rawSolution":"Dây điện sờn hở lõi copper tiềm ẩn nguy cơ giật điện nguy hiểm và chập cháy. Cần ngắt nguồn điện và báo giáo viên thay thế ngay."}]},{"blockId":"single_6cec643d-3c46-4fba-8384-8b31bddc0986_17","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"6cec643d-3c46-4fba-8384-8b31bddc0986","type":"mcq","level":"H","chapterName":"CHƯƠNG 1: MỞ ĐẦU","points":0.5,"textHtml":"Bộ chuyển đổi điện áp trong thí nghiệm quang hình ghi thông số: Đầu vào $\\text{Input: } 220\\text{ V AC}$, Đầu ra $\\text{Output: } 12\\text{ V DC}$. Nếu học sinh cắm nhầm bóng đèn thí nghiệm $12\\text{ V}$ trực tiếp vào ổ cắm điện lưới $220\\text{ V}$ thì sự cố nào xảy ra?","rawText":"Bộ chuyển đổi điện áp trong thí nghiệm quang hình ghi thông số: Đầu vào $\\text{Input: } 220\\text{ V AC}$, Đầu ra $\\text{Output: } 12\\text{ V DC}$. Nếu học sinh cắm nhầm bóng đèn thí nghiệm $12\\text{ V}$ trực tiếp vào ổ cắm điện lưới $220\\text{ V}$ thì sự cố nào xảy ra?","ownImageUrl":"","optionsHtml":["Bóng đèn sáng bình thường và tiết kiệm điện","Bóng đèn bị cháy nổ lập tức do hiệu điện thế đặt vào vượt quá giới hạn định mức rất nhiều lần","Bóng đèn không sáng do điện áp quá cao","Không có hiện tượng gì xảy ra"],"optionsRaw":["Bóng đèn sáng bình thường và tiết kiệm điện","Bóng đèn bị cháy nổ lập tức do hiệu điện thế đặt vào vượt quá giới hạn định mức rất nhiều lần","Bóng đèn không sáng do điện áp quá cao","Không có hiện tượng gì xảy ra"],"correctIndex":1,"correctAnswer":"Bóng đèn bị cháy nổ lập tức do hiệu điện thế đặt vào vượt quá giới hạn định mức rất nhiều lần","subQuestions":[],"solutionHtml":"Bóng đèn chỉ chịu được $12\\text{ V}$. Đưa trực tiếp hiệu điện thế $220\\text{ V}$ vào sẽ gây quá dòng đột ngột làm nổ cháy bóng đèn lập tức.","rawSolution":"Bóng đèn chỉ chịu được $12\\text{ V}$. Đưa trực tiếp hiệu điện thế $220\\text{ V}$ vào sẽ gây quá dòng đột ngột làm nổ cháy bóng đèn lập tức."}]},{"blockId":"single_1a99069f-1c8a-46da-9eaa-8213ef96eb8b_18","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"1a99069f-1c8a-46da-9eaa-8213ef96eb8b","type":"mcq","level":"H","chapterName":"CHƯƠNG 1: MỞ ĐẦU","points":0.5,"textHtml":"Trong phòng thực hành Vật lí bất ngờ xảy ra sự cố cháy do cồn đổ ra mặt bàn khi đun nước. Hành động dập lửa nào sau đây là **SAI VÀ NGUY HIỂM NHẤT**?","rawText":"Trong phòng thực hành Vật lí bất ngờ xảy ra sự cố cháy do cồn đổ ra mặt bàn khi đun nước. Hành động dập lửa nào sau đây là **SAI VÀ NGUY HIỂM NHẤT**?","ownImageUrl":"","optionsHtml":["Dùng chăn/mền ẩm phủ kín lên khu vực cồn đang cháy để cách ly oxygen","Sử dụng bình chữa cháy dạng bột xịt vào gốc lửa","Lấy một chậu nước đầy xối mạnh trực tiếp vào đám cháy cồn","Ngắt toàn bộ hệ thống điện phòng thực hành và hô khoán cứu hộ"],"optionsRaw":["Dùng chăn/mền ẩm phủ kín lên khu vực cồn đang cháy để cách ly oxygen","Sử dụng bình chữa cháy dạng bột xịt vào gốc lửa","Lấy một chậu nước đầy xối mạnh trực tiếp vào đám cháy cồn","Ngắt toàn bộ hệ thống điện phòng thực hành và hô khoán cứu hộ"],"correctIndex":2,"correctAnswer":"Lấy một chậu nước đầy xối mạnh trực tiếp vào đám cháy cồn","subQuestions":[],"solutionHtml":"SGK Mục II.3 quy định rõ: &quot;Không được sử dụng nước dập đám cháy... cồn... vì cồn nhẹ hơn nước và hòa tan/nổi trên nước, xối nước sẽ làm cồn cháy lan rộng hơn ra khắp phòng!&quot;","rawSolution":"SGK Mục II.3 quy định rõ: \"Không được sử dụng nước dập đám cháy... cồn... vì cồn nhẹ hơn nước và hòa tan/nổi trên nước, xối nước sẽ làm cồn cháy lan rộng hơn ra khắp phòng!\""}]},{"blockId":"single_7b489bf1-6d60-4149-bc9c-e6a98d187481_19","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"7b489bf1-6d60-4149-bc9c-e6a98d187481","type":"mcq","level":"H","chapterName":"CHƯƠNG 1: MỞ ĐẦU","points":0.5,"textHtml":"Khi phòng thực hành xảy ra hỏa hoạn có liên quan đến thiết bị đang cắm điện và các kim loại kiềm (như Magnesium), quy trình xử lý PCCC nào sau đây tuân thủ đúng nguyên tắc an toàn?","rawText":"Khi phòng thực hành xảy ra hỏa hoạn có liên quan đến thiết bị đang cắm điện và các kim loại kiềm (như Magnesium), quy trình xử lý PCCC nào sau đây tuân thủ đúng nguyên tắc an toàn?","ownImageUrl":"","optionsHtml":["Dùng bình khí $\\text{CO}_2$ xịt trực tiếp vào kim loại kiềm đang cháy","Dùng nước xối vào thiết bị điện đang cắm nguồn","Lập tức ngắt cầu dao điện tổng, sơ tán học sinh, di dời hóa chất dễ cháy ra xa; **không** dùng $\\text{CO}_2$ dập cháy kim loại kiềm và **không** dùng nước dập cháy điện","Đóng chặt tất cả cửa phòng thực hành và tiếp tục làm thí nghiệm"],"optionsRaw":["Dùng bình khí $\\text{CO}_2$ xịt trực tiếp vào kim loại kiềm đang cháy","Dùng nước xối vào thiết bị điện đang cắm nguồn","Lập tức ngắt cầu dao điện tổng, sơ tán học sinh, di dời hóa chất dễ cháy ra xa; **không** dùng $\\text{CO}_2$ dập cháy kim loại kiềm và **không** dùng nước dập cháy điện","Đóng chặt tất cả cửa phòng thực hành và tiếp tục làm thí nghiệm"],"correctIndex":2,"correctAnswer":"Lập tức ngắt cầu dao điện tổng, sơ tán học sinh, di dời hóa chất dễ cháy ra xa; **không** dùng $\\text{CO}_2$ dập cháy kim loại kiềm và **không** dùng nước dập cháy điện","subQuestions":[],"solutionHtml":"SGK Mục II.3 nêu rõ quy tắc PCCC: Ngắt điện tổng, sơ tán người. Tuyệt đối không dùng nước dập cháy thiết bị điện active; Không dùng bình $\\text{CO}_2$ dập cháy kim loại kiềm (Mg...) vì ở nhiệt độ cao kim loại kiềm sẽ phản ứng với $\\text{CO}_2$ sinh ra Carbon tỏa nhiệt cực dội.","rawSolution":"SGK Mục II.3 nêu rõ quy tắc PCCC: Ngắt điện tổng, sơ tán người. Tuyệt đối không dùng nước dập cháy thiết bị điện active; Không dùng bình $\\text{CO}_2$ dập cháy kim loại kiềm (Mg...) vì ở nhiệt độ cao kim loại kiềm sẽ phản ứng với $\\text{CO}_2$ sinh ra Carbon tỏa nhiệt cực dội."}]}]}</script>
+  <script>
+    (function() {
+      var dataEl = document.getElementById('edusync-runtime-data');
+      var EXAM = JSON.parse(dataEl.textContent || '{}');
+      var LETTERS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+      var TF_LABELS = ['a', 'b', 'c', 'd', 'e', 'f'];
+
+      function shuffle(arr) {
+        var copy = arr.slice();
+        for (var i = copy.length - 1; i > 0; i--) {
+          var j = Math.floor(Math.random() * (i + 1));
+          var tmp = copy[i]; copy[i] = copy[j]; copy[j] = tmp;
+        }
+        return copy;
+      }
+
+      var blocks = EXAM.shuffleQuestions ? shuffle(EXAM.blocks || []) : (EXAM.blocks || []);
+      var flatQuestions = [];
+      blocks.forEach(function(block) {
+        block.questions.forEach(function(q) {
+          if (q.type === 'mcq' && EXAM.shuffleOptions && Array.isArray(q.optionsHtml)) {
+            var tagged = q.optionsHtml.map(function(html, idx) {
+              return { html: html, raw: q.optionsRaw[idx], isCorrect: idx === q.correctIndex };
+            });
+            var mixed = shuffle(tagged);
+            q.optionsHtml = mixed.map(function(m) { return m.html; });
+            q.optionsRaw = mixed.map(function(m) { return m.raw; });
+            q.correctIndex = Math.max(0, mixed.findIndex(function(m) { return m.isCorrect; }));
+          }
+          q.displayNumber = flatQuestions.length + 1;
+          flatQuestions.push(q);
+        });
+      });
+
+      var userAnswers = {};
+      var submitted = false;
+      var durationLimit = (EXAM.durationMinutes || 0) > 0 ? EXAM.durationMinutes * 60 : 0;
+      var startTime = Date.now();
+      var timerHandle = null;
+
+      function fmtTime(sec) {
+        var s = Math.max(0, Math.floor(sec));
+        var m = Math.floor(s / 60);
+        var r = s % 60;
+        return String(m).padStart(2, '0') + ':' + String(r).padStart(2, '0');
+      }
+
+      function isQuestionAnswered(q) {
+        var ans = userAnswers[q.id];
+        if (q.type === 'mcq') return typeof ans === 'number';
+        if (q.type === 'short') return typeof ans === 'string' && ans.trim().length > 0;
+        if (q.type === 'group-tf') {
+          if (!ans || typeof ans !== 'object') return false;
+          return q.subQuestions.some(function(sq) { return ans[sq.id] === 'True' || ans[sq.id] === 'False'; });
+        }
+        return false;
+      }
+
+      function updateProgress() {
+        var done = flatQuestions.filter(isQuestionAnswered).length;
+        document.getElementById('progressLabel').textContent = done + '/' + flatQuestions.length;
+        document.getElementById('sidebarCount').textContent = 'Đã làm ' + done + '/' + flatQuestions.length;
+        flatQuestions.forEach(function(q) {
+          var pBtn = document.getElementById('pbtn_' + q.displayNumber);
+          if (!pBtn || submitted) return;
+          pBtn.className = 'p-btn mono' + (isQuestionAnswered(q) ? ' done' : '');
+        });
+      }
+
+      function buildQuestionEl(q) {
+        var card = document.createElement('article');
+        card.className = 'q-card';
+        card.id = 'qcard_' + q.displayNumber;
+
+        var header = document.createElement('div');
+        header.className = 'q-header';
+        var leftMeta = '<span class="q-num">Câu ' + q.displayNumber + '</span>';
+        var tags = [q.level ? ('Mức ' + q.level) : '', q.points + ' đ', q.chapterName || ''].filter(Boolean).join(' · ');
+        header.innerHTML = leftMeta + '<span id="qstatus_' + q.displayNumber + '" class="q-status">' + tags + '</span>';
+        card.appendChild(header);
+
+        var qTextEl = document.createElement('div');
+        qTextEl.className = 'q-text';
+        qTextEl.innerHTML = q.textHtml;
+        card.appendChild(qTextEl);
+
+        if (q.ownImageUrl) {
+          var fig = document.createElement('div');
+          fig.className = 'q-figure';
+          var img = document.createElement('img');
+          img.src = q.ownImageUrl;
+          img.alt = 'Hình minh họa câu ' + q.displayNumber;
+          fig.appendChild(img);
+          card.appendChild(fig);
+        }
+
+        if (q.type === 'mcq') {
+          var grid = document.createElement('div');
+          grid.className = 'options-grid';
+          q.optionsHtml.forEach(function(optHtml, optIdx) {
+            var btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'opt-btn';
+            btn.id = 'opt_' + q.id + '_' + optIdx;
+            btn.innerHTML = '<span class="opt-letter mono">' + (LETTERS[optIdx] || optIdx + 1) + '</span><span style="flex:1;">' + optHtml + '</span>';
+            btn.addEventListener('click', function() {
+              if (submitted) return;
+              userAnswers[q.id] = optIdx;
+              q.optionsHtml.forEach(function(_, i2) {
+                var el = document.getElementById('opt_' + q.id + '_' + i2);
+                if (el) el.classList.toggle('selected', i2 === optIdx);
+              });
+              updateProgress();
+            });
+            grid.appendChild(btn);
+          });
+          card.appendChild(grid);
+        } else if (q.type === 'group-tf') {
+          var list = document.createElement('div');
+          list.className = 'tf-list';
+          q.subQuestions.forEach(function(sq, sIdx) {
+            var row = document.createElement('div');
+            row.className = 'tf-row';
+            row.id = 'tfrow_' + sq.id;
+
+            var txt = document.createElement('div');
+            txt.className = 'tf-text';
+            txt.innerHTML = '<strong>' + (TF_LABELS[sIdx] || (sIdx + 1)) + ')</strong> ' + sq.textHtml;
+            row.appendChild(txt);
+
+            var actions = document.createElement('div');
+            actions.className = 'tf-actions';
+            ['True', 'False'].forEach(function(val) {
+              var b = document.createElement('button');
+              b.type = 'button';
+              b.className = 'tf-choice';
+              b.id = 'tfbtn_' + sq.id + '_' + val;
+              b.textContent = val === 'True' ? 'Đúng' : 'Sai';
+              b.addEventListener('click', function() {
+                if (submitted) return;
+                if (!userAnswers[q.id] || typeof userAnswers[q.id] !== 'object') userAnswers[q.id] = {};
+                userAnswers[q.id][sq.id] = val;
+                var bt = document.getElementById('tfbtn_' + sq.id + '_True');
+                var bf = document.getElementById('tfbtn_' + sq.id + '_False');
+                if (bt) bt.classList.toggle('active', val === 'True');
+                if (bf) bf.classList.toggle('active', val === 'False');
+                updateProgress();
+              });
+              actions.appendChild(b);
+            });
+            row.appendChild(actions);
+            list.appendChild(row);
+          });
+          card.appendChild(list);
+        } else {
+          var sBox = document.createElement('div');
+          sBox.className = 'short-box';
+          var inp = document.createElement('input');
+          inp.type = 'text';
+          inp.className = 'short-input';
+          inp.id = 'short_' + q.id;
+          inp.placeholder = 'Nhập đáp số (vd: 2.6 hoặc 36)';
+          inp.addEventListener('input', function() {
+            if (submitted) return;
+            userAnswers[q.id] = inp.value;
+            updateProgress();
+          });
+          var fb = document.createElement('span');
+          fb.id = 'shortfb_' + q.id;
+          fb.className = 'short-feedback';
+          sBox.appendChild(inp);
+          sBox.appendChild(fb);
+          card.appendChild(sBox);
+        }
+
+        if (q.solutionHtml) {
+          var sol = document.createElement('div');
+          sol.className = 'solution-box';
+          sol.id = 'sol_' + q.id;
+          sol.innerHTML = '<strong>Lời giải chi tiết:</strong><div style="margin-top:4px;">' + q.solutionHtml + '</div>';
+          card.appendChild(sol);
+        }
+
+        return card;
+      }
+
+      function renderExam() {
+        var root = document.getElementById('questionsRoot');
+        var pal = document.getElementById('paletteRoot');
+        root.innerHTML = '';
+        pal.innerHTML = '';
+
+        blocks.forEach(function(block) {
+          if (block.contextHtml || block.sharedImageUrl) {
+            var groupEl = document.createElement('section');
+            groupEl.className = 'context-group';
+
+            var head = document.createElement('div');
+            head.className = 'context-header';
+            var firstNum = block.questions[0].displayNumber;
+            var lastNum = block.questions[block.questions.length - 1].displayNumber;
+            var labelText = block.questions.length > 1
+              ? 'Dữ liệu dùng chung cho Câu ' + firstNum + ' – Câu ' + lastNum
+              : 'Dữ liệu đề bài (Câu ' + firstNum + ')';
+            var html = '<div class="context-label">' + labelText + '</div>';
+            if (block.contextHtml) {
+              html += '<div class="context-body">' + block.contextHtml + '</div>';
+            }
+            head.innerHTML = html;
+            if (block.sharedImageUrl) {
+              var fig = document.createElement('div');
+              fig.className = 'q-figure';
+              var img = document.createElement('img');
+              img.src = block.sharedImageUrl;
+              img.alt = labelText;
+              fig.appendChild(img);
+              head.appendChild(fig);
+            }
+            groupEl.appendChild(head);
+
+            var inner = document.createElement('div');
+            inner.className = 'context-questions';
+            block.questions.forEach(function(q) {
+              inner.appendChild(buildQuestionEl(q));
+            });
+            groupEl.appendChild(inner);
+            root.appendChild(groupEl);
+          } else {
+            block.questions.forEach(function(q) {
+              root.appendChild(buildQuestionEl(q));
+            });
+          }
+        });
+
+        flatQuestions.forEach(function(q) {
+          var b = document.createElement('button');
+          b.type = 'button';
+          b.className = 'p-btn mono';
+          b.id = 'pbtn_' + q.displayNumber;
+          b.textContent = String(q.displayNumber);
+          b.addEventListener('click', function() {
+            var target = document.getElementById('qcard_' + q.displayNumber);
+            if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          });
+          pal.appendChild(b);
+        });
+
+        updateProgress();
+        if (window.MathJax && window.MathJax.typesetPromise) {
+          window.MathJax.typesetPromise().catch(function() {});
+        }
+      }
+
+      function normalizeShort(val) {
+        return String(val || '').trim().replace(/,/g, '.').replace(/\s+/g, '').toLowerCase();
+      }
+
+      function isShortMatch(userVal, expectedVal) {
+        var u = normalizeShort(userVal);
+        var e = normalizeShort(expectedVal);
+        if (!u) return false;
+        if (u === e) return true;
+        var nu = parseFloat(u);
+        var ne = parseFloat(e);
+        if (!isNaN(nu) && !isNaN(ne) && String(nu) === u || !isNaN(nu) && !isNaN(ne)) {
+          if (/^-?\d+(?:\.\d+)?$/.test(u) && /^-?\d+(?:\.\d+)?$/.test(e)) {
+            return Math.abs(nu - ne) < 1e-6;
+          }
+        }
+        return false;
+      }
+
+      function gradeAndSubmit(force) {
+        if (submitted) return;
+        var answered = flatQuestions.filter(isQuestionAnswered).length;
+        if (!force && answered < flatQuestions.length) {
+          document.getElementById('confirmMsg').textContent =
+            'Bạn mới làm ' + answered + '/' + flatQuestions.length + ' câu. Bạn có chắc muốn nộp bài ngay?';
+          document.getElementById('confirmBar').classList.add('visible');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+          return;
+        }
+        document.getElementById('confirmBar').classList.remove('visible');
+        submitted = true;
+        if (timerHandle) clearInterval(timerHandle);
+
+        var totalScore = 0;
+        var maxScore = EXAM.maxScore || 10;
+        var correctQuestions = 0;
+        var answerDetails = [];
+
+        flatQuestions.forEach(function(q) {
+          var qCorrect = false;
+          var pBtn = document.getElementById('pbtn_' + q.displayNumber);
+          var stEl = document.getElementById('qstatus_' + q.displayNumber);
+          var solEl = document.getElementById('sol_' + q.id);
+          if (solEl) solEl.classList.add('visible');
+
+          if (q.type === 'mcq') {
+            var chosen = typeof userAnswers[q.id] === 'number' ? userAnswers[q.id] : -1;
+            qCorrect = chosen === q.correctIndex;
+            if (qCorrect) {
+              totalScore += q.points;
+              correctQuestions++;
+            }
+            q.optionsHtml.forEach(function(_, i) {
+              var ob = document.getElementById('opt_' + q.id + '_' + i);
+              if (!ob) return;
+              ob.disabled = true;
+              ob.classList.remove('selected');
+              if (i === q.correctIndex) ob.classList.add('correct');
+              else if (i === chosen) ob.classList.add('wrong');
+            });
+            if (stEl) {
+              stEl.textContent = qCorrect ? ('Đúng (+' + q.points + 'đ)') : 'Sai (0đ)';
+              stEl.className = 'q-status ' + (qCorrect ? 'ok' : 'bad');
+            }
+            answerDetails.push({
+              orderIndex: answerDetails.length,
+              questionText: 'Câu ' + q.displayNumber + ': ' + q.rawText,
+              options: q.optionsRaw,
+              selectedIndex: chosen,
+              correctIndex: q.correctIndex,
+              isCorrect: qCorrect,
+              explanation: q.rawSolution
+            });
+          } else if (q.type === 'group-tf') {
+            var tfMap = (userAnswers[q.id] && typeof userAnswers[q.id] === 'object') ? userAnswers[q.id] : {};
+            var rightSubs = 0;
+            q.subQuestions.forEach(function(sq, sIdx) {
+              var picked = tfMap[sq.id] || '';
+              var subOk = picked === sq.correctAnswer;
+              if (subOk) rightSubs++;
+              var row = document.getElementById('tfrow_' + sq.id);
+              if (row) row.classList.add(subOk ? 'ok' : 'bad');
+              ['True', 'False'].forEach(function(v) {
+                var btn = document.getElementById('tfbtn_' + sq.id + '_' + v);
+                if (!btn) return;
+                btn.disabled = true;
+                if (v === sq.correctAnswer) btn.classList.add('right-ans');
+              });
+              answerDetails.push({
+                orderIndex: answerDetails.length,
+                questionText: 'Câu ' + q.displayNumber + (TF_LABELS[sIdx] || '') + ': ' + sq.rawText,
+                options: ['Đúng', 'Sai'],
+                selectedIndex: picked === 'True' ? 0 : (picked === 'False' ? 1 : -1),
+                correctIndex: sq.correctAnswer === 'True' ? 0 : 1,
+                isCorrect: subOk,
+                explanation: sIdx === q.subQuestions.length - 1 ? q.rawSolution : ''
+              });
+            });
+            var earnedRatio = 0;
+            if (q.subQuestions.length === 4) {
+              earnedRatio = rightSubs === 1 ? 0.1 : rightSubs === 2 ? 0.25 : rightSubs === 3 ? 0.5 : rightSubs === 4 ? 1 : 0;
+            } else if (q.subQuestions.length > 0) {
+              earnedRatio = rightSubs / q.subQuestions.length;
+            }
+            var earned = Math.round(q.points * earnedRatio * 100) / 100;
+            totalScore += earned;
+            qCorrect = rightSubs === q.subQuestions.length;
+            if (qCorrect) correctQuestions++;
+            if (stEl) {
+              stEl.textContent = 'Đúng ' + rightSubs + '/' + q.subQuestions.length + ' ý (+' + earned + 'đ)';
+              stEl.className = 'q-status ' + (qCorrect ? 'ok' : 'bad');
+            }
+          } else {
+            var rawInput = document.getElementById('short_' + q.id);
+            var typed = rawInput ? rawInput.value.trim() : '';
+            if (rawInput) rawInput.disabled = true;
+            qCorrect = isShortMatch(typed, q.correctAnswer);
+            if (qCorrect) {
+              totalScore += q.points;
+              correctQuestions++;
+            }
+            var fbEl = document.getElementById('shortfb_' + q.id);
+            if (fbEl) {
+              fbEl.textContent = qCorrect
+                ? ('Chính xác (+' + q.points + 'đ)')
+                : ('Đáp án đúng: ' + q.correctAnswer);
+              fbEl.style.color = qCorrect ? 'var(--ok)' : 'var(--bad)';
+            }
+            if (stEl) {
+              stEl.textContent = qCorrect ? ('Đúng (+' + q.points + 'đ)') : 'Sai (0đ)';
+              stEl.className = 'q-status ' + (qCorrect ? 'ok' : 'bad');
+            }
+            answerDetails.push({
+              orderIndex: answerDetails.length,
+              questionText: 'Câu ' + q.displayNumber + ': ' + q.rawText,
+              options: ['Bài làm: ' + (typed || '(bỏ trống)'), 'Đáp án chuẩn: ' + q.correctAnswer],
+              selectedIndex: qCorrect ? 1 : 0,
+              correctIndex: 1,
+              isCorrect: qCorrect,
+              explanation: q.rawSolution
+            });
+          }
+
+          if (pBtn) {
+            pBtn.className = 'p-btn mono ' + (qCorrect ? 'ok' : 'bad');
+          }
+        });
+
+        totalScore = Math.round(totalScore * 100) / 100;
+        var pct = maxScore > 0 ? Math.round((totalScore / maxScore) * 1000) / 10 : 0;
+
+        document.getElementById('scoreText').textContent = totalScore + ' / ' + maxScore + ' điểm';
+        document.getElementById('correctText').textContent =
+          'Đúng hoàn toàn ' + correctQuestions + ' / ' + flatQuestions.length + ' câu (' + pct + '%)';
+        document.getElementById('resultScreen').classList.add('visible');
+        document.getElementById('topSubmitBtn').style.display = 'none';
+        document.getElementById('sideSubmitBtn').style.display = 'none';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+
+        if (window.MathJax && window.MathJax.typesetPromise) {
+          window.MathJax.typesetPromise().catch(function() {});
+        }
+
+        if (typeof window.EduSyncSubmitScore === 'function') {
+          window.EduSyncSubmitScore(totalScore, maxScore, correctQuestions, flatQuestions.length, answerDetails);
+        } else if (window.parent && window.parent !== window) {
+          window.parent.postMessage({
+            type: 'QUIZ_RESULT',
+            score: totalScore,
+            maxScore: maxScore,
+            correctCount: correctQuestions,
+            totalQuestions: flatQuestions.length,
+            answerDetails: answerDetails
+          }, '*');
+        }
+      }
+
+      document.getElementById('topSubmitBtn').addEventListener('click', function() { gradeAndSubmit(false); });
+      document.getElementById('sideSubmitBtn').addEventListener('click', function() { gradeAndSubmit(false); });
+      document.getElementById('confirmYesBtn').addEventListener('click', function() { gradeAndSubmit(true); });
+      document.getElementById('confirmCancelBtn').addEventListener('click', function() {
+        document.getElementById('confirmBar').classList.remove('visible');
+      });
+
+      function tickTimer() {
+        if (submitted) return;
+        var elapsed = Math.floor((Date.now() - startTime) / 1000);
+        var box = document.getElementById('timerBox');
+        if (durationLimit > 0) {
+          var rem = Math.max(0, durationLimit - elapsed);
+          box.textContent = fmtTime(rem);
+          box.classList.toggle('urgent', rem <= 60);
+          if (rem <= 0) gradeAndSubmit(true);
+        } else {
+          box.textContent = fmtTime(elapsed);
+        }
+      }
+
+      renderExam();
+      tickTimer();
+      timerHandle = setInterval(tickTimer, 1000);
+    })();
+  </script>
+</body>
+</html>
