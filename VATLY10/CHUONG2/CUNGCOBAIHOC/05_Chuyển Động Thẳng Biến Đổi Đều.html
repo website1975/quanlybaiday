@@ -1,0 +1,1154 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chuyển Động Thẳng Biến Đổi Đều</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true
+      },
+      options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre'] }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --border: #e2e8f0;
+      --text: #0f172a;
+      --muted: #64748b;
+      --accent: #1d4ed8;
+      --accent-hover: #1e40af;
+      --accent-soft: #eff6ff;
+      --ok: #047857;
+      --ok-bg: #ecfdf5;
+      --ok-border: #6ee7b7;
+      --bad: #dc2626;
+      --bad-bg: #fef2f2;
+      --bad-border: #fca5a5;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.55;
+    }
+    .mono { font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace; font-variant-numeric: tabular-nums; }
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+    }
+    .topbar-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .exam-title { font-size: 16px; font-weight: 700; margin: 0; color: var(--text); }
+    .exam-meta { font-size: 12px; color: var(--muted); margin-top: 2px; }
+    .topbar-actions { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+    .timer-box {
+      padding: 6px 12px;
+      border-radius: 8px;
+      background: #f1f5f9;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .timer-box.urgent {
+      background: var(--bad-bg);
+      color: var(--bad);
+      border: 1px solid var(--bad-border);
+    }
+    .btn {
+      border: 1px solid transparent;
+      border-radius: 8px;
+      padding: 8px 16px;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background-color 0.15s ease, border-color 0.15s ease;
+    }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-primary:hover { background: var(--accent-hover); }
+    .btn-secondary { background: #fff; border-color: #cbd5e1; color: #334155; }
+    .btn-secondary:hover { background: #f8fafc; }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 280px;
+      gap: 20px;
+      align-items: start;
+    }
+    @media (max-width: 960px) {
+      .container { grid-template-columns: 1fr; }
+    }
+    .main-col { display: flex; flex-direction: column; gap: 18px; }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+    }
+    .result-card {
+      background: var(--ok-bg);
+      border: 1px solid var(--ok-border);
+      border-radius: 12px;
+      padding: 20px;
+      display: none;
+    }
+    .result-card.visible { display: block; }
+    .result-score { font-size: 26px; font-weight: 700; color: var(--ok); margin: 4px 0; }
+    .result-sub { font-size: 13px; color: #065f46; }
+    .confirm-bar {
+      display: none;
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      border-radius: 10px;
+      padding: 14px 16px;
+      margin-bottom: 4px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      font-size: 13px;
+      color: #92400e;
+    }
+    .confirm-bar.visible { display: flex; }
+    .context-group {
+      background: var(--surface);
+      border: 1px solid #cbd5e1;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .context-header {
+      background: #f1f5f9;
+      border-bottom: 1px solid var(--border);
+      padding: 16px 20px;
+    }
+    .context-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 6px;
+    }
+    .context-body { font-size: 14px; color: #1e293b; }
+    .context-questions {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      background: #f8fafc;
+    }
+    .q-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 18px;
+      scroll-margin-top: 84px;
+    }
+    .q-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding-bottom: 10px;
+      margin-bottom: 12px;
+      border-bottom: 1px solid #f1f5f9;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .q-num { font-size: 14px; font-weight: 700; color: var(--text); }
+    .q-status { font-weight: 600; }
+    .q-status.ok { color: var(--ok); }
+    .q-status.bad { color: var(--bad); }
+    .q-text { font-size: 15px; font-weight: 500; color: var(--text); margin-bottom: 14px; }
+    .q-figure {
+      margin: 12px 0;
+      text-align: center;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px;
+    }
+    .q-figure img { max-width: 100%; max-height: 360px; height: auto; border-radius: 4px; }
+    .options-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+    @media (max-width: 640px) {
+      .options-grid { grid-template-columns: 1fr; }
+    }
+    .opt-btn {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      text-align: left;
+      padding: 11px 13px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #fff;
+      font-family: inherit;
+      font-size: 14px;
+      color: #1e293b;
+      cursor: pointer;
+      transition: border-color 0.15s ease, background-color 0.15s ease;
+    }
+    .opt-btn:hover:not(:disabled) { border-color: #94a3b8; background: #f8fafc; }
+    .opt-btn.selected { border-color: var(--accent); background: var(--accent-soft); color: #1e3a8a; font-weight: 500; }
+    .opt-btn.correct { border-color: var(--ok-border); background: var(--ok-bg); color: #064e3b; font-weight: 600; }
+    .opt-btn.wrong { border-color: var(--bad-border); background: var(--bad-bg); color: #7f1d1d; }
+    .opt-letter {
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      border: 1px solid #cbd5e1;
+      background: #fff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .opt-btn.selected .opt-letter { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .tf-list { display: flex; flex-direction: column; gap: 10px; }
+    .tf-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #fff;
+    }
+    .tf-row.ok { border-color: var(--ok-border); background: var(--ok-bg); }
+    .tf-row.bad { border-color: var(--bad-border); background: var(--bad-bg); }
+    .tf-text { font-size: 14px; flex: 1; }
+    .tf-actions { display: flex; gap: 6px; flex-shrink: 0; }
+    .tf-choice {
+      padding: 6px 12px;
+      border-radius: 6px;
+      border: 1px solid #cbd5e1;
+      background: #fff;
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .tf-choice.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .tf-choice.right-ans { border-color: var(--ok); color: var(--ok); }
+    .short-box { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+    .short-input {
+      width: 240px;
+      max-width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px;
+    }
+    .short-input:focus { outline: 2px solid var(--accent); border-color: var(--accent); }
+    .short-feedback { font-size: 13px; font-weight: 600; }
+    .solution-box {
+      display: none;
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: 8px;
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      font-size: 13px;
+      color: #334155;
+    }
+    .solution-box.visible { display: block; }
+    .sidebar {
+      position: sticky;
+      top: 76px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+    }
+    .palette-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 6px;
+      margin: 12px 0 16px;
+    }
+    .p-btn {
+      height: 34px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: #f8fafc;
+      font-size: 12px;
+      font-weight: 700;
+      color: #334155;
+      cursor: pointer;
+    }
+    .p-btn.done { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .p-btn.ok { background: var(--ok); color: #fff; border-color: var(--ok); }
+    .p-btn.bad { background: var(--bad); color: #fff; border-color: var(--bad); }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div>
+        <h1 class="exam-title">Chuyển Động Thẳng Biến Đổi Đều</h1>
+        <div class="exam-meta">Vật Lý · Khối 10 · CHƯƠNG 2: ĐỘNG HỌC · 20 câu · Thang 10 điểm</div>
+      </div>
+      <div class="topbar-actions">
+        <span id="progressLabel" class="exam-meta mono">0/20</span>
+        <div id="timerBox" class="timer-box mono">00:00</div>
+        <button id="topSubmitBtn" type="button" class="btn btn-primary">Nộp bài</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <main class="main-col">
+      <div id="confirmBar" class="confirm-bar">
+        <span id="confirmMsg">Bạn vẫn còn câu chưa trả lời. Xác nhận nộp bài ngay?</span>
+        <div style="display:flex;gap:8px;">
+          <button id="confirmCancelBtn" type="button" class="btn btn-secondary">Làm tiếp</button>
+          <button id="confirmYesBtn" type="button" class="btn btn-primary">Xác nhận nộp</button>
+        </div>
+      </div>
+
+      <section id="resultScreen" class="result-card">
+        <div style="font-size:12px;font-weight:700;color:#047857;">KẾT QUẢ BÀI LÀM</div>
+        <div id="scoreText" class="result-score mono">0 / 10</div>
+        <div id="correctText" class="result-sub mono">0 / 20</div>
+        <div id="explanationsSection" class="result-sub" style="margin-top:6px;">
+          Xem lại từng câu và lời giải chi tiết ở bên dưới.
+        </div>
+      </section>
+
+      <div id="questionsRoot" class="main-col"></div>
+    </main>
+
+    <aside class="sidebar">
+      <div style="font-size:14px;font-weight:700;">Bảng câu hỏi</div>
+      <div id="sidebarCount" class="exam-meta mono">Đã làm 0/20</div>
+      <div id="paletteRoot" class="palette-grid"></div>
+      <button id="sideSubmitBtn" type="button" class="btn btn-primary" style="width:100%;">Nộp bài &amp; Chấm điểm</button>
+    </aside>
+  </div>
+
+  <script type="application/json" id="edusync-exam-json">{
+  "id": "700131db-f862-4ea7-af4f-95fad83d5383",
+  "title": "Chuyển Động Thẳng Biến Đổi Đều",
+  "subject": "Vật Lý",
+  "grade": "10",
+  "type": "test",
+  "category": "CHƯƠNG 2: ĐỘNG HỌC",
+  "durationMinutes": 20,
+  "shuffleQuestions": false,
+  "shuffleOptions": false,
+  "questionCount": 20,
+  "questions": [
+    {
+      "id": "f3d623f5-b06e-4c68-8102-970e35ffec21",
+      "index": 1,
+      "type": "mcq",
+      "level": "B",
+      "text": "Chuyển động thẳng biến đổi đều là chuyển động thẳng có đặc điểm nào sau đây?",
+      "options": [
+        "Vận tốc có độ lớn không đổi theo thời gian.",
+        "Gia tốc không đổi theo thời gian ($a = {hằng số}$).",
+        "Quãng đường đi được luôn tỉ lệ thuận với thời gian.",
+        "Gia tốc tăng đều theo thời gian."
+      ],
+      "correctAnswer": "Gia tốc không đổi theo thời gian ($a = {hằng số}$).",
+      "solution": "SGK Trang 40 định nghĩa: Chuyển động thẳng biến đổi đều là chuyển động thẳng có gia tốc không đổi theo thời gian ($a = \\frac{\\Delta v}{\\Delta t} = {hằng số}$).",
+      "points": 0.5
+    },
+    {
+      "id": "df5359e9-8fff-4e56-ba36-c7c2a06a7ddf",
+      "index": 2,
+      "type": "mcq",
+      "level": "B",
+      "text": "Công thức tính **vận tốc tức thời** $v_t$ tại thời điểm $t$ của chuyển động thẳng biến đổi đều với vận tốc ban đầu $v_0$ và gia tốc $a$ (chọn thời điểm ban đầu $t_0 = 0$) là:",
+      "options": [
+        "$v_t = v_0 + a.t$",
+        "$v_t = v_0 - a.t$",
+        "$v_t = v_0 + \\frac{1}{2}a.t^2$",
+        "$v_t = a.t^2$"
+      ],
+      "correctAnswer": "$v_t = v_0 + a.t$",
+      "solution": "Theo công thức (9.2) SGK Trang 40: Vận tốc tức thời $v_t = v_0 + a.t$.",
+      "points": 0.5
+    },
+    {
+      "id": "d7cbab96-c1ca-4a2a-b86f-3f42885b856b",
+      "index": 3,
+      "type": "mcq",
+      "level": "B",
+      "text": "Công thức tính **độ dịch chuyển** $d$ trong chuyển động thẳng biến đổi đều theo thời gian $t$ là:",
+      "options": [
+        "$d = v_0.t + a.t^2$",
+        "$d = v_0.t + \\frac{1}{2}.a.t^2$",
+        "$d = \\frac{1}{2}.v_0.t + a.t^2$",
+        "$d = v_0 + a.t$"
+      ],
+      "correctAnswer": "$d = v_0.t + \\frac{1}{2}.a.t^2$",
+      "solution": "Theo công thức (9.4) SGK Trang 42: Độ dịch chuyển $d = v_0.t + \\frac{1}{2}.a.t^2$.",
+      "points": 0.5
+    },
+    {
+      "id": "084d81f6-d527-4dce-a40b-6dec511a6684",
+      "index": 4,
+      "type": "mcq",
+      "level": "B",
+      "text": "Công thức liên hệ giữa vận tốc $v_t$, vận tốc ban đầu $v_0$, gia tốc $a$ và độ dịch chuyển $d$ **không phụ thuộc trực tiếp vào thời gian $t$** là:",
+      "options": [
+        "$v_t^2 - v_0^2 = a.d$",
+        "$v_t^2 - v_0^2 = 2.a.d$",
+        "$v_t - v_0 = 2.a.d$",
+        "$v_t^2 + v_0^2 = 2.a.d$"
+      ],
+      "correctAnswer": "$v_t^2 - v_0^2 = 2.a.d$",
+      "solution": "Theo công thức (9.5) SGK Trang 42: $v_t^2 - v_0^2 = 2.a.d$.",
+      "points": 0.5
+    },
+    {
+      "id": "d33d2a5b-d3ac-4a8a-a248-e4cbc1193809",
+      "index": 5,
+      "type": "mcq",
+      "level": "B",
+      "text": "Chuyển động thẳng **nhanh dần đều** và **chậm dần đều** có đặc điểm về dấu của gia tốc $a$ và vận tốc $v$ lần lượt là:",
+      "options": [
+        "Nhanh dần đều: $a \\cdot v > 0$; Chậm dần đều: $a \\cdot v < 0$",
+        "Nhanh dần đều: $a \\cdot v < 0$; Chậm dần đều: $a \\cdot v > 0$",
+        "Nhanh dần đều: $a > 0$; Chậm dần đều: $a < 0$ (không phụ thuộc vận tốc)",
+        "Cả hai loại chuyển động đều có $a \\cdot v > 0$"
+      ],
+      "correctAnswer": "Nhanh dần đều: $a \\cdot v > 0$; Chậm dần đều: $a \\cdot v < 0$",
+      "solution": "SGK Trang 43 ghi rõ: Chuyển động thẳng nhanh dần đều có $a \\cdot v > 0$ (gia tốc cùng chiều vận tốc); chuyển động thẳng chậm dần đều có $a \\cdot v < 0$ (gia tốc ngược chiều vận tốc).",
+      "points": 0.5
+    },
+    {
+      "id": "112d3ec6-6d92-4449-8832-2834ec5fad08",
+      "index": 6,
+      "type": "mcq",
+      "level": "B",
+      "text": "Đồ thị vận tốc – thời gian ($v - t$) của một chuyển động thẳng biến đổi đều có dạng là đường gì?",
+      "options": [
+        "Đường cong Parabol.",
+        "Đường thẳng xiên góc đối với trục thời gian.",
+        "Đường hyperbol.",
+        "Đường gấp khúc bất kì."
+      ],
+      "correctAnswer": "Đường thẳng xiên góc đối với trục thời gian.",
+      "solution": "Vì $v_t = v_0 + a.t$ là hàm bậc nhất theo thời gian $t$, nên đồ thị $v - t$ có dạng là một đường thẳng xiên góc đối với trục thời gian.",
+      "points": 0.5
+    },
+    {
+      "id": "f52cb943-f319-4b3d-9d96-512bf2c803eb",
+      "index": 7,
+      "type": "mcq",
+      "level": "B",
+      "text": "Độ lớn độ dịch chuyển $d$ trong khoảng thời gian $t$ của chuyển động thẳng biến đổi đều được xác định bằng hình học thông qua đồ thị $v - t$ là:",
+      "options": [
+        "Diện tích phần hình phẳng giới hạn bởi đồ thị $v - t$ và trục thời gian $Ot$.",
+        "Độ dài đường chéo của đồ thị.",
+        "Chu vi của hình thang tạo bởi đồ thị.",
+        "Độ dốc của đồ thị $v - t$."
+      ],
+      "correctAnswer": "Diện tích phần hình phẳng giới hạn bởi đồ thị $v - t$ và trục thời gian $Ot$.",
+      "solution": "SGK Trang 41 & 42 chứng minh: Độ lớn độ dịch chuyển $d$ trong khoảng thời gian $t$ bằng diện tích hình giới hạn bởi đồ thị $v - t$, trục thời gian $Ot$ và các đường gióng thời gian.",
+      "points": 0.5
+    },
+    {
+      "id": "e274834f-8a77-4829-9e1a-d3dfb01d5620",
+      "index": 8,
+      "type": "mcq",
+      "level": "B",
+      "text": "Nhận xét nào sau đây về gia tốc trong chuyển động thẳng biến đổi đều là **SAI**?",
+      "options": [
+        "Trong chuyển động thẳng biến đổi đều, gia tốc là đại lượng không đổi.",
+        "Hệ số góc (độ dốc) của đồ thị vận tốc – thời gian cho biết giá trị của gia tốc.",
+        "Trong chuyển động chậm dần đều, gia tốc luôn mang giá trị âm.",
+        "Trong chuyển động nhanh dần đều, gia tốc $\\vec{a}$ luôn cùng hướng với vận tốc $\\vec{v}$."
+      ],
+      "correctAnswer": "Trong chuyển động chậm dần đều, gia tốc luôn mang giá trị âm.",
+      "solution": "Phát biểútrong chuyển động chậm dần đều, gia tốc luôn mang giá trị âm' là SAI. Chuyển động chậm dần đều chỉ đòi hỏi $a$ và $v$ ngược dấu ($a \\cdot v < 0$). Nếu chọn chiều dương ngược chiều chuyển động ($v < 0$) thì gia tốc $a > 0$.",
+      "points": 0.5
+    },
+    {
+      "id": "208746f5-927c-4ca8-bc50-4a782154e83b",
+      "index": 9,
+      "type": "mcq",
+      "level": "H",
+      "text": "Một xe máy đang đứng yên ($v_0 = 0$), bắt đầu chuyển động thẳng nhanh dần đều với gia tốc $a = 0,5\\,m/s^2$. Vận tốc của xe máy sau $10\\,giây$ là bao nhiêu?",
+      "options": [
+        "$5,0$ m/s",
+        "$10,0$ m/s",
+        "$2,5$ m/s",
+        "$20,0$ m/s"
+      ],
+      "correctAnswer": "$5,0$ m/s",
+      "solution": "Áp dụng công thức vận tốc tức thời:\n$$v_t = v_0 + a.t = 0 + 0,5 \\times 10 = 5,0$ m/s$.",
+      "points": 0.5
+    },
+    {
+      "id": "35fc38b8-3bc0-4861-873a-96f01ec68a78",
+      "index": 10,
+      "type": "mcq",
+      "level": "H",
+      "text": "Một ô tô đang di chuyển thẳng với vận tốc $15$ m/s thì người tài xế hãm phanh làm xe chuyển động chậm dần đều với gia tốc có độ lớn $1,5\\,m/s^2$. Thời gian kể từ lúc hãm phanh cho đến khi xe dừng lại hoàn toàn là:",
+      "options": [
+        "$10\\,giây$",
+        "$15\\,giây$",
+        "$22,5\\,giây$",
+        "$5\\,giây$"
+      ],
+      "correctAnswer": "$10\\,giây$",
+      "solution": "Xe chậm dần đều nên gia tốc $a = -1,5\\,m/s^2$. Khi dừng lại hẳn thì $v_t = 0$.\n$$t = \\frac{v_t - v_0}{a} = \\frac{0 - 15}{-1,5} = 10$ s$.",
+      "points": 0.5
+    },
+    {
+      "id": "157bfc3d-ba9b-4d15-92e9-c6f2a97d65de",
+      "index": 11,
+      "type": "mcq",
+      "level": "H",
+      "text": "Dựa vào đồ thị $v - t$ ở Hình 9.4: Gia tốc của vật trong $4\\,giây$ đầu tiên ($0 \\to 4$ s) bằng bao nhiêu?",
+      "options": [
+        "$2\\,m/s^2$",
+        "$4\\,m/s^2$",
+        "$8\\,m/s^2$",
+        "$1\\,m/s^2$"
+      ],
+      "correctAnswer": "$2\\,m/s^2$",
+      "solution": "Trong 4 giây đầu:\n- Tại $t = 0\\,s \\implies v_0 = 0$.\n- Tại $t = 4\\,s \\implies v_1 = 8$ m/s.\n- Gia tốc $a = \\frac{\\Delta v}{\\Delta t} = \\frac{8 - 0}{4 - 0} = 2\\,m/s^2$.",
+      "points": 0.5
+    },
+    {
+      "id": "b67f3b68-44f3-49bd-ad4b-3975423920b2",
+      "index": 12,
+      "type": "mcq",
+      "level": "H",
+      "text": "Quan sát đồ thị $v - t$ ở Hình 9.4: Gia tốc của vật trong $3\\,giây$ cuối cùng (từ $t = 6$ s đến $t = 9$ s) bằng bao nhiêu?",
+      "options": [
+        "$-\\frac{8}{3}\\,m/s^2 \\approx -2,67\\,m/s^2$",
+        "$-2\\,m/s^2$",
+        "$2,67\\,m/s^2$",
+        "$-8\\,m/s^2$"
+      ],
+      "correctAnswer": "$-\\frac{8}{3}\\,m/s^2 \\approx -2,67\\,m/s^2$",
+      "solution": "Từ $t_1 = 6$ s ($v_1 = 8$ m/s) đến $t_2 = 9$ s ($v_2 = 0$ m/s):\n$$a = \\frac{v_2 - v_1}{t_2 - t_1} = \\frac{0 - 8}{9 - 6} = -\\frac{8}{3}\\,m/s^2 \\approx -2,67\\,m/s^2$$.",
+      "points": 0.5
+    },
+    {
+      "id": "812b8749-0f28-4114-8acb-2e9aa52f8434",
+      "index": 13,
+      "type": "mcq",
+      "level": "H",
+      "text": "Dựa vào đồ thị $v - t$ ở Hình 9.2 (mô tả một bạn đang đi trong siêu thị): Trong khoảng thời gian nào bạn này **chuyển động thẳng đều**?",
+      "options": [
+        "Từ $t = 4$ s đến $t = 6$ s",
+        "Từ $0$ s đến $t = 4$ s",
+        "Từ $t = 7$ s đến $t = 9$ s",
+        "Từ $t = 6$ s đến $t = 7$ s"
+      ],
+      "correctAnswer": "Từ $t = 4$ s đến $t = 6$ s",
+      "solution": "Trong khoảng thời gian từ $t = 4$ s đến $t = 6$ s, đồ thị $v - t$ là một đoạn nằm ngang với vận tốc $v = 2$ m/s không đổi $\\implies$ bạn này chuyển động thẳng đều.",
+      "points": 0.5
+    },
+    {
+      "id": "6d02af77-d1cb-401a-b03c-0c44e43c5ab7",
+      "index": 14,
+      "type": "mcq",
+      "level": "H",
+      "text": "Quan sát đồ thị $v - t$ ở Hình 9.2: Trong khoảng thời gian từ $t = 7$ s đến $t = 9$ s, trạng thái chuyển động của bạn đó như thế nào?",
+      "options": [
+        "Đứng nghỉ (đứng yên không di chuyển).",
+        "Chuyển động thẳng đều với vận tốc $2$ m/s.",
+        "Chuyển động nhanh dần đều.",
+        "Chuyển động chậm dần đều."
+      ],
+      "correctAnswer": "Đứng nghỉ (đứng yên không di chuyển).",
+      "solution": "Từ $t = 7$ s đến $t = 9$ s, vận tốc $v = 0$ m/s (đường biểu diễn trùng với trục hoành) $\\implies$ bạn này đang đứng nghỉ.",
+      "points": 0.5
+    },
+    {
+      "id": "1b50ad5e-8b08-4d67-ba00-ebc5512b9b75",
+      "index": 15,
+      "type": "mcq",
+      "level": "H",
+      "text": "Một ô tô tăng tốc đều từ $10$ m/s lên $20$ m/s trên một đoạn đường thẳng dài $150$ m. Gia tốc $a$ của ô tô trên đoạn đường này bằng bao nhiêu?",
+      "options": [
+        "$1,0\\,m/s^2$",
+        "$2,0\\,m/s^2$",
+        "$0,5\\,m/s^2$",
+        "$1,5\\,m/s^2$"
+      ],
+      "correctAnswer": "$1,0\\,m/s^2$",
+      "solution": "Áp dụng công thức độc lập với thời gian $v_t^2 - v_0^2 = 2.a.d$:\n$$20^2 - 10^2 = 2 \\times a \\times 150 \\iff 400 - 100 = 300a \\iff 300 = 300a \\implies a = 1,0\\,m/s^2$$.",
+      "points": 0.5
+    },
+    {
+      "id": "4eb0b4dd-e79a-47bd-b2b2-7855839f989a",
+      "index": 16,
+      "type": "mcq",
+      "level": "VD",
+      "text": "Một vận động viên đua xe đạp đường dài vượt qua vạch đích với tốc độ $10$ m/s. Sau đó vận động viên này đi chậm dần đều thêm $20$ m nữa thì dừng lại hẳn (coi chuyển động là thẳng). Gia tốc $a$ và thời gian $t$ cần để dừng lại lần lượt là:",
+      "options": [
+        "$a = -2,5\\,m/s^2$ và $t = 4$ s",
+        "$a = -1,25\\,m/s^2$ và $t = 8$ s",
+        "$a = -2,5\\,m/s^2$ và $t = 2$ s",
+        "$a = -5,0\\,m/s^2$ và $t = 4$ s"
+      ],
+      "correctAnswer": "$a = -2,5\\,m/s^2$ và $t = 4$ s",
+      "solution": "1. Khi dừng hẳn $v_t = 0$. Áp dụng $v_t^2 - v_0^2 = 2.a.d$:\n$$0^2 - 10^2 = 2 \\cdot a \\cdot 20 \\iff -100 = 40a \\implies a = -2,5\\,m/s^2$$.\n2. Thời gian dừng lại: $t = \\frac{v_t - v_0}{a} = \\frac{0 - 10}{-2,5} = 4$ s.",
+      "points": 0.5
+    },
+    {
+      "id": "b50f6ef7-5022-421f-99c2-d9e8f389e08d",
+      "index": 17,
+      "type": "mcq",
+      "level": "VD",
+      "text": "Dựa vào đồ thị $v - t$ ở Hình 9.4: Tính tổng độ dịch chuyển $d$ của vật trong toàn bộ $9\\,giây$ chuyển động.",
+      "options": [
+        "$44$ m",
+        "$36$ m",
+        "$72$ m",
+        "$52$ m"
+      ],
+      "correctAnswer": "$44$ m",
+      "solution": "Độ dịch chuyển trong 9s bằng diện tích hình thang giới hạn bởi đồ thị $v - t$:\n- Đáy lớn $a = 9$ s (từ $0 \\to 9$ s).\n- Đáy nhỏ $b = 6 - 4 = 2$ s (từ $4 \\to 6$ s).\n- Chiều cao $h = 8$ m/s.\n- Diện tích (độ dịch chuyển) $d = \\frac{(9 + 2) \\times 8}{2} = \\frac{11 \\times 8}{2} = 44$ m.",
+      "points": 0.5
+    },
+    {
+      "id": "e8a77578-ca21-4374-96cf-04e3964d82ad",
+      "index": 18,
+      "type": "mcq",
+      "level": "VD",
+      "text": "Một chú chó chạy trong ngõ thẳng có đồ thị $v - t$ như Hình 9.5: Tính quãng đường $s$ mà chú chó đi được và độ dịch chuyển $d$ sau $10\\,giây$ chuyển động.",
+      "options": [
+        "Quãng đường $s = 12,5$ m; Độ dịch chuyển $d = 7,5$ m",
+        "Quãng đường $s = 10,0$ m; Độ dịch chuyển $d = 10,0$ m",
+        "Quãng đường $s = 15,0$ m; Độ dịch chuyển $d = 5,0$ m",
+        "Quãng đường $s = 12,5$ m; Độ dịch chuyển $d = 12,5$ m"
+      ],
+      "correctAnswer": "Quãng đường $s = 12,5$ m; Độ dịch chuyển $d = 7,5$ m",
+      "solution": "1. Giai đoạn 1 ($0 \\to 7$ s): Đồ thị hình thang phía trên có đáy lớn 7s, đáy nhỏ $5-2=3$ s, chiều cao $2$ m/s.\n - $d_1 = s_1 = \\frac{(7 + 3) \\times 2}{2} = 10$ m.\n2. Giai đoạn 2 ($7 \\to 10$ s): Chú chó đổi chiều ($v = -1$ m/s). Đồ thị hình thang phía dưới có đáy lớn $10-7=3$ s, đáy nhỏ $10-8=2$ s, chiều cao $|v| = 1$ m/s.\n - $s_2 = \\frac{(3 + 2) \\times 1}{2} = 2,5\\,m \\implies d_2 = -2,5$ m.\n\n- Tổng quãng đường: $s = s_1 + s_2 = 10 + 2,5 = 12,5$ m.\n- Độ dịch chuyển: $d = d_1 + d_2 = 10 - 2,5 = 7,5$ m.",
+      "points": 0.5
+    },
+    {
+      "id": "d1e1b538-2c45-499e-a10a-1bb6284754d0",
+      "index": 19,
+      "type": "mcq",
+      "level": "VD",
+      "text": "Một xe lửa đang chuyển động thẳng đều với vận tốc $36$ km/h thì lái tàu hãm phanh cho xe chuyển động chậm dần đều để vào ga. Xe dừng lại hẳn sau $2\\,phút$ kể từ khi bắt đầu hãm phanh. Tính quãng đường xe lửa di chuyển được trong $10\\,giây$ cuối cùng trước khi dừng hẳn.",
+      "options": [
+        "$4,17$ m (hoặc $\\frac{25}{6}$ m)",
+        "$8,33$ m",
+        "$2,08$ m",
+        "$10,0$ m"
+      ],
+      "correctAnswer": "$4,17$ m (hoặc $\\frac{25}{6}$ m)",
+      "solution": "1. Đổi $v_0 = 36\\,km/h = 10$ m/s; $t = 2\\,phút = 120$ s. Khi dừng hẳn $v = 0$.\n- Gia tốc hãm phanh: $a = \\frac{0 - 10}{120} = -\\frac{1}{12}\\,m/s^2$.\n2. $10$ s cuối cùng ứng với khoảng thời gian từ $t_1 = 110$ s đến $t_2 = 120$ s.\n- Vận tốc tại thời điểm $t_1 = 110$ s:\n $$v_{110} = v_0 + a \\cdot t_1 = 10 + \\left(-\\frac{1}{12}\\right) \\times 110 = 10 - \\frac{110}{12} = \\frac{10}{12} = \\frac{5}{6}$ m/s$.\n3. Quãng đường đi được trong $10$ s cuối:\n $$s = \\frac{v_{110} + 0}{2} \\times 10 = \\frac{\\frac{5}{6}}{2} \\times 10 = \\frac{25}{6} \\approx 4,17$ m$.",
+      "points": 0.5
+    },
+    {
+      "id": "dd75c391-0ae2-4e4e-93bc-50d55fa4c0c9",
+      "index": 20,
+      "type": "mcq",
+      "level": "VD",
+      "text": "Hai xe ô tô A và B cùng chuyển động thẳng theo cùng một chiều trên một đường thẳng. Tại thời điểm $t = 0$, xe A đang chạy thẳng đều với vận tốc không đổi $v_A = 10$ m/s. Xe B ở phía sau xe A một khoảng $d_0 = 200$ m bắt đầu tăng tốc từ trạng thái nghỉ ($v_{0B} = 0$) với gia tốc không đổi $a_B = 2\\,m/s^2$. Sau thời gian bao lâu kể từ $t = 0$ thì xe B đuổi kịp xe A và vận tốc của xe B khi đó là bao nhiêu?",
+      "options": [
+        "$t = 20$ s và vận tốc xe B là $v_B = 40$ m/s",
+        "$t = 10$ s và vận tốc xe B là $v_B = 20$ m/s",
+        "$t = 25$ s và vận tốc xe B là $v_B = 50$ m/s",
+        "$t = 15$ s và vận tốc xe B là $v_B = 30$ m/s"
+      ],
+      "correctAnswer": "$t = 20$ s và vận tốc xe B là $v_B = 40$ m/s",
+      "solution": "1. Chọn gốc tọa độ tại vị trí xe B ở $t = 0$, chiều dương là chiều chuyển động.\n- Phương trình vị trí xe A: $x_A = 200 + 10t$.\n- Phương trình vị trí xe B: $x_B = \\frac{1}{2} a_B t^2 = \\frac{1}{2} (2) t^2 = t^2$.\n2. Hai xe gặp nhau (xe B đuổi kịp xe A) khi $x_A = x_B$:\n$$t^2 = 200 + 10t \\iff t^2 - 10t - 200 = 0 \\iff (t - 20)(t + 10) = 0$$\nVì $t > 0 \\implies t = 20\\,giây$.\n3. Vận tốc xe B khi đuổi kịp xe A:\n$$v_B = a_B \\cdot t = 2 \\times 20 = 40$ m/s$.",
+      "points": 0.5
+    }
+  ]
+}</script>
+  <script id="edusync-runtime-data" type="application/json">{"examId":"700131db-f862-4ea7-af4f-95fad83d5383","title":"Chuyển Động Thẳng Biến Đổi Đều","subject":"Vật Lý","grade":"10","category":"CHƯƠNG 2: ĐỘNG HỌC","durationMinutes":20,"maxScore":10,"shuffleQuestions":false,"shuffleOptions":false,"blocks":[{"blockId":"single_f3d623f5-b06e-4c68-8102-970e35ffec21_0","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"f3d623f5-b06e-4c68-8102-970e35ffec21","type":"mcq","level":"B","chapterName":"","points":0.5,"textHtml":"Chuyển động thẳng biến đổi đều là chuyển động thẳng có đặc điểm nào sau đây?","rawText":"Chuyển động thẳng biến đổi đều là chuyển động thẳng có đặc điểm nào sau đây?","ownImageUrl":"","optionsHtml":["Vận tốc có độ lớn không đổi theo thời gian.","Gia tốc không đổi theo thời gian ($a = {hằng số}$).","Quãng đường đi được luôn tỉ lệ thuận với thời gian.","Gia tốc tăng đều theo thời gian."],"optionsRaw":["Vận tốc có độ lớn không đổi theo thời gian.","Gia tốc không đổi theo thời gian ($a = {hằng số}$).","Quãng đường đi được luôn tỉ lệ thuận với thời gian.","Gia tốc tăng đều theo thời gian."],"correctIndex":1,"correctAnswer":"Gia tốc không đổi theo thời gian ($a = {hằng số}$).","subQuestions":[],"solutionHtml":"SGK Trang 40 định nghĩa: Chuyển động thẳng biến đổi đều là chuyển động thẳng có gia tốc không đổi theo thời gian ($a = \\frac{\\Delta v}{\\Delta t} = {hằng số}$).","rawSolution":"SGK Trang 40 định nghĩa: Chuyển động thẳng biến đổi đều là chuyển động thẳng có gia tốc không đổi theo thời gian ($a = \\frac{\\Delta v}{\\Delta t} = {hằng số}$)."}]},{"blockId":"single_df5359e9-8fff-4e56-ba36-c7c2a06a7ddf_1","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"df5359e9-8fff-4e56-ba36-c7c2a06a7ddf","type":"mcq","level":"B","chapterName":"","points":0.5,"textHtml":"Công thức tính **vận tốc tức thời** $v_t$ tại thời điểm $t$ của chuyển động thẳng biến đổi đều với vận tốc ban đầu $v_0$ và gia tốc $a$ (chọn thời điểm ban đầu $t_0 = 0$) là:","rawText":"Công thức tính **vận tốc tức thời** $v_t$ tại thời điểm $t$ của chuyển động thẳng biến đổi đều với vận tốc ban đầu $v_0$ và gia tốc $a$ (chọn thời điểm ban đầu $t_0 = 0$) là:","ownImageUrl":"","optionsHtml":["$v_t = v_0 + a.t$","$v_t = v_0 - a.t$","$v_t = v_0 + \\frac{1}{2}a.t^2$","$v_t = a.t^2$"],"optionsRaw":["$v_t = v_0 + a.t$","$v_t = v_0 - a.t$","$v_t = v_0 + \\frac{1}{2}a.t^2$","$v_t = a.t^2$"],"correctIndex":0,"correctAnswer":"$v_t = v_0 + a.t$","subQuestions":[],"solutionHtml":"Theo công thức (9.2) SGK Trang 40: Vận tốc tức thời $v_t = v_0 + a.t$.","rawSolution":"Theo công thức (9.2) SGK Trang 40: Vận tốc tức thời $v_t = v_0 + a.t$."}]},{"blockId":"single_d7cbab96-c1ca-4a2a-b86f-3f42885b856b_2","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"d7cbab96-c1ca-4a2a-b86f-3f42885b856b","type":"mcq","level":"B","chapterName":"","points":0.5,"textHtml":"Công thức tính **độ dịch chuyển** $d$ trong chuyển động thẳng biến đổi đều theo thời gian $t$ là:","rawText":"Công thức tính **độ dịch chuyển** $d$ trong chuyển động thẳng biến đổi đều theo thời gian $t$ là:","ownImageUrl":"","optionsHtml":["$d = v_0.t + a.t^2$","$d = v_0.t + \\frac{1}{2}.a.t^2$","$d = \\frac{1}{2}.v_0.t + a.t^2$","$d = v_0 + a.t$"],"optionsRaw":["$d = v_0.t + a.t^2$","$d = v_0.t + \\frac{1}{2}.a.t^2$","$d = \\frac{1}{2}.v_0.t + a.t^2$","$d = v_0 + a.t$"],"correctIndex":1,"correctAnswer":"$d = v_0.t + \\frac{1}{2}.a.t^2$","subQuestions":[],"solutionHtml":"Theo công thức (9.4) SGK Trang 42: Độ dịch chuyển $d = v_0.t + \\frac{1}{2}.a.t^2$.","rawSolution":"Theo công thức (9.4) SGK Trang 42: Độ dịch chuyển $d = v_0.t + \\frac{1}{2}.a.t^2$."}]},{"blockId":"single_084d81f6-d527-4dce-a40b-6dec511a6684_3","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"084d81f6-d527-4dce-a40b-6dec511a6684","type":"mcq","level":"B","chapterName":"","points":0.5,"textHtml":"Công thức liên hệ giữa vận tốc $v_t$, vận tốc ban đầu $v_0$, gia tốc $a$ và độ dịch chuyển $d$ **không phụ thuộc trực tiếp vào thời gian $t$** là:","rawText":"Công thức liên hệ giữa vận tốc $v_t$, vận tốc ban đầu $v_0$, gia tốc $a$ và độ dịch chuyển $d$ **không phụ thuộc trực tiếp vào thời gian $t$** là:","ownImageUrl":"","optionsHtml":["$v_t^2 - v_0^2 = a.d$","$v_t^2 - v_0^2 = 2.a.d$","$v_t - v_0 = 2.a.d$","$v_t^2 + v_0^2 = 2.a.d$"],"optionsRaw":["$v_t^2 - v_0^2 = a.d$","$v_t^2 - v_0^2 = 2.a.d$","$v_t - v_0 = 2.a.d$","$v_t^2 + v_0^2 = 2.a.d$"],"correctIndex":1,"correctAnswer":"$v_t^2 - v_0^2 = 2.a.d$","subQuestions":[],"solutionHtml":"Theo công thức (9.5) SGK Trang 42: $v_t^2 - v_0^2 = 2.a.d$.","rawSolution":"Theo công thức (9.5) SGK Trang 42: $v_t^2 - v_0^2 = 2.a.d$."}]},{"blockId":"single_d33d2a5b-d3ac-4a8a-a248-e4cbc1193809_4","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"d33d2a5b-d3ac-4a8a-a248-e4cbc1193809","type":"mcq","level":"B","chapterName":"","points":0.5,"textHtml":"Chuyển động thẳng **nhanh dần đều** và **chậm dần đều** có đặc điểm về dấu của gia tốc $a$ và vận tốc $v$ lần lượt là:","rawText":"Chuyển động thẳng **nhanh dần đều** và **chậm dần đều** có đặc điểm về dấu của gia tốc $a$ và vận tốc $v$ lần lượt là:","ownImageUrl":"","optionsHtml":["Nhanh dần đều: $a \\cdot v &gt; 0$; Chậm dần đều: $a \\cdot v &lt; 0$","Nhanh dần đều: $a \\cdot v &lt; 0$; Chậm dần đều: $a \\cdot v &gt; 0$","Nhanh dần đều: $a &gt; 0$; Chậm dần đều: $a &lt; 0$ (không phụ thuộc vận tốc)","Cả hai loại chuyển động đều có $a \\cdot v &gt; 0$"],"optionsRaw":["Nhanh dần đều: $a \\cdot v > 0$; Chậm dần đều: $a \\cdot v < 0$","Nhanh dần đều: $a \\cdot v < 0$; Chậm dần đều: $a \\cdot v > 0$","Nhanh dần đều: $a > 0$; Chậm dần đều: $a < 0$ (không phụ thuộc vận tốc)","Cả hai loại chuyển động đều có $a \\cdot v > 0$"],"correctIndex":0,"correctAnswer":"Nhanh dần đều: $a \\cdot v > 0$; Chậm dần đều: $a \\cdot v < 0$","subQuestions":[],"solutionHtml":"SGK Trang 43 ghi rõ: Chuyển động thẳng nhanh dần đều có $a \\cdot v &gt; 0$ (gia tốc cùng chiều vận tốc); chuyển động thẳng chậm dần đều có $a \\cdot v &lt; 0$ (gia tốc ngược chiều vận tốc).","rawSolution":"SGK Trang 43 ghi rõ: Chuyển động thẳng nhanh dần đều có $a \\cdot v > 0$ (gia tốc cùng chiều vận tốc); chuyển động thẳng chậm dần đều có $a \\cdot v < 0$ (gia tốc ngược chiều vận tốc)."}]},{"blockId":"single_112d3ec6-6d92-4449-8832-2834ec5fad08_5","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"112d3ec6-6d92-4449-8832-2834ec5fad08","type":"mcq","level":"B","chapterName":"","points":0.5,"textHtml":"Đồ thị vận tốc – thời gian ($v - t$) của một chuyển động thẳng biến đổi đều có dạng là đường gì?","rawText":"Đồ thị vận tốc – thời gian ($v - t$) của một chuyển động thẳng biến đổi đều có dạng là đường gì?","ownImageUrl":"","optionsHtml":["Đường cong Parabol.","Đường thẳng xiên góc đối với trục thời gian.","Đường hyperbol.","Đường gấp khúc bất kì."],"optionsRaw":["Đường cong Parabol.","Đường thẳng xiên góc đối với trục thời gian.","Đường hyperbol.","Đường gấp khúc bất kì."],"correctIndex":1,"correctAnswer":"Đường thẳng xiên góc đối với trục thời gian.","subQuestions":[],"solutionHtml":"Vì $v_t = v_0 + a.t$ là hàm bậc nhất theo thời gian $t$, nên đồ thị $v - t$ có dạng là một đường thẳng xiên góc đối với trục thời gian.","rawSolution":"Vì $v_t = v_0 + a.t$ là hàm bậc nhất theo thời gian $t$, nên đồ thị $v - t$ có dạng là một đường thẳng xiên góc đối với trục thời gian."}]},{"blockId":"single_f52cb943-f319-4b3d-9d96-512bf2c803eb_6","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"f52cb943-f319-4b3d-9d96-512bf2c803eb","type":"mcq","level":"B","chapterName":"","points":0.5,"textHtml":"Độ lớn độ dịch chuyển $d$ trong khoảng thời gian $t$ của chuyển động thẳng biến đổi đều được xác định bằng hình học thông qua đồ thị $v - t$ là:","rawText":"Độ lớn độ dịch chuyển $d$ trong khoảng thời gian $t$ của chuyển động thẳng biến đổi đều được xác định bằng hình học thông qua đồ thị $v - t$ là:","ownImageUrl":"","optionsHtml":["Diện tích phần hình phẳng giới hạn bởi đồ thị $v - t$ và trục thời gian $Ot$.","Độ dài đường chéo của đồ thị.","Chu vi của hình thang tạo bởi đồ thị.","Độ dốc của đồ thị $v - t$."],"optionsRaw":["Diện tích phần hình phẳng giới hạn bởi đồ thị $v - t$ và trục thời gian $Ot$.","Độ dài đường chéo của đồ thị.","Chu vi của hình thang tạo bởi đồ thị.","Độ dốc của đồ thị $v - t$."],"correctIndex":0,"correctAnswer":"Diện tích phần hình phẳng giới hạn bởi đồ thị $v - t$ và trục thời gian $Ot$.","subQuestions":[],"solutionHtml":"SGK Trang 41 &amp; 42 chứng minh: Độ lớn độ dịch chuyển $d$ trong khoảng thời gian $t$ bằng diện tích hình giới hạn bởi đồ thị $v - t$, trục thời gian $Ot$ và các đường gióng thời gian.","rawSolution":"SGK Trang 41 & 42 chứng minh: Độ lớn độ dịch chuyển $d$ trong khoảng thời gian $t$ bằng diện tích hình giới hạn bởi đồ thị $v - t$, trục thời gian $Ot$ và các đường gióng thời gian."}]},{"blockId":"single_e274834f-8a77-4829-9e1a-d3dfb01d5620_7","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"e274834f-8a77-4829-9e1a-d3dfb01d5620","type":"mcq","level":"B","chapterName":"","points":0.5,"textHtml":"Nhận xét nào sau đây về gia tốc trong chuyển động thẳng biến đổi đều là **SAI**?","rawText":"Nhận xét nào sau đây về gia tốc trong chuyển động thẳng biến đổi đều là **SAI**?","ownImageUrl":"","optionsHtml":["Trong chuyển động thẳng biến đổi đều, gia tốc là đại lượng không đổi.","Hệ số góc (độ dốc) của đồ thị vận tốc – thời gian cho biết giá trị của gia tốc.","Trong chuyển động chậm dần đều, gia tốc luôn mang giá trị âm.","Trong chuyển động nhanh dần đều, gia tốc $\\vec{a}$ luôn cùng hướng với vận tốc $\\vec{v}$."],"optionsRaw":["Trong chuyển động thẳng biến đổi đều, gia tốc là đại lượng không đổi.","Hệ số góc (độ dốc) của đồ thị vận tốc – thời gian cho biết giá trị của gia tốc.","Trong chuyển động chậm dần đều, gia tốc luôn mang giá trị âm.","Trong chuyển động nhanh dần đều, gia tốc $\\vec{a}$ luôn cùng hướng với vận tốc $\\vec{v}$."],"correctIndex":2,"correctAnswer":"Trong chuyển động chậm dần đều, gia tốc luôn mang giá trị âm.","subQuestions":[],"solutionHtml":"Phát biểútrong chuyển động chậm dần đều, gia tốc luôn mang giá trị âm&#39; là SAI. Chuyển động chậm dần đều chỉ đòi hỏi $a$ và $v$ ngược dấu ($a \\cdot v &lt; 0$). Nếu chọn chiều dương ngược chiều chuyển động ($v &lt; 0$) thì gia tốc $a &gt; 0$.","rawSolution":"Phát biểútrong chuyển động chậm dần đều, gia tốc luôn mang giá trị âm' là SAI. Chuyển động chậm dần đều chỉ đòi hỏi $a$ và $v$ ngược dấu ($a \\cdot v < 0$). Nếu chọn chiều dương ngược chiều chuyển động ($v < 0$) thì gia tốc $a > 0$."}]},{"blockId":"single_208746f5-927c-4ca8-bc50-4a782154e83b_8","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"208746f5-927c-4ca8-bc50-4a782154e83b","type":"mcq","level":"H","chapterName":"","points":0.5,"textHtml":"Một xe máy đang đứng yên ($v_0 = 0$), bắt đầu chuyển động thẳng nhanh dần đều với gia tốc $a = 0,5\\,m/s^2$. Vận tốc của xe máy sau $10\\,giây$ là bao nhiêu?","rawText":"Một xe máy đang đứng yên ($v_0 = 0$), bắt đầu chuyển động thẳng nhanh dần đều với gia tốc $a = 0,5\\,m/s^2$. Vận tốc của xe máy sau $10\\,giây$ là bao nhiêu?","ownImageUrl":"","optionsHtml":["$5,0$ m/s","$10,0$ m/s","$2,5$ m/s","$20,0$ m/s"],"optionsRaw":["$5,0$ m/s","$10,0$ m/s","$2,5$ m/s","$20,0$ m/s"],"correctIndex":0,"correctAnswer":"$5,0$ m/s","subQuestions":[],"solutionHtml":"Áp dụng công thức vận tốc tức thời:<br>$$v_t = v_0 + a.t = 0 + 0,5 \\times 10 = 5,0$ m/s$.","rawSolution":"Áp dụng công thức vận tốc tức thời:\n$$v_t = v_0 + a.t = 0 + 0,5 \\times 10 = 5,0$ m/s$."}]},{"blockId":"single_35fc38b8-3bc0-4861-873a-96f01ec68a78_9","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"35fc38b8-3bc0-4861-873a-96f01ec68a78","type":"mcq","level":"H","chapterName":"","points":0.5,"textHtml":"Một ô tô đang di chuyển thẳng với vận tốc $15$ m/s thì người tài xế hãm phanh làm xe chuyển động chậm dần đều với gia tốc có độ lớn $1,5\\,m/s^2$. Thời gian kể từ lúc hãm phanh cho đến khi xe dừng lại hoàn toàn là:","rawText":"Một ô tô đang di chuyển thẳng với vận tốc $15$ m/s thì người tài xế hãm phanh làm xe chuyển động chậm dần đều với gia tốc có độ lớn $1,5\\,m/s^2$. Thời gian kể từ lúc hãm phanh cho đến khi xe dừng lại hoàn toàn là:","ownImageUrl":"","optionsHtml":["$10\\,giây$","$15\\,giây$","$22,5\\,giây$","$5\\,giây$"],"optionsRaw":["$10\\,giây$","$15\\,giây$","$22,5\\,giây$","$5\\,giây$"],"correctIndex":0,"correctAnswer":"$10\\,giây$","subQuestions":[],"solutionHtml":"Xe chậm dần đều nên gia tốc $a = -1,5\\,m/s^2$. Khi dừng lại hẳn thì $v_t = 0$.<br>$$t = \\frac{v_t - v_0}{a} = \\frac{0 - 15}{-1,5} = 10$ s$.","rawSolution":"Xe chậm dần đều nên gia tốc $a = -1,5\\,m/s^2$. Khi dừng lại hẳn thì $v_t = 0$.\n$$t = \\frac{v_t - v_0}{a} = \\frac{0 - 15}{-1,5} = 10$ s$."}]},{"blockId":"single_157bfc3d-ba9b-4d15-92e9-c6f2a97d65de_10","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"157bfc3d-ba9b-4d15-92e9-c6f2a97d65de","type":"mcq","level":"H","chapterName":"","points":0.5,"textHtml":"Dựa vào đồ thị $v - t$ ở Hình 9.4: Gia tốc của vật trong $4\\,giây$ đầu tiên ($0 \\to 4$ s) bằng bao nhiêu?","rawText":"Dựa vào đồ thị $v - t$ ở Hình 9.4: Gia tốc của vật trong $4\\,giây$ đầu tiên ($0 \\to 4$ s) bằng bao nhiêu?","ownImageUrl":"","optionsHtml":["$2\\,m/s^2$","$4\\,m/s^2$","$8\\,m/s^2$","$1\\,m/s^2$"],"optionsRaw":["$2\\,m/s^2$","$4\\,m/s^2$","$8\\,m/s^2$","$1\\,m/s^2$"],"correctIndex":0,"correctAnswer":"$2\\,m/s^2$","subQuestions":[],"solutionHtml":"Trong 4 giây đầu:<br>- Tại $t = 0\\,s \\implies v_0 = 0$.<br>- Tại $t = 4\\,s \\implies v_1 = 8$ m/s.<br>- Gia tốc $a = \\frac{\\Delta v}{\\Delta t} = \\frac{8 - 0}{4 - 0} = 2\\,m/s^2$.","rawSolution":"Trong 4 giây đầu:\n- Tại $t = 0\\,s \\implies v_0 = 0$.\n- Tại $t = 4\\,s \\implies v_1 = 8$ m/s.\n- Gia tốc $a = \\frac{\\Delta v}{\\Delta t} = \\frac{8 - 0}{4 - 0} = 2\\,m/s^2$."}]},{"blockId":"single_b67f3b68-44f3-49bd-ad4b-3975423920b2_11","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"b67f3b68-44f3-49bd-ad4b-3975423920b2","type":"mcq","level":"H","chapterName":"","points":0.5,"textHtml":"Quan sát đồ thị $v - t$ ở Hình 9.4: Gia tốc của vật trong $3\\,giây$ cuối cùng (từ $t = 6$ s đến $t = 9$ s) bằng bao nhiêu?","rawText":"Quan sát đồ thị $v - t$ ở Hình 9.4: Gia tốc của vật trong $3\\,giây$ cuối cùng (từ $t = 6$ s đến $t = 9$ s) bằng bao nhiêu?","ownImageUrl":"","optionsHtml":["$-\\frac{8}{3}\\,m/s^2 \\approx -2,67\\,m/s^2$","$-2\\,m/s^2$","$2,67\\,m/s^2$","$-8\\,m/s^2$"],"optionsRaw":["$-\\frac{8}{3}\\,m/s^2 \\approx -2,67\\,m/s^2$","$-2\\,m/s^2$","$2,67\\,m/s^2$","$-8\\,m/s^2$"],"correctIndex":0,"correctAnswer":"$-\\frac{8}{3}\\,m/s^2 \\approx -2,67\\,m/s^2$","subQuestions":[],"solutionHtml":"Từ $t_1 = 6$ s ($v_1 = 8$ m/s) đến $t_2 = 9$ s ($v_2 = 0$ m/s):<br>$$a = \\frac{v_2 - v_1}{t_2 - t_1} = \\frac{0 - 8}{9 - 6} = -\\frac{8}{3}\\,m/s^2 \\approx -2,67\\,m/s^2$$.","rawSolution":"Từ $t_1 = 6$ s ($v_1 = 8$ m/s) đến $t_2 = 9$ s ($v_2 = 0$ m/s):\n$$a = \\frac{v_2 - v_1}{t_2 - t_1} = \\frac{0 - 8}{9 - 6} = -\\frac{8}{3}\\,m/s^2 \\approx -2,67\\,m/s^2$$."}]},{"blockId":"single_812b8749-0f28-4114-8acb-2e9aa52f8434_12","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"812b8749-0f28-4114-8acb-2e9aa52f8434","type":"mcq","level":"H","chapterName":"","points":0.5,"textHtml":"Dựa vào đồ thị $v - t$ ở Hình 9.2 (mô tả một bạn đang đi trong siêu thị): Trong khoảng thời gian nào bạn này **chuyển động thẳng đều**?","rawText":"Dựa vào đồ thị $v - t$ ở Hình 9.2 (mô tả một bạn đang đi trong siêu thị): Trong khoảng thời gian nào bạn này **chuyển động thẳng đều**?","ownImageUrl":"","optionsHtml":["Từ $t = 4$ s đến $t = 6$ s","Từ $0$ s đến $t = 4$ s","Từ $t = 7$ s đến $t = 9$ s","Từ $t = 6$ s đến $t = 7$ s"],"optionsRaw":["Từ $t = 4$ s đến $t = 6$ s","Từ $0$ s đến $t = 4$ s","Từ $t = 7$ s đến $t = 9$ s","Từ $t = 6$ s đến $t = 7$ s"],"correctIndex":0,"correctAnswer":"Từ $t = 4$ s đến $t = 6$ s","subQuestions":[],"solutionHtml":"Trong khoảng thời gian từ $t = 4$ s đến $t = 6$ s, đồ thị $v - t$ là một đoạn nằm ngang với vận tốc $v = 2$ m/s không đổi $\\implies$ bạn này chuyển động thẳng đều.","rawSolution":"Trong khoảng thời gian từ $t = 4$ s đến $t = 6$ s, đồ thị $v - t$ là một đoạn nằm ngang với vận tốc $v = 2$ m/s không đổi $\\implies$ bạn này chuyển động thẳng đều."}]},{"blockId":"single_6d02af77-d1cb-401a-b03c-0c44e43c5ab7_13","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"6d02af77-d1cb-401a-b03c-0c44e43c5ab7","type":"mcq","level":"H","chapterName":"","points":0.5,"textHtml":"Quan sát đồ thị $v - t$ ở Hình 9.2: Trong khoảng thời gian từ $t = 7$ s đến $t = 9$ s, trạng thái chuyển động của bạn đó như thế nào?","rawText":"Quan sát đồ thị $v - t$ ở Hình 9.2: Trong khoảng thời gian từ $t = 7$ s đến $t = 9$ s, trạng thái chuyển động của bạn đó như thế nào?","ownImageUrl":"","optionsHtml":["Đứng nghỉ (đứng yên không di chuyển).","Chuyển động thẳng đều với vận tốc $2$ m/s.","Chuyển động nhanh dần đều.","Chuyển động chậm dần đều."],"optionsRaw":["Đứng nghỉ (đứng yên không di chuyển).","Chuyển động thẳng đều với vận tốc $2$ m/s.","Chuyển động nhanh dần đều.","Chuyển động chậm dần đều."],"correctIndex":0,"correctAnswer":"Đứng nghỉ (đứng yên không di chuyển).","subQuestions":[],"solutionHtml":"Từ $t = 7$ s đến $t = 9$ s, vận tốc $v = 0$ m/s (đường biểu diễn trùng với trục hoành) $\\implies$ bạn này đang đứng nghỉ.","rawSolution":"Từ $t = 7$ s đến $t = 9$ s, vận tốc $v = 0$ m/s (đường biểu diễn trùng với trục hoành) $\\implies$ bạn này đang đứng nghỉ."}]},{"blockId":"single_1b50ad5e-8b08-4d67-ba00-ebc5512b9b75_14","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"1b50ad5e-8b08-4d67-ba00-ebc5512b9b75","type":"mcq","level":"H","chapterName":"","points":0.5,"textHtml":"Một ô tô tăng tốc đều từ $10$ m/s lên $20$ m/s trên một đoạn đường thẳng dài $150$ m. Gia tốc $a$ của ô tô trên đoạn đường này bằng bao nhiêu?","rawText":"Một ô tô tăng tốc đều từ $10$ m/s lên $20$ m/s trên một đoạn đường thẳng dài $150$ m. Gia tốc $a$ của ô tô trên đoạn đường này bằng bao nhiêu?","ownImageUrl":"","optionsHtml":["$1,0\\,m/s^2$","$2,0\\,m/s^2$","$0,5\\,m/s^2$","$1,5\\,m/s^2$"],"optionsRaw":["$1,0\\,m/s^2$","$2,0\\,m/s^2$","$0,5\\,m/s^2$","$1,5\\,m/s^2$"],"correctIndex":0,"correctAnswer":"$1,0\\,m/s^2$","subQuestions":[],"solutionHtml":"Áp dụng công thức độc lập với thời gian $v_t^2 - v_0^2 = 2.a.d$:<br>$$20^2 - 10^2 = 2 \\times a \\times 150 \\iff 400 - 100 = 300a \\iff 300 = 300a \\implies a = 1,0\\,m/s^2$$.","rawSolution":"Áp dụng công thức độc lập với thời gian $v_t^2 - v_0^2 = 2.a.d$:\n$$20^2 - 10^2 = 2 \\times a \\times 150 \\iff 400 - 100 = 300a \\iff 300 = 300a \\implies a = 1,0\\,m/s^2$$."}]},{"blockId":"single_4eb0b4dd-e79a-47bd-b2b2-7855839f989a_15","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"4eb0b4dd-e79a-47bd-b2b2-7855839f989a","type":"mcq","level":"VD","chapterName":"","points":0.5,"textHtml":"Một vận động viên đua xe đạp đường dài vượt qua vạch đích với tốc độ $10$ m/s. Sau đó vận động viên này đi chậm dần đều thêm $20$ m nữa thì dừng lại hẳn (coi chuyển động là thẳng). Gia tốc $a$ và thời gian $t$ cần để dừng lại lần lượt là:","rawText":"Một vận động viên đua xe đạp đường dài vượt qua vạch đích với tốc độ $10$ m/s. Sau đó vận động viên này đi chậm dần đều thêm $20$ m nữa thì dừng lại hẳn (coi chuyển động là thẳng). Gia tốc $a$ và thời gian $t$ cần để dừng lại lần lượt là:","ownImageUrl":"","optionsHtml":["$a = -2,5\\,m/s^2$ và $t = 4$ s","$a = -1,25\\,m/s^2$ và $t = 8$ s","$a = -2,5\\,m/s^2$ và $t = 2$ s","$a = -5,0\\,m/s^2$ và $t = 4$ s"],"optionsRaw":["$a = -2,5\\,m/s^2$ và $t = 4$ s","$a = -1,25\\,m/s^2$ và $t = 8$ s","$a = -2,5\\,m/s^2$ và $t = 2$ s","$a = -5,0\\,m/s^2$ và $t = 4$ s"],"correctIndex":0,"correctAnswer":"$a = -2,5\\,m/s^2$ và $t = 4$ s","subQuestions":[],"solutionHtml":"1. Khi dừng hẳn $v_t = 0$. Áp dụng $v_t^2 - v_0^2 = 2.a.d$:<br>$$0^2 - 10^2 = 2 \\cdot a \\cdot 20 \\iff -100 = 40a \\implies a = -2,5\\,m/s^2$$.<br>2. Thời gian dừng lại: $t = \\frac{v_t - v_0}{a} = \\frac{0 - 10}{-2,5} = 4$ s.","rawSolution":"1. Khi dừng hẳn $v_t = 0$. Áp dụng $v_t^2 - v_0^2 = 2.a.d$:\n$$0^2 - 10^2 = 2 \\cdot a \\cdot 20 \\iff -100 = 40a \\implies a = -2,5\\,m/s^2$$.\n2. Thời gian dừng lại: $t = \\frac{v_t - v_0}{a} = \\frac{0 - 10}{-2,5} = 4$ s."}]},{"blockId":"single_b50f6ef7-5022-421f-99c2-d9e8f389e08d_16","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"b50f6ef7-5022-421f-99c2-d9e8f389e08d","type":"mcq","level":"VD","chapterName":"","points":0.5,"textHtml":"Dựa vào đồ thị $v - t$ ở Hình 9.4: Tính tổng độ dịch chuyển $d$ của vật trong toàn bộ $9\\,giây$ chuyển động.","rawText":"Dựa vào đồ thị $v - t$ ở Hình 9.4: Tính tổng độ dịch chuyển $d$ của vật trong toàn bộ $9\\,giây$ chuyển động.","ownImageUrl":"","optionsHtml":["$44$ m","$36$ m","$72$ m","$52$ m"],"optionsRaw":["$44$ m","$36$ m","$72$ m","$52$ m"],"correctIndex":0,"correctAnswer":"$44$ m","subQuestions":[],"solutionHtml":"Độ dịch chuyển trong 9s bằng diện tích hình thang giới hạn bởi đồ thị $v - t$:<br>- Đáy lớn $a = 9$ s (từ $0 \\to 9$ s).<br>- Đáy nhỏ $b = 6 - 4 = 2$ s (từ $4 \\to 6$ s).<br>- Chiều cao $h = 8$ m/s.<br>- Diện tích (độ dịch chuyển) $d = \\frac{(9 + 2) \\times 8}{2} = \\frac{11 \\times 8}{2} = 44$ m.","rawSolution":"Độ dịch chuyển trong 9s bằng diện tích hình thang giới hạn bởi đồ thị $v - t$:\n- Đáy lớn $a = 9$ s (từ $0 \\to 9$ s).\n- Đáy nhỏ $b = 6 - 4 = 2$ s (từ $4 \\to 6$ s).\n- Chiều cao $h = 8$ m/s.\n- Diện tích (độ dịch chuyển) $d = \\frac{(9 + 2) \\times 8}{2} = \\frac{11 \\times 8}{2} = 44$ m."}]},{"blockId":"single_e8a77578-ca21-4374-96cf-04e3964d82ad_17","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"e8a77578-ca21-4374-96cf-04e3964d82ad","type":"mcq","level":"VD","chapterName":"","points":0.5,"textHtml":"Một chú chó chạy trong ngõ thẳng có đồ thị $v - t$ như Hình 9.5: Tính quãng đường $s$ mà chú chó đi được và độ dịch chuyển $d$ sau $10\\,giây$ chuyển động.","rawText":"Một chú chó chạy trong ngõ thẳng có đồ thị $v - t$ như Hình 9.5: Tính quãng đường $s$ mà chú chó đi được và độ dịch chuyển $d$ sau $10\\,giây$ chuyển động.","ownImageUrl":"","optionsHtml":["Quãng đường $s = 12,5$ m; Độ dịch chuyển $d = 7,5$ m","Quãng đường $s = 10,0$ m; Độ dịch chuyển $d = 10,0$ m","Quãng đường $s = 15,0$ m; Độ dịch chuyển $d = 5,0$ m","Quãng đường $s = 12,5$ m; Độ dịch chuyển $d = 12,5$ m"],"optionsRaw":["Quãng đường $s = 12,5$ m; Độ dịch chuyển $d = 7,5$ m","Quãng đường $s = 10,0$ m; Độ dịch chuyển $d = 10,0$ m","Quãng đường $s = 15,0$ m; Độ dịch chuyển $d = 5,0$ m","Quãng đường $s = 12,5$ m; Độ dịch chuyển $d = 12,5$ m"],"correctIndex":0,"correctAnswer":"Quãng đường $s = 12,5$ m; Độ dịch chuyển $d = 7,5$ m","subQuestions":[],"solutionHtml":"1. Giai đoạn 1 ($0 \\to 7$ s): Đồ thị hình thang phía trên có đáy lớn 7s, đáy nhỏ $5-2=3$ s, chiều cao $2$ m/s.<br> - $d_1 = s_1 = \\frac{(7 + 3) \\times 2}{2} = 10$ m.<br>2. Giai đoạn 2 ($7 \\to 10$ s): Chú chó đổi chiều ($v = -1$ m/s). Đồ thị hình thang phía dưới có đáy lớn $10-7=3$ s, đáy nhỏ $10-8=2$ s, chiều cao $|v| = 1$ m/s.<br> - $s_2 = \\frac{(3 + 2) \\times 1}{2} = 2,5\\,m \\implies d_2 = -2,5$ m.<br><br>- Tổng quãng đường: $s = s_1 + s_2 = 10 + 2,5 = 12,5$ m.<br>- Độ dịch chuyển: $d = d_1 + d_2 = 10 - 2,5 = 7,5$ m.","rawSolution":"1. Giai đoạn 1 ($0 \\to 7$ s): Đồ thị hình thang phía trên có đáy lớn 7s, đáy nhỏ $5-2=3$ s, chiều cao $2$ m/s.\n - $d_1 = s_1 = \\frac{(7 + 3) \\times 2}{2} = 10$ m.\n2. Giai đoạn 2 ($7 \\to 10$ s): Chú chó đổi chiều ($v = -1$ m/s). Đồ thị hình thang phía dưới có đáy lớn $10-7=3$ s, đáy nhỏ $10-8=2$ s, chiều cao $|v| = 1$ m/s.\n - $s_2 = \\frac{(3 + 2) \\times 1}{2} = 2,5\\,m \\implies d_2 = -2,5$ m.\n\n- Tổng quãng đường: $s = s_1 + s_2 = 10 + 2,5 = 12,5$ m.\n- Độ dịch chuyển: $d = d_1 + d_2 = 10 - 2,5 = 7,5$ m."}]},{"blockId":"single_d1e1b538-2c45-499e-a10a-1bb6284754d0_18","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"d1e1b538-2c45-499e-a10a-1bb6284754d0","type":"mcq","level":"VD","chapterName":"","points":0.5,"textHtml":"Một xe lửa đang chuyển động thẳng đều với vận tốc $36$ km/h thì lái tàu hãm phanh cho xe chuyển động chậm dần đều để vào ga. Xe dừng lại hẳn sau $2\\,phút$ kể từ khi bắt đầu hãm phanh. Tính quãng đường xe lửa di chuyển được trong $10\\,giây$ cuối cùng trước khi dừng hẳn.","rawText":"Một xe lửa đang chuyển động thẳng đều với vận tốc $36$ km/h thì lái tàu hãm phanh cho xe chuyển động chậm dần đều để vào ga. Xe dừng lại hẳn sau $2\\,phút$ kể từ khi bắt đầu hãm phanh. Tính quãng đường xe lửa di chuyển được trong $10\\,giây$ cuối cùng trước khi dừng hẳn.","ownImageUrl":"","optionsHtml":["$4,17$ m (hoặc $\\frac{25}{6}$ m)","$8,33$ m","$2,08$ m","$10,0$ m"],"optionsRaw":["$4,17$ m (hoặc $\\frac{25}{6}$ m)","$8,33$ m","$2,08$ m","$10,0$ m"],"correctIndex":0,"correctAnswer":"$4,17$ m (hoặc $\\frac{25}{6}$ m)","subQuestions":[],"solutionHtml":"1. Đổi $v_0 = 36\\,km/h = 10$ m/s; $t = 2\\,phút = 120$ s. Khi dừng hẳn $v = 0$.<br>- Gia tốc hãm phanh: $a = \\frac{0 - 10}{120} = -\\frac{1}{12}\\,m/s^2$.<br>2. $10$ s cuối cùng ứng với khoảng thời gian từ $t_1 = 110$ s đến $t_2 = 120$ s.<br>- Vận tốc tại thời điểm $t_1 = 110$ s:<br> $$v_{110} = v_0 + a \\cdot t_1 = 10 + \\left(-\\frac{1}{12}\\right) \\times 110 = 10 - \\frac{110}{12} = \\frac{10}{12} = \\frac{5}{6}$ m/s$.<br>3. Quãng đường đi được trong $10$ s cuối:<br> $$s = \\frac{v_{110} + 0}{2} \\times 10 = \\frac{\\frac{5}{6}}{2} \\times 10 = \\frac{25}{6} \\approx 4,17$ m$.","rawSolution":"1. Đổi $v_0 = 36\\,km/h = 10$ m/s; $t = 2\\,phút = 120$ s. Khi dừng hẳn $v = 0$.\n- Gia tốc hãm phanh: $a = \\frac{0 - 10}{120} = -\\frac{1}{12}\\,m/s^2$.\n2. $10$ s cuối cùng ứng với khoảng thời gian từ $t_1 = 110$ s đến $t_2 = 120$ s.\n- Vận tốc tại thời điểm $t_1 = 110$ s:\n $$v_{110} = v_0 + a \\cdot t_1 = 10 + \\left(-\\frac{1}{12}\\right) \\times 110 = 10 - \\frac{110}{12} = \\frac{10}{12} = \\frac{5}{6}$ m/s$.\n3. Quãng đường đi được trong $10$ s cuối:\n $$s = \\frac{v_{110} + 0}{2} \\times 10 = \\frac{\\frac{5}{6}}{2} \\times 10 = \\frac{25}{6} \\approx 4,17$ m$."}]},{"blockId":"single_dd75c391-0ae2-4e4e-93bc-50d55fa4c0c9_19","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"dd75c391-0ae2-4e4e-93bc-50d55fa4c0c9","type":"mcq","level":"VD","chapterName":"","points":0.5,"textHtml":"Hai xe ô tô A và B cùng chuyển động thẳng theo cùng một chiều trên một đường thẳng. Tại thời điểm $t = 0$, xe A đang chạy thẳng đều với vận tốc không đổi $v_A = 10$ m/s. Xe B ở phía sau xe A một khoảng $d_0 = 200$ m bắt đầu tăng tốc từ trạng thái nghỉ ($v_{0B} = 0$) với gia tốc không đổi $a_B = 2\\,m/s^2$. Sau thời gian bao lâu kể từ $t = 0$ thì xe B đuổi kịp xe A và vận tốc của xe B khi đó là bao nhiêu?","rawText":"Hai xe ô tô A và B cùng chuyển động thẳng theo cùng một chiều trên một đường thẳng. Tại thời điểm $t = 0$, xe A đang chạy thẳng đều với vận tốc không đổi $v_A = 10$ m/s. Xe B ở phía sau xe A một khoảng $d_0 = 200$ m bắt đầu tăng tốc từ trạng thái nghỉ ($v_{0B} = 0$) với gia tốc không đổi $a_B = 2\\,m/s^2$. Sau thời gian bao lâu kể từ $t = 0$ thì xe B đuổi kịp xe A và vận tốc của xe B khi đó là bao nhiêu?","ownImageUrl":"","optionsHtml":["$t = 20$ s và vận tốc xe B là $v_B = 40$ m/s","$t = 10$ s và vận tốc xe B là $v_B = 20$ m/s","$t = 25$ s và vận tốc xe B là $v_B = 50$ m/s","$t = 15$ s và vận tốc xe B là $v_B = 30$ m/s"],"optionsRaw":["$t = 20$ s và vận tốc xe B là $v_B = 40$ m/s","$t = 10$ s và vận tốc xe B là $v_B = 20$ m/s","$t = 25$ s và vận tốc xe B là $v_B = 50$ m/s","$t = 15$ s và vận tốc xe B là $v_B = 30$ m/s"],"correctIndex":0,"correctAnswer":"$t = 20$ s và vận tốc xe B là $v_B = 40$ m/s","subQuestions":[],"solutionHtml":"1. Chọn gốc tọa độ tại vị trí xe B ở $t = 0$, chiều dương là chiều chuyển động.<br>- Phương trình vị trí xe A: $x_A = 200 + 10t$.<br>- Phương trình vị trí xe B: $x_B = \\frac{1}{2} a_B t^2 = \\frac{1}{2} (2) t^2 = t^2$.<br>2. Hai xe gặp nhau (xe B đuổi kịp xe A) khi $x_A = x_B$:<br>$$t^2 = 200 + 10t \\iff t^2 - 10t - 200 = 0 \\iff (t - 20)(t + 10) = 0$$<br>Vì $t &gt; 0 \\implies t = 20\\,giây$.<br>3. Vận tốc xe B khi đuổi kịp xe A:<br>$$v_B = a_B \\cdot t = 2 \\times 20 = 40$ m/s$.","rawSolution":"1. Chọn gốc tọa độ tại vị trí xe B ở $t = 0$, chiều dương là chiều chuyển động.\n- Phương trình vị trí xe A: $x_A = 200 + 10t$.\n- Phương trình vị trí xe B: $x_B = \\frac{1}{2} a_B t^2 = \\frac{1}{2} (2) t^2 = t^2$.\n2. Hai xe gặp nhau (xe B đuổi kịp xe A) khi $x_A = x_B$:\n$$t^2 = 200 + 10t \\iff t^2 - 10t - 200 = 0 \\iff (t - 20)(t + 10) = 0$$\nVì $t > 0 \\implies t = 20\\,giây$.\n3. Vận tốc xe B khi đuổi kịp xe A:\n$$v_B = a_B \\cdot t = 2 \\times 20 = 40$ m/s$."}]}]}</script>
+  <script>
+    (function() {
+      var dataEl = document.getElementById('edusync-runtime-data');
+      var EXAM = JSON.parse(dataEl.textContent || '{}');
+      var LETTERS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+      var TF_LABELS = ['a', 'b', 'c', 'd', 'e', 'f'];
+
+      function shuffle(arr) {
+        var copy = arr.slice();
+        for (var i = copy.length - 1; i > 0; i--) {
+          var j = Math.floor(Math.random() * (i + 1));
+          var tmp = copy[i]; copy[i] = copy[j]; copy[j] = tmp;
+        }
+        return copy;
+      }
+
+      var blocks = EXAM.shuffleQuestions ? shuffle(EXAM.blocks || []) : (EXAM.blocks || []);
+      var flatQuestions = [];
+      blocks.forEach(function(block) {
+        block.questions.forEach(function(q) {
+          if (q.type === 'mcq' && EXAM.shuffleOptions && Array.isArray(q.optionsHtml)) {
+            var tagged = q.optionsHtml.map(function(html, idx) {
+              return { html: html, raw: q.optionsRaw[idx], isCorrect: idx === q.correctIndex };
+            });
+            var mixed = shuffle(tagged);
+            q.optionsHtml = mixed.map(function(m) { return m.html; });
+            q.optionsRaw = mixed.map(function(m) { return m.raw; });
+            q.correctIndex = Math.max(0, mixed.findIndex(function(m) { return m.isCorrect; }));
+          }
+          q.displayNumber = flatQuestions.length + 1;
+          flatQuestions.push(q);
+        });
+      });
+
+      var userAnswers = {};
+      var submitted = false;
+      var durationLimit = (EXAM.durationMinutes || 0) > 0 ? EXAM.durationMinutes * 60 : 0;
+      var startTime = Date.now();
+      var timerHandle = null;
+
+      function fmtTime(sec) {
+        var s = Math.max(0, Math.floor(sec));
+        var m = Math.floor(s / 60);
+        var r = s % 60;
+        return String(m).padStart(2, '0') + ':' + String(r).padStart(2, '0');
+      }
+
+      function isQuestionAnswered(q) {
+        var ans = userAnswers[q.id];
+        if (q.type === 'mcq') return typeof ans === 'number';
+        if (q.type === 'short') return typeof ans === 'string' && ans.trim().length > 0;
+        if (q.type === 'group-tf') {
+          if (!ans || typeof ans !== 'object') return false;
+          return q.subQuestions.some(function(sq) { return ans[sq.id] === 'True' || ans[sq.id] === 'False'; });
+        }
+        return false;
+      }
+
+      function updateProgress() {
+        var done = flatQuestions.filter(isQuestionAnswered).length;
+        document.getElementById('progressLabel').textContent = done + '/' + flatQuestions.length;
+        document.getElementById('sidebarCount').textContent = 'Đã làm ' + done + '/' + flatQuestions.length;
+        flatQuestions.forEach(function(q) {
+          var pBtn = document.getElementById('pbtn_' + q.displayNumber);
+          if (!pBtn || submitted) return;
+          pBtn.className = 'p-btn mono' + (isQuestionAnswered(q) ? ' done' : '');
+        });
+      }
+
+      function buildQuestionEl(q) {
+        var card = document.createElement('article');
+        card.className = 'q-card';
+        card.id = 'qcard_' + q.displayNumber;
+
+        var header = document.createElement('div');
+        header.className = 'q-header';
+        var leftMeta = '<span class="q-num">Câu ' + q.displayNumber + '</span>';
+        var tags = [q.level ? ('Mức ' + q.level) : '', q.points + ' đ', q.chapterName || ''].filter(Boolean).join(' · ');
+        header.innerHTML = leftMeta + '<span id="qstatus_' + q.displayNumber + '" class="q-status">' + tags + '</span>';
+        card.appendChild(header);
+
+        var qTextEl = document.createElement('div');
+        qTextEl.className = 'q-text';
+        qTextEl.innerHTML = q.textHtml;
+        card.appendChild(qTextEl);
+
+        if (q.ownImageUrl) {
+          var fig = document.createElement('div');
+          fig.className = 'q-figure';
+          var img = document.createElement('img');
+          img.src = q.ownImageUrl;
+          img.alt = 'Hình minh họa câu ' + q.displayNumber;
+          fig.appendChild(img);
+          card.appendChild(fig);
+        }
+
+        if (q.type === 'mcq') {
+          var grid = document.createElement('div');
+          grid.className = 'options-grid';
+          q.optionsHtml.forEach(function(optHtml, optIdx) {
+            var btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'opt-btn';
+            btn.id = 'opt_' + q.id + '_' + optIdx;
+            btn.innerHTML = '<span class="opt-letter mono">' + (LETTERS[optIdx] || optIdx + 1) + '</span><span style="flex:1;">' + optHtml + '</span>';
+            btn.addEventListener('click', function() {
+              if (submitted) return;
+              userAnswers[q.id] = optIdx;
+              q.optionsHtml.forEach(function(_, i2) {
+                var el = document.getElementById('opt_' + q.id + '_' + i2);
+                if (el) el.classList.toggle('selected', i2 === optIdx);
+              });
+              updateProgress();
+            });
+            grid.appendChild(btn);
+          });
+          card.appendChild(grid);
+        } else if (q.type === 'group-tf') {
+          var list = document.createElement('div');
+          list.className = 'tf-list';
+          q.subQuestions.forEach(function(sq, sIdx) {
+            var row = document.createElement('div');
+            row.className = 'tf-row';
+            row.id = 'tfrow_' + sq.id;
+
+            var txt = document.createElement('div');
+            txt.className = 'tf-text';
+            txt.innerHTML = '<strong>' + (TF_LABELS[sIdx] || (sIdx + 1)) + ')</strong> ' + sq.textHtml;
+            row.appendChild(txt);
+
+            var actions = document.createElement('div');
+            actions.className = 'tf-actions';
+            ['True', 'False'].forEach(function(val) {
+              var b = document.createElement('button');
+              b.type = 'button';
+              b.className = 'tf-choice';
+              b.id = 'tfbtn_' + sq.id + '_' + val;
+              b.textContent = val === 'True' ? 'Đúng' : 'Sai';
+              b.addEventListener('click', function() {
+                if (submitted) return;
+                if (!userAnswers[q.id] || typeof userAnswers[q.id] !== 'object') userAnswers[q.id] = {};
+                userAnswers[q.id][sq.id] = val;
+                var bt = document.getElementById('tfbtn_' + sq.id + '_True');
+                var bf = document.getElementById('tfbtn_' + sq.id + '_False');
+                if (bt) bt.classList.toggle('active', val === 'True');
+                if (bf) bf.classList.toggle('active', val === 'False');
+                updateProgress();
+              });
+              actions.appendChild(b);
+            });
+            row.appendChild(actions);
+            list.appendChild(row);
+          });
+          card.appendChild(list);
+        } else {
+          var sBox = document.createElement('div');
+          sBox.className = 'short-box';
+          var inp = document.createElement('input');
+          inp.type = 'text';
+          inp.className = 'short-input';
+          inp.id = 'short_' + q.id;
+          inp.placeholder = 'Nhập đáp số (vd: 2.6 hoặc 36)';
+          inp.addEventListener('input', function() {
+            if (submitted) return;
+            userAnswers[q.id] = inp.value;
+            updateProgress();
+          });
+          var fb = document.createElement('span');
+          fb.id = 'shortfb_' + q.id;
+          fb.className = 'short-feedback';
+          sBox.appendChild(inp);
+          sBox.appendChild(fb);
+          card.appendChild(sBox);
+        }
+
+        if (q.solutionHtml) {
+          var sol = document.createElement('div');
+          sol.className = 'solution-box';
+          sol.id = 'sol_' + q.id;
+          sol.innerHTML = '<strong>Lời giải chi tiết:</strong><div style="margin-top:4px;">' + q.solutionHtml + '</div>';
+          card.appendChild(sol);
+        }
+
+        return card;
+      }
+
+      function renderExam() {
+        var root = document.getElementById('questionsRoot');
+        var pal = document.getElementById('paletteRoot');
+        root.innerHTML = '';
+        pal.innerHTML = '';
+
+        blocks.forEach(function(block) {
+          if (block.contextHtml || block.sharedImageUrl) {
+            var groupEl = document.createElement('section');
+            groupEl.className = 'context-group';
+
+            var head = document.createElement('div');
+            head.className = 'context-header';
+            var firstNum = block.questions[0].displayNumber;
+            var lastNum = block.questions[block.questions.length - 1].displayNumber;
+            var labelText = block.questions.length > 1
+              ? 'Dữ liệu dùng chung cho Câu ' + firstNum + ' – Câu ' + lastNum
+              : 'Dữ liệu đề bài (Câu ' + firstNum + ')';
+            var html = '<div class="context-label">' + labelText + '</div>';
+            if (block.contextHtml) {
+              html += '<div class="context-body">' + block.contextHtml + '</div>';
+            }
+            head.innerHTML = html;
+            if (block.sharedImageUrl) {
+              var fig = document.createElement('div');
+              fig.className = 'q-figure';
+              var img = document.createElement('img');
+              img.src = block.sharedImageUrl;
+              img.alt = labelText;
+              fig.appendChild(img);
+              head.appendChild(fig);
+            }
+            groupEl.appendChild(head);
+
+            var inner = document.createElement('div');
+            inner.className = 'context-questions';
+            block.questions.forEach(function(q) {
+              inner.appendChild(buildQuestionEl(q));
+            });
+            groupEl.appendChild(inner);
+            root.appendChild(groupEl);
+          } else {
+            block.questions.forEach(function(q) {
+              root.appendChild(buildQuestionEl(q));
+            });
+          }
+        });
+
+        flatQuestions.forEach(function(q) {
+          var b = document.createElement('button');
+          b.type = 'button';
+          b.className = 'p-btn mono';
+          b.id = 'pbtn_' + q.displayNumber;
+          b.textContent = String(q.displayNumber);
+          b.addEventListener('click', function() {
+            var target = document.getElementById('qcard_' + q.displayNumber);
+            if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          });
+          pal.appendChild(b);
+        });
+
+        updateProgress();
+        if (window.MathJax && window.MathJax.typesetPromise) {
+          window.MathJax.typesetPromise().catch(function() {});
+        }
+      }
+
+      function normalizeShort(val) {
+        return String(val || '').trim().replace(/,/g, '.').replace(/\s+/g, '').toLowerCase();
+      }
+
+      function isShortMatch(userVal, expectedVal) {
+        var u = normalizeShort(userVal);
+        var e = normalizeShort(expectedVal);
+        if (!u) return false;
+        if (u === e) return true;
+        var nu = parseFloat(u);
+        var ne = parseFloat(e);
+        if (!isNaN(nu) && !isNaN(ne) && String(nu) === u || !isNaN(nu) && !isNaN(ne)) {
+          if (/^-?\d+(?:\.\d+)?$/.test(u) && /^-?\d+(?:\.\d+)?$/.test(e)) {
+            return Math.abs(nu - ne) < 1e-6;
+          }
+        }
+        return false;
+      }
+
+      function gradeAndSubmit(force) {
+        if (submitted) return;
+        var answered = flatQuestions.filter(isQuestionAnswered).length;
+        if (!force && answered < flatQuestions.length) {
+          document.getElementById('confirmMsg').textContent =
+            'Bạn mới làm ' + answered + '/' + flatQuestions.length + ' câu. Bạn có chắc muốn nộp bài ngay?';
+          document.getElementById('confirmBar').classList.add('visible');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+          return;
+        }
+        document.getElementById('confirmBar').classList.remove('visible');
+        submitted = true;
+        if (timerHandle) clearInterval(timerHandle);
+
+        var totalScore = 0;
+        var maxScore = EXAM.maxScore || 10;
+        var correctQuestions = 0;
+        var answerDetails = [];
+
+        flatQuestions.forEach(function(q) {
+          var qCorrect = false;
+          var pBtn = document.getElementById('pbtn_' + q.displayNumber);
+          var stEl = document.getElementById('qstatus_' + q.displayNumber);
+          var solEl = document.getElementById('sol_' + q.id);
+          if (solEl) solEl.classList.add('visible');
+
+          if (q.type === 'mcq') {
+            var chosen = typeof userAnswers[q.id] === 'number' ? userAnswers[q.id] : -1;
+            qCorrect = chosen === q.correctIndex;
+            if (qCorrect) {
+              totalScore += q.points;
+              correctQuestions++;
+            }
+            q.optionsHtml.forEach(function(_, i) {
+              var ob = document.getElementById('opt_' + q.id + '_' + i);
+              if (!ob) return;
+              ob.disabled = true;
+              ob.classList.remove('selected');
+              if (i === q.correctIndex) ob.classList.add('correct');
+              else if (i === chosen) ob.classList.add('wrong');
+            });
+            if (stEl) {
+              stEl.textContent = qCorrect ? ('Đúng (+' + q.points + 'đ)') : 'Sai (0đ)';
+              stEl.className = 'q-status ' + (qCorrect ? 'ok' : 'bad');
+            }
+            answerDetails.push({
+              orderIndex: answerDetails.length,
+              questionText: 'Câu ' + q.displayNumber + ': ' + q.rawText,
+              options: q.optionsRaw,
+              selectedIndex: chosen,
+              correctIndex: q.correctIndex,
+              isCorrect: qCorrect,
+              explanation: q.rawSolution
+            });
+          } else if (q.type === 'group-tf') {
+            var tfMap = (userAnswers[q.id] && typeof userAnswers[q.id] === 'object') ? userAnswers[q.id] : {};
+            var rightSubs = 0;
+            q.subQuestions.forEach(function(sq, sIdx) {
+              var picked = tfMap[sq.id] || '';
+              var subOk = picked === sq.correctAnswer;
+              if (subOk) rightSubs++;
+              var row = document.getElementById('tfrow_' + sq.id);
+              if (row) row.classList.add(subOk ? 'ok' : 'bad');
+              ['True', 'False'].forEach(function(v) {
+                var btn = document.getElementById('tfbtn_' + sq.id + '_' + v);
+                if (!btn) return;
+                btn.disabled = true;
+                if (v === sq.correctAnswer) btn.classList.add('right-ans');
+              });
+              answerDetails.push({
+                orderIndex: answerDetails.length,
+                questionText: 'Câu ' + q.displayNumber + (TF_LABELS[sIdx] || '') + ': ' + sq.rawText,
+                options: ['Đúng', 'Sai'],
+                selectedIndex: picked === 'True' ? 0 : (picked === 'False' ? 1 : -1),
+                correctIndex: sq.correctAnswer === 'True' ? 0 : 1,
+                isCorrect: subOk,
+                explanation: sIdx === q.subQuestions.length - 1 ? q.rawSolution : ''
+              });
+            });
+            var earnedRatio = 0;
+            if (q.subQuestions.length === 4) {
+              earnedRatio = rightSubs === 1 ? 0.1 : rightSubs === 2 ? 0.25 : rightSubs === 3 ? 0.5 : rightSubs === 4 ? 1 : 0;
+            } else if (q.subQuestions.length > 0) {
+              earnedRatio = rightSubs / q.subQuestions.length;
+            }
+            var earned = Math.round(q.points * earnedRatio * 100) / 100;
+            totalScore += earned;
+            qCorrect = rightSubs === q.subQuestions.length;
+            if (qCorrect) correctQuestions++;
+            if (stEl) {
+              stEl.textContent = 'Đúng ' + rightSubs + '/' + q.subQuestions.length + ' ý (+' + earned + 'đ)';
+              stEl.className = 'q-status ' + (qCorrect ? 'ok' : 'bad');
+            }
+          } else {
+            var rawInput = document.getElementById('short_' + q.id);
+            var typed = rawInput ? rawInput.value.trim() : '';
+            if (rawInput) rawInput.disabled = true;
+            qCorrect = isShortMatch(typed, q.correctAnswer);
+            if (qCorrect) {
+              totalScore += q.points;
+              correctQuestions++;
+            }
+            var fbEl = document.getElementById('shortfb_' + q.id);
+            if (fbEl) {
+              fbEl.textContent = qCorrect
+                ? ('Chính xác (+' + q.points + 'đ)')
+                : ('Đáp án đúng: ' + q.correctAnswer);
+              fbEl.style.color = qCorrect ? 'var(--ok)' : 'var(--bad)';
+            }
+            if (stEl) {
+              stEl.textContent = qCorrect ? ('Đúng (+' + q.points + 'đ)') : 'Sai (0đ)';
+              stEl.className = 'q-status ' + (qCorrect ? 'ok' : 'bad');
+            }
+            answerDetails.push({
+              orderIndex: answerDetails.length,
+              questionText: 'Câu ' + q.displayNumber + ': ' + q.rawText,
+              options: ['Bài làm: ' + (typed || '(bỏ trống)'), 'Đáp án chuẩn: ' + q.correctAnswer],
+              selectedIndex: qCorrect ? 1 : 0,
+              correctIndex: 1,
+              isCorrect: qCorrect,
+              explanation: q.rawSolution
+            });
+          }
+
+          if (pBtn) {
+            pBtn.className = 'p-btn mono ' + (qCorrect ? 'ok' : 'bad');
+          }
+        });
+
+        totalScore = Math.round(totalScore * 100) / 100;
+        var pct = maxScore > 0 ? Math.round((totalScore / maxScore) * 1000) / 10 : 0;
+
+        document.getElementById('scoreText').textContent = totalScore + ' / ' + maxScore + ' điểm';
+        document.getElementById('correctText').textContent =
+          'Đúng hoàn toàn ' + correctQuestions + ' / ' + flatQuestions.length + ' câu (' + pct + '%)';
+        document.getElementById('resultScreen').classList.add('visible');
+        document.getElementById('topSubmitBtn').style.display = 'none';
+        document.getElementById('sideSubmitBtn').style.display = 'none';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+
+        if (window.MathJax && window.MathJax.typesetPromise) {
+          window.MathJax.typesetPromise().catch(function() {});
+        }
+
+        if (typeof window.EduSyncSubmitScore === 'function') {
+          window.EduSyncSubmitScore(totalScore, maxScore, correctQuestions, flatQuestions.length, answerDetails);
+        } else if (window.parent && window.parent !== window) {
+          window.parent.postMessage({
+            type: 'QUIZ_RESULT',
+            score: totalScore,
+            maxScore: maxScore,
+            correctCount: correctQuestions,
+            totalQuestions: flatQuestions.length,
+            answerDetails: answerDetails
+          }, '*');
+        }
+      }
+
+      document.getElementById('topSubmitBtn').addEventListener('click', function() { gradeAndSubmit(false); });
+      document.getElementById('sideSubmitBtn').addEventListener('click', function() { gradeAndSubmit(false); });
+      document.getElementById('confirmYesBtn').addEventListener('click', function() { gradeAndSubmit(true); });
+      document.getElementById('confirmCancelBtn').addEventListener('click', function() {
+        document.getElementById('confirmBar').classList.remove('visible');
+      });
+
+      function tickTimer() {
+        if (submitted) return;
+        var elapsed = Math.floor((Date.now() - startTime) / 1000);
+        var box = document.getElementById('timerBox');
+        if (durationLimit > 0) {
+          var rem = Math.max(0, durationLimit - elapsed);
+          box.textContent = fmtTime(rem);
+          box.classList.toggle('urgent', rem <= 60);
+          if (rem <= 0) gradeAndSubmit(true);
+        } else {
+          box.textContent = fmtTime(elapsed);
+        }
+      }
+
+      renderExam();
+      tickTimer();
+      timerHandle = setInterval(tickTimer, 1000);
+    })();
+  </script>
+</body>
+</html>
