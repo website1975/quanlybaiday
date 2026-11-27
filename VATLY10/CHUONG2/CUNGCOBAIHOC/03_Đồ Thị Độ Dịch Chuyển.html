@@ -1,0 +1,1154 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Đồ Thị Độ Dịch Chuyển</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true
+      },
+      options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre'] }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --border: #e2e8f0;
+      --text: #0f172a;
+      --muted: #64748b;
+      --accent: #1d4ed8;
+      --accent-hover: #1e40af;
+      --accent-soft: #eff6ff;
+      --ok: #047857;
+      --ok-bg: #ecfdf5;
+      --ok-border: #6ee7b7;
+      --bad: #dc2626;
+      --bad-bg: #fef2f2;
+      --bad-border: #fca5a5;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.55;
+    }
+    .mono { font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace; font-variant-numeric: tabular-nums; }
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+    }
+    .topbar-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .exam-title { font-size: 16px; font-weight: 700; margin: 0; color: var(--text); }
+    .exam-meta { font-size: 12px; color: var(--muted); margin-top: 2px; }
+    .topbar-actions { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+    .timer-box {
+      padding: 6px 12px;
+      border-radius: 8px;
+      background: #f1f5f9;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .timer-box.urgent {
+      background: var(--bad-bg);
+      color: var(--bad);
+      border: 1px solid var(--bad-border);
+    }
+    .btn {
+      border: 1px solid transparent;
+      border-radius: 8px;
+      padding: 8px 16px;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background-color 0.15s ease, border-color 0.15s ease;
+    }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-primary:hover { background: var(--accent-hover); }
+    .btn-secondary { background: #fff; border-color: #cbd5e1; color: #334155; }
+    .btn-secondary:hover { background: #f8fafc; }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 280px;
+      gap: 20px;
+      align-items: start;
+    }
+    @media (max-width: 960px) {
+      .container { grid-template-columns: 1fr; }
+    }
+    .main-col { display: flex; flex-direction: column; gap: 18px; }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+    }
+    .result-card {
+      background: var(--ok-bg);
+      border: 1px solid var(--ok-border);
+      border-radius: 12px;
+      padding: 20px;
+      display: none;
+    }
+    .result-card.visible { display: block; }
+    .result-score { font-size: 26px; font-weight: 700; color: var(--ok); margin: 4px 0; }
+    .result-sub { font-size: 13px; color: #065f46; }
+    .confirm-bar {
+      display: none;
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      border-radius: 10px;
+      padding: 14px 16px;
+      margin-bottom: 4px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      font-size: 13px;
+      color: #92400e;
+    }
+    .confirm-bar.visible { display: flex; }
+    .context-group {
+      background: var(--surface);
+      border: 1px solid #cbd5e1;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .context-header {
+      background: #f1f5f9;
+      border-bottom: 1px solid var(--border);
+      padding: 16px 20px;
+    }
+    .context-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 6px;
+    }
+    .context-body { font-size: 14px; color: #1e293b; }
+    .context-questions {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      background: #f8fafc;
+    }
+    .q-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 18px;
+      scroll-margin-top: 84px;
+    }
+    .q-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding-bottom: 10px;
+      margin-bottom: 12px;
+      border-bottom: 1px solid #f1f5f9;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .q-num { font-size: 14px; font-weight: 700; color: var(--text); }
+    .q-status { font-weight: 600; }
+    .q-status.ok { color: var(--ok); }
+    .q-status.bad { color: var(--bad); }
+    .q-text { font-size: 15px; font-weight: 500; color: var(--text); margin-bottom: 14px; }
+    .q-figure {
+      margin: 12px 0;
+      text-align: center;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px;
+    }
+    .q-figure img { max-width: 100%; max-height: 360px; height: auto; border-radius: 4px; }
+    .options-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+    @media (max-width: 640px) {
+      .options-grid { grid-template-columns: 1fr; }
+    }
+    .opt-btn {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      text-align: left;
+      padding: 11px 13px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #fff;
+      font-family: inherit;
+      font-size: 14px;
+      color: #1e293b;
+      cursor: pointer;
+      transition: border-color 0.15s ease, background-color 0.15s ease;
+    }
+    .opt-btn:hover:not(:disabled) { border-color: #94a3b8; background: #f8fafc; }
+    .opt-btn.selected { border-color: var(--accent); background: var(--accent-soft); color: #1e3a8a; font-weight: 500; }
+    .opt-btn.correct { border-color: var(--ok-border); background: var(--ok-bg); color: #064e3b; font-weight: 600; }
+    .opt-btn.wrong { border-color: var(--bad-border); background: var(--bad-bg); color: #7f1d1d; }
+    .opt-letter {
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      border: 1px solid #cbd5e1;
+      background: #fff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .opt-btn.selected .opt-letter { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .tf-list { display: flex; flex-direction: column; gap: 10px; }
+    .tf-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #fff;
+    }
+    .tf-row.ok { border-color: var(--ok-border); background: var(--ok-bg); }
+    .tf-row.bad { border-color: var(--bad-border); background: var(--bad-bg); }
+    .tf-text { font-size: 14px; flex: 1; }
+    .tf-actions { display: flex; gap: 6px; flex-shrink: 0; }
+    .tf-choice {
+      padding: 6px 12px;
+      border-radius: 6px;
+      border: 1px solid #cbd5e1;
+      background: #fff;
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .tf-choice.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .tf-choice.right-ans { border-color: var(--ok); color: var(--ok); }
+    .short-box { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+    .short-input {
+      width: 240px;
+      max-width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px;
+    }
+    .short-input:focus { outline: 2px solid var(--accent); border-color: var(--accent); }
+    .short-feedback { font-size: 13px; font-weight: 600; }
+    .solution-box {
+      display: none;
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: 8px;
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      font-size: 13px;
+      color: #334155;
+    }
+    .solution-box.visible { display: block; }
+    .sidebar {
+      position: sticky;
+      top: 76px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+    }
+    .palette-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 6px;
+      margin: 12px 0 16px;
+    }
+    .p-btn {
+      height: 34px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: #f8fafc;
+      font-size: 12px;
+      font-weight: 700;
+      color: #334155;
+      cursor: pointer;
+    }
+    .p-btn.done { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .p-btn.ok { background: var(--ok); color: #fff; border-color: var(--ok); }
+    .p-btn.bad { background: var(--bad); color: #fff; border-color: var(--bad); }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div>
+        <h1 class="exam-title">Đồ Thị Độ Dịch Chuyển</h1>
+        <div class="exam-meta">Vật Lý · Khối 10 · CHƯƠNG 2: ĐỘNG HỌC · 20 câu · Thang 10 điểm</div>
+      </div>
+      <div class="topbar-actions">
+        <span id="progressLabel" class="exam-meta mono">0/20</span>
+        <div id="timerBox" class="timer-box mono">00:00</div>
+        <button id="topSubmitBtn" type="button" class="btn btn-primary">Nộp bài</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <main class="main-col">
+      <div id="confirmBar" class="confirm-bar">
+        <span id="confirmMsg">Bạn vẫn còn câu chưa trả lời. Xác nhận nộp bài ngay?</span>
+        <div style="display:flex;gap:8px;">
+          <button id="confirmCancelBtn" type="button" class="btn btn-secondary">Làm tiếp</button>
+          <button id="confirmYesBtn" type="button" class="btn btn-primary">Xác nhận nộp</button>
+        </div>
+      </div>
+
+      <section id="resultScreen" class="result-card">
+        <div style="font-size:12px;font-weight:700;color:#047857;">KẾT QUẢ BÀI LÀM</div>
+        <div id="scoreText" class="result-score mono">0 / 10</div>
+        <div id="correctText" class="result-sub mono">0 / 20</div>
+        <div id="explanationsSection" class="result-sub" style="margin-top:6px;">
+          Xem lại từng câu và lời giải chi tiết ở bên dưới.
+        </div>
+      </section>
+
+      <div id="questionsRoot" class="main-col"></div>
+    </main>
+
+    <aside class="sidebar">
+      <div style="font-size:14px;font-weight:700;">Bảng câu hỏi</div>
+      <div id="sidebarCount" class="exam-meta mono">Đã làm 0/20</div>
+      <div id="paletteRoot" class="palette-grid"></div>
+      <button id="sideSubmitBtn" type="button" class="btn btn-primary" style="width:100%;">Nộp bài &amp; Chấm điểm</button>
+    </aside>
+  </div>
+
+  <script type="application/json" id="edusync-exam-json">{
+  "id": "966e85b2-e876-4372-a81d-4c6a431f4039",
+  "title": "Đồ Thị Độ Dịch Chuyển",
+  "subject": "Vật Lý",
+  "grade": "10",
+  "type": "test",
+  "category": "CHƯƠNG 2: ĐỘNG HỌC",
+  "durationMinutes": 25,
+  "shuffleQuestions": false,
+  "shuffleOptions": false,
+  "questionCount": 20,
+  "questions": [
+    {
+      "id": "8f6d510d-40b8-4a67-8975-f1af9cfbec42",
+      "index": 1,
+      "type": "mcq",
+      "level": "B",
+      "text": "Đồ thị độ dịch chuyển – thời gian ($d - t$) của một chuyển động thẳng đều có dạng biểu diễn là đường gì?",
+      "options": [
+        "Đường cong Parabol.",
+        "Đường thẳng dốc lên hoặc dốc xuống (hoặc một đoạn thẳng).",
+        "Đường tròn.",
+        "Đường gấp khúc có đoạn là hình xích-rắc cong phức tạp."
+      ],
+      "correctAnswer": "Đường thẳng dốc lên hoặc dốc xuống (hoặc một đoạn thẳng).",
+      "solution": "Trong chuyển động thẳng đều, ta có công thức $d = v \\cdot t$. Biểu thức này có dạng của hàm số $y = a \\cdot x$ trong Toán học nên có đường biểu diễn là một đoạn thẳng hoặc đường thẳng.",
+      "points": 0.5
+    },
+    {
+      "id": "b5d5ff40-6cf7-4f73-8d66-df7798141447",
+      "index": 2,
+      "type": "mcq",
+      "level": "B",
+      "text": "Độ dốc (hệ số góc) của đường biểu diễn trong đồ thị độ dịch chuyển – thời gian ($d - t$) của chuyển động thẳng cho biết đại lượng nào dưới đây?",
+      "options": [
+        "Gia tốc của chuyển động.",
+        "Độ lớn vận tốc của chuyển động.",
+        "Quãng đường đi được của vật.",
+        "Thời gian chuyển động của vật."
+      ],
+      "correctAnswer": "Độ lớn vận tốc của chuyển động.",
+      "solution": "SGK Trang 36 khẳng định: Độ dốc (hệ số góc $\\frac{\\Delta d}{\\Delta t}$) của đồ thị độ dịch chuyển – thời gian trong chuyển động thẳng cho biết độ lớn vận tốc chuyển động.",
+      "points": 0.5
+    },
+    {
+      "id": "1f8bf64a-5ccd-43fb-bbd2-dadee88f516d",
+      "index": 3,
+      "type": "mcq",
+      "level": "B",
+      "text": "Nếu đường biểu diễn trên đồ thị độ dịch chuyển – thời gian ($d - t$) là một đường thẳng nằm ngang song song với trục thời gian $Ot$, nhận xét nào đúng về trạng thái của vật?",
+      "options": [
+        "Vật đang chuyển động thẳng đều với vận tốc rất lớn.",
+        "Vật đang chuyển động nhanh dần.",
+        "Vật đang ở trạng thái đứng yên (vận tốc $v = 0$).",
+        "Vật đang chuyển động ngược chiều dương."
+      ],
+      "correctAnswer": "Vật đang ở trạng thái đứng yên (vận tốc $v = 0$).",
+      "solution": "Đường biểu diễn nằm ngang có $\\Delta d = 0$ theo thời gian $\\Delta t$, chứng tỏ độ dịch chuyển không thay đổi, tức là vật đang đứng yên ($v = 0$).",
+      "points": 0.5
+    },
+    {
+      "id": "872a00cc-4fca-4ca4-b27e-d9304d0437ed",
+      "index": 4,
+      "type": "mcq",
+      "level": "B",
+      "text": "Khi vật chuyển động thẳng **theo một chiều không đổi**, mối quan hệ giữa độ lớn độ dịch chuyển ($d$) và quãng đường đi được ($s$) là:",
+      "options": [
+        "$d = s$.",
+        "$d > s$.",
+        "$d < s$.",
+        "$d = -s$ trong mọi trường hợp."
+      ],
+      "correctAnswer": "$d = s$.",
+      "solution": "SGK Trang 34 mục 1 ghi rõ: Khi vật chuyển động thẳng theo một chiều không đổi thì độ dịch chuyển và quãng đường đi được có độ lớn như nhau: $d = s$.",
+      "points": 0.5
+    },
+    {
+      "id": "42023f36-10f5-4a9e-8312-7a498b408aef",
+      "index": 5,
+      "type": "mcq",
+      "level": "B",
+      "text": "Khi vật đang chuyển động thẳng theo chiều dương, nếu vật **đổi chiều chuyển động** thì trong khoảng thời gian chuyển động ngược chiều đó, giá trị của quãng đường ($s$) và độ dịch chuyển ($d$) thay đổi như thế nào?",
+      "options": [
+        "Quãng đường $s > 0$, độ dịch chuyển $d$ giảm (hoặc có giá trị âm).",
+        "Cả quãng đường $s$ và độ dịch chuyển $d$ đều có giá trị âm.",
+        "Quãng đường $s < 0$, độ dịch chuyển $d > 0$.",
+        "Quãng đường $s = 0$, độ dịch chuyển $d = 0$."
+      ],
+      "correctAnswer": "Quãng đường $s > 0$, độ dịch chuyển $d$ giảm (hoặc có giá trị âm).",
+      "solution": "Theo bài học SGK Trang 34 & 35: Quãng đường $s$ đi được luôn là đại lượng dương ($s > 0$), còn khi chuyển động ngược chiều dương thì độ dịch chuyển giảm (thương số $\\Delta d / \\Delta t < 0$, cho giá trị vận tốc $v < 0$).",
+      "points": 0.5
+    },
+    {
+      "id": "7287d988-2406-4a05-8a2e-d55fca503dc2",
+      "index": 6,
+      "type": "mcq",
+      "level": "B",
+      "text": "Công thức xác định giá trị vận tốc $v$ từ đồ thị độ dịch chuyển – thời gian ($d - t$) trong khoảng thời gian $\\Delta t = t_2 - t_1$ là:",
+      "options": [
+        "$v = \\frac{\\Delta d}{\\Delta t} = \\frac{d_2 - d_1}{t_2 - t_1}$.",
+        "$v = \\Delta d \\cdot \\Delta t$.",
+        "$v = \\frac{t_2 - t_1}{d_2 - d_1}$.",
+        "$v = \\frac{d_1 + d_2}{2}$."
+      ],
+      "correctAnswer": "$v = \\frac{\\Delta d}{\\Delta t} = \\frac{d_2 - d_1}{t_2 - t_1}$.",
+      "solution": "Vận tốc trong đồ thị $d - t$ bằng hệ số góc của đường biểu diễn: $v = \\frac{\\Delta d}{\\Delta t} = \\frac{d_2 - d_1}{t_2 - t_1}$.",
+      "points": 0.5
+    },
+    {
+      "id": "7abb42f6-7594-4f10-b9c2-3a21c341ac69",
+      "index": 7,
+      "type": "mcq",
+      "level": "B",
+      "text": "So sánh độ dốc của hai đường biểu diễn chuyển động thẳng trên cùng một đồ thị $d - t$: Đường nào có độ dốc **lớn hơn** thì vật đó có:",
+      "options": [
+        "Thời gian chuyển động dài hơn.",
+        "Vận tốc có độ lớn lớn hơn.",
+        "Quãng đường nhỏ hơn.",
+        "Gia tốc nhỏ hơn."
+      ],
+      "correctAnswer": "Vận tốc có độ lớn lớn hơn.",
+      "solution": "Độ dốc của đường biểu diễn trên đồ thị $d - t$ tỉ lệ thuận với độ lớn vận tốc. Do đó độ dốc càng lớn thì vận tốc của vật càng lớn.",
+      "points": 0.5
+    },
+    {
+      "id": "1965c3e5-9399-4bb6-9e4a-4189f69b3f3f",
+      "index": 8,
+      "type": "mcq",
+      "level": "B",
+      "text": "Đồ thị độ dịch chuyển – thời gian ($d - t$) của một chuyển động thẳng **không** cho phép ta xác định thông tin nào sau đây?",
+      "options": [
+        "Vị trí của vật ở thời điểm bất kỳ.",
+        "Thời điểm vật đổi chiều chuyển động.",
+        "Khối lượng và lực tác dụng lên vật.",
+        "Vận tốc chuyển động của vật."
+      ],
+      "correctAnswer": "Khối lượng và lực tác dụng lên vật.",
+      "solution": "Đồ thị $d - t$ là công cụ động học dùng để xác định vị trí, thời điểm, chiều chuyển động và vận tốc của vật, không thể hiện đại lượng động lực học như khối lượng hay lực tác dụng.",
+      "points": 0.5
+    },
+    {
+      "id": "442cb094-c367-433e-8980-d36749475e25",
+      "index": 9,
+      "type": "mcq",
+      "level": "H",
+      "text": "Dựa vào sơ đồ Hình 7.1: Bạn A đi từ nhà đến trường học (1 000 m) rồi từ trường học quay lại siêu thị (800 m). Biết cứ $100$ m bạn A đi hết $25$ s. Vận tốc của bạn A trong đoạn đi **từ trường học đến siêu thị** là bao nhiêu?",
+      "options": [
+        "$4$ m/s",
+        "$-4$ m/s",
+        "$2$ m/s",
+        "$-2$ m/s"
+      ],
+      "correctAnswer": "$-4$ m/s",
+      "solution": "Đoạn từ trường học ($d_1 = 1000$ m) về siêu thị ($d_2 = 800$ m):\n- Độ dịch chuyển $\\Delta d = d_2 - d_1 = 800 - 1000 = -200$ m.\n- Quãng đường đi ngược lại là $200$ m. Vì $100$ m đi hết $25$ s nên thời gian đi $200$ m là $\\Delta t = 50$ s.\n- Vận tốc: $v = \\frac{\\Delta d}{\\Delta t} = \\frac{-200}{50} = -4$ m/s.",
+      "points": 0.5
+    },
+    {
+      "id": "50c5fec3-98c8-4012-9029-d37adda5d97b",
+      "index": 10,
+      "type": "mcq",
+      "level": "H",
+      "text": "Dựa vào đồ thị độ dịch chuyển – thời gian Hình 7.2 của một người bơi trong bể bơi dài $50$ m: Trong $25\\,giây$ đầu tiên (đoạn OA), vận tốc bơi của người đó là:",
+      "options": [
+        "$1$ m/s",
+        "$2$ m/s",
+        "$0,5$ m/s",
+        "$2,5$ m/s"
+      ],
+      "correctAnswer": "$2$ m/s",
+      "solution": "Trong $25$ s đầu (đoạn OA):\n- Điểm O: $t_1 = 0\\,s, d_1 = 0$ m.\n- Điểm A: $t_2 = 25\\,s, d_2 = 50$ m.\n- Vận tốc $v = \\frac{d_2 - d_1}{t_2 - t_1} = \\frac{50 - 0}{25 - 0} = 2$ m/s.",
+      "points": 0.5
+    },
+    {
+      "id": "46ffbd8c-df1f-4b93-bd0b-d4b8f6d54f8b",
+      "index": 11,
+      "type": "mcq",
+      "level": "H",
+      "text": "Quan sát đồ thị Hình 7.2 (Người bơi trong bể bơi): Từ giây thứ 25 đến giây thứ 35 (đoạn AB), trạng thái chuyển động của người bơi là gì?",
+      "options": [
+        "Bơi nhanh dần về vị trí xuất phát.",
+        "Không bơi (nghỉ đứng yên ở thành bể bên kia).",
+        "Bơi chậm dần đều với vận tốc $1$ m/s.",
+        "Bơi quay trở lại với tốc độ $2$ m/s."
+      ],
+      "correctAnswer": "Không bơi (nghỉ đứng yên ở thành bể bên kia).",
+      "solution": "Từ $t = 25$ s đến $t = 35$ s, đường biểu diễn AB là đoạn nằm ngang tại $d = 50$ m. Độ dịch chuyển không đổi $\\Delta d = 0 \\implies v = 0$, nghĩa là người bơi đang dừng lại nghỉ tại đầu bể bên kia.",
+      "points": 0.5
+    },
+    {
+      "id": "23016319-cd26-4885-b9e4-c04511e7d981",
+      "index": 12,
+      "type": "mcq",
+      "level": "H",
+      "text": "Quan sát đồ thị Hình 7.2: Xác định vận tốc và tốc độ của người bơi trong giai đoạn từ giây thứ 35 đến giây thứ 60 (đoạn BC):",
+      "options": [
+        "Vận tốc $v = -1$ m/s, tốc độ $v = 1$ m/s.",
+        "Vận tốc $v = 1$ m/s, tốc độ $v = 1$ m/s.",
+        "Vận tốc $v = -2$ m/s, tốc độ $v = 2$ m/s.",
+        "Vận tốc $v = 0$ m/s, tốc độ $v = 1$ m/s."
+      ],
+      "correctAnswer": "Vận tốc $v = -1$ m/s, tốc độ $v = 1$ m/s.",
+      "solution": "Ở đoạn BC:\n- Tại B ($t = 35$ s): $d_B = 50$ m.\n- Tại C ($t = 60$ s): $d_C = 25$ m.\n- Độ dịch chuyển $\\Delta d = 25 - 50 = -25$ m. Khoảng thời gian $\\Delta t = 60 - 35 = 25$ s.\n- Vận tốc: $v = \\frac{\\Delta d}{\\Delta t} = \\frac{-25}{25} = -1$ m/s.\n- Tốc độ là độ lớn của vận tốc: $|v| = 1$ m/s.",
+      "points": 0.5
+    },
+    {
+      "id": "72fa3200-6aae-4fc1-a1b6-63d8b900d51f",
+      "index": 13,
+      "type": "mcq",
+      "level": "H",
+      "text": "Một ô tô đồ chơi chạy bằng pin có bảng số liệu chuyển động (độ dịch chuyển d từ 0 đến 7m tương ứng thời gian t từ 0 đến 5s). Tính vận tốc của xe trong khoảng thời gian từ giây thứ 1 đến giây thứ 4.",
+      "options": [
+        "$1$ m/s",
+        "$2$ m/s",
+        "$1,5$ m/s",
+        "$2,33$ m/s"
+      ],
+      "correctAnswer": "$2$ m/s",
+      "solution": "Từ $t_1 = 1$ s đến $t_2 = 4$ s:\n- $d_1 = 1$ m, $d_2 = 7$ m.\n- $\\Delta d = 7 - 1 = 6$ m.\n- $\\Delta t = 4 - 1 = 3$ s.\n- Vận tốc: $v = \\frac{\\Delta d}{\\Delta t} = \\frac{6}{3} = 2$ m/s.",
+      "points": 0.5
+    },
+    {
+      "id": "2d896dad-41ed-4975-aa7c-d86714e9b971",
+      "index": 14,
+      "type": "mcq",
+      "level": "H",
+      "text": "Dựa vào đồ thị $d - t$ ở Hình 7.4 của một xe ô tô đồ chơi điều khiển từ xa: Mô tả nào dưới đây mô tả chính xác chuyển động của xe trong $2\\,giây$ đầu tiên?",
+      "options": [
+        "Xe chuyển động thẳng đều theo chiều dương với vận tốc $2$ m/s.",
+        "Xe đứng yên ở vị trí $4$ m.",
+        "Xe chuyển động lùi theo chiều âm với vận tốc $-1$ m/s.",
+        "Xe chuyển động tăng tốc từ $0$ lên $4$ m/s."
+      ],
+      "correctAnswer": "Xe chuyển động thẳng đều theo chiều dương với vận tốc $2$ m/s.",
+      "solution": "Trong 2 giây đầu ($t = 0 \\to 2$ s):\n- Độ dịch chuyển tăng đều từ $0$ lên $4$ m.\n- Hệ số góc $v = \\frac{4 - 0}{2 - 0} = 2\\,m/s > 0$, nên xe chuyển động thẳng đều theo chiều dương với vận tốc $2$ m/s.",
+      "points": 0.5
+    },
+    {
+      "id": "20bd808f-16c8-4380-8976-e9d83ccc1488",
+      "index": 15,
+      "type": "mcq",
+      "level": "H",
+      "text": "Dựa vào đồ thị Hình 7.4: Vị trí của xe ô tô điều khiển so với điểm xuất phát ở giây thứ 2, giây thứ 4, giây thứ 8 và giây thứ 10 lần lượt là:",
+      "options": [
+        "$4\\,m; 4\\,m; 0\\,m; -1$ m",
+        "$2\\,m; 4\\,m; 8\\,m; 10$ m",
+        "$4\\,m; 2\\,m; 0\\,m; 1$ m",
+        "$0\\,m; 4\\,m; 4\\,m; -1$ m"
+      ],
+      "correctAnswer": "$4\\,m; 4\\,m; 0\\,m; -1$ m",
+      "solution": "Nhìn trực tiếp các tung độ tương ứng trên đồ thị Hình 7.4:\n- Tại $t = 2\\,s \\implies d = 4$ m.\n- Tại $t = 4\\,s \\implies d = 4$ m.\n- Tại $t = 8\\,s \\implies d = 0$ m (trở về vị trí xuất phát).\n- Tại $t = 10\\,s \\implies d = -1$ m (ở phía sau vị trí xuất phát $1$ m).",
+      "points": 0.5
+    },
+    {
+      "id": "d9ee0200-0755-4f2d-8a4a-55b7a5da013f",
+      "index": 16,
+      "type": "mcq",
+      "level": "VD",
+      "text": "Dựa vào đồ thị Hình 7.4: Xác định tổng quãng đường đi được ($s$) và độ dịch chuyển ($d$) của xe ô tô đồ chơi sau toàn bộ $10\\,giây$ chuyển động.",
+      "options": [
+        "Quãng đường $s = 9$ m; Độ dịch chuyển $d = -1$ m.",
+        "Quãng đường $s = 4$ m; Độ dịch chuyển $d = 4$ m.",
+        "Quãng đường $s = 5$ m; Độ dịch chuyển $d = 1$ m.",
+        "Quãng đường $s = 8$ m; Độ dịch chuyển $d = -2$ m."
+      ],
+      "correctAnswer": "Quãng đường $s = 9$ m; Độ dịch chuyển $d = -1$ m.",
+      "solution": "Tính từng giai đoạn chuyển động:\n1. Từ $t = 0 \\to 2$ s: Xe tiến từ $0 \\to 4\\,m \\implies s_1 = 4$ m.\n2. Từ $t = 2 \\to 4$ s: Xe đứng yên $\\implies s_2 = 0$ m.\n3. Từ $t = 4 \\to 9$ s: Xe lùi từ $4$ m về $-1\\,m \\implies s_3 = | -1 - 4 | = 5$ m.\n4. Từ $t = 9 \\to 10$ s: Xe đứng yên $\\implies s_4 = 0$ m.\n- Tổng quãng đường $s = 4 + 0 + 5 + 0 = 9$ m.\n- Độ dịch chuyển cuối cùng ở $t = 10$ s so với mốc xuất phát ($0$ m) là $d = -1 - 0 = -1$ m.",
+      "points": 0.5
+    },
+    {
+      "id": "e46b0329-0299-40a4-93bf-b176640bc4f1",
+      "index": 17,
+      "type": "mcq",
+      "level": "VD",
+      "text": "Hai ô tô chuyển động thẳng đều trên cùng một đường thẳng. Đồ thị $d - t$ của ô tô (1) xuất phát từ gốc tọa độ O có vận tốc $v_1 = 60$ km/h. Ô tô (2) xuất phát từ vị trí $d_{02} = 120$ km chuyển động ngược chiều về O với vận tốc $v_2 = -40$ km/h. Hai xe gặp nhau tại thời điểm $t$ và vị trí $d$ bằng bao nhiêu?",
+      "options": [
+        "$t = 1,2\\,giờ$ (72 phút) và $d = 72$ km",
+        "$t = 2,0\\,giờ$ và $d = 60$ km",
+        "$t = 1,5\\,giờ$ và $d = 90$ km",
+        "$t = 0,8\\,giờ$ và $d = 48$ km"
+      ],
+      "correctAnswer": "$t = 1,2\\,giờ$ (72 phút) và $d = 72$ km",
+      "solution": "Phương trình độ dịch chuyển của hai xe:\n- Xe 1: $d_1 = 60t$.\n- Xe 2: $d_2 = 120 - 40t$.\n- Hai xe gặp nhau khi giao điểm của 2 đồ thị xuất hiện ($d_1 = d_2$):\n$$60t = 120 - 40t \\iff 100t = 120 \\implies t = 1,2\\,giờ = 72\\,phút.$$\n- Vị trí gặp nhau: $d = 60 \\times 1,2 = 72$ km.",
+      "points": 0.5
+    },
+    {
+      "id": "569f6b0b-d1cb-434a-ad35-84bae1215bf9",
+      "index": 18,
+      "type": "mcq",
+      "level": "VD",
+      "text": "Một người đi bộ trên một đường thẳng. Trong $20\\,phút$ đầu đi được $1,2$ km theo chiều dương. Sau đó dừng lại nghỉ $10\\,phút$. Trong $15\\,phút$ tiếp theo người đó quay ngược lại đi được $0,6$ km. Vận tốc trung bình của người đó trong toàn bộ thời gian $45\\,phút$ là:",
+      "options": [
+        "$0,8$ km/h",
+        "$2,4$ km/h",
+        "$1,2$ km/h",
+        "$1,6$ km/h"
+      ],
+      "correctAnswer": "$0,8$ km/h",
+      "solution": "Xác định các thông số:\n- Độ dịch chuyển sau $20\\,phút$: $d_1 = +1,2$ km.\n- Nghỉ $10\\,phút$: $d$ không đổi.\n- Đi ngược lại $0,6$ km trong $15\\,phút$: độ dịch chuyển cuối cùng $d = 1,2 - 0,6 = 0,6$ km.\n- Tổng thời gian: $t = 20 + 10 + 15 = 45\\,phút = 0,75\\,giờ$.\n- Vận tốc trung bình: $v_{tb} = \\frac{d}{t} = \\frac{0,6}{0,75} = 0,8$ km/h.",
+      "points": 0.5
+    },
+    {
+      "id": "831b189c-8ab6-47ae-bf3c-f265f8d2c018",
+      "index": 19,
+      "type": "mcq",
+      "level": "VD",
+      "text": "Đồ thị $d - t$ của hai vật (1) và (2) chuyển động thẳng. Vật (1) có phương trình $d_1 = 10 + 5t\\,(m)$. Vật (2) xuất phát từ vị trí $d_{02} = 50$ m lúc $t = 0$ và chuyển động ngược chiều dương, cắt đồ thị vật (1) tại thời điểm $t = 4$ s. Hãy xác định vận tốc $v_2$ của vật (2) và quãng đường vật (2) đi được từ $t = 0$ đến thời điểm hai vật cách nhau $20$ m **sau khi đã gặp nhau**.",
+      "options": [
+        "$v_2 = -5$ m/s; Quãng đường $s_2 = 30$ m",
+        "$v_2 = -10$ m/s; Quãng đường $s_2 = 40$ m",
+        "$v_2 = -5$ m/s; Quãng đường $s_2 = 20$ m",
+        "$v_2 = -2,5$ m/s; Quãng đường $s_2 = 15$ m"
+      ],
+      "correctAnswer": "$v_2 = -5$ m/s; Quãng đường $s_2 = 30$ m",
+      "solution": "1. Tại thời điểm hai vật gặp nhau $t = 4$ s:\n- Vị trí vật (1): $d_1(4) = 10 + 5(4) = 30$ m.\n- Vì hai vật gặp nhau nên $d_2(4) = 30$ m.\n- Phương trình vật (2): $d_2 = 50 + v_2 \\cdot t \\implies 30 = 50 + v_2(4) \\implies v_2 = -5$ m/s.\n\n2. Khoảng cách giữa hai vật sau khi gặp nhau ($t > 4$ s):\n- $d_1 - d_2 = 20\\,m \\iff (10 + 5t) - (50 - 5t) = 20 \\iff 10t - 40 = 20 \\implies t = 6$ s.\n- Quãng đường vật (2) đi được từ $t = 0$ đến $t = 6$ s:\n$$s_2 = |v_2| \\cdot t = 5 \\times 6 = 30$ m$.",
+      "points": 0.5
+    },
+    {
+      "id": "6ef6c4d9-2ff2-4ea3-8765-b5691a612f75",
+      "index": 20,
+      "type": "mcq",
+      "level": "VD",
+      "text": "Một chất điểm chuyển động thẳng có đồ thị $d - t$ gồm 3 giai đoạn nối tiếp: Giai đoạn 1 ($0 \\le t \\le t_1$) đi đều $v_1 = 4$ m/s tới $d_1 = 20$ m. Giai đoạn 2 nghỉ $5$ s. Giai đoạn 3 đi ngược chiều $v_3 = -2$ m/s về vị trí $d_3 = -10$ m. Xác định tổng thời gian $t_3$ và **tốc độ trung bình** trong toàn bộ thời gian $t_3$.",
+      "options": [
+        "$t_3 = 25$ s; Tốc độ trung bình $v_{tb tốc độ} = 2,0$ m/s",
+        "$t_3 = 20$ s; Tốc độ trung bình $v_{tb tốc độ} = 1,5$ m/s",
+        "$t_3 = 25$ s; Tốc độ trung bình $v_{tb tốc độ} = -0,4$ m/s",
+        "$t_3 = 30$ s; Tốc độ trung bình $v_{tb tốc độ} = 2,5$ m/s"
+      ],
+      "correctAnswer": "$t_3 = 25$ s; Tốc độ trung bình $v_{tb tốc độ} = 2,0$ m/s",
+      "solution": "Tính toán từng mốc thời gian và quãng đường:\n- Giai đoạn 1: $t_1 = \\frac{d_1}{v_1} = \\frac{20}{4} = 5$ s. Quãng đường $s_1 = 20$ m.\n- Giai đoạn 2: $t_2 = t_1 + 5 = 10$ s. Quãng đường $s_2 = 0$ m.\n- Giai đoạn 3: Độ dịch chuyển $\\Delta d_3 = d_3 - d_2 = -10 - 20 = -30$ m.\n  Thời gian $\\Delta t_3 = \\frac{\\Delta d_3}{v_3} = \\frac{-30}{-2} = 15$ s.\n  Quãng đường $s_3 = |\\Delta d_3| = 30$ m.\n- Tổng thời gian $t_3 = t_2 + 15 = 10 + 15 = 25$ s.\n- Tổng quãng đường $s = s_1 + s_2 + s_3 = 20 + 0 + 30 = 50$ m.\n- Tốc độ trung bình: $v_{tb tốc độ} = \\frac{s}{t_3} = \\frac{50}{25} = 2,0$ m/s.",
+      "points": 0.5
+    }
+  ]
+}</script>
+  <script id="edusync-runtime-data" type="application/json">{"examId":"966e85b2-e876-4372-a81d-4c6a431f4039","title":"Đồ Thị Độ Dịch Chuyển","subject":"Vật Lý","grade":"10","category":"CHƯƠNG 2: ĐỘNG HỌC","durationMinutes":25,"maxScore":10,"shuffleQuestions":false,"shuffleOptions":false,"blocks":[{"blockId":"single_8f6d510d-40b8-4a67-8975-f1af9cfbec42_0","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"8f6d510d-40b8-4a67-8975-f1af9cfbec42","type":"mcq","level":"B","chapterName":"","points":0.5,"textHtml":"Đồ thị độ dịch chuyển – thời gian ($d - t$) của một chuyển động thẳng đều có dạng biểu diễn là đường gì?","rawText":"Đồ thị độ dịch chuyển – thời gian ($d - t$) của một chuyển động thẳng đều có dạng biểu diễn là đường gì?","ownImageUrl":"","optionsHtml":["Đường cong Parabol.","Đường thẳng dốc lên hoặc dốc xuống (hoặc một đoạn thẳng).","Đường tròn.","Đường gấp khúc có đoạn là hình xích-rắc cong phức tạp."],"optionsRaw":["Đường cong Parabol.","Đường thẳng dốc lên hoặc dốc xuống (hoặc một đoạn thẳng).","Đường tròn.","Đường gấp khúc có đoạn là hình xích-rắc cong phức tạp."],"correctIndex":1,"correctAnswer":"Đường thẳng dốc lên hoặc dốc xuống (hoặc một đoạn thẳng).","subQuestions":[],"solutionHtml":"Trong chuyển động thẳng đều, ta có công thức $d = v \\cdot t$. Biểu thức này có dạng của hàm số $y = a \\cdot x$ trong Toán học nên có đường biểu diễn là một đoạn thẳng hoặc đường thẳng.","rawSolution":"Trong chuyển động thẳng đều, ta có công thức $d = v \\cdot t$. Biểu thức này có dạng của hàm số $y = a \\cdot x$ trong Toán học nên có đường biểu diễn là một đoạn thẳng hoặc đường thẳng."}]},{"blockId":"single_b5d5ff40-6cf7-4f73-8d66-df7798141447_1","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"b5d5ff40-6cf7-4f73-8d66-df7798141447","type":"mcq","level":"B","chapterName":"","points":0.5,"textHtml":"Độ dốc (hệ số góc) của đường biểu diễn trong đồ thị độ dịch chuyển – thời gian ($d - t$) của chuyển động thẳng cho biết đại lượng nào dưới đây?","rawText":"Độ dốc (hệ số góc) của đường biểu diễn trong đồ thị độ dịch chuyển – thời gian ($d - t$) của chuyển động thẳng cho biết đại lượng nào dưới đây?","ownImageUrl":"","optionsHtml":["Gia tốc của chuyển động.","Độ lớn vận tốc của chuyển động.","Quãng đường đi được của vật.","Thời gian chuyển động của vật."],"optionsRaw":["Gia tốc của chuyển động.","Độ lớn vận tốc của chuyển động.","Quãng đường đi được của vật.","Thời gian chuyển động của vật."],"correctIndex":1,"correctAnswer":"Độ lớn vận tốc của chuyển động.","subQuestions":[],"solutionHtml":"SGK Trang 36 khẳng định: Độ dốc (hệ số góc $\\frac{\\Delta d}{\\Delta t}$) của đồ thị độ dịch chuyển – thời gian trong chuyển động thẳng cho biết độ lớn vận tốc chuyển động.","rawSolution":"SGK Trang 36 khẳng định: Độ dốc (hệ số góc $\\frac{\\Delta d}{\\Delta t}$) của đồ thị độ dịch chuyển – thời gian trong chuyển động thẳng cho biết độ lớn vận tốc chuyển động."}]},{"blockId":"single_1f8bf64a-5ccd-43fb-bbd2-dadee88f516d_2","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"1f8bf64a-5ccd-43fb-bbd2-dadee88f516d","type":"mcq","level":"B","chapterName":"","points":0.5,"textHtml":"Nếu đường biểu diễn trên đồ thị độ dịch chuyển – thời gian ($d - t$) là một đường thẳng nằm ngang song song với trục thời gian $Ot$, nhận xét nào đúng về trạng thái của vật?","rawText":"Nếu đường biểu diễn trên đồ thị độ dịch chuyển – thời gian ($d - t$) là một đường thẳng nằm ngang song song với trục thời gian $Ot$, nhận xét nào đúng về trạng thái của vật?","ownImageUrl":"","optionsHtml":["Vật đang chuyển động thẳng đều với vận tốc rất lớn.","Vật đang chuyển động nhanh dần.","Vật đang ở trạng thái đứng yên (vận tốc $v = 0$).","Vật đang chuyển động ngược chiều dương."],"optionsRaw":["Vật đang chuyển động thẳng đều với vận tốc rất lớn.","Vật đang chuyển động nhanh dần.","Vật đang ở trạng thái đứng yên (vận tốc $v = 0$).","Vật đang chuyển động ngược chiều dương."],"correctIndex":2,"correctAnswer":"Vật đang ở trạng thái đứng yên (vận tốc $v = 0$).","subQuestions":[],"solutionHtml":"Đường biểu diễn nằm ngang có $\\Delta d = 0$ theo thời gian $\\Delta t$, chứng tỏ độ dịch chuyển không thay đổi, tức là vật đang đứng yên ($v = 0$).","rawSolution":"Đường biểu diễn nằm ngang có $\\Delta d = 0$ theo thời gian $\\Delta t$, chứng tỏ độ dịch chuyển không thay đổi, tức là vật đang đứng yên ($v = 0$)."}]},{"blockId":"single_872a00cc-4fca-4ca4-b27e-d9304d0437ed_3","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"872a00cc-4fca-4ca4-b27e-d9304d0437ed","type":"mcq","level":"B","chapterName":"","points":0.5,"textHtml":"Khi vật chuyển động thẳng **theo một chiều không đổi**, mối quan hệ giữa độ lớn độ dịch chuyển ($d$) và quãng đường đi được ($s$) là:","rawText":"Khi vật chuyển động thẳng **theo một chiều không đổi**, mối quan hệ giữa độ lớn độ dịch chuyển ($d$) và quãng đường đi được ($s$) là:","ownImageUrl":"","optionsHtml":["$d = s$.","$d &gt; s$.","$d &lt; s$.","$d = -s$ trong mọi trường hợp."],"optionsRaw":["$d = s$.","$d > s$.","$d < s$.","$d = -s$ trong mọi trường hợp."],"correctIndex":0,"correctAnswer":"$d = s$.","subQuestions":[],"solutionHtml":"SGK Trang 34 mục 1 ghi rõ: Khi vật chuyển động thẳng theo một chiều không đổi thì độ dịch chuyển và quãng đường đi được có độ lớn như nhau: $d = s$.","rawSolution":"SGK Trang 34 mục 1 ghi rõ: Khi vật chuyển động thẳng theo một chiều không đổi thì độ dịch chuyển và quãng đường đi được có độ lớn như nhau: $d = s$."}]},{"blockId":"single_42023f36-10f5-4a9e-8312-7a498b408aef_4","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"42023f36-10f5-4a9e-8312-7a498b408aef","type":"mcq","level":"B","chapterName":"","points":0.5,"textHtml":"Khi vật đang chuyển động thẳng theo chiều dương, nếu vật **đổi chiều chuyển động** thì trong khoảng thời gian chuyển động ngược chiều đó, giá trị của quãng đường ($s$) và độ dịch chuyển ($d$) thay đổi như thế nào?","rawText":"Khi vật đang chuyển động thẳng theo chiều dương, nếu vật **đổi chiều chuyển động** thì trong khoảng thời gian chuyển động ngược chiều đó, giá trị của quãng đường ($s$) và độ dịch chuyển ($d$) thay đổi như thế nào?","ownImageUrl":"","optionsHtml":["Quãng đường $s &gt; 0$, độ dịch chuyển $d$ giảm (hoặc có giá trị âm).","Cả quãng đường $s$ và độ dịch chuyển $d$ đều có giá trị âm.","Quãng đường $s &lt; 0$, độ dịch chuyển $d &gt; 0$.","Quãng đường $s = 0$, độ dịch chuyển $d = 0$."],"optionsRaw":["Quãng đường $s > 0$, độ dịch chuyển $d$ giảm (hoặc có giá trị âm).","Cả quãng đường $s$ và độ dịch chuyển $d$ đều có giá trị âm.","Quãng đường $s < 0$, độ dịch chuyển $d > 0$.","Quãng đường $s = 0$, độ dịch chuyển $d = 0$."],"correctIndex":0,"correctAnswer":"Quãng đường $s > 0$, độ dịch chuyển $d$ giảm (hoặc có giá trị âm).","subQuestions":[],"solutionHtml":"Theo bài học SGK Trang 34 &amp; 35: Quãng đường $s$ đi được luôn là đại lượng dương ($s &gt; 0$), còn khi chuyển động ngược chiều dương thì độ dịch chuyển giảm (thương số $\\Delta d / \\Delta t &lt; 0$, cho giá trị vận tốc $v &lt; 0$).","rawSolution":"Theo bài học SGK Trang 34 & 35: Quãng đường $s$ đi được luôn là đại lượng dương ($s > 0$), còn khi chuyển động ngược chiều dương thì độ dịch chuyển giảm (thương số $\\Delta d / \\Delta t < 0$, cho giá trị vận tốc $v < 0$)."}]},{"blockId":"single_7287d988-2406-4a05-8a2e-d55fca503dc2_5","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"7287d988-2406-4a05-8a2e-d55fca503dc2","type":"mcq","level":"B","chapterName":"","points":0.5,"textHtml":"Công thức xác định giá trị vận tốc $v$ từ đồ thị độ dịch chuyển – thời gian ($d - t$) trong khoảng thời gian $\\Delta t = t_2 - t_1$ là:","rawText":"Công thức xác định giá trị vận tốc $v$ từ đồ thị độ dịch chuyển – thời gian ($d - t$) trong khoảng thời gian $\\Delta t = t_2 - t_1$ là:","ownImageUrl":"","optionsHtml":["$v = \\frac{\\Delta d}{\\Delta t} = \\frac{d_2 - d_1}{t_2 - t_1}$.","$v = \\Delta d \\cdot \\Delta t$.","$v = \\frac{t_2 - t_1}{d_2 - d_1}$.","$v = \\frac{d_1 + d_2}{2}$."],"optionsRaw":["$v = \\frac{\\Delta d}{\\Delta t} = \\frac{d_2 - d_1}{t_2 - t_1}$.","$v = \\Delta d \\cdot \\Delta t$.","$v = \\frac{t_2 - t_1}{d_2 - d_1}$.","$v = \\frac{d_1 + d_2}{2}$."],"correctIndex":0,"correctAnswer":"$v = \\frac{\\Delta d}{\\Delta t} = \\frac{d_2 - d_1}{t_2 - t_1}$.","subQuestions":[],"solutionHtml":"Vận tốc trong đồ thị $d - t$ bằng hệ số góc của đường biểu diễn: $v = \\frac{\\Delta d}{\\Delta t} = \\frac{d_2 - d_1}{t_2 - t_1}$.","rawSolution":"Vận tốc trong đồ thị $d - t$ bằng hệ số góc của đường biểu diễn: $v = \\frac{\\Delta d}{\\Delta t} = \\frac{d_2 - d_1}{t_2 - t_1}$."}]},{"blockId":"single_7abb42f6-7594-4f10-b9c2-3a21c341ac69_6","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"7abb42f6-7594-4f10-b9c2-3a21c341ac69","type":"mcq","level":"B","chapterName":"","points":0.5,"textHtml":"So sánh độ dốc của hai đường biểu diễn chuyển động thẳng trên cùng một đồ thị $d - t$: Đường nào có độ dốc **lớn hơn** thì vật đó có:","rawText":"So sánh độ dốc của hai đường biểu diễn chuyển động thẳng trên cùng một đồ thị $d - t$: Đường nào có độ dốc **lớn hơn** thì vật đó có:","ownImageUrl":"","optionsHtml":["Thời gian chuyển động dài hơn.","Vận tốc có độ lớn lớn hơn.","Quãng đường nhỏ hơn.","Gia tốc nhỏ hơn."],"optionsRaw":["Thời gian chuyển động dài hơn.","Vận tốc có độ lớn lớn hơn.","Quãng đường nhỏ hơn.","Gia tốc nhỏ hơn."],"correctIndex":1,"correctAnswer":"Vận tốc có độ lớn lớn hơn.","subQuestions":[],"solutionHtml":"Độ dốc của đường biểu diễn trên đồ thị $d - t$ tỉ lệ thuận với độ lớn vận tốc. Do đó độ dốc càng lớn thì vận tốc của vật càng lớn.","rawSolution":"Độ dốc của đường biểu diễn trên đồ thị $d - t$ tỉ lệ thuận với độ lớn vận tốc. Do đó độ dốc càng lớn thì vận tốc của vật càng lớn."}]},{"blockId":"single_1965c3e5-9399-4bb6-9e4a-4189f69b3f3f_7","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"1965c3e5-9399-4bb6-9e4a-4189f69b3f3f","type":"mcq","level":"B","chapterName":"","points":0.5,"textHtml":"Đồ thị độ dịch chuyển – thời gian ($d - t$) của một chuyển động thẳng **không** cho phép ta xác định thông tin nào sau đây?","rawText":"Đồ thị độ dịch chuyển – thời gian ($d - t$) của một chuyển động thẳng **không** cho phép ta xác định thông tin nào sau đây?","ownImageUrl":"","optionsHtml":["Vị trí của vật ở thời điểm bất kỳ.","Thời điểm vật đổi chiều chuyển động.","Khối lượng và lực tác dụng lên vật.","Vận tốc chuyển động của vật."],"optionsRaw":["Vị trí của vật ở thời điểm bất kỳ.","Thời điểm vật đổi chiều chuyển động.","Khối lượng và lực tác dụng lên vật.","Vận tốc chuyển động của vật."],"correctIndex":2,"correctAnswer":"Khối lượng và lực tác dụng lên vật.","subQuestions":[],"solutionHtml":"Đồ thị $d - t$ là công cụ động học dùng để xác định vị trí, thời điểm, chiều chuyển động và vận tốc của vật, không thể hiện đại lượng động lực học như khối lượng hay lực tác dụng.","rawSolution":"Đồ thị $d - t$ là công cụ động học dùng để xác định vị trí, thời điểm, chiều chuyển động và vận tốc của vật, không thể hiện đại lượng động lực học như khối lượng hay lực tác dụng."}]},{"blockId":"single_442cb094-c367-433e-8980-d36749475e25_8","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"442cb094-c367-433e-8980-d36749475e25","type":"mcq","level":"H","chapterName":"","points":0.5,"textHtml":"Dựa vào sơ đồ Hình 7.1: Bạn A đi từ nhà đến trường học (1 000 m) rồi từ trường học quay lại siêu thị (800 m). Biết cứ $100$ m bạn A đi hết $25$ s. Vận tốc của bạn A trong đoạn đi **từ trường học đến siêu thị** là bao nhiêu?","rawText":"Dựa vào sơ đồ Hình 7.1: Bạn A đi từ nhà đến trường học (1 000 m) rồi từ trường học quay lại siêu thị (800 m). Biết cứ $100$ m bạn A đi hết $25$ s. Vận tốc của bạn A trong đoạn đi **từ trường học đến siêu thị** là bao nhiêu?","ownImageUrl":"","optionsHtml":["$4$ m/s","$-4$ m/s","$2$ m/s","$-2$ m/s"],"optionsRaw":["$4$ m/s","$-4$ m/s","$2$ m/s","$-2$ m/s"],"correctIndex":1,"correctAnswer":"$-4$ m/s","subQuestions":[],"solutionHtml":"Đoạn từ trường học ($d_1 = 1000$ m) về siêu thị ($d_2 = 800$ m):<br>- Độ dịch chuyển $\\Delta d = d_2 - d_1 = 800 - 1000 = -200$ m.<br>- Quãng đường đi ngược lại là $200$ m. Vì $100$ m đi hết $25$ s nên thời gian đi $200$ m là $\\Delta t = 50$ s.<br>- Vận tốc: $v = \\frac{\\Delta d}{\\Delta t} = \\frac{-200}{50} = -4$ m/s.","rawSolution":"Đoạn từ trường học ($d_1 = 1000$ m) về siêu thị ($d_2 = 800$ m):\n- Độ dịch chuyển $\\Delta d = d_2 - d_1 = 800 - 1000 = -200$ m.\n- Quãng đường đi ngược lại là $200$ m. Vì $100$ m đi hết $25$ s nên thời gian đi $200$ m là $\\Delta t = 50$ s.\n- Vận tốc: $v = \\frac{\\Delta d}{\\Delta t} = \\frac{-200}{50} = -4$ m/s."}]},{"blockId":"single_50c5fec3-98c8-4012-9029-d37adda5d97b_9","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"50c5fec3-98c8-4012-9029-d37adda5d97b","type":"mcq","level":"H","chapterName":"","points":0.5,"textHtml":"Dựa vào đồ thị độ dịch chuyển – thời gian Hình 7.2 của một người bơi trong bể bơi dài $50$ m: Trong $25\\,giây$ đầu tiên (đoạn OA), vận tốc bơi của người đó là:","rawText":"Dựa vào đồ thị độ dịch chuyển – thời gian Hình 7.2 của một người bơi trong bể bơi dài $50$ m: Trong $25\\,giây$ đầu tiên (đoạn OA), vận tốc bơi của người đó là:","ownImageUrl":"","optionsHtml":["$1$ m/s","$2$ m/s","$0,5$ m/s","$2,5$ m/s"],"optionsRaw":["$1$ m/s","$2$ m/s","$0,5$ m/s","$2,5$ m/s"],"correctIndex":1,"correctAnswer":"$2$ m/s","subQuestions":[],"solutionHtml":"Trong $25$ s đầu (đoạn OA):<br>- Điểm O: $t_1 = 0\\,s, d_1 = 0$ m.<br>- Điểm A: $t_2 = 25\\,s, d_2 = 50$ m.<br>- Vận tốc $v = \\frac{d_2 - d_1}{t_2 - t_1} = \\frac{50 - 0}{25 - 0} = 2$ m/s.","rawSolution":"Trong $25$ s đầu (đoạn OA):\n- Điểm O: $t_1 = 0\\,s, d_1 = 0$ m.\n- Điểm A: $t_2 = 25\\,s, d_2 = 50$ m.\n- Vận tốc $v = \\frac{d_2 - d_1}{t_2 - t_1} = \\frac{50 - 0}{25 - 0} = 2$ m/s."}]},{"blockId":"single_46ffbd8c-df1f-4b93-bd0b-d4b8f6d54f8b_10","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"46ffbd8c-df1f-4b93-bd0b-d4b8f6d54f8b","type":"mcq","level":"H","chapterName":"","points":0.5,"textHtml":"Quan sát đồ thị Hình 7.2 (Người bơi trong bể bơi): Từ giây thứ 25 đến giây thứ 35 (đoạn AB), trạng thái chuyển động của người bơi là gì?","rawText":"Quan sát đồ thị Hình 7.2 (Người bơi trong bể bơi): Từ giây thứ 25 đến giây thứ 35 (đoạn AB), trạng thái chuyển động của người bơi là gì?","ownImageUrl":"","optionsHtml":["Bơi nhanh dần về vị trí xuất phát.","Không bơi (nghỉ đứng yên ở thành bể bên kia).","Bơi chậm dần đều với vận tốc $1$ m/s.","Bơi quay trở lại với tốc độ $2$ m/s."],"optionsRaw":["Bơi nhanh dần về vị trí xuất phát.","Không bơi (nghỉ đứng yên ở thành bể bên kia).","Bơi chậm dần đều với vận tốc $1$ m/s.","Bơi quay trở lại với tốc độ $2$ m/s."],"correctIndex":1,"correctAnswer":"Không bơi (nghỉ đứng yên ở thành bể bên kia).","subQuestions":[],"solutionHtml":"Từ $t = 25$ s đến $t = 35$ s, đường biểu diễn AB là đoạn nằm ngang tại $d = 50$ m. Độ dịch chuyển không đổi $\\Delta d = 0 \\implies v = 0$, nghĩa là người bơi đang dừng lại nghỉ tại đầu bể bên kia.","rawSolution":"Từ $t = 25$ s đến $t = 35$ s, đường biểu diễn AB là đoạn nằm ngang tại $d = 50$ m. Độ dịch chuyển không đổi $\\Delta d = 0 \\implies v = 0$, nghĩa là người bơi đang dừng lại nghỉ tại đầu bể bên kia."}]},{"blockId":"single_23016319-cd26-4885-b9e4-c04511e7d981_11","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"23016319-cd26-4885-b9e4-c04511e7d981","type":"mcq","level":"H","chapterName":"","points":0.5,"textHtml":"Quan sát đồ thị Hình 7.2: Xác định vận tốc và tốc độ của người bơi trong giai đoạn từ giây thứ 35 đến giây thứ 60 (đoạn BC):","rawText":"Quan sát đồ thị Hình 7.2: Xác định vận tốc và tốc độ của người bơi trong giai đoạn từ giây thứ 35 đến giây thứ 60 (đoạn BC):","ownImageUrl":"","optionsHtml":["Vận tốc $v = -1$ m/s, tốc độ $v = 1$ m/s.","Vận tốc $v = 1$ m/s, tốc độ $v = 1$ m/s.","Vận tốc $v = -2$ m/s, tốc độ $v = 2$ m/s.","Vận tốc $v = 0$ m/s, tốc độ $v = 1$ m/s."],"optionsRaw":["Vận tốc $v = -1$ m/s, tốc độ $v = 1$ m/s.","Vận tốc $v = 1$ m/s, tốc độ $v = 1$ m/s.","Vận tốc $v = -2$ m/s, tốc độ $v = 2$ m/s.","Vận tốc $v = 0$ m/s, tốc độ $v = 1$ m/s."],"correctIndex":0,"correctAnswer":"Vận tốc $v = -1$ m/s, tốc độ $v = 1$ m/s.","subQuestions":[],"solutionHtml":"Ở đoạn BC:<br>- Tại B ($t = 35$ s): $d_B = 50$ m.<br>- Tại C ($t = 60$ s): $d_C = 25$ m.<br>- Độ dịch chuyển $\\Delta d = 25 - 50 = -25$ m. Khoảng thời gian $\\Delta t = 60 - 35 = 25$ s.<br>- Vận tốc: $v = \\frac{\\Delta d}{\\Delta t} = \\frac{-25}{25} = -1$ m/s.<br>- Tốc độ là độ lớn của vận tốc: $|v| = 1$ m/s.","rawSolution":"Ở đoạn BC:\n- Tại B ($t = 35$ s): $d_B = 50$ m.\n- Tại C ($t = 60$ s): $d_C = 25$ m.\n- Độ dịch chuyển $\\Delta d = 25 - 50 = -25$ m. Khoảng thời gian $\\Delta t = 60 - 35 = 25$ s.\n- Vận tốc: $v = \\frac{\\Delta d}{\\Delta t} = \\frac{-25}{25} = -1$ m/s.\n- Tốc độ là độ lớn của vận tốc: $|v| = 1$ m/s."}]},{"blockId":"single_72fa3200-6aae-4fc1-a1b6-63d8b900d51f_12","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"72fa3200-6aae-4fc1-a1b6-63d8b900d51f","type":"mcq","level":"H","chapterName":"","points":0.5,"textHtml":"Một ô tô đồ chơi chạy bằng pin có bảng số liệu chuyển động (độ dịch chuyển d từ 0 đến 7m tương ứng thời gian t từ 0 đến 5s). Tính vận tốc của xe trong khoảng thời gian từ giây thứ 1 đến giây thứ 4.","rawText":"Một ô tô đồ chơi chạy bằng pin có bảng số liệu chuyển động (độ dịch chuyển d từ 0 đến 7m tương ứng thời gian t từ 0 đến 5s). Tính vận tốc của xe trong khoảng thời gian từ giây thứ 1 đến giây thứ 4.","ownImageUrl":"","optionsHtml":["$1$ m/s","$2$ m/s","$1,5$ m/s","$2,33$ m/s"],"optionsRaw":["$1$ m/s","$2$ m/s","$1,5$ m/s","$2,33$ m/s"],"correctIndex":1,"correctAnswer":"$2$ m/s","subQuestions":[],"solutionHtml":"Từ $t_1 = 1$ s đến $t_2 = 4$ s:<br>- $d_1 = 1$ m, $d_2 = 7$ m.<br>- $\\Delta d = 7 - 1 = 6$ m.<br>- $\\Delta t = 4 - 1 = 3$ s.<br>- Vận tốc: $v = \\frac{\\Delta d}{\\Delta t} = \\frac{6}{3} = 2$ m/s.","rawSolution":"Từ $t_1 = 1$ s đến $t_2 = 4$ s:\n- $d_1 = 1$ m, $d_2 = 7$ m.\n- $\\Delta d = 7 - 1 = 6$ m.\n- $\\Delta t = 4 - 1 = 3$ s.\n- Vận tốc: $v = \\frac{\\Delta d}{\\Delta t} = \\frac{6}{3} = 2$ m/s."}]},{"blockId":"single_2d896dad-41ed-4975-aa7c-d86714e9b971_13","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"2d896dad-41ed-4975-aa7c-d86714e9b971","type":"mcq","level":"H","chapterName":"","points":0.5,"textHtml":"Dựa vào đồ thị $d - t$ ở Hình 7.4 của một xe ô tô đồ chơi điều khiển từ xa: Mô tả nào dưới đây mô tả chính xác chuyển động của xe trong $2\\,giây$ đầu tiên?","rawText":"Dựa vào đồ thị $d - t$ ở Hình 7.4 của một xe ô tô đồ chơi điều khiển từ xa: Mô tả nào dưới đây mô tả chính xác chuyển động của xe trong $2\\,giây$ đầu tiên?","ownImageUrl":"","optionsHtml":["Xe chuyển động thẳng đều theo chiều dương với vận tốc $2$ m/s.","Xe đứng yên ở vị trí $4$ m.","Xe chuyển động lùi theo chiều âm với vận tốc $-1$ m/s.","Xe chuyển động tăng tốc từ $0$ lên $4$ m/s."],"optionsRaw":["Xe chuyển động thẳng đều theo chiều dương với vận tốc $2$ m/s.","Xe đứng yên ở vị trí $4$ m.","Xe chuyển động lùi theo chiều âm với vận tốc $-1$ m/s.","Xe chuyển động tăng tốc từ $0$ lên $4$ m/s."],"correctIndex":0,"correctAnswer":"Xe chuyển động thẳng đều theo chiều dương với vận tốc $2$ m/s.","subQuestions":[],"solutionHtml":"Trong 2 giây đầu ($t = 0 \\to 2$ s):<br>- Độ dịch chuyển tăng đều từ $0$ lên $4$ m.<br>- Hệ số góc $v = \\frac{4 - 0}{2 - 0} = 2\\,m/s &gt; 0$, nên xe chuyển động thẳng đều theo chiều dương với vận tốc $2$ m/s.","rawSolution":"Trong 2 giây đầu ($t = 0 \\to 2$ s):\n- Độ dịch chuyển tăng đều từ $0$ lên $4$ m.\n- Hệ số góc $v = \\frac{4 - 0}{2 - 0} = 2\\,m/s > 0$, nên xe chuyển động thẳng đều theo chiều dương với vận tốc $2$ m/s."}]},{"blockId":"single_20bd808f-16c8-4380-8976-e9d83ccc1488_14","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"20bd808f-16c8-4380-8976-e9d83ccc1488","type":"mcq","level":"H","chapterName":"","points":0.5,"textHtml":"Dựa vào đồ thị Hình 7.4: Vị trí của xe ô tô điều khiển so với điểm xuất phát ở giây thứ 2, giây thứ 4, giây thứ 8 và giây thứ 10 lần lượt là:","rawText":"Dựa vào đồ thị Hình 7.4: Vị trí của xe ô tô điều khiển so với điểm xuất phát ở giây thứ 2, giây thứ 4, giây thứ 8 và giây thứ 10 lần lượt là:","ownImageUrl":"","optionsHtml":["$4\\,m; 4\\,m; 0\\,m; -1$ m","$2\\,m; 4\\,m; 8\\,m; 10$ m","$4\\,m; 2\\,m; 0\\,m; 1$ m","$0\\,m; 4\\,m; 4\\,m; -1$ m"],"optionsRaw":["$4\\,m; 4\\,m; 0\\,m; -1$ m","$2\\,m; 4\\,m; 8\\,m; 10$ m","$4\\,m; 2\\,m; 0\\,m; 1$ m","$0\\,m; 4\\,m; 4\\,m; -1$ m"],"correctIndex":0,"correctAnswer":"$4\\,m; 4\\,m; 0\\,m; -1$ m","subQuestions":[],"solutionHtml":"Nhìn trực tiếp các tung độ tương ứng trên đồ thị Hình 7.4:<br>- Tại $t = 2\\,s \\implies d = 4$ m.<br>- Tại $t = 4\\,s \\implies d = 4$ m.<br>- Tại $t = 8\\,s \\implies d = 0$ m (trở về vị trí xuất phát).<br>- Tại $t = 10\\,s \\implies d = -1$ m (ở phía sau vị trí xuất phát $1$ m).","rawSolution":"Nhìn trực tiếp các tung độ tương ứng trên đồ thị Hình 7.4:\n- Tại $t = 2\\,s \\implies d = 4$ m.\n- Tại $t = 4\\,s \\implies d = 4$ m.\n- Tại $t = 8\\,s \\implies d = 0$ m (trở về vị trí xuất phát).\n- Tại $t = 10\\,s \\implies d = -1$ m (ở phía sau vị trí xuất phát $1$ m)."}]},{"blockId":"single_d9ee0200-0755-4f2d-8a4a-55b7a5da013f_15","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"d9ee0200-0755-4f2d-8a4a-55b7a5da013f","type":"mcq","level":"VD","chapterName":"","points":0.5,"textHtml":"Dựa vào đồ thị Hình 7.4: Xác định tổng quãng đường đi được ($s$) và độ dịch chuyển ($d$) của xe ô tô đồ chơi sau toàn bộ $10\\,giây$ chuyển động.","rawText":"Dựa vào đồ thị Hình 7.4: Xác định tổng quãng đường đi được ($s$) và độ dịch chuyển ($d$) của xe ô tô đồ chơi sau toàn bộ $10\\,giây$ chuyển động.","ownImageUrl":"","optionsHtml":["Quãng đường $s = 9$ m; Độ dịch chuyển $d = -1$ m.","Quãng đường $s = 4$ m; Độ dịch chuyển $d = 4$ m.","Quãng đường $s = 5$ m; Độ dịch chuyển $d = 1$ m.","Quãng đường $s = 8$ m; Độ dịch chuyển $d = -2$ m."],"optionsRaw":["Quãng đường $s = 9$ m; Độ dịch chuyển $d = -1$ m.","Quãng đường $s = 4$ m; Độ dịch chuyển $d = 4$ m.","Quãng đường $s = 5$ m; Độ dịch chuyển $d = 1$ m.","Quãng đường $s = 8$ m; Độ dịch chuyển $d = -2$ m."],"correctIndex":0,"correctAnswer":"Quãng đường $s = 9$ m; Độ dịch chuyển $d = -1$ m.","subQuestions":[],"solutionHtml":"Tính từng giai đoạn chuyển động:<br>1. Từ $t = 0 \\to 2$ s: Xe tiến từ $0 \\to 4\\,m \\implies s_1 = 4$ m.<br>2. Từ $t = 2 \\to 4$ s: Xe đứng yên $\\implies s_2 = 0$ m.<br>3. Từ $t = 4 \\to 9$ s: Xe lùi từ $4$ m về $-1\\,m \\implies s_3 = | -1 - 4 | = 5$ m.<br>4. Từ $t = 9 \\to 10$ s: Xe đứng yên $\\implies s_4 = 0$ m.<br>- Tổng quãng đường $s = 4 + 0 + 5 + 0 = 9$ m.<br>- Độ dịch chuyển cuối cùng ở $t = 10$ s so với mốc xuất phát ($0$ m) là $d = -1 - 0 = -1$ m.","rawSolution":"Tính từng giai đoạn chuyển động:\n1. Từ $t = 0 \\to 2$ s: Xe tiến từ $0 \\to 4\\,m \\implies s_1 = 4$ m.\n2. Từ $t = 2 \\to 4$ s: Xe đứng yên $\\implies s_2 = 0$ m.\n3. Từ $t = 4 \\to 9$ s: Xe lùi từ $4$ m về $-1\\,m \\implies s_3 = | -1 - 4 | = 5$ m.\n4. Từ $t = 9 \\to 10$ s: Xe đứng yên $\\implies s_4 = 0$ m.\n- Tổng quãng đường $s = 4 + 0 + 5 + 0 = 9$ m.\n- Độ dịch chuyển cuối cùng ở $t = 10$ s so với mốc xuất phát ($0$ m) là $d = -1 - 0 = -1$ m."}]},{"blockId":"single_e46b0329-0299-40a4-93bf-b176640bc4f1_16","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"e46b0329-0299-40a4-93bf-b176640bc4f1","type":"mcq","level":"VD","chapterName":"","points":0.5,"textHtml":"Hai ô tô chuyển động thẳng đều trên cùng một đường thẳng. Đồ thị $d - t$ của ô tô (1) xuất phát từ gốc tọa độ O có vận tốc $v_1 = 60$ km/h. Ô tô (2) xuất phát từ vị trí $d_{02} = 120$ km chuyển động ngược chiều về O với vận tốc $v_2 = -40$ km/h. Hai xe gặp nhau tại thời điểm $t$ và vị trí $d$ bằng bao nhiêu?","rawText":"Hai ô tô chuyển động thẳng đều trên cùng một đường thẳng. Đồ thị $d - t$ của ô tô (1) xuất phát từ gốc tọa độ O có vận tốc $v_1 = 60$ km/h. Ô tô (2) xuất phát từ vị trí $d_{02} = 120$ km chuyển động ngược chiều về O với vận tốc $v_2 = -40$ km/h. Hai xe gặp nhau tại thời điểm $t$ và vị trí $d$ bằng bao nhiêu?","ownImageUrl":"","optionsHtml":["$t = 1,2\\,giờ$ (72 phút) và $d = 72$ km","$t = 2,0\\,giờ$ và $d = 60$ km","$t = 1,5\\,giờ$ và $d = 90$ km","$t = 0,8\\,giờ$ và $d = 48$ km"],"optionsRaw":["$t = 1,2\\,giờ$ (72 phút) và $d = 72$ km","$t = 2,0\\,giờ$ và $d = 60$ km","$t = 1,5\\,giờ$ và $d = 90$ km","$t = 0,8\\,giờ$ và $d = 48$ km"],"correctIndex":0,"correctAnswer":"$t = 1,2\\,giờ$ (72 phút) và $d = 72$ km","subQuestions":[],"solutionHtml":"Phương trình độ dịch chuyển của hai xe:<br>- Xe 1: $d_1 = 60t$.<br>- Xe 2: $d_2 = 120 - 40t$.<br>- Hai xe gặp nhau khi giao điểm của 2 đồ thị xuất hiện ($d_1 = d_2$):<br>$$60t = 120 - 40t \\iff 100t = 120 \\implies t = 1,2\\,giờ = 72\\,phút.$$<br>- Vị trí gặp nhau: $d = 60 \\times 1,2 = 72$ km.","rawSolution":"Phương trình độ dịch chuyển của hai xe:\n- Xe 1: $d_1 = 60t$.\n- Xe 2: $d_2 = 120 - 40t$.\n- Hai xe gặp nhau khi giao điểm của 2 đồ thị xuất hiện ($d_1 = d_2$):\n$$60t = 120 - 40t \\iff 100t = 120 \\implies t = 1,2\\,giờ = 72\\,phút.$$\n- Vị trí gặp nhau: $d = 60 \\times 1,2 = 72$ km."}]},{"blockId":"single_569f6b0b-d1cb-434a-ad35-84bae1215bf9_17","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"569f6b0b-d1cb-434a-ad35-84bae1215bf9","type":"mcq","level":"VD","chapterName":"","points":0.5,"textHtml":"Một người đi bộ trên một đường thẳng. Trong $20\\,phút$ đầu đi được $1,2$ km theo chiều dương. Sau đó dừng lại nghỉ $10\\,phút$. Trong $15\\,phút$ tiếp theo người đó quay ngược lại đi được $0,6$ km. Vận tốc trung bình của người đó trong toàn bộ thời gian $45\\,phút$ là:","rawText":"Một người đi bộ trên một đường thẳng. Trong $20\\,phút$ đầu đi được $1,2$ km theo chiều dương. Sau đó dừng lại nghỉ $10\\,phút$. Trong $15\\,phút$ tiếp theo người đó quay ngược lại đi được $0,6$ km. Vận tốc trung bình của người đó trong toàn bộ thời gian $45\\,phút$ là:","ownImageUrl":"","optionsHtml":["$0,8$ km/h","$2,4$ km/h","$1,2$ km/h","$1,6$ km/h"],"optionsRaw":["$0,8$ km/h","$2,4$ km/h","$1,2$ km/h","$1,6$ km/h"],"correctIndex":0,"correctAnswer":"$0,8$ km/h","subQuestions":[],"solutionHtml":"Xác định các thông số:<br>- Độ dịch chuyển sau $20\\,phút$: $d_1 = +1,2$ km.<br>- Nghỉ $10\\,phút$: $d$ không đổi.<br>- Đi ngược lại $0,6$ km trong $15\\,phút$: độ dịch chuyển cuối cùng $d = 1,2 - 0,6 = 0,6$ km.<br>- Tổng thời gian: $t = 20 + 10 + 15 = 45\\,phút = 0,75\\,giờ$.<br>- Vận tốc trung bình: $v_{tb} = \\frac{d}{t} = \\frac{0,6}{0,75} = 0,8$ km/h.","rawSolution":"Xác định các thông số:\n- Độ dịch chuyển sau $20\\,phút$: $d_1 = +1,2$ km.\n- Nghỉ $10\\,phút$: $d$ không đổi.\n- Đi ngược lại $0,6$ km trong $15\\,phút$: độ dịch chuyển cuối cùng $d = 1,2 - 0,6 = 0,6$ km.\n- Tổng thời gian: $t = 20 + 10 + 15 = 45\\,phút = 0,75\\,giờ$.\n- Vận tốc trung bình: $v_{tb} = \\frac{d}{t} = \\frac{0,6}{0,75} = 0,8$ km/h."}]},{"blockId":"single_831b189c-8ab6-47ae-bf3c-f265f8d2c018_18","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"831b189c-8ab6-47ae-bf3c-f265f8d2c018","type":"mcq","level":"VD","chapterName":"","points":0.5,"textHtml":"Đồ thị $d - t$ của hai vật (1) và (2) chuyển động thẳng. Vật (1) có phương trình $d_1 = 10 + 5t\\,(m)$. Vật (2) xuất phát từ vị trí $d_{02} = 50$ m lúc $t = 0$ và chuyển động ngược chiều dương, cắt đồ thị vật (1) tại thời điểm $t = 4$ s. Hãy xác định vận tốc $v_2$ của vật (2) và quãng đường vật (2) đi được từ $t = 0$ đến thời điểm hai vật cách nhau $20$ m **sau khi đã gặp nhau**.","rawText":"Đồ thị $d - t$ của hai vật (1) và (2) chuyển động thẳng. Vật (1) có phương trình $d_1 = 10 + 5t\\,(m)$. Vật (2) xuất phát từ vị trí $d_{02} = 50$ m lúc $t = 0$ và chuyển động ngược chiều dương, cắt đồ thị vật (1) tại thời điểm $t = 4$ s. Hãy xác định vận tốc $v_2$ của vật (2) và quãng đường vật (2) đi được từ $t = 0$ đến thời điểm hai vật cách nhau $20$ m **sau khi đã gặp nhau**.","ownImageUrl":"","optionsHtml":["$v_2 = -5$ m/s; Quãng đường $s_2 = 30$ m","$v_2 = -10$ m/s; Quãng đường $s_2 = 40$ m","$v_2 = -5$ m/s; Quãng đường $s_2 = 20$ m","$v_2 = -2,5$ m/s; Quãng đường $s_2 = 15$ m"],"optionsRaw":["$v_2 = -5$ m/s; Quãng đường $s_2 = 30$ m","$v_2 = -10$ m/s; Quãng đường $s_2 = 40$ m","$v_2 = -5$ m/s; Quãng đường $s_2 = 20$ m","$v_2 = -2,5$ m/s; Quãng đường $s_2 = 15$ m"],"correctIndex":0,"correctAnswer":"$v_2 = -5$ m/s; Quãng đường $s_2 = 30$ m","subQuestions":[],"solutionHtml":"1. Tại thời điểm hai vật gặp nhau $t = 4$ s:<br>- Vị trí vật (1): $d_1(4) = 10 + 5(4) = 30$ m.<br>- Vì hai vật gặp nhau nên $d_2(4) = 30$ m.<br>- Phương trình vật (2): $d_2 = 50 + v_2 \\cdot t \\implies 30 = 50 + v_2(4) \\implies v_2 = -5$ m/s.<br><br>2. Khoảng cách giữa hai vật sau khi gặp nhau ($t &gt; 4$ s):<br>- $d_1 - d_2 = 20\\,m \\iff (10 + 5t) - (50 - 5t) = 20 \\iff 10t - 40 = 20 \\implies t = 6$ s.<br>- Quãng đường vật (2) đi được từ $t = 0$ đến $t = 6$ s:<br>$$s_2 = |v_2| \\cdot t = 5 \\times 6 = 30$ m$.","rawSolution":"1. Tại thời điểm hai vật gặp nhau $t = 4$ s:\n- Vị trí vật (1): $d_1(4) = 10 + 5(4) = 30$ m.\n- Vì hai vật gặp nhau nên $d_2(4) = 30$ m.\n- Phương trình vật (2): $d_2 = 50 + v_2 \\cdot t \\implies 30 = 50 + v_2(4) \\implies v_2 = -5$ m/s.\n\n2. Khoảng cách giữa hai vật sau khi gặp nhau ($t > 4$ s):\n- $d_1 - d_2 = 20\\,m \\iff (10 + 5t) - (50 - 5t) = 20 \\iff 10t - 40 = 20 \\implies t = 6$ s.\n- Quãng đường vật (2) đi được từ $t = 0$ đến $t = 6$ s:\n$$s_2 = |v_2| \\cdot t = 5 \\times 6 = 30$ m$."}]},{"blockId":"single_6ef6c4d9-2ff2-4ea3-8765-b5691a612f75_19","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"6ef6c4d9-2ff2-4ea3-8765-b5691a612f75","type":"mcq","level":"VD","chapterName":"","points":0.5,"textHtml":"Một chất điểm chuyển động thẳng có đồ thị $d - t$ gồm 3 giai đoạn nối tiếp: Giai đoạn 1 ($0 \\le t \\le t_1$) đi đều $v_1 = 4$ m/s tới $d_1 = 20$ m. Giai đoạn 2 nghỉ $5$ s. Giai đoạn 3 đi ngược chiều $v_3 = -2$ m/s về vị trí $d_3 = -10$ m. Xác định tổng thời gian $t_3$ và **tốc độ trung bình** trong toàn bộ thời gian $t_3$.","rawText":"Một chất điểm chuyển động thẳng có đồ thị $d - t$ gồm 3 giai đoạn nối tiếp: Giai đoạn 1 ($0 \\le t \\le t_1$) đi đều $v_1 = 4$ m/s tới $d_1 = 20$ m. Giai đoạn 2 nghỉ $5$ s. Giai đoạn 3 đi ngược chiều $v_3 = -2$ m/s về vị trí $d_3 = -10$ m. Xác định tổng thời gian $t_3$ và **tốc độ trung bình** trong toàn bộ thời gian $t_3$.","ownImageUrl":"","optionsHtml":["$t_3 = 25$ s; Tốc độ trung bình $v_{tb tốc độ} = 2,0$ m/s","$t_3 = 20$ s; Tốc độ trung bình $v_{tb tốc độ} = 1,5$ m/s","$t_3 = 25$ s; Tốc độ trung bình $v_{tb tốc độ} = -0,4$ m/s","$t_3 = 30$ s; Tốc độ trung bình $v_{tb tốc độ} = 2,5$ m/s"],"optionsRaw":["$t_3 = 25$ s; Tốc độ trung bình $v_{tb tốc độ} = 2,0$ m/s","$t_3 = 20$ s; Tốc độ trung bình $v_{tb tốc độ} = 1,5$ m/s","$t_3 = 25$ s; Tốc độ trung bình $v_{tb tốc độ} = -0,4$ m/s","$t_3 = 30$ s; Tốc độ trung bình $v_{tb tốc độ} = 2,5$ m/s"],"correctIndex":0,"correctAnswer":"$t_3 = 25$ s; Tốc độ trung bình $v_{tb tốc độ} = 2,0$ m/s","subQuestions":[],"solutionHtml":"Tính toán từng mốc thời gian và quãng đường:<br>- Giai đoạn 1: $t_1 = \\frac{d_1}{v_1} = \\frac{20}{4} = 5$ s. Quãng đường $s_1 = 20$ m.<br>- Giai đoạn 2: $t_2 = t_1 + 5 = 10$ s. Quãng đường $s_2 = 0$ m.<br>- Giai đoạn 3: Độ dịch chuyển $\\Delta d_3 = d_3 - d_2 = -10 - 20 = -30$ m.<br>  Thời gian $\\Delta t_3 = \\frac{\\Delta d_3}{v_3} = \\frac{-30}{-2} = 15$ s.<br>  Quãng đường $s_3 = |\\Delta d_3| = 30$ m.<br>- Tổng thời gian $t_3 = t_2 + 15 = 10 + 15 = 25$ s.<br>- Tổng quãng đường $s = s_1 + s_2 + s_3 = 20 + 0 + 30 = 50$ m.<br>- Tốc độ trung bình: $v_{tb tốc độ} = \\frac{s}{t_3} = \\frac{50}{25} = 2,0$ m/s.","rawSolution":"Tính toán từng mốc thời gian và quãng đường:\n- Giai đoạn 1: $t_1 = \\frac{d_1}{v_1} = \\frac{20}{4} = 5$ s. Quãng đường $s_1 = 20$ m.\n- Giai đoạn 2: $t_2 = t_1 + 5 = 10$ s. Quãng đường $s_2 = 0$ m.\n- Giai đoạn 3: Độ dịch chuyển $\\Delta d_3 = d_3 - d_2 = -10 - 20 = -30$ m.\n  Thời gian $\\Delta t_3 = \\frac{\\Delta d_3}{v_3} = \\frac{-30}{-2} = 15$ s.\n  Quãng đường $s_3 = |\\Delta d_3| = 30$ m.\n- Tổng thời gian $t_3 = t_2 + 15 = 10 + 15 = 25$ s.\n- Tổng quãng đường $s = s_1 + s_2 + s_3 = 20 + 0 + 30 = 50$ m.\n- Tốc độ trung bình: $v_{tb tốc độ} = \\frac{s}{t_3} = \\frac{50}{25} = 2,0$ m/s."}]}]}</script>
+  <script>
+    (function() {
+      var dataEl = document.getElementById('edusync-runtime-data');
+      var EXAM = JSON.parse(dataEl.textContent || '{}');
+      var LETTERS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+      var TF_LABELS = ['a', 'b', 'c', 'd', 'e', 'f'];
+
+      function shuffle(arr) {
+        var copy = arr.slice();
+        for (var i = copy.length - 1; i > 0; i--) {
+          var j = Math.floor(Math.random() * (i + 1));
+          var tmp = copy[i]; copy[i] = copy[j]; copy[j] = tmp;
+        }
+        return copy;
+      }
+
+      var blocks = EXAM.shuffleQuestions ? shuffle(EXAM.blocks || []) : (EXAM.blocks || []);
+      var flatQuestions = [];
+      blocks.forEach(function(block) {
+        block.questions.forEach(function(q) {
+          if (q.type === 'mcq' && EXAM.shuffleOptions && Array.isArray(q.optionsHtml)) {
+            var tagged = q.optionsHtml.map(function(html, idx) {
+              return { html: html, raw: q.optionsRaw[idx], isCorrect: idx === q.correctIndex };
+            });
+            var mixed = shuffle(tagged);
+            q.optionsHtml = mixed.map(function(m) { return m.html; });
+            q.optionsRaw = mixed.map(function(m) { return m.raw; });
+            q.correctIndex = Math.max(0, mixed.findIndex(function(m) { return m.isCorrect; }));
+          }
+          q.displayNumber = flatQuestions.length + 1;
+          flatQuestions.push(q);
+        });
+      });
+
+      var userAnswers = {};
+      var submitted = false;
+      var durationLimit = (EXAM.durationMinutes || 0) > 0 ? EXAM.durationMinutes * 60 : 0;
+      var startTime = Date.now();
+      var timerHandle = null;
+
+      function fmtTime(sec) {
+        var s = Math.max(0, Math.floor(sec));
+        var m = Math.floor(s / 60);
+        var r = s % 60;
+        return String(m).padStart(2, '0') + ':' + String(r).padStart(2, '0');
+      }
+
+      function isQuestionAnswered(q) {
+        var ans = userAnswers[q.id];
+        if (q.type === 'mcq') return typeof ans === 'number';
+        if (q.type === 'short') return typeof ans === 'string' && ans.trim().length > 0;
+        if (q.type === 'group-tf') {
+          if (!ans || typeof ans !== 'object') return false;
+          return q.subQuestions.some(function(sq) { return ans[sq.id] === 'True' || ans[sq.id] === 'False'; });
+        }
+        return false;
+      }
+
+      function updateProgress() {
+        var done = flatQuestions.filter(isQuestionAnswered).length;
+        document.getElementById('progressLabel').textContent = done + '/' + flatQuestions.length;
+        document.getElementById('sidebarCount').textContent = 'Đã làm ' + done + '/' + flatQuestions.length;
+        flatQuestions.forEach(function(q) {
+          var pBtn = document.getElementById('pbtn_' + q.displayNumber);
+          if (!pBtn || submitted) return;
+          pBtn.className = 'p-btn mono' + (isQuestionAnswered(q) ? ' done' : '');
+        });
+      }
+
+      function buildQuestionEl(q) {
+        var card = document.createElement('article');
+        card.className = 'q-card';
+        card.id = 'qcard_' + q.displayNumber;
+
+        var header = document.createElement('div');
+        header.className = 'q-header';
+        var leftMeta = '<span class="q-num">Câu ' + q.displayNumber + '</span>';
+        var tags = [q.level ? ('Mức ' + q.level) : '', q.points + ' đ', q.chapterName || ''].filter(Boolean).join(' · ');
+        header.innerHTML = leftMeta + '<span id="qstatus_' + q.displayNumber + '" class="q-status">' + tags + '</span>';
+        card.appendChild(header);
+
+        var qTextEl = document.createElement('div');
+        qTextEl.className = 'q-text';
+        qTextEl.innerHTML = q.textHtml;
+        card.appendChild(qTextEl);
+
+        if (q.ownImageUrl) {
+          var fig = document.createElement('div');
+          fig.className = 'q-figure';
+          var img = document.createElement('img');
+          img.src = q.ownImageUrl;
+          img.alt = 'Hình minh họa câu ' + q.displayNumber;
+          fig.appendChild(img);
+          card.appendChild(fig);
+        }
+
+        if (q.type === 'mcq') {
+          var grid = document.createElement('div');
+          grid.className = 'options-grid';
+          q.optionsHtml.forEach(function(optHtml, optIdx) {
+            var btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'opt-btn';
+            btn.id = 'opt_' + q.id + '_' + optIdx;
+            btn.innerHTML = '<span class="opt-letter mono">' + (LETTERS[optIdx] || optIdx + 1) + '</span><span style="flex:1;">' + optHtml + '</span>';
+            btn.addEventListener('click', function() {
+              if (submitted) return;
+              userAnswers[q.id] = optIdx;
+              q.optionsHtml.forEach(function(_, i2) {
+                var el = document.getElementById('opt_' + q.id + '_' + i2);
+                if (el) el.classList.toggle('selected', i2 === optIdx);
+              });
+              updateProgress();
+            });
+            grid.appendChild(btn);
+          });
+          card.appendChild(grid);
+        } else if (q.type === 'group-tf') {
+          var list = document.createElement('div');
+          list.className = 'tf-list';
+          q.subQuestions.forEach(function(sq, sIdx) {
+            var row = document.createElement('div');
+            row.className = 'tf-row';
+            row.id = 'tfrow_' + sq.id;
+
+            var txt = document.createElement('div');
+            txt.className = 'tf-text';
+            txt.innerHTML = '<strong>' + (TF_LABELS[sIdx] || (sIdx + 1)) + ')</strong> ' + sq.textHtml;
+            row.appendChild(txt);
+
+            var actions = document.createElement('div');
+            actions.className = 'tf-actions';
+            ['True', 'False'].forEach(function(val) {
+              var b = document.createElement('button');
+              b.type = 'button';
+              b.className = 'tf-choice';
+              b.id = 'tfbtn_' + sq.id + '_' + val;
+              b.textContent = val === 'True' ? 'Đúng' : 'Sai';
+              b.addEventListener('click', function() {
+                if (submitted) return;
+                if (!userAnswers[q.id] || typeof userAnswers[q.id] !== 'object') userAnswers[q.id] = {};
+                userAnswers[q.id][sq.id] = val;
+                var bt = document.getElementById('tfbtn_' + sq.id + '_True');
+                var bf = document.getElementById('tfbtn_' + sq.id + '_False');
+                if (bt) bt.classList.toggle('active', val === 'True');
+                if (bf) bf.classList.toggle('active', val === 'False');
+                updateProgress();
+              });
+              actions.appendChild(b);
+            });
+            row.appendChild(actions);
+            list.appendChild(row);
+          });
+          card.appendChild(list);
+        } else {
+          var sBox = document.createElement('div');
+          sBox.className = 'short-box';
+          var inp = document.createElement('input');
+          inp.type = 'text';
+          inp.className = 'short-input';
+          inp.id = 'short_' + q.id;
+          inp.placeholder = 'Nhập đáp số (vd: 2.6 hoặc 36)';
+          inp.addEventListener('input', function() {
+            if (submitted) return;
+            userAnswers[q.id] = inp.value;
+            updateProgress();
+          });
+          var fb = document.createElement('span');
+          fb.id = 'shortfb_' + q.id;
+          fb.className = 'short-feedback';
+          sBox.appendChild(inp);
+          sBox.appendChild(fb);
+          card.appendChild(sBox);
+        }
+
+        if (q.solutionHtml) {
+          var sol = document.createElement('div');
+          sol.className = 'solution-box';
+          sol.id = 'sol_' + q.id;
+          sol.innerHTML = '<strong>Lời giải chi tiết:</strong><div style="margin-top:4px;">' + q.solutionHtml + '</div>';
+          card.appendChild(sol);
+        }
+
+        return card;
+      }
+
+      function renderExam() {
+        var root = document.getElementById('questionsRoot');
+        var pal = document.getElementById('paletteRoot');
+        root.innerHTML = '';
+        pal.innerHTML = '';
+
+        blocks.forEach(function(block) {
+          if (block.contextHtml || block.sharedImageUrl) {
+            var groupEl = document.createElement('section');
+            groupEl.className = 'context-group';
+
+            var head = document.createElement('div');
+            head.className = 'context-header';
+            var firstNum = block.questions[0].displayNumber;
+            var lastNum = block.questions[block.questions.length - 1].displayNumber;
+            var labelText = block.questions.length > 1
+              ? 'Dữ liệu dùng chung cho Câu ' + firstNum + ' – Câu ' + lastNum
+              : 'Dữ liệu đề bài (Câu ' + firstNum + ')';
+            var html = '<div class="context-label">' + labelText + '</div>';
+            if (block.contextHtml) {
+              html += '<div class="context-body">' + block.contextHtml + '</div>';
+            }
+            head.innerHTML = html;
+            if (block.sharedImageUrl) {
+              var fig = document.createElement('div');
+              fig.className = 'q-figure';
+              var img = document.createElement('img');
+              img.src = block.sharedImageUrl;
+              img.alt = labelText;
+              fig.appendChild(img);
+              head.appendChild(fig);
+            }
+            groupEl.appendChild(head);
+
+            var inner = document.createElement('div');
+            inner.className = 'context-questions';
+            block.questions.forEach(function(q) {
+              inner.appendChild(buildQuestionEl(q));
+            });
+            groupEl.appendChild(inner);
+            root.appendChild(groupEl);
+          } else {
+            block.questions.forEach(function(q) {
+              root.appendChild(buildQuestionEl(q));
+            });
+          }
+        });
+
+        flatQuestions.forEach(function(q) {
+          var b = document.createElement('button');
+          b.type = 'button';
+          b.className = 'p-btn mono';
+          b.id = 'pbtn_' + q.displayNumber;
+          b.textContent = String(q.displayNumber);
+          b.addEventListener('click', function() {
+            var target = document.getElementById('qcard_' + q.displayNumber);
+            if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          });
+          pal.appendChild(b);
+        });
+
+        updateProgress();
+        if (window.MathJax && window.MathJax.typesetPromise) {
+          window.MathJax.typesetPromise().catch(function() {});
+        }
+      }
+
+      function normalizeShort(val) {
+        return String(val || '').trim().replace(/,/g, '.').replace(/\s+/g, '').toLowerCase();
+      }
+
+      function isShortMatch(userVal, expectedVal) {
+        var u = normalizeShort(userVal);
+        var e = normalizeShort(expectedVal);
+        if (!u) return false;
+        if (u === e) return true;
+        var nu = parseFloat(u);
+        var ne = parseFloat(e);
+        if (!isNaN(nu) && !isNaN(ne) && String(nu) === u || !isNaN(nu) && !isNaN(ne)) {
+          if (/^-?\d+(?:\.\d+)?$/.test(u) && /^-?\d+(?:\.\d+)?$/.test(e)) {
+            return Math.abs(nu - ne) < 1e-6;
+          }
+        }
+        return false;
+      }
+
+      function gradeAndSubmit(force) {
+        if (submitted) return;
+        var answered = flatQuestions.filter(isQuestionAnswered).length;
+        if (!force && answered < flatQuestions.length) {
+          document.getElementById('confirmMsg').textContent =
+            'Bạn mới làm ' + answered + '/' + flatQuestions.length + ' câu. Bạn có chắc muốn nộp bài ngay?';
+          document.getElementById('confirmBar').classList.add('visible');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+          return;
+        }
+        document.getElementById('confirmBar').classList.remove('visible');
+        submitted = true;
+        if (timerHandle) clearInterval(timerHandle);
+
+        var totalScore = 0;
+        var maxScore = EXAM.maxScore || 10;
+        var correctQuestions = 0;
+        var answerDetails = [];
+
+        flatQuestions.forEach(function(q) {
+          var qCorrect = false;
+          var pBtn = document.getElementById('pbtn_' + q.displayNumber);
+          var stEl = document.getElementById('qstatus_' + q.displayNumber);
+          var solEl = document.getElementById('sol_' + q.id);
+          if (solEl) solEl.classList.add('visible');
+
+          if (q.type === 'mcq') {
+            var chosen = typeof userAnswers[q.id] === 'number' ? userAnswers[q.id] : -1;
+            qCorrect = chosen === q.correctIndex;
+            if (qCorrect) {
+              totalScore += q.points;
+              correctQuestions++;
+            }
+            q.optionsHtml.forEach(function(_, i) {
+              var ob = document.getElementById('opt_' + q.id + '_' + i);
+              if (!ob) return;
+              ob.disabled = true;
+              ob.classList.remove('selected');
+              if (i === q.correctIndex) ob.classList.add('correct');
+              else if (i === chosen) ob.classList.add('wrong');
+            });
+            if (stEl) {
+              stEl.textContent = qCorrect ? ('Đúng (+' + q.points + 'đ)') : 'Sai (0đ)';
+              stEl.className = 'q-status ' + (qCorrect ? 'ok' : 'bad');
+            }
+            answerDetails.push({
+              orderIndex: answerDetails.length,
+              questionText: 'Câu ' + q.displayNumber + ': ' + q.rawText,
+              options: q.optionsRaw,
+              selectedIndex: chosen,
+              correctIndex: q.correctIndex,
+              isCorrect: qCorrect,
+              explanation: q.rawSolution
+            });
+          } else if (q.type === 'group-tf') {
+            var tfMap = (userAnswers[q.id] && typeof userAnswers[q.id] === 'object') ? userAnswers[q.id] : {};
+            var rightSubs = 0;
+            q.subQuestions.forEach(function(sq, sIdx) {
+              var picked = tfMap[sq.id] || '';
+              var subOk = picked === sq.correctAnswer;
+              if (subOk) rightSubs++;
+              var row = document.getElementById('tfrow_' + sq.id);
+              if (row) row.classList.add(subOk ? 'ok' : 'bad');
+              ['True', 'False'].forEach(function(v) {
+                var btn = document.getElementById('tfbtn_' + sq.id + '_' + v);
+                if (!btn) return;
+                btn.disabled = true;
+                if (v === sq.correctAnswer) btn.classList.add('right-ans');
+              });
+              answerDetails.push({
+                orderIndex: answerDetails.length,
+                questionText: 'Câu ' + q.displayNumber + (TF_LABELS[sIdx] || '') + ': ' + sq.rawText,
+                options: ['Đúng', 'Sai'],
+                selectedIndex: picked === 'True' ? 0 : (picked === 'False' ? 1 : -1),
+                correctIndex: sq.correctAnswer === 'True' ? 0 : 1,
+                isCorrect: subOk,
+                explanation: sIdx === q.subQuestions.length - 1 ? q.rawSolution : ''
+              });
+            });
+            var earnedRatio = 0;
+            if (q.subQuestions.length === 4) {
+              earnedRatio = rightSubs === 1 ? 0.1 : rightSubs === 2 ? 0.25 : rightSubs === 3 ? 0.5 : rightSubs === 4 ? 1 : 0;
+            } else if (q.subQuestions.length > 0) {
+              earnedRatio = rightSubs / q.subQuestions.length;
+            }
+            var earned = Math.round(q.points * earnedRatio * 100) / 100;
+            totalScore += earned;
+            qCorrect = rightSubs === q.subQuestions.length;
+            if (qCorrect) correctQuestions++;
+            if (stEl) {
+              stEl.textContent = 'Đúng ' + rightSubs + '/' + q.subQuestions.length + ' ý (+' + earned + 'đ)';
+              stEl.className = 'q-status ' + (qCorrect ? 'ok' : 'bad');
+            }
+          } else {
+            var rawInput = document.getElementById('short_' + q.id);
+            var typed = rawInput ? rawInput.value.trim() : '';
+            if (rawInput) rawInput.disabled = true;
+            qCorrect = isShortMatch(typed, q.correctAnswer);
+            if (qCorrect) {
+              totalScore += q.points;
+              correctQuestions++;
+            }
+            var fbEl = document.getElementById('shortfb_' + q.id);
+            if (fbEl) {
+              fbEl.textContent = qCorrect
+                ? ('Chính xác (+' + q.points + 'đ)')
+                : ('Đáp án đúng: ' + q.correctAnswer);
+              fbEl.style.color = qCorrect ? 'var(--ok)' : 'var(--bad)';
+            }
+            if (stEl) {
+              stEl.textContent = qCorrect ? ('Đúng (+' + q.points + 'đ)') : 'Sai (0đ)';
+              stEl.className = 'q-status ' + (qCorrect ? 'ok' : 'bad');
+            }
+            answerDetails.push({
+              orderIndex: answerDetails.length,
+              questionText: 'Câu ' + q.displayNumber + ': ' + q.rawText,
+              options: ['Bài làm: ' + (typed || '(bỏ trống)'), 'Đáp án chuẩn: ' + q.correctAnswer],
+              selectedIndex: qCorrect ? 1 : 0,
+              correctIndex: 1,
+              isCorrect: qCorrect,
+              explanation: q.rawSolution
+            });
+          }
+
+          if (pBtn) {
+            pBtn.className = 'p-btn mono ' + (qCorrect ? 'ok' : 'bad');
+          }
+        });
+
+        totalScore = Math.round(totalScore * 100) / 100;
+        var pct = maxScore > 0 ? Math.round((totalScore / maxScore) * 1000) / 10 : 0;
+
+        document.getElementById('scoreText').textContent = totalScore + ' / ' + maxScore + ' điểm';
+        document.getElementById('correctText').textContent =
+          'Đúng hoàn toàn ' + correctQuestions + ' / ' + flatQuestions.length + ' câu (' + pct + '%)';
+        document.getElementById('resultScreen').classList.add('visible');
+        document.getElementById('topSubmitBtn').style.display = 'none';
+        document.getElementById('sideSubmitBtn').style.display = 'none';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+
+        if (window.MathJax && window.MathJax.typesetPromise) {
+          window.MathJax.typesetPromise().catch(function() {});
+        }
+
+        if (typeof window.EduSyncSubmitScore === 'function') {
+          window.EduSyncSubmitScore(totalScore, maxScore, correctQuestions, flatQuestions.length, answerDetails);
+        } else if (window.parent && window.parent !== window) {
+          window.parent.postMessage({
+            type: 'QUIZ_RESULT',
+            score: totalScore,
+            maxScore: maxScore,
+            correctCount: correctQuestions,
+            totalQuestions: flatQuestions.length,
+            answerDetails: answerDetails
+          }, '*');
+        }
+      }
+
+      document.getElementById('topSubmitBtn').addEventListener('click', function() { gradeAndSubmit(false); });
+      document.getElementById('sideSubmitBtn').addEventListener('click', function() { gradeAndSubmit(false); });
+      document.getElementById('confirmYesBtn').addEventListener('click', function() { gradeAndSubmit(true); });
+      document.getElementById('confirmCancelBtn').addEventListener('click', function() {
+        document.getElementById('confirmBar').classList.remove('visible');
+      });
+
+      function tickTimer() {
+        if (submitted) return;
+        var elapsed = Math.floor((Date.now() - startTime) / 1000);
+        var box = document.getElementById('timerBox');
+        if (durationLimit > 0) {
+          var rem = Math.max(0, durationLimit - elapsed);
+          box.textContent = fmtTime(rem);
+          box.classList.toggle('urgent', rem <= 60);
+          if (rem <= 0) gradeAndSubmit(true);
+        } else {
+          box.textContent = fmtTime(elapsed);
+        }
+      }
+
+      renderExam();
+      tickTimer();
+      timerHandle = setInterval(tickTimer, 1000);
+    })();
+  </script>
+</body>
+</html>
