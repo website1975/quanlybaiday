@@ -1,0 +1,1154 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Độ dịch chuyển và Quãng đường</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true
+      },
+      options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre'] }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --border: #e2e8f0;
+      --text: #0f172a;
+      --muted: #64748b;
+      --accent: #1d4ed8;
+      --accent-hover: #1e40af;
+      --accent-soft: #eff6ff;
+      --ok: #047857;
+      --ok-bg: #ecfdf5;
+      --ok-border: #6ee7b7;
+      --bad: #dc2626;
+      --bad-bg: #fef2f2;
+      --bad-border: #fca5a5;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.55;
+    }
+    .mono { font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace; font-variant-numeric: tabular-nums; }
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+    }
+    .topbar-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .exam-title { font-size: 16px; font-weight: 700; margin: 0; color: var(--text); }
+    .exam-meta { font-size: 12px; color: var(--muted); margin-top: 2px; }
+    .topbar-actions { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+    .timer-box {
+      padding: 6px 12px;
+      border-radius: 8px;
+      background: #f1f5f9;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .timer-box.urgent {
+      background: var(--bad-bg);
+      color: var(--bad);
+      border: 1px solid var(--bad-border);
+    }
+    .btn {
+      border: 1px solid transparent;
+      border-radius: 8px;
+      padding: 8px 16px;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background-color 0.15s ease, border-color 0.15s ease;
+    }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-primary:hover { background: var(--accent-hover); }
+    .btn-secondary { background: #fff; border-color: #cbd5e1; color: #334155; }
+    .btn-secondary:hover { background: #f8fafc; }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 280px;
+      gap: 20px;
+      align-items: start;
+    }
+    @media (max-width: 960px) {
+      .container { grid-template-columns: 1fr; }
+    }
+    .main-col { display: flex; flex-direction: column; gap: 18px; }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+    }
+    .result-card {
+      background: var(--ok-bg);
+      border: 1px solid var(--ok-border);
+      border-radius: 12px;
+      padding: 20px;
+      display: none;
+    }
+    .result-card.visible { display: block; }
+    .result-score { font-size: 26px; font-weight: 700; color: var(--ok); margin: 4px 0; }
+    .result-sub { font-size: 13px; color: #065f46; }
+    .confirm-bar {
+      display: none;
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      border-radius: 10px;
+      padding: 14px 16px;
+      margin-bottom: 4px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      font-size: 13px;
+      color: #92400e;
+    }
+    .confirm-bar.visible { display: flex; }
+    .context-group {
+      background: var(--surface);
+      border: 1px solid #cbd5e1;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .context-header {
+      background: #f1f5f9;
+      border-bottom: 1px solid var(--border);
+      padding: 16px 20px;
+    }
+    .context-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 6px;
+    }
+    .context-body { font-size: 14px; color: #1e293b; }
+    .context-questions {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      background: #f8fafc;
+    }
+    .q-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 18px;
+      scroll-margin-top: 84px;
+    }
+    .q-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding-bottom: 10px;
+      margin-bottom: 12px;
+      border-bottom: 1px solid #f1f5f9;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .q-num { font-size: 14px; font-weight: 700; color: var(--text); }
+    .q-status { font-weight: 600; }
+    .q-status.ok { color: var(--ok); }
+    .q-status.bad { color: var(--bad); }
+    .q-text { font-size: 15px; font-weight: 500; color: var(--text); margin-bottom: 14px; }
+    .q-figure {
+      margin: 12px 0;
+      text-align: center;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px;
+    }
+    .q-figure img { max-width: 100%; max-height: 360px; height: auto; border-radius: 4px; }
+    .options-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+    @media (max-width: 640px) {
+      .options-grid { grid-template-columns: 1fr; }
+    }
+    .opt-btn {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      text-align: left;
+      padding: 11px 13px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #fff;
+      font-family: inherit;
+      font-size: 14px;
+      color: #1e293b;
+      cursor: pointer;
+      transition: border-color 0.15s ease, background-color 0.15s ease;
+    }
+    .opt-btn:hover:not(:disabled) { border-color: #94a3b8; background: #f8fafc; }
+    .opt-btn.selected { border-color: var(--accent); background: var(--accent-soft); color: #1e3a8a; font-weight: 500; }
+    .opt-btn.correct { border-color: var(--ok-border); background: var(--ok-bg); color: #064e3b; font-weight: 600; }
+    .opt-btn.wrong { border-color: var(--bad-border); background: var(--bad-bg); color: #7f1d1d; }
+    .opt-letter {
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      border: 1px solid #cbd5e1;
+      background: #fff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .opt-btn.selected .opt-letter { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .tf-list { display: flex; flex-direction: column; gap: 10px; }
+    .tf-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #fff;
+    }
+    .tf-row.ok { border-color: var(--ok-border); background: var(--ok-bg); }
+    .tf-row.bad { border-color: var(--bad-border); background: var(--bad-bg); }
+    .tf-text { font-size: 14px; flex: 1; }
+    .tf-actions { display: flex; gap: 6px; flex-shrink: 0; }
+    .tf-choice {
+      padding: 6px 12px;
+      border-radius: 6px;
+      border: 1px solid #cbd5e1;
+      background: #fff;
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .tf-choice.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .tf-choice.right-ans { border-color: var(--ok); color: var(--ok); }
+    .short-box { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+    .short-input {
+      width: 240px;
+      max-width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px;
+    }
+    .short-input:focus { outline: 2px solid var(--accent); border-color: var(--accent); }
+    .short-feedback { font-size: 13px; font-weight: 600; }
+    .solution-box {
+      display: none;
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: 8px;
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      font-size: 13px;
+      color: #334155;
+    }
+    .solution-box.visible { display: block; }
+    .sidebar {
+      position: sticky;
+      top: 76px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+    }
+    .palette-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 6px;
+      margin: 12px 0 16px;
+    }
+    .p-btn {
+      height: 34px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: #f8fafc;
+      font-size: 12px;
+      font-weight: 700;
+      color: #334155;
+      cursor: pointer;
+    }
+    .p-btn.done { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .p-btn.ok { background: var(--ok); color: #fff; border-color: var(--ok); }
+    .p-btn.bad { background: var(--bad); color: #fff; border-color: var(--bad); }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div>
+        <h1 class="exam-title">Độ dịch chuyển và Quãng đường</h1>
+        <div class="exam-meta">Vật Lý · Khối 10 · CHƯƠNG 2: ĐỘNG HỌC · 20 câu · Thang 10 điểm</div>
+      </div>
+      <div class="topbar-actions">
+        <span id="progressLabel" class="exam-meta mono">0/20</span>
+        <div id="timerBox" class="timer-box mono">00:00</div>
+        <button id="topSubmitBtn" type="button" class="btn btn-primary">Nộp bài</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <main class="main-col">
+      <div id="confirmBar" class="confirm-bar">
+        <span id="confirmMsg">Bạn vẫn còn câu chưa trả lời. Xác nhận nộp bài ngay?</span>
+        <div style="display:flex;gap:8px;">
+          <button id="confirmCancelBtn" type="button" class="btn btn-secondary">Làm tiếp</button>
+          <button id="confirmYesBtn" type="button" class="btn btn-primary">Xác nhận nộp</button>
+        </div>
+      </div>
+
+      <section id="resultScreen" class="result-card">
+        <div style="font-size:12px;font-weight:700;color:#047857;">KẾT QUẢ BÀI LÀM</div>
+        <div id="scoreText" class="result-score mono">0 / 10</div>
+        <div id="correctText" class="result-sub mono">0 / 20</div>
+        <div id="explanationsSection" class="result-sub" style="margin-top:6px;">
+          Xem lại từng câu và lời giải chi tiết ở bên dưới.
+        </div>
+      </section>
+
+      <div id="questionsRoot" class="main-col"></div>
+    </main>
+
+    <aside class="sidebar">
+      <div style="font-size:14px;font-weight:700;">Bảng câu hỏi</div>
+      <div id="sidebarCount" class="exam-meta mono">Đã làm 0/20</div>
+      <div id="paletteRoot" class="palette-grid"></div>
+      <button id="sideSubmitBtn" type="button" class="btn btn-primary" style="width:100%;">Nộp bài &amp; Chấm điểm</button>
+    </aside>
+  </div>
+
+  <script type="application/json" id="edusync-exam-json">{
+  "id": "47cff55d-a833-4445-b090-7e0372690f14",
+  "title": "Độ dịch chuyển và Quãng đường",
+  "subject": "Vật Lý",
+  "grade": "10",
+  "type": "test",
+  "category": "CHƯƠNG 2: ĐỘNG HỌC",
+  "durationMinutes": 20,
+  "shuffleQuestions": false,
+  "shuffleOptions": false,
+  "questionCount": 20,
+  "questions": [
+    {
+      "id": "5a344041-a350-4185-8f31-c0be3bfff729",
+      "index": 1,
+      "type": "mcq",
+      "level": "B",
+      "text": "Đại lượng nào dưới đây vừa cho biết độ lớn, vừa cho biết hướng của sự thay đổi vị trí của vật?",
+      "options": [
+        "Quãng đường đi được $s$.",
+        "Độ dịch chuyển $\\vec{d}$.",
+        "Tốc độ trung bình $v$.",
+        "Thời gian chuyển động $t$."
+      ],
+      "correctAnswer": "Độ dịch chuyển $\\vec{d}$.",
+      "solution": "Theo định nghĩa trong SGK Bài 4 (trang 22): Đại lượng vừa cho biết độ lớn vừa cho biết hướng của sự thay đổi vị trí của vật gọi là độ dịch chuyển. Kí hiệu là vectơ $\\vec{d}$.",
+      "points": 0.5
+    },
+    {
+      "id": "8b170e8c-c87f-48bf-ad3e-ab37c4677534",
+      "index": 2,
+      "type": "mcq",
+      "level": "B",
+      "text": "Độ dịch chuyển được biểu diễn trên hình vẽ bằng phương tiện nào sau đây?",
+      "options": [
+        "Một đường cong có mũi tên chỉ hướng.",
+        "Một đoạn thẳng không có hướng.",
+        "Một mũi tên nối vị trí đầu và vị trí cuối của chuyển động, có độ dài tỉ lệ với độ lớn của độ dịch chuyển.",
+        "Một hình chữ nhật ô bao sai số."
+      ],
+      "correctAnswer": "Một mũi tên nối vị trí đầu và vị trí cuối của chuyển động, có độ dài tỉ lệ với độ lớn của độ dịch chuyển.",
+      "solution": "Theo SGK (trang 22): Độ dịch chuyển được biểu diễn bằng một mũi tên nối vị trí đầu và vị trí cuối của chuyển động, có độ dài tỉ lệ với độ lớn của độ dịch chuyển.",
+      "points": 0.5
+    },
+    {
+      "id": "d57d2a90-6f5a-4f53-a262-4aef6a1d651f",
+      "index": 3,
+      "type": "mcq",
+      "level": "B",
+      "text": "Đại lượng nào sau đây là đại lượng vectơ?",
+      "options": [
+        "Quãng đường.",
+        "Thời gian.",
+        "Độ dịch chuyển.",
+        "Nhiệt độ."
+      ],
+      "correctAnswer": "Độ dịch chuyển.",
+      "solution": "Theo SGK (trang 22): Một đại lượng vừa cho biết độ lớn, vừa cho biết hướng như độ dịch chuyển gọi là đại lượng vectơ.",
+      "points": 0.5
+    },
+    {
+      "id": "2ff7ee63-c127-47ba-abf7-f2a4e5c01877",
+      "index": 4,
+      "type": "mcq",
+      "level": "B",
+      "text": "Trong thực tế, hệ tọa độ địa lí có gốc là vị trí vật mốc, hai trục tọa độ được quy ước như thế nào?",
+      "options": [
+        "Trục hoành nối hai hướng bắc - nam, trục tung nối hai hướng tây - đông.",
+        "Trục hoành nối hai hướng tây - đông, trục tung nối hai hướng bắc - nam.",
+        "Hai trục tọa độ vuông góc tùy ý không theo hướng địa lí.",
+        "Trục hoành chỉ hướng đông, trục tung chỉ hướng tây."
+      ],
+      "correctAnswer": "Trục hoành nối hai hướng tây - đông, trục tung nối hai hướng bắc - nam.",
+      "solution": "Theo SGK Mục I (trang 22): Người ta thường chọn hệ tọa độ trùng với hệ tọa độ địa lí, có gốc là vị trí vật mốc, trục hoành nối hai hướng tây - đông, trục tung nối hai hướng bắc - nam.",
+      "points": 0.5
+    },
+    {
+      "id": "fc96b14a-7c7d-4162-b11b-2c660580daeb",
+      "index": 5,
+      "type": "mcq",
+      "level": "B",
+      "text": "Hệ quy chiếu dùng để xác định vị trí và thời điểm của vật bao gồm những thành phần nào?",
+      "options": [
+        "Hệ tọa độ kết hợp với mốc thời gian và đồng hồ đo thời gian.",
+        "Chỉ gồm hệ tọa độ và vật mốc.",
+        "Chỉ gồm một đồng hồ đo thời gian.",
+        "Thước đo độ dài và nhiệt kế."
+      ],
+      "correctAnswer": "Hệ tọa độ kết hợp với mốc thời gian và đồng hồ đo thời gian.",
+      "solution": "Theo SGK (trang 22): Hệ tọa độ kết hợp với mốc thời gian và đồng hồ đo thời gian được gọi là hệ quy chiếu.",
+      "points": 0.5
+    },
+    {
+      "id": "26b4107a-2ad5-4bb4-8a9f-02673a725c66",
+      "index": 6,
+      "type": "mcq",
+      "level": "B",
+      "text": "Khi vật chuyển động thẳng và không đổi chiều, mối quan hệ giữa độ lớn độ dịch chuyển $d$ và quãng đường đi được $s$ là:",
+      "options": [
+        "$d > s$",
+        "$d < s$",
+        "$d = s$",
+        "$d = -s$"
+      ],
+      "correctAnswer": "$d = s$",
+      "solution": "Theo phần EM ĐÃ HỌC (trang 25): Khi vật chuyển động thẳng, không đổi chiều thì độ lớn của độ dịch chuyển và quãng đường đi được bằng nhau ($d = s$).",
+      "points": 0.5
+    },
+    {
+      "id": "27f6fcfc-360d-43e5-a110-f1067f9c625c",
+      "index": 7,
+      "type": "mcq",
+      "level": "B",
+      "text": "Phần Vật lý nghiên cứu chuyển động của vật mà không đề cập đến tác dụng của lực lên chuyển động gọi là gì?",
+      "options": [
+        "Động lực học.",
+        "Động học.",
+        "Quang học.",
+        "Nhiệt học."
+      ],
+      "correctAnswer": "Động học.",
+      "solution": "Theo khung 'EM CÓ BIẾT?' (trang 21): Động học là phần vật lý nghiên cứu chuyển động của vật mà không đề cập đến tác dụng của lực lên chuyển động.",
+      "points": 0.5
+    },
+    {
+      "id": "8221fe6e-7e06-4f01-9beb-ad3fbf34fd9c",
+      "index": 8,
+      "type": "mcq",
+      "level": "B",
+      "text": "Khi nào một vật chuyển động được coi là một chất điểm?",
+      "options": [
+        "Khi kích thước của vật rất lớn so với độ dài quãng đường.",
+        "Khi kích thước của vật rất nhỏ so với độ dài của quãng đường đi được.",
+        "Khi vật đứng yên không chuyển động.",
+        "Khi vật chuyển động với tốc độ ánh sáng."
+      ],
+      "correctAnswer": "Khi kích thước của vật rất nhỏ so với độ dài của quãng đường đi được.",
+      "solution": "Theo khung 'EM CÓ BIẾT?' (trang 21): Khi kích thước của vật rất nhỏ so với độ dài của quãng đường đi được thì vật được coi là chất điểm.",
+      "points": 0.5
+    },
+    {
+      "id": "aa48753e-8864-4d3f-a3bc-55337e433bd7",
+      "index": 9,
+      "type": "mcq",
+      "level": "H",
+      "text": "Một ô tô đi tới điểm O của ngã tư (đủ 4 hướng Đông, Tây, Nam, Bắc) với tốc độ không đổi $36$ km/h. Sau $10$ s đi tiếp theo hướng Bắc, ô tô ở vị trí nào nếu mỗi vạch khoảng cách trên sơ đồ là $50$ m?",
+      "options": [
+        "Điểm A cách O 150 m.",
+        "Điểm B cách O 100 m.",
+        "Điểm C cách O 50 m.",
+        "Điểm D cách O 50 m."
+      ],
+      "correctAnswer": "Điểm B cách O 100 m.",
+      "solution": "1) Đổi tốc độ: $v = 36 km/h = 10$ m/s.\n2) Quãng đường ô tô đi tiếp sau 10s: $s = v \\cdot t = 10 \\cdot 10 = 100$ m.\n3) Vì ô tô đi theo hướng Bắc nên vị trí ứng với khoảng cách 100 m phía Bắc là điểm B (trên đường Bắc từ O: C ở 50m, B ở 100m, A ở 150m).",
+      "points": 0.5
+    },
+    {
+      "id": "16135317-f63a-47a1-b8a1-5e8429944f9d",
+      "index": 10,
+      "type": "mcq",
+      "level": "H",
+      "text": "Trên trục tọa độ $Ox$ có điểm gốc O tại vị trí ban đầu. Chọn mốc thời gian là $t_0 = 8$ h khi vật ở $x_0 = 20$ km. Vật chuyển động thẳng đều với tốc độ $40$ km/h. Tọa độ vị trí của vật tại thời điểm $t = 11$ h là bao nhiêu?",
+      "options": [
+        "$x = 120$ km",
+        "$x = 140$ km",
+        "$x = 100$ km",
+        "$x = 160$ km"
+      ],
+      "correctAnswer": "$x = 140$ km",
+      "solution": "1) Khoảng thời gian chuyển động: $\\Delta t = 11 h - 8 h = 3$ h.\n2) Quãng đường đi được: $s = v \\cdot \\Delta t = 40 \\cdot 3 = 120$ km.\n3) Tọa độ tại 11h: $x = x_0 + s = 20 + 120 = 140$ km.",
+      "points": 0.5
+    },
+    {
+      "id": "f395f58e-27a3-4451-99f3-d90611878704",
+      "index": 11,
+      "type": "mcq",
+      "level": "H",
+      "text": "Xem vectơ độ dịch chuyển $\\vec{d_2}$ trên hệ tọa độ địa lí có tỉ xích $1$ cm ứng với $100$ m (Hình 4.5). Vectơ $\\vec{d_2}$ dài 3 cm và hợp với trục Đông một góc $45^\\circ$. Mô tả độ dịch chuyển này đúng nhất là:",
+      "options": [
+        "$d_2 = 300$ m (hướng Đông).",
+        "$d_2 = 300$ m (hướng $45^\\circ$ đông – bắc).",
+        "$d_2 = 200$ m (hướng Bắc).",
+        "$d_2 = 100$ m (hướng Tây)."
+      ],
+      "correctAnswer": "$d_2 = 300$ m (hướng $45^\\circ$ đông – bắc).",
+      "solution": "Mỗi cm ứng với 100 m nên 3 cm ứng với 300 m. Góc $45^\\circ$ giữa trục Đông và trục Bắc chỉ hướng Đông - Bắc. Do đó $d_2 = 300$ m (hướng $45^\\circ$ đông – bắc).",
+      "points": 0.5
+    },
+    {
+      "id": "a0afe193-bcb9-4305-98b5-94dc029b50f5",
+      "index": 12,
+      "type": "mcq",
+      "level": "H",
+      "text": "Ba người đi từ vị trí A đến vị trí B: Người (1) đi xe máy theo đường cong, Người (2) đi bộ theo đường thẳng AB, Người (3) đi ô tô theo đường vòng. So sánh độ lớn độ dịch chuyển $d_1, d_2, d_3$ của ba người:",
+      "options": [
+        "$d_1 > d_2 > d_3$",
+        "$d_3 > d_1 > d_2$",
+        "$d_1 = d_2 = d_3$",
+        "$d_2 > d_1 = d_3$"
+      ],
+      "correctAnswer": "$d_1 = d_2 = d_3$",
+      "solution": "Cả 3 người đều xuất phát từ điểm đầu A và kết thúc tại điểm cuối B. Độ dịch chuyển chỉ phụ thuộc vào điểm đầu và điểm cuối, do đó cả 3 người có cùng độ dịch chuyển: $d_1 = d_2 = d_3$.",
+      "points": 0.5
+    },
+    {
+      "id": "b0057081-df1a-4890-b86e-18d1a697f002",
+      "index": 13,
+      "type": "mcq",
+      "level": "H",
+      "text": "Trường hợp nào sau đây độ lớn độ dịch chuyển $d$ KHÔNG bằng quãng đường đi được $s$?",
+      "options": [
+        "Một em học sinh đi bộ thẳng từ nhà đến trường không quay đầu.",
+        "Xe ô tô chạy thẳng trên đường cao tốc một chiều.",
+        "Quả bóng rơi tự do từ trên cao xuống đất.",
+        "Một người chạy thể dục 5 vòng quanh sân vận động rồi quay lại vị trí xuất phát."
+      ],
+      "correctAnswer": "Một người chạy thể dục 5 vòng quanh sân vận động rồi quay lại vị trí xuất phát.",
+      "solution": "Khi người chạy 5 vòng quanh sân vận động và quay lại điểm xuất phát thì vị trí đầu và vị trí cuối trùng nhau $\\implies d = 0$, trong khi quãng đường $s > 0$. Do đó $d \\neq s$.",
+      "points": 0.5
+    },
+    {
+      "id": "354f8dc1-9dbf-44c2-898b-789f965261ed",
+      "index": 14,
+      "type": "mcq",
+      "level": "H",
+      "text": "Một chất điểm chuyển động trên đường thẳng Ox. Ban đầu chất điểm ở tọa độ $x_1 = -5$ m, sau một thời gian chất điểm đến tọa độ $x_2 = +15$ m. Độ dịch chuyển của chất điểm là:",
+      "options": [
+        "$d = +10$ m",
+        "$d = +20$ m",
+        "$d = -20$ m",
+        "$d = 10$ m"
+      ],
+      "correctAnswer": "$d = +20$ m",
+      "solution": "Độ dịch chuyển trên trục Ox tính bằng: $d = x_2 - x_1 = 15 - (-5) = +20$ m.",
+      "points": 0.5
+    },
+    {
+      "id": "08fcf7e8-94b7-4476-b426-7e151b9cb867",
+      "index": 15,
+      "type": "mcq",
+      "level": "H",
+      "text": "Bạn A đi từ Trạm xăng (ở tọa độ $x = 400$ m) đến Siêu thị (ở tọa độ $x = 800$ m) theo chiều dương trục Ox. Quãng đường $s$ và độ dịch chuyển $d$ của bạn A từ trạm xăng đến siêu thị là:",
+      "options": [
+        "$s = 400 m, d = 400$ m",
+        "$s = 800 m, d = 400$ m",
+        "$s = 400 m, d = 1200$ m",
+        "$s = 1200 m, d = 1200$ m"
+      ],
+      "correctAnswer": "$s = 400 m, d = 400$ m",
+      "solution": "Vì bạn A đi thẳng từ 400 m đến 800 m cùng chiều dương nên:\n- Quãng đường: $s = 800 - 400 = 400$ m.\n- Độ dịch chuyển: $d = 800 - 400 = +400$ m.",
+      "points": 0.5
+    },
+    {
+      "id": "588fa677-8bb2-4240-8b4b-7b85cce6377e",
+      "index": 16,
+      "type": "mcq",
+      "level": "VD",
+      "text": "Bạn A đi xe đạp từ Nhà (ở mốc $0$ m) qua Trạm xăng ($400$ m), đến Siêu thị mua đồ ($800$ m) rồi quay về Nhà cất đồ ($0$ m), sau đó đi xe đến Trường ($1200$ m). Quãng đường đi được $s$ và độ dịch chuyển $d$ của cả chuyến đi lần lượt là:",
+      "options": [
+        "$s = 2800$ m và $d = 1200$ m",
+        "$s = 2000$ m và $d = 1200$ m",
+        "$s = 2800$ m và $d = 2800$ m",
+        "$s = 1200$ m và $d = 1200$ m"
+      ],
+      "correctAnswer": "$s = 2800$ m và $d = 1200$ m",
+      "solution": "1) Quãng đường đi từng đoạn:\n- Từ Nhà đến Siêu thị: $800$ m.\n- Từ Siêu thị quay về Nhà: $800$ m.\n- Từ Nhà đến Trường: $1200$ m.\n$\\implies$ Tổng quãng đường $s = 800 + 800 + 1200 = 2800$ m.\n2) Độ dịch chuyển: Điểm đầu là Nhà ($x_1 = 0$), điểm cuối là Trường ($x_2 = 1200$ m)\n$\\implies d = x_2 - x_1 = 1200 - 0 = 1200$ m.",
+      "points": 0.5
+    },
+    {
+      "id": "0124d243-f0a5-496c-853b-c46a98ccc992",
+      "index": 17,
+      "type": "mcq",
+      "level": "VD",
+      "text": "Một người đi xe đạp từ A đến B dài $4$ km theo hướng Đông, sau đó rẽ vuông góc đi từ B đến C dài $4$ km theo hướng Bắc. Quãng đường $s$ và độ lớn độ dịch chuyển $d$ từ A đến C của người đó là:",
+      "options": [
+        "$s = 8$ km và $d = 8$ km",
+        "$s = 8$ km và $d \\approx 5{,}7$ km (hướng $45^\\circ$ đông – bắc)",
+        "$s = 5{,}7$ km và $d = 8$ km",
+        "$s = 8$ km và $d = 0$ km"
+      ],
+      "correctAnswer": "$s = 8$ km và $d \\approx 5{,}7$ km (hướng $45^\\circ$ đông – bắc)",
+      "solution": "1) Quãng đường đi được: $s = AB + BC = 4 + 4 = 8$ km.\n2) Vì tam giác ABC vuông tại B nên độ lớn độ dịch chuyển AC:\n$d = \\sqrt{AB^2 + BC^2} = \\sqrt{4^2 + 4^2} = \\sqrt{32} \\approx 5{,}7$ km.\n3) Vì tam giác ABC vuông cân tại B nên góc $\\widehat{CAB} = 45^\\circ$ $\\implies$ Hướng $45^\\circ$ đông – bắc.",
+      "points": 0.5
+    },
+    {
+      "id": "f76af1ae-46c7-4ec1-b759-e5a0c6284f84",
+      "index": 18,
+      "type": "mcq",
+      "level": "VD",
+      "text": "Một người bơi ngang từ bờ bên này sang bờ bên kia của một dòng sông rộng $50$ m theo hướng vuông góc với dòng sông. Do nước sông chảy từ bắc xuống nam nên khi sang bờ bên kia người đó bị trôi xuôi theo dòng nước $50$ m. Độ lớn độ dịch chuyển của người đó là:",
+      "options": [
+        "$50$ m",
+        "$100$ m",
+        "$50\\sqrt{2} m \\approx 70{,}7$ m",
+        "$25\\sqrt{2}$ m"
+      ],
+      "correctAnswer": "$50\\sqrt{2} m \\approx 70{,}7$ m",
+      "solution": "Độ dịch chuyển ngang sông (sang bờ đối diện) là $d_1 = 50$ m.\nĐộ dịch chuyển dọc theo dòng sông do trôi dạt là $d_2 = 50$ m.\nHai thành phần dịch chuyển vuông góc nhau, nên độ dịch chuyển tổng hợp có độ lớn:\n$d = \\sqrt{d_1^2 + d_2^2} = \\sqrt{50^2 + 50^2} = 50\\sqrt{2} \\approx 70{,}71$ m.",
+      "points": 0.5
+    },
+    {
+      "id": "24df94b3-5aa2-45b1-83d5-e6196e85647f",
+      "index": 19,
+      "type": "mcq",
+      "level": "VD",
+      "text": "Một người lái ô tô đi thẳng $6$ km theo hướng Tây, sau đó rẽ trái đi thẳng theo hướng Nam $4$ km, rồi tiếp tục quay sang hướng Đông đi $3$ km. Quãng đường đi được $s$ và độ lớn độ dịch chuyển $d$ của ô tô lần lượt là:",
+      "options": [
+        "$s = 13$ km và $d = 5$ km",
+        "$s = 13$ km và $d = 13$ km",
+        "$s = 10$ km và $d = 7$ km",
+        "$s = 13$ km và $d = 7$ km"
+      ],
+      "correctAnswer": "$s = 13$ km và $d = 5$ km",
+      "solution": "1) Tổng quãng đường đi được: $s = 6 + 4 + 3 = 13$ km.\n2) Xác định vị trí điểm cuối so với điểm đầu trên hệ tọa độ (chọn gốc O tại điểm đầu, chiều dương Đông-Tây, Bắc-Nam):\n- Dịch sang Tây 6 km ($x_1 = -6$), dịch Nam 4 km ($y_1 = -4$), dịch Đông 3 km ($x_2 = -6 + 3 = -3$).\n- Tọa độ vị trí cuối so với mốc O là $(x = -3 km, y = -4 km)$.\n3) Độ lớn độ dịch chuyển:\n$d = \\sqrt{x^2 + y^2} = \\sqrt{(-3)^2 + (-4)^2} = \\sqrt{9 + 16} = 5$ km.",
+      "points": 0.5
+    },
+    {
+      "id": "60c7e824-0fba-4ac9-9edb-bd32452e170f",
+      "index": 20,
+      "type": "mcq",
+      "level": "VD",
+      "text": "Một con rô-bốt thực hiện liên tiếp các độ dịch chuyển: $\\vec{d_1}$ dài $10$ m hướng Bắc, $\\vec{d_2}$ dài $10\\sqrt{3}$ m hướng Đông và $\\vec{d_3}$ dài $20$ m hướng Nam. Độ lớn độ dịch chuyển tổng hợp của con rô-bốt bằng bao nhiêu?",
+      "options": [
+        "$10$ m",
+        "$20$ m",
+        "$10\\sqrt{3}$ m",
+        "$30$ m"
+      ],
+      "correctAnswer": "$20$ m",
+      "solution": "1) Tổng hợp hai độ dịch chuyển dọc trục Bắc - Nam (trục Oy):\n$\\vec{d}_{y} = \\vec{d_1} + \\vec{d_3}$. Vì $\\vec{d_1}$ hướng Bắc (+10m) và $\\vec{d_3}$ hướng Nam (-20m) nên thành phần theo trục Oy là $d_y = 10 - 20 = -10$ m (hướng Nam, độ lớn 10m).\n2) Thành phần theo trục Đông - Tây (trục Ox):\n$d_x = d_2 = 10\\sqrt{3}$ m (hướng Đông).\n3) Vì $d_x$ và $d_y$ vuông góc nhau nên độ lớn độ dịch chuyển tổng hợp:\n$d = \\sqrt{d_x^2 + d_y^2} = \\sqrt{(10\\sqrt{3})^2 + (-10)^2} = \\sqrt{300 + 100} = \\sqrt{400} = 20$ m.",
+      "points": 0.5
+    }
+  ]
+}</script>
+  <script id="edusync-runtime-data" type="application/json">{"examId":"47cff55d-a833-4445-b090-7e0372690f14","title":"Độ dịch chuyển và Quãng đường","subject":"Vật Lý","grade":"10","category":"CHƯƠNG 2: ĐỘNG HỌC","durationMinutes":20,"maxScore":10,"shuffleQuestions":false,"shuffleOptions":false,"blocks":[{"blockId":"single_5a344041-a350-4185-8f31-c0be3bfff729_0","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"5a344041-a350-4185-8f31-c0be3bfff729","type":"mcq","level":"B","chapterName":"","points":0.5,"textHtml":"Đại lượng nào dưới đây vừa cho biết độ lớn, vừa cho biết hướng của sự thay đổi vị trí của vật?","rawText":"Đại lượng nào dưới đây vừa cho biết độ lớn, vừa cho biết hướng của sự thay đổi vị trí của vật?","ownImageUrl":"","optionsHtml":["Quãng đường đi được $s$.","Độ dịch chuyển $\\vec{d}$.","Tốc độ trung bình $v$.","Thời gian chuyển động $t$."],"optionsRaw":["Quãng đường đi được $s$.","Độ dịch chuyển $\\vec{d}$.","Tốc độ trung bình $v$.","Thời gian chuyển động $t$."],"correctIndex":1,"correctAnswer":"Độ dịch chuyển $\\vec{d}$.","subQuestions":[],"solutionHtml":"Theo định nghĩa trong SGK Bài 4 (trang 22): Đại lượng vừa cho biết độ lớn vừa cho biết hướng của sự thay đổi vị trí của vật gọi là độ dịch chuyển. Kí hiệu là vectơ $\\vec{d}$.","rawSolution":"Theo định nghĩa trong SGK Bài 4 (trang 22): Đại lượng vừa cho biết độ lớn vừa cho biết hướng của sự thay đổi vị trí của vật gọi là độ dịch chuyển. Kí hiệu là vectơ $\\vec{d}$."}]},{"blockId":"single_8b170e8c-c87f-48bf-ad3e-ab37c4677534_1","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"8b170e8c-c87f-48bf-ad3e-ab37c4677534","type":"mcq","level":"B","chapterName":"","points":0.5,"textHtml":"Độ dịch chuyển được biểu diễn trên hình vẽ bằng phương tiện nào sau đây?","rawText":"Độ dịch chuyển được biểu diễn trên hình vẽ bằng phương tiện nào sau đây?","ownImageUrl":"","optionsHtml":["Một đường cong có mũi tên chỉ hướng.","Một đoạn thẳng không có hướng.","Một mũi tên nối vị trí đầu và vị trí cuối của chuyển động, có độ dài tỉ lệ với độ lớn của độ dịch chuyển.","Một hình chữ nhật ô bao sai số."],"optionsRaw":["Một đường cong có mũi tên chỉ hướng.","Một đoạn thẳng không có hướng.","Một mũi tên nối vị trí đầu và vị trí cuối của chuyển động, có độ dài tỉ lệ với độ lớn của độ dịch chuyển.","Một hình chữ nhật ô bao sai số."],"correctIndex":2,"correctAnswer":"Một mũi tên nối vị trí đầu và vị trí cuối của chuyển động, có độ dài tỉ lệ với độ lớn của độ dịch chuyển.","subQuestions":[],"solutionHtml":"Theo SGK (trang 22): Độ dịch chuyển được biểu diễn bằng một mũi tên nối vị trí đầu và vị trí cuối của chuyển động, có độ dài tỉ lệ với độ lớn của độ dịch chuyển.","rawSolution":"Theo SGK (trang 22): Độ dịch chuyển được biểu diễn bằng một mũi tên nối vị trí đầu và vị trí cuối của chuyển động, có độ dài tỉ lệ với độ lớn của độ dịch chuyển."}]},{"blockId":"single_d57d2a90-6f5a-4f53-a262-4aef6a1d651f_2","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"d57d2a90-6f5a-4f53-a262-4aef6a1d651f","type":"mcq","level":"B","chapterName":"","points":0.5,"textHtml":"Đại lượng nào sau đây là đại lượng vectơ?","rawText":"Đại lượng nào sau đây là đại lượng vectơ?","ownImageUrl":"","optionsHtml":["Quãng đường.","Thời gian.","Độ dịch chuyển.","Nhiệt độ."],"optionsRaw":["Quãng đường.","Thời gian.","Độ dịch chuyển.","Nhiệt độ."],"correctIndex":2,"correctAnswer":"Độ dịch chuyển.","subQuestions":[],"solutionHtml":"Theo SGK (trang 22): Một đại lượng vừa cho biết độ lớn, vừa cho biết hướng như độ dịch chuyển gọi là đại lượng vectơ.","rawSolution":"Theo SGK (trang 22): Một đại lượng vừa cho biết độ lớn, vừa cho biết hướng như độ dịch chuyển gọi là đại lượng vectơ."}]},{"blockId":"single_2ff7ee63-c127-47ba-abf7-f2a4e5c01877_3","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"2ff7ee63-c127-47ba-abf7-f2a4e5c01877","type":"mcq","level":"B","chapterName":"","points":0.5,"textHtml":"Trong thực tế, hệ tọa độ địa lí có gốc là vị trí vật mốc, hai trục tọa độ được quy ước như thế nào?","rawText":"Trong thực tế, hệ tọa độ địa lí có gốc là vị trí vật mốc, hai trục tọa độ được quy ước như thế nào?","ownImageUrl":"","optionsHtml":["Trục hoành nối hai hướng bắc - nam, trục tung nối hai hướng tây - đông.","Trục hoành nối hai hướng tây - đông, trục tung nối hai hướng bắc - nam.","Hai trục tọa độ vuông góc tùy ý không theo hướng địa lí.","Trục hoành chỉ hướng đông, trục tung chỉ hướng tây."],"optionsRaw":["Trục hoành nối hai hướng bắc - nam, trục tung nối hai hướng tây - đông.","Trục hoành nối hai hướng tây - đông, trục tung nối hai hướng bắc - nam.","Hai trục tọa độ vuông góc tùy ý không theo hướng địa lí.","Trục hoành chỉ hướng đông, trục tung chỉ hướng tây."],"correctIndex":1,"correctAnswer":"Trục hoành nối hai hướng tây - đông, trục tung nối hai hướng bắc - nam.","subQuestions":[],"solutionHtml":"Theo SGK Mục I (trang 22): Người ta thường chọn hệ tọa độ trùng với hệ tọa độ địa lí, có gốc là vị trí vật mốc, trục hoành nối hai hướng tây - đông, trục tung nối hai hướng bắc - nam.","rawSolution":"Theo SGK Mục I (trang 22): Người ta thường chọn hệ tọa độ trùng với hệ tọa độ địa lí, có gốc là vị trí vật mốc, trục hoành nối hai hướng tây - đông, trục tung nối hai hướng bắc - nam."}]},{"blockId":"single_fc96b14a-7c7d-4162-b11b-2c660580daeb_4","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"fc96b14a-7c7d-4162-b11b-2c660580daeb","type":"mcq","level":"B","chapterName":"","points":0.5,"textHtml":"Hệ quy chiếu dùng để xác định vị trí và thời điểm của vật bao gồm những thành phần nào?","rawText":"Hệ quy chiếu dùng để xác định vị trí và thời điểm của vật bao gồm những thành phần nào?","ownImageUrl":"","optionsHtml":["Hệ tọa độ kết hợp với mốc thời gian và đồng hồ đo thời gian.","Chỉ gồm hệ tọa độ và vật mốc.","Chỉ gồm một đồng hồ đo thời gian.","Thước đo độ dài và nhiệt kế."],"optionsRaw":["Hệ tọa độ kết hợp với mốc thời gian và đồng hồ đo thời gian.","Chỉ gồm hệ tọa độ và vật mốc.","Chỉ gồm một đồng hồ đo thời gian.","Thước đo độ dài và nhiệt kế."],"correctIndex":0,"correctAnswer":"Hệ tọa độ kết hợp với mốc thời gian và đồng hồ đo thời gian.","subQuestions":[],"solutionHtml":"Theo SGK (trang 22): Hệ tọa độ kết hợp với mốc thời gian và đồng hồ đo thời gian được gọi là hệ quy chiếu.","rawSolution":"Theo SGK (trang 22): Hệ tọa độ kết hợp với mốc thời gian và đồng hồ đo thời gian được gọi là hệ quy chiếu."}]},{"blockId":"single_26b4107a-2ad5-4bb4-8a9f-02673a725c66_5","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"26b4107a-2ad5-4bb4-8a9f-02673a725c66","type":"mcq","level":"B","chapterName":"","points":0.5,"textHtml":"Khi vật chuyển động thẳng và không đổi chiều, mối quan hệ giữa độ lớn độ dịch chuyển $d$ và quãng đường đi được $s$ là:","rawText":"Khi vật chuyển động thẳng và không đổi chiều, mối quan hệ giữa độ lớn độ dịch chuyển $d$ và quãng đường đi được $s$ là:","ownImageUrl":"","optionsHtml":["$d &gt; s$","$d &lt; s$","$d = s$","$d = -s$"],"optionsRaw":["$d > s$","$d < s$","$d = s$","$d = -s$"],"correctIndex":2,"correctAnswer":"$d = s$","subQuestions":[],"solutionHtml":"Theo phần EM ĐÃ HỌC (trang 25): Khi vật chuyển động thẳng, không đổi chiều thì độ lớn của độ dịch chuyển và quãng đường đi được bằng nhau ($d = s$).","rawSolution":"Theo phần EM ĐÃ HỌC (trang 25): Khi vật chuyển động thẳng, không đổi chiều thì độ lớn của độ dịch chuyển và quãng đường đi được bằng nhau ($d = s$)."}]},{"blockId":"single_27f6fcfc-360d-43e5-a110-f1067f9c625c_6","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"27f6fcfc-360d-43e5-a110-f1067f9c625c","type":"mcq","level":"B","chapterName":"","points":0.5,"textHtml":"Phần Vật lý nghiên cứu chuyển động của vật mà không đề cập đến tác dụng của lực lên chuyển động gọi là gì?","rawText":"Phần Vật lý nghiên cứu chuyển động của vật mà không đề cập đến tác dụng của lực lên chuyển động gọi là gì?","ownImageUrl":"","optionsHtml":["Động lực học.","Động học.","Quang học.","Nhiệt học."],"optionsRaw":["Động lực học.","Động học.","Quang học.","Nhiệt học."],"correctIndex":1,"correctAnswer":"Động học.","subQuestions":[],"solutionHtml":"Theo khung &#39;EM CÓ BIẾT?&#39; (trang 21): Động học là phần vật lý nghiên cứu chuyển động của vật mà không đề cập đến tác dụng của lực lên chuyển động.","rawSolution":"Theo khung 'EM CÓ BIẾT?' (trang 21): Động học là phần vật lý nghiên cứu chuyển động của vật mà không đề cập đến tác dụng của lực lên chuyển động."}]},{"blockId":"single_8221fe6e-7e06-4f01-9beb-ad3fbf34fd9c_7","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"8221fe6e-7e06-4f01-9beb-ad3fbf34fd9c","type":"mcq","level":"B","chapterName":"","points":0.5,"textHtml":"Khi nào một vật chuyển động được coi là một chất điểm?","rawText":"Khi nào một vật chuyển động được coi là một chất điểm?","ownImageUrl":"","optionsHtml":["Khi kích thước của vật rất lớn so với độ dài quãng đường.","Khi kích thước của vật rất nhỏ so với độ dài của quãng đường đi được.","Khi vật đứng yên không chuyển động.","Khi vật chuyển động với tốc độ ánh sáng."],"optionsRaw":["Khi kích thước của vật rất lớn so với độ dài quãng đường.","Khi kích thước của vật rất nhỏ so với độ dài của quãng đường đi được.","Khi vật đứng yên không chuyển động.","Khi vật chuyển động với tốc độ ánh sáng."],"correctIndex":1,"correctAnswer":"Khi kích thước của vật rất nhỏ so với độ dài của quãng đường đi được.","subQuestions":[],"solutionHtml":"Theo khung &#39;EM CÓ BIẾT?&#39; (trang 21): Khi kích thước của vật rất nhỏ so với độ dài của quãng đường đi được thì vật được coi là chất điểm.","rawSolution":"Theo khung 'EM CÓ BIẾT?' (trang 21): Khi kích thước của vật rất nhỏ so với độ dài của quãng đường đi được thì vật được coi là chất điểm."}]},{"blockId":"single_aa48753e-8864-4d3f-a3bc-55337e433bd7_8","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"aa48753e-8864-4d3f-a3bc-55337e433bd7","type":"mcq","level":"H","chapterName":"","points":0.5,"textHtml":"Một ô tô đi tới điểm O của ngã tư (đủ 4 hướng Đông, Tây, Nam, Bắc) với tốc độ không đổi $36$ km/h. Sau $10$ s đi tiếp theo hướng Bắc, ô tô ở vị trí nào nếu mỗi vạch khoảng cách trên sơ đồ là $50$ m?","rawText":"Một ô tô đi tới điểm O của ngã tư (đủ 4 hướng Đông, Tây, Nam, Bắc) với tốc độ không đổi $36$ km/h. Sau $10$ s đi tiếp theo hướng Bắc, ô tô ở vị trí nào nếu mỗi vạch khoảng cách trên sơ đồ là $50$ m?","ownImageUrl":"","optionsHtml":["Điểm A cách O 150 m.","Điểm B cách O 100 m.","Điểm C cách O 50 m.","Điểm D cách O 50 m."],"optionsRaw":["Điểm A cách O 150 m.","Điểm B cách O 100 m.","Điểm C cách O 50 m.","Điểm D cách O 50 m."],"correctIndex":1,"correctAnswer":"Điểm B cách O 100 m.","subQuestions":[],"solutionHtml":"1) Đổi tốc độ: $v = 36 km/h = 10$ m/s.<br>2) Quãng đường ô tô đi tiếp sau 10s: $s = v \\cdot t = 10 \\cdot 10 = 100$ m.<br>3) Vì ô tô đi theo hướng Bắc nên vị trí ứng với khoảng cách 100 m phía Bắc là điểm B (trên đường Bắc từ O: C ở 50m, B ở 100m, A ở 150m).","rawSolution":"1) Đổi tốc độ: $v = 36 km/h = 10$ m/s.\n2) Quãng đường ô tô đi tiếp sau 10s: $s = v \\cdot t = 10 \\cdot 10 = 100$ m.\n3) Vì ô tô đi theo hướng Bắc nên vị trí ứng với khoảng cách 100 m phía Bắc là điểm B (trên đường Bắc từ O: C ở 50m, B ở 100m, A ở 150m)."}]},{"blockId":"single_16135317-f63a-47a1-b8a1-5e8429944f9d_9","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"16135317-f63a-47a1-b8a1-5e8429944f9d","type":"mcq","level":"H","chapterName":"","points":0.5,"textHtml":"Trên trục tọa độ $Ox$ có điểm gốc O tại vị trí ban đầu. Chọn mốc thời gian là $t_0 = 8$ h khi vật ở $x_0 = 20$ km. Vật chuyển động thẳng đều với tốc độ $40$ km/h. Tọa độ vị trí của vật tại thời điểm $t = 11$ h là bao nhiêu?","rawText":"Trên trục tọa độ $Ox$ có điểm gốc O tại vị trí ban đầu. Chọn mốc thời gian là $t_0 = 8$ h khi vật ở $x_0 = 20$ km. Vật chuyển động thẳng đều với tốc độ $40$ km/h. Tọa độ vị trí của vật tại thời điểm $t = 11$ h là bao nhiêu?","ownImageUrl":"","optionsHtml":["$x = 120$ km","$x = 140$ km","$x = 100$ km","$x = 160$ km"],"optionsRaw":["$x = 120$ km","$x = 140$ km","$x = 100$ km","$x = 160$ km"],"correctIndex":1,"correctAnswer":"$x = 140$ km","subQuestions":[],"solutionHtml":"1) Khoảng thời gian chuyển động: $\\Delta t = 11 h - 8 h = 3$ h.<br>2) Quãng đường đi được: $s = v \\cdot \\Delta t = 40 \\cdot 3 = 120$ km.<br>3) Tọa độ tại 11h: $x = x_0 + s = 20 + 120 = 140$ km.","rawSolution":"1) Khoảng thời gian chuyển động: $\\Delta t = 11 h - 8 h = 3$ h.\n2) Quãng đường đi được: $s = v \\cdot \\Delta t = 40 \\cdot 3 = 120$ km.\n3) Tọa độ tại 11h: $x = x_0 + s = 20 + 120 = 140$ km."}]},{"blockId":"single_f395f58e-27a3-4451-99f3-d90611878704_10","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"f395f58e-27a3-4451-99f3-d90611878704","type":"mcq","level":"H","chapterName":"","points":0.5,"textHtml":"Xem vectơ độ dịch chuyển $\\vec{d_2}$ trên hệ tọa độ địa lí có tỉ xích $1$ cm ứng với $100$ m (Hình 4.5). Vectơ $\\vec{d_2}$ dài 3 cm và hợp với trục Đông một góc $45^\\circ$. Mô tả độ dịch chuyển này đúng nhất là:","rawText":"Xem vectơ độ dịch chuyển $\\vec{d_2}$ trên hệ tọa độ địa lí có tỉ xích $1$ cm ứng với $100$ m (Hình 4.5). Vectơ $\\vec{d_2}$ dài 3 cm và hợp với trục Đông một góc $45^\\circ$. Mô tả độ dịch chuyển này đúng nhất là:","ownImageUrl":"","optionsHtml":["$d_2 = 300$ m (hướng Đông).","$d_2 = 300$ m (hướng $45^\\circ$ đông – bắc).","$d_2 = 200$ m (hướng Bắc).","$d_2 = 100$ m (hướng Tây)."],"optionsRaw":["$d_2 = 300$ m (hướng Đông).","$d_2 = 300$ m (hướng $45^\\circ$ đông – bắc).","$d_2 = 200$ m (hướng Bắc).","$d_2 = 100$ m (hướng Tây)."],"correctIndex":1,"correctAnswer":"$d_2 = 300$ m (hướng $45^\\circ$ đông – bắc).","subQuestions":[],"solutionHtml":"Mỗi cm ứng với 100 m nên 3 cm ứng với 300 m. Góc $45^\\circ$ giữa trục Đông và trục Bắc chỉ hướng Đông - Bắc. Do đó $d_2 = 300$ m (hướng $45^\\circ$ đông – bắc).","rawSolution":"Mỗi cm ứng với 100 m nên 3 cm ứng với 300 m. Góc $45^\\circ$ giữa trục Đông và trục Bắc chỉ hướng Đông - Bắc. Do đó $d_2 = 300$ m (hướng $45^\\circ$ đông – bắc)."}]},{"blockId":"single_a0afe193-bcb9-4305-98b5-94dc029b50f5_11","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"a0afe193-bcb9-4305-98b5-94dc029b50f5","type":"mcq","level":"H","chapterName":"","points":0.5,"textHtml":"Ba người đi từ vị trí A đến vị trí B: Người (1) đi xe máy theo đường cong, Người (2) đi bộ theo đường thẳng AB, Người (3) đi ô tô theo đường vòng. So sánh độ lớn độ dịch chuyển $d_1, d_2, d_3$ của ba người:","rawText":"Ba người đi từ vị trí A đến vị trí B: Người (1) đi xe máy theo đường cong, Người (2) đi bộ theo đường thẳng AB, Người (3) đi ô tô theo đường vòng. So sánh độ lớn độ dịch chuyển $d_1, d_2, d_3$ của ba người:","ownImageUrl":"","optionsHtml":["$d_1 &gt; d_2 &gt; d_3$","$d_3 &gt; d_1 &gt; d_2$","$d_1 = d_2 = d_3$","$d_2 &gt; d_1 = d_3$"],"optionsRaw":["$d_1 > d_2 > d_3$","$d_3 > d_1 > d_2$","$d_1 = d_2 = d_3$","$d_2 > d_1 = d_3$"],"correctIndex":2,"correctAnswer":"$d_1 = d_2 = d_3$","subQuestions":[],"solutionHtml":"Cả 3 người đều xuất phát từ điểm đầu A và kết thúc tại điểm cuối B. Độ dịch chuyển chỉ phụ thuộc vào điểm đầu và điểm cuối, do đó cả 3 người có cùng độ dịch chuyển: $d_1 = d_2 = d_3$.","rawSolution":"Cả 3 người đều xuất phát từ điểm đầu A và kết thúc tại điểm cuối B. Độ dịch chuyển chỉ phụ thuộc vào điểm đầu và điểm cuối, do đó cả 3 người có cùng độ dịch chuyển: $d_1 = d_2 = d_3$."}]},{"blockId":"single_b0057081-df1a-4890-b86e-18d1a697f002_12","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"b0057081-df1a-4890-b86e-18d1a697f002","type":"mcq","level":"H","chapterName":"","points":0.5,"textHtml":"Trường hợp nào sau đây độ lớn độ dịch chuyển $d$ KHÔNG bằng quãng đường đi được $s$?","rawText":"Trường hợp nào sau đây độ lớn độ dịch chuyển $d$ KHÔNG bằng quãng đường đi được $s$?","ownImageUrl":"","optionsHtml":["Một em học sinh đi bộ thẳng từ nhà đến trường không quay đầu.","Xe ô tô chạy thẳng trên đường cao tốc một chiều.","Quả bóng rơi tự do từ trên cao xuống đất.","Một người chạy thể dục 5 vòng quanh sân vận động rồi quay lại vị trí xuất phát."],"optionsRaw":["Một em học sinh đi bộ thẳng từ nhà đến trường không quay đầu.","Xe ô tô chạy thẳng trên đường cao tốc một chiều.","Quả bóng rơi tự do từ trên cao xuống đất.","Một người chạy thể dục 5 vòng quanh sân vận động rồi quay lại vị trí xuất phát."],"correctIndex":3,"correctAnswer":"Một người chạy thể dục 5 vòng quanh sân vận động rồi quay lại vị trí xuất phát.","subQuestions":[],"solutionHtml":"Khi người chạy 5 vòng quanh sân vận động và quay lại điểm xuất phát thì vị trí đầu và vị trí cuối trùng nhau $\\implies d = 0$, trong khi quãng đường $s &gt; 0$. Do đó $d \\neq s$.","rawSolution":"Khi người chạy 5 vòng quanh sân vận động và quay lại điểm xuất phát thì vị trí đầu và vị trí cuối trùng nhau $\\implies d = 0$, trong khi quãng đường $s > 0$. Do đó $d \\neq s$."}]},{"blockId":"single_354f8dc1-9dbf-44c2-898b-789f965261ed_13","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"354f8dc1-9dbf-44c2-898b-789f965261ed","type":"mcq","level":"H","chapterName":"","points":0.5,"textHtml":"Một chất điểm chuyển động trên đường thẳng Ox. Ban đầu chất điểm ở tọa độ $x_1 = -5$ m, sau một thời gian chất điểm đến tọa độ $x_2 = +15$ m. Độ dịch chuyển của chất điểm là:","rawText":"Một chất điểm chuyển động trên đường thẳng Ox. Ban đầu chất điểm ở tọa độ $x_1 = -5$ m, sau một thời gian chất điểm đến tọa độ $x_2 = +15$ m. Độ dịch chuyển của chất điểm là:","ownImageUrl":"","optionsHtml":["$d = +10$ m","$d = +20$ m","$d = -20$ m","$d = 10$ m"],"optionsRaw":["$d = +10$ m","$d = +20$ m","$d = -20$ m","$d = 10$ m"],"correctIndex":1,"correctAnswer":"$d = +20$ m","subQuestions":[],"solutionHtml":"Độ dịch chuyển trên trục Ox tính bằng: $d = x_2 - x_1 = 15 - (-5) = +20$ m.","rawSolution":"Độ dịch chuyển trên trục Ox tính bằng: $d = x_2 - x_1 = 15 - (-5) = +20$ m."}]},{"blockId":"single_08fcf7e8-94b7-4476-b426-7e151b9cb867_14","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"08fcf7e8-94b7-4476-b426-7e151b9cb867","type":"mcq","level":"H","chapterName":"","points":0.5,"textHtml":"Bạn A đi từ Trạm xăng (ở tọa độ $x = 400$ m) đến Siêu thị (ở tọa độ $x = 800$ m) theo chiều dương trục Ox. Quãng đường $s$ và độ dịch chuyển $d$ của bạn A từ trạm xăng đến siêu thị là:","rawText":"Bạn A đi từ Trạm xăng (ở tọa độ $x = 400$ m) đến Siêu thị (ở tọa độ $x = 800$ m) theo chiều dương trục Ox. Quãng đường $s$ và độ dịch chuyển $d$ của bạn A từ trạm xăng đến siêu thị là:","ownImageUrl":"","optionsHtml":["$s = 400 m, d = 400$ m","$s = 800 m, d = 400$ m","$s = 400 m, d = 1200$ m","$s = 1200 m, d = 1200$ m"],"optionsRaw":["$s = 400 m, d = 400$ m","$s = 800 m, d = 400$ m","$s = 400 m, d = 1200$ m","$s = 1200 m, d = 1200$ m"],"correctIndex":0,"correctAnswer":"$s = 400 m, d = 400$ m","subQuestions":[],"solutionHtml":"Vì bạn A đi thẳng từ 400 m đến 800 m cùng chiều dương nên:<br>- Quãng đường: $s = 800 - 400 = 400$ m.<br>- Độ dịch chuyển: $d = 800 - 400 = +400$ m.","rawSolution":"Vì bạn A đi thẳng từ 400 m đến 800 m cùng chiều dương nên:\n- Quãng đường: $s = 800 - 400 = 400$ m.\n- Độ dịch chuyển: $d = 800 - 400 = +400$ m."}]},{"blockId":"single_588fa677-8bb2-4240-8b4b-7b85cce6377e_15","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"588fa677-8bb2-4240-8b4b-7b85cce6377e","type":"mcq","level":"VD","chapterName":"","points":0.5,"textHtml":"Bạn A đi xe đạp từ Nhà (ở mốc $0$ m) qua Trạm xăng ($400$ m), đến Siêu thị mua đồ ($800$ m) rồi quay về Nhà cất đồ ($0$ m), sau đó đi xe đến Trường ($1200$ m). Quãng đường đi được $s$ và độ dịch chuyển $d$ của cả chuyến đi lần lượt là:","rawText":"Bạn A đi xe đạp từ Nhà (ở mốc $0$ m) qua Trạm xăng ($400$ m), đến Siêu thị mua đồ ($800$ m) rồi quay về Nhà cất đồ ($0$ m), sau đó đi xe đến Trường ($1200$ m). Quãng đường đi được $s$ và độ dịch chuyển $d$ của cả chuyến đi lần lượt là:","ownImageUrl":"","optionsHtml":["$s = 2800$ m và $d = 1200$ m","$s = 2000$ m và $d = 1200$ m","$s = 2800$ m và $d = 2800$ m","$s = 1200$ m và $d = 1200$ m"],"optionsRaw":["$s = 2800$ m và $d = 1200$ m","$s = 2000$ m và $d = 1200$ m","$s = 2800$ m và $d = 2800$ m","$s = 1200$ m và $d = 1200$ m"],"correctIndex":0,"correctAnswer":"$s = 2800$ m và $d = 1200$ m","subQuestions":[],"solutionHtml":"1) Quãng đường đi từng đoạn:<br>- Từ Nhà đến Siêu thị: $800$ m.<br>- Từ Siêu thị quay về Nhà: $800$ m.<br>- Từ Nhà đến Trường: $1200$ m.<br>$\\implies$ Tổng quãng đường $s = 800 + 800 + 1200 = 2800$ m.<br>2) Độ dịch chuyển: Điểm đầu là Nhà ($x_1 = 0$), điểm cuối là Trường ($x_2 = 1200$ m)<br>$\\implies d = x_2 - x_1 = 1200 - 0 = 1200$ m.","rawSolution":"1) Quãng đường đi từng đoạn:\n- Từ Nhà đến Siêu thị: $800$ m.\n- Từ Siêu thị quay về Nhà: $800$ m.\n- Từ Nhà đến Trường: $1200$ m.\n$\\implies$ Tổng quãng đường $s = 800 + 800 + 1200 = 2800$ m.\n2) Độ dịch chuyển: Điểm đầu là Nhà ($x_1 = 0$), điểm cuối là Trường ($x_2 = 1200$ m)\n$\\implies d = x_2 - x_1 = 1200 - 0 = 1200$ m."}]},{"blockId":"single_0124d243-f0a5-496c-853b-c46a98ccc992_16","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"0124d243-f0a5-496c-853b-c46a98ccc992","type":"mcq","level":"VD","chapterName":"","points":0.5,"textHtml":"Một người đi xe đạp từ A đến B dài $4$ km theo hướng Đông, sau đó rẽ vuông góc đi từ B đến C dài $4$ km theo hướng Bắc. Quãng đường $s$ và độ lớn độ dịch chuyển $d$ từ A đến C của người đó là:","rawText":"Một người đi xe đạp từ A đến B dài $4$ km theo hướng Đông, sau đó rẽ vuông góc đi từ B đến C dài $4$ km theo hướng Bắc. Quãng đường $s$ và độ lớn độ dịch chuyển $d$ từ A đến C của người đó là:","ownImageUrl":"","optionsHtml":["$s = 8$ km và $d = 8$ km","$s = 8$ km và $d \\approx 5{,}7$ km (hướng $45^\\circ$ đông – bắc)","$s = 5{,}7$ km và $d = 8$ km","$s = 8$ km và $d = 0$ km"],"optionsRaw":["$s = 8$ km và $d = 8$ km","$s = 8$ km và $d \\approx 5{,}7$ km (hướng $45^\\circ$ đông – bắc)","$s = 5{,}7$ km và $d = 8$ km","$s = 8$ km và $d = 0$ km"],"correctIndex":1,"correctAnswer":"$s = 8$ km và $d \\approx 5{,}7$ km (hướng $45^\\circ$ đông – bắc)","subQuestions":[],"solutionHtml":"1) Quãng đường đi được: $s = AB + BC = 4 + 4 = 8$ km.<br>2) Vì tam giác ABC vuông tại B nên độ lớn độ dịch chuyển AC:<br>$d = \\sqrt{AB^2 + BC^2} = \\sqrt{4^2 + 4^2} = \\sqrt{32} \\approx 5{,}7$ km.<br>3) Vì tam giác ABC vuông cân tại B nên góc $\\widehat{CAB} = 45^\\circ$ $\\implies$ Hướng $45^\\circ$ đông – bắc.","rawSolution":"1) Quãng đường đi được: $s = AB + BC = 4 + 4 = 8$ km.\n2) Vì tam giác ABC vuông tại B nên độ lớn độ dịch chuyển AC:\n$d = \\sqrt{AB^2 + BC^2} = \\sqrt{4^2 + 4^2} = \\sqrt{32} \\approx 5{,}7$ km.\n3) Vì tam giác ABC vuông cân tại B nên góc $\\widehat{CAB} = 45^\\circ$ $\\implies$ Hướng $45^\\circ$ đông – bắc."}]},{"blockId":"single_f76af1ae-46c7-4ec1-b759-e5a0c6284f84_17","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"f76af1ae-46c7-4ec1-b759-e5a0c6284f84","type":"mcq","level":"VD","chapterName":"","points":0.5,"textHtml":"Một người bơi ngang từ bờ bên này sang bờ bên kia của một dòng sông rộng $50$ m theo hướng vuông góc với dòng sông. Do nước sông chảy từ bắc xuống nam nên khi sang bờ bên kia người đó bị trôi xuôi theo dòng nước $50$ m. Độ lớn độ dịch chuyển của người đó là:","rawText":"Một người bơi ngang từ bờ bên này sang bờ bên kia của một dòng sông rộng $50$ m theo hướng vuông góc với dòng sông. Do nước sông chảy từ bắc xuống nam nên khi sang bờ bên kia người đó bị trôi xuôi theo dòng nước $50$ m. Độ lớn độ dịch chuyển của người đó là:","ownImageUrl":"","optionsHtml":["$50$ m","$100$ m","$50\\sqrt{2} m \\approx 70{,}7$ m","$25\\sqrt{2}$ m"],"optionsRaw":["$50$ m","$100$ m","$50\\sqrt{2} m \\approx 70{,}7$ m","$25\\sqrt{2}$ m"],"correctIndex":2,"correctAnswer":"$50\\sqrt{2} m \\approx 70{,}7$ m","subQuestions":[],"solutionHtml":"Độ dịch chuyển ngang sông (sang bờ đối diện) là $d_1 = 50$ m.<br>Độ dịch chuyển dọc theo dòng sông do trôi dạt là $d_2 = 50$ m.<br>Hai thành phần dịch chuyển vuông góc nhau, nên độ dịch chuyển tổng hợp có độ lớn:<br>$d = \\sqrt{d_1^2 + d_2^2} = \\sqrt{50^2 + 50^2} = 50\\sqrt{2} \\approx 70{,}71$ m.","rawSolution":"Độ dịch chuyển ngang sông (sang bờ đối diện) là $d_1 = 50$ m.\nĐộ dịch chuyển dọc theo dòng sông do trôi dạt là $d_2 = 50$ m.\nHai thành phần dịch chuyển vuông góc nhau, nên độ dịch chuyển tổng hợp có độ lớn:\n$d = \\sqrt{d_1^2 + d_2^2} = \\sqrt{50^2 + 50^2} = 50\\sqrt{2} \\approx 70{,}71$ m."}]},{"blockId":"single_24df94b3-5aa2-45b1-83d5-e6196e85647f_18","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"24df94b3-5aa2-45b1-83d5-e6196e85647f","type":"mcq","level":"VD","chapterName":"","points":0.5,"textHtml":"Một người lái ô tô đi thẳng $6$ km theo hướng Tây, sau đó rẽ trái đi thẳng theo hướng Nam $4$ km, rồi tiếp tục quay sang hướng Đông đi $3$ km. Quãng đường đi được $s$ và độ lớn độ dịch chuyển $d$ của ô tô lần lượt là:","rawText":"Một người lái ô tô đi thẳng $6$ km theo hướng Tây, sau đó rẽ trái đi thẳng theo hướng Nam $4$ km, rồi tiếp tục quay sang hướng Đông đi $3$ km. Quãng đường đi được $s$ và độ lớn độ dịch chuyển $d$ của ô tô lần lượt là:","ownImageUrl":"","optionsHtml":["$s = 13$ km và $d = 5$ km","$s = 13$ km và $d = 13$ km","$s = 10$ km và $d = 7$ km","$s = 13$ km và $d = 7$ km"],"optionsRaw":["$s = 13$ km và $d = 5$ km","$s = 13$ km và $d = 13$ km","$s = 10$ km và $d = 7$ km","$s = 13$ km và $d = 7$ km"],"correctIndex":0,"correctAnswer":"$s = 13$ km và $d = 5$ km","subQuestions":[],"solutionHtml":"1) Tổng quãng đường đi được: $s = 6 + 4 + 3 = 13$ km.<br>2) Xác định vị trí điểm cuối so với điểm đầu trên hệ tọa độ (chọn gốc O tại điểm đầu, chiều dương Đông-Tây, Bắc-Nam):<br>- Dịch sang Tây 6 km ($x_1 = -6$), dịch Nam 4 km ($y_1 = -4$), dịch Đông 3 km ($x_2 = -6 + 3 = -3$).<br>- Tọa độ vị trí cuối so với mốc O là $(x = -3 km, y = -4 km)$.<br>3) Độ lớn độ dịch chuyển:<br>$d = \\sqrt{x^2 + y^2} = \\sqrt{(-3)^2 + (-4)^2} = \\sqrt{9 + 16} = 5$ km.","rawSolution":"1) Tổng quãng đường đi được: $s = 6 + 4 + 3 = 13$ km.\n2) Xác định vị trí điểm cuối so với điểm đầu trên hệ tọa độ (chọn gốc O tại điểm đầu, chiều dương Đông-Tây, Bắc-Nam):\n- Dịch sang Tây 6 km ($x_1 = -6$), dịch Nam 4 km ($y_1 = -4$), dịch Đông 3 km ($x_2 = -6 + 3 = -3$).\n- Tọa độ vị trí cuối so với mốc O là $(x = -3 km, y = -4 km)$.\n3) Độ lớn độ dịch chuyển:\n$d = \\sqrt{x^2 + y^2} = \\sqrt{(-3)^2 + (-4)^2} = \\sqrt{9 + 16} = 5$ km."}]},{"blockId":"single_60c7e824-0fba-4ac9-9edb-bd32452e170f_19","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"60c7e824-0fba-4ac9-9edb-bd32452e170f","type":"mcq","level":"VD","chapterName":"","points":0.5,"textHtml":"Một con rô-bốt thực hiện liên tiếp các độ dịch chuyển: $\\vec{d_1}$ dài $10$ m hướng Bắc, $\\vec{d_2}$ dài $10\\sqrt{3}$ m hướng Đông và $\\vec{d_3}$ dài $20$ m hướng Nam. Độ lớn độ dịch chuyển tổng hợp của con rô-bốt bằng bao nhiêu?","rawText":"Một con rô-bốt thực hiện liên tiếp các độ dịch chuyển: $\\vec{d_1}$ dài $10$ m hướng Bắc, $\\vec{d_2}$ dài $10\\sqrt{3}$ m hướng Đông và $\\vec{d_3}$ dài $20$ m hướng Nam. Độ lớn độ dịch chuyển tổng hợp của con rô-bốt bằng bao nhiêu?","ownImageUrl":"","optionsHtml":["$10$ m","$20$ m","$10\\sqrt{3}$ m","$30$ m"],"optionsRaw":["$10$ m","$20$ m","$10\\sqrt{3}$ m","$30$ m"],"correctIndex":1,"correctAnswer":"$20$ m","subQuestions":[],"solutionHtml":"1) Tổng hợp hai độ dịch chuyển dọc trục Bắc - Nam (trục Oy):<br>$\\vec{d}_{y} = \\vec{d_1} + \\vec{d_3}$. Vì $\\vec{d_1}$ hướng Bắc (+10m) và $\\vec{d_3}$ hướng Nam (-20m) nên thành phần theo trục Oy là $d_y = 10 - 20 = -10$ m (hướng Nam, độ lớn 10m).<br>2) Thành phần theo trục Đông - Tây (trục Ox):<br>$d_x = d_2 = 10\\sqrt{3}$ m (hướng Đông).<br>3) Vì $d_x$ và $d_y$ vuông góc nhau nên độ lớn độ dịch chuyển tổng hợp:<br>$d = \\sqrt{d_x^2 + d_y^2} = \\sqrt{(10\\sqrt{3})^2 + (-10)^2} = \\sqrt{300 + 100} = \\sqrt{400} = 20$ m.","rawSolution":"1) Tổng hợp hai độ dịch chuyển dọc trục Bắc - Nam (trục Oy):\n$\\vec{d}_{y} = \\vec{d_1} + \\vec{d_3}$. Vì $\\vec{d_1}$ hướng Bắc (+10m) và $\\vec{d_3}$ hướng Nam (-20m) nên thành phần theo trục Oy là $d_y = 10 - 20 = -10$ m (hướng Nam, độ lớn 10m).\n2) Thành phần theo trục Đông - Tây (trục Ox):\n$d_x = d_2 = 10\\sqrt{3}$ m (hướng Đông).\n3) Vì $d_x$ và $d_y$ vuông góc nhau nên độ lớn độ dịch chuyển tổng hợp:\n$d = \\sqrt{d_x^2 + d_y^2} = \\sqrt{(10\\sqrt{3})^2 + (-10)^2} = \\sqrt{300 + 100} = \\sqrt{400} = 20$ m."}]}]}</script>
+  <script>
+    (function() {
+      var dataEl = document.getElementById('edusync-runtime-data');
+      var EXAM = JSON.parse(dataEl.textContent || '{}');
+      var LETTERS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+      var TF_LABELS = ['a', 'b', 'c', 'd', 'e', 'f'];
+
+      function shuffle(arr) {
+        var copy = arr.slice();
+        for (var i = copy.length - 1; i > 0; i--) {
+          var j = Math.floor(Math.random() * (i + 1));
+          var tmp = copy[i]; copy[i] = copy[j]; copy[j] = tmp;
+        }
+        return copy;
+      }
+
+      var blocks = EXAM.shuffleQuestions ? shuffle(EXAM.blocks || []) : (EXAM.blocks || []);
+      var flatQuestions = [];
+      blocks.forEach(function(block) {
+        block.questions.forEach(function(q) {
+          if (q.type === 'mcq' && EXAM.shuffleOptions && Array.isArray(q.optionsHtml)) {
+            var tagged = q.optionsHtml.map(function(html, idx) {
+              return { html: html, raw: q.optionsRaw[idx], isCorrect: idx === q.correctIndex };
+            });
+            var mixed = shuffle(tagged);
+            q.optionsHtml = mixed.map(function(m) { return m.html; });
+            q.optionsRaw = mixed.map(function(m) { return m.raw; });
+            q.correctIndex = Math.max(0, mixed.findIndex(function(m) { return m.isCorrect; }));
+          }
+          q.displayNumber = flatQuestions.length + 1;
+          flatQuestions.push(q);
+        });
+      });
+
+      var userAnswers = {};
+      var submitted = false;
+      var durationLimit = (EXAM.durationMinutes || 0) > 0 ? EXAM.durationMinutes * 60 : 0;
+      var startTime = Date.now();
+      var timerHandle = null;
+
+      function fmtTime(sec) {
+        var s = Math.max(0, Math.floor(sec));
+        var m = Math.floor(s / 60);
+        var r = s % 60;
+        return String(m).padStart(2, '0') + ':' + String(r).padStart(2, '0');
+      }
+
+      function isQuestionAnswered(q) {
+        var ans = userAnswers[q.id];
+        if (q.type === 'mcq') return typeof ans === 'number';
+        if (q.type === 'short') return typeof ans === 'string' && ans.trim().length > 0;
+        if (q.type === 'group-tf') {
+          if (!ans || typeof ans !== 'object') return false;
+          return q.subQuestions.some(function(sq) { return ans[sq.id] === 'True' || ans[sq.id] === 'False'; });
+        }
+        return false;
+      }
+
+      function updateProgress() {
+        var done = flatQuestions.filter(isQuestionAnswered).length;
+        document.getElementById('progressLabel').textContent = done + '/' + flatQuestions.length;
+        document.getElementById('sidebarCount').textContent = 'Đã làm ' + done + '/' + flatQuestions.length;
+        flatQuestions.forEach(function(q) {
+          var pBtn = document.getElementById('pbtn_' + q.displayNumber);
+          if (!pBtn || submitted) return;
+          pBtn.className = 'p-btn mono' + (isQuestionAnswered(q) ? ' done' : '');
+        });
+      }
+
+      function buildQuestionEl(q) {
+        var card = document.createElement('article');
+        card.className = 'q-card';
+        card.id = 'qcard_' + q.displayNumber;
+
+        var header = document.createElement('div');
+        header.className = 'q-header';
+        var leftMeta = '<span class="q-num">Câu ' + q.displayNumber + '</span>';
+        var tags = [q.level ? ('Mức ' + q.level) : '', q.points + ' đ', q.chapterName || ''].filter(Boolean).join(' · ');
+        header.innerHTML = leftMeta + '<span id="qstatus_' + q.displayNumber + '" class="q-status">' + tags + '</span>';
+        card.appendChild(header);
+
+        var qTextEl = document.createElement('div');
+        qTextEl.className = 'q-text';
+        qTextEl.innerHTML = q.textHtml;
+        card.appendChild(qTextEl);
+
+        if (q.ownImageUrl) {
+          var fig = document.createElement('div');
+          fig.className = 'q-figure';
+          var img = document.createElement('img');
+          img.src = q.ownImageUrl;
+          img.alt = 'Hình minh họa câu ' + q.displayNumber;
+          fig.appendChild(img);
+          card.appendChild(fig);
+        }
+
+        if (q.type === 'mcq') {
+          var grid = document.createElement('div');
+          grid.className = 'options-grid';
+          q.optionsHtml.forEach(function(optHtml, optIdx) {
+            var btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'opt-btn';
+            btn.id = 'opt_' + q.id + '_' + optIdx;
+            btn.innerHTML = '<span class="opt-letter mono">' + (LETTERS[optIdx] || optIdx + 1) + '</span><span style="flex:1;">' + optHtml + '</span>';
+            btn.addEventListener('click', function() {
+              if (submitted) return;
+              userAnswers[q.id] = optIdx;
+              q.optionsHtml.forEach(function(_, i2) {
+                var el = document.getElementById('opt_' + q.id + '_' + i2);
+                if (el) el.classList.toggle('selected', i2 === optIdx);
+              });
+              updateProgress();
+            });
+            grid.appendChild(btn);
+          });
+          card.appendChild(grid);
+        } else if (q.type === 'group-tf') {
+          var list = document.createElement('div');
+          list.className = 'tf-list';
+          q.subQuestions.forEach(function(sq, sIdx) {
+            var row = document.createElement('div');
+            row.className = 'tf-row';
+            row.id = 'tfrow_' + sq.id;
+
+            var txt = document.createElement('div');
+            txt.className = 'tf-text';
+            txt.innerHTML = '<strong>' + (TF_LABELS[sIdx] || (sIdx + 1)) + ')</strong> ' + sq.textHtml;
+            row.appendChild(txt);
+
+            var actions = document.createElement('div');
+            actions.className = 'tf-actions';
+            ['True', 'False'].forEach(function(val) {
+              var b = document.createElement('button');
+              b.type = 'button';
+              b.className = 'tf-choice';
+              b.id = 'tfbtn_' + sq.id + '_' + val;
+              b.textContent = val === 'True' ? 'Đúng' : 'Sai';
+              b.addEventListener('click', function() {
+                if (submitted) return;
+                if (!userAnswers[q.id] || typeof userAnswers[q.id] !== 'object') userAnswers[q.id] = {};
+                userAnswers[q.id][sq.id] = val;
+                var bt = document.getElementById('tfbtn_' + sq.id + '_True');
+                var bf = document.getElementById('tfbtn_' + sq.id + '_False');
+                if (bt) bt.classList.toggle('active', val === 'True');
+                if (bf) bf.classList.toggle('active', val === 'False');
+                updateProgress();
+              });
+              actions.appendChild(b);
+            });
+            row.appendChild(actions);
+            list.appendChild(row);
+          });
+          card.appendChild(list);
+        } else {
+          var sBox = document.createElement('div');
+          sBox.className = 'short-box';
+          var inp = document.createElement('input');
+          inp.type = 'text';
+          inp.className = 'short-input';
+          inp.id = 'short_' + q.id;
+          inp.placeholder = 'Nhập đáp số (vd: 2.6 hoặc 36)';
+          inp.addEventListener('input', function() {
+            if (submitted) return;
+            userAnswers[q.id] = inp.value;
+            updateProgress();
+          });
+          var fb = document.createElement('span');
+          fb.id = 'shortfb_' + q.id;
+          fb.className = 'short-feedback';
+          sBox.appendChild(inp);
+          sBox.appendChild(fb);
+          card.appendChild(sBox);
+        }
+
+        if (q.solutionHtml) {
+          var sol = document.createElement('div');
+          sol.className = 'solution-box';
+          sol.id = 'sol_' + q.id;
+          sol.innerHTML = '<strong>Lời giải chi tiết:</strong><div style="margin-top:4px;">' + q.solutionHtml + '</div>';
+          card.appendChild(sol);
+        }
+
+        return card;
+      }
+
+      function renderExam() {
+        var root = document.getElementById('questionsRoot');
+        var pal = document.getElementById('paletteRoot');
+        root.innerHTML = '';
+        pal.innerHTML = '';
+
+        blocks.forEach(function(block) {
+          if (block.contextHtml || block.sharedImageUrl) {
+            var groupEl = document.createElement('section');
+            groupEl.className = 'context-group';
+
+            var head = document.createElement('div');
+            head.className = 'context-header';
+            var firstNum = block.questions[0].displayNumber;
+            var lastNum = block.questions[block.questions.length - 1].displayNumber;
+            var labelText = block.questions.length > 1
+              ? 'Dữ liệu dùng chung cho Câu ' + firstNum + ' – Câu ' + lastNum
+              : 'Dữ liệu đề bài (Câu ' + firstNum + ')';
+            var html = '<div class="context-label">' + labelText + '</div>';
+            if (block.contextHtml) {
+              html += '<div class="context-body">' + block.contextHtml + '</div>';
+            }
+            head.innerHTML = html;
+            if (block.sharedImageUrl) {
+              var fig = document.createElement('div');
+              fig.className = 'q-figure';
+              var img = document.createElement('img');
+              img.src = block.sharedImageUrl;
+              img.alt = labelText;
+              fig.appendChild(img);
+              head.appendChild(fig);
+            }
+            groupEl.appendChild(head);
+
+            var inner = document.createElement('div');
+            inner.className = 'context-questions';
+            block.questions.forEach(function(q) {
+              inner.appendChild(buildQuestionEl(q));
+            });
+            groupEl.appendChild(inner);
+            root.appendChild(groupEl);
+          } else {
+            block.questions.forEach(function(q) {
+              root.appendChild(buildQuestionEl(q));
+            });
+          }
+        });
+
+        flatQuestions.forEach(function(q) {
+          var b = document.createElement('button');
+          b.type = 'button';
+          b.className = 'p-btn mono';
+          b.id = 'pbtn_' + q.displayNumber;
+          b.textContent = String(q.displayNumber);
+          b.addEventListener('click', function() {
+            var target = document.getElementById('qcard_' + q.displayNumber);
+            if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          });
+          pal.appendChild(b);
+        });
+
+        updateProgress();
+        if (window.MathJax && window.MathJax.typesetPromise) {
+          window.MathJax.typesetPromise().catch(function() {});
+        }
+      }
+
+      function normalizeShort(val) {
+        return String(val || '').trim().replace(/,/g, '.').replace(/\s+/g, '').toLowerCase();
+      }
+
+      function isShortMatch(userVal, expectedVal) {
+        var u = normalizeShort(userVal);
+        var e = normalizeShort(expectedVal);
+        if (!u) return false;
+        if (u === e) return true;
+        var nu = parseFloat(u);
+        var ne = parseFloat(e);
+        if (!isNaN(nu) && !isNaN(ne) && String(nu) === u || !isNaN(nu) && !isNaN(ne)) {
+          if (/^-?\d+(?:\.\d+)?$/.test(u) && /^-?\d+(?:\.\d+)?$/.test(e)) {
+            return Math.abs(nu - ne) < 1e-6;
+          }
+        }
+        return false;
+      }
+
+      function gradeAndSubmit(force) {
+        if (submitted) return;
+        var answered = flatQuestions.filter(isQuestionAnswered).length;
+        if (!force && answered < flatQuestions.length) {
+          document.getElementById('confirmMsg').textContent =
+            'Bạn mới làm ' + answered + '/' + flatQuestions.length + ' câu. Bạn có chắc muốn nộp bài ngay?';
+          document.getElementById('confirmBar').classList.add('visible');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+          return;
+        }
+        document.getElementById('confirmBar').classList.remove('visible');
+        submitted = true;
+        if (timerHandle) clearInterval(timerHandle);
+
+        var totalScore = 0;
+        var maxScore = EXAM.maxScore || 10;
+        var correctQuestions = 0;
+        var answerDetails = [];
+
+        flatQuestions.forEach(function(q) {
+          var qCorrect = false;
+          var pBtn = document.getElementById('pbtn_' + q.displayNumber);
+          var stEl = document.getElementById('qstatus_' + q.displayNumber);
+          var solEl = document.getElementById('sol_' + q.id);
+          if (solEl) solEl.classList.add('visible');
+
+          if (q.type === 'mcq') {
+            var chosen = typeof userAnswers[q.id] === 'number' ? userAnswers[q.id] : -1;
+            qCorrect = chosen === q.correctIndex;
+            if (qCorrect) {
+              totalScore += q.points;
+              correctQuestions++;
+            }
+            q.optionsHtml.forEach(function(_, i) {
+              var ob = document.getElementById('opt_' + q.id + '_' + i);
+              if (!ob) return;
+              ob.disabled = true;
+              ob.classList.remove('selected');
+              if (i === q.correctIndex) ob.classList.add('correct');
+              else if (i === chosen) ob.classList.add('wrong');
+            });
+            if (stEl) {
+              stEl.textContent = qCorrect ? ('Đúng (+' + q.points + 'đ)') : 'Sai (0đ)';
+              stEl.className = 'q-status ' + (qCorrect ? 'ok' : 'bad');
+            }
+            answerDetails.push({
+              orderIndex: answerDetails.length,
+              questionText: 'Câu ' + q.displayNumber + ': ' + q.rawText,
+              options: q.optionsRaw,
+              selectedIndex: chosen,
+              correctIndex: q.correctIndex,
+              isCorrect: qCorrect,
+              explanation: q.rawSolution
+            });
+          } else if (q.type === 'group-tf') {
+            var tfMap = (userAnswers[q.id] && typeof userAnswers[q.id] === 'object') ? userAnswers[q.id] : {};
+            var rightSubs = 0;
+            q.subQuestions.forEach(function(sq, sIdx) {
+              var picked = tfMap[sq.id] || '';
+              var subOk = picked === sq.correctAnswer;
+              if (subOk) rightSubs++;
+              var row = document.getElementById('tfrow_' + sq.id);
+              if (row) row.classList.add(subOk ? 'ok' : 'bad');
+              ['True', 'False'].forEach(function(v) {
+                var btn = document.getElementById('tfbtn_' + sq.id + '_' + v);
+                if (!btn) return;
+                btn.disabled = true;
+                if (v === sq.correctAnswer) btn.classList.add('right-ans');
+              });
+              answerDetails.push({
+                orderIndex: answerDetails.length,
+                questionText: 'Câu ' + q.displayNumber + (TF_LABELS[sIdx] || '') + ': ' + sq.rawText,
+                options: ['Đúng', 'Sai'],
+                selectedIndex: picked === 'True' ? 0 : (picked === 'False' ? 1 : -1),
+                correctIndex: sq.correctAnswer === 'True' ? 0 : 1,
+                isCorrect: subOk,
+                explanation: sIdx === q.subQuestions.length - 1 ? q.rawSolution : ''
+              });
+            });
+            var earnedRatio = 0;
+            if (q.subQuestions.length === 4) {
+              earnedRatio = rightSubs === 1 ? 0.1 : rightSubs === 2 ? 0.25 : rightSubs === 3 ? 0.5 : rightSubs === 4 ? 1 : 0;
+            } else if (q.subQuestions.length > 0) {
+              earnedRatio = rightSubs / q.subQuestions.length;
+            }
+            var earned = Math.round(q.points * earnedRatio * 100) / 100;
+            totalScore += earned;
+            qCorrect = rightSubs === q.subQuestions.length;
+            if (qCorrect) correctQuestions++;
+            if (stEl) {
+              stEl.textContent = 'Đúng ' + rightSubs + '/' + q.subQuestions.length + ' ý (+' + earned + 'đ)';
+              stEl.className = 'q-status ' + (qCorrect ? 'ok' : 'bad');
+            }
+          } else {
+            var rawInput = document.getElementById('short_' + q.id);
+            var typed = rawInput ? rawInput.value.trim() : '';
+            if (rawInput) rawInput.disabled = true;
+            qCorrect = isShortMatch(typed, q.correctAnswer);
+            if (qCorrect) {
+              totalScore += q.points;
+              correctQuestions++;
+            }
+            var fbEl = document.getElementById('shortfb_' + q.id);
+            if (fbEl) {
+              fbEl.textContent = qCorrect
+                ? ('Chính xác (+' + q.points + 'đ)')
+                : ('Đáp án đúng: ' + q.correctAnswer);
+              fbEl.style.color = qCorrect ? 'var(--ok)' : 'var(--bad)';
+            }
+            if (stEl) {
+              stEl.textContent = qCorrect ? ('Đúng (+' + q.points + 'đ)') : 'Sai (0đ)';
+              stEl.className = 'q-status ' + (qCorrect ? 'ok' : 'bad');
+            }
+            answerDetails.push({
+              orderIndex: answerDetails.length,
+              questionText: 'Câu ' + q.displayNumber + ': ' + q.rawText,
+              options: ['Bài làm: ' + (typed || '(bỏ trống)'), 'Đáp án chuẩn: ' + q.correctAnswer],
+              selectedIndex: qCorrect ? 1 : 0,
+              correctIndex: 1,
+              isCorrect: qCorrect,
+              explanation: q.rawSolution
+            });
+          }
+
+          if (pBtn) {
+            pBtn.className = 'p-btn mono ' + (qCorrect ? 'ok' : 'bad');
+          }
+        });
+
+        totalScore = Math.round(totalScore * 100) / 100;
+        var pct = maxScore > 0 ? Math.round((totalScore / maxScore) * 1000) / 10 : 0;
+
+        document.getElementById('scoreText').textContent = totalScore + ' / ' + maxScore + ' điểm';
+        document.getElementById('correctText').textContent =
+          'Đúng hoàn toàn ' + correctQuestions + ' / ' + flatQuestions.length + ' câu (' + pct + '%)';
+        document.getElementById('resultScreen').classList.add('visible');
+        document.getElementById('topSubmitBtn').style.display = 'none';
+        document.getElementById('sideSubmitBtn').style.display = 'none';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+
+        if (window.MathJax && window.MathJax.typesetPromise) {
+          window.MathJax.typesetPromise().catch(function() {});
+        }
+
+        if (typeof window.EduSyncSubmitScore === 'function') {
+          window.EduSyncSubmitScore(totalScore, maxScore, correctQuestions, flatQuestions.length, answerDetails);
+        } else if (window.parent && window.parent !== window) {
+          window.parent.postMessage({
+            type: 'QUIZ_RESULT',
+            score: totalScore,
+            maxScore: maxScore,
+            correctCount: correctQuestions,
+            totalQuestions: flatQuestions.length,
+            answerDetails: answerDetails
+          }, '*');
+        }
+      }
+
+      document.getElementById('topSubmitBtn').addEventListener('click', function() { gradeAndSubmit(false); });
+      document.getElementById('sideSubmitBtn').addEventListener('click', function() { gradeAndSubmit(false); });
+      document.getElementById('confirmYesBtn').addEventListener('click', function() { gradeAndSubmit(true); });
+      document.getElementById('confirmCancelBtn').addEventListener('click', function() {
+        document.getElementById('confirmBar').classList.remove('visible');
+      });
+
+      function tickTimer() {
+        if (submitted) return;
+        var elapsed = Math.floor((Date.now() - startTime) / 1000);
+        var box = document.getElementById('timerBox');
+        if (durationLimit > 0) {
+          var rem = Math.max(0, durationLimit - elapsed);
+          box.textContent = fmtTime(rem);
+          box.classList.toggle('urgent', rem <= 60);
+          if (rem <= 0) gradeAndSubmit(true);
+        } else {
+          box.textContent = fmtTime(elapsed);
+        }
+      }
+
+      renderExam();
+      tickTimer();
+      timerHandle = setInterval(tickTimer, 1000);
+    })();
+  </script>
+</body>
+</html>
