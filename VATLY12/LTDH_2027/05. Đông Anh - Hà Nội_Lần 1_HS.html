@@ -1,0 +1,1355 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Đông Anh – Hà Nội Lần 1</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true
+      },
+      options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre'] }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --border: #e2e8f0;
+      --text: #0f172a;
+      --muted: #64748b;
+      --accent: #1d4ed8;
+      --accent-hover: #1e40af;
+      --accent-soft: #eff6ff;
+      --ok: #047857;
+      --ok-bg: #ecfdf5;
+      --ok-border: #6ee7b7;
+      --bad: #dc2626;
+      --bad-bg: #fef2f2;
+      --bad-border: #fca5a5;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.55;
+    }
+    .mono { font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace; font-variant-numeric: tabular-nums; }
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+    }
+    .topbar-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .exam-title { font-size: 16px; font-weight: 700; margin: 0; color: var(--text); }
+    .exam-meta { font-size: 12px; color: var(--muted); margin-top: 2px; }
+    .topbar-actions { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+    .timer-box {
+      padding: 6px 12px;
+      border-radius: 8px;
+      background: #f1f5f9;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .timer-box.urgent {
+      background: var(--bad-bg);
+      color: var(--bad);
+      border: 1px solid var(--bad-border);
+    }
+    .btn {
+      border: 1px solid transparent;
+      border-radius: 8px;
+      padding: 8px 16px;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background-color 0.15s ease, border-color 0.15s ease;
+    }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-primary:hover { background: var(--accent-hover); }
+    .btn-secondary { background: #fff; border-color: #cbd5e1; color: #334155; }
+    .btn-secondary:hover { background: #f8fafc; }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 280px;
+      gap: 20px;
+      align-items: start;
+    }
+    @media (max-width: 960px) {
+      .container { grid-template-columns: 1fr; }
+    }
+    .main-col { display: flex; flex-direction: column; gap: 18px; }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+    }
+    .result-card {
+      background: var(--ok-bg);
+      border: 1px solid var(--ok-border);
+      border-radius: 12px;
+      padding: 20px;
+      display: none;
+    }
+    .result-card.visible { display: block; }
+    .result-score { font-size: 26px; font-weight: 700; color: var(--ok); margin: 4px 0; }
+    .result-sub { font-size: 13px; color: #065f46; }
+    .confirm-bar {
+      display: none;
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      border-radius: 10px;
+      padding: 14px 16px;
+      margin-bottom: 4px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      font-size: 13px;
+      color: #92400e;
+    }
+    .confirm-bar.visible { display: flex; }
+    .context-group {
+      background: var(--surface);
+      border: 1px solid #cbd5e1;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .context-header {
+      background: #f1f5f9;
+      border-bottom: 1px solid var(--border);
+      padding: 16px 20px;
+    }
+    .context-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 6px;
+    }
+    .context-body { font-size: 14px; color: #1e293b; }
+    .context-questions {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      background: #f8fafc;
+    }
+    .q-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 18px;
+      scroll-margin-top: 84px;
+    }
+    .q-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding-bottom: 10px;
+      margin-bottom: 12px;
+      border-bottom: 1px solid #f1f5f9;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .q-num { font-size: 14px; font-weight: 700; color: var(--text); }
+    .q-status { font-weight: 600; }
+    .q-status.ok { color: var(--ok); }
+    .q-status.bad { color: var(--bad); }
+    .q-text { font-size: 15px; font-weight: 500; color: var(--text); margin-bottom: 14px; }
+    .q-figure {
+      margin: 12px 0;
+      text-align: center;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px;
+    }
+    .q-figure img { max-width: 100%; max-height: 360px; height: auto; border-radius: 4px; }
+    .options-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+    @media (max-width: 640px) {
+      .options-grid { grid-template-columns: 1fr; }
+    }
+    .opt-btn {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      text-align: left;
+      padding: 11px 13px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #fff;
+      font-family: inherit;
+      font-size: 14px;
+      color: #1e293b;
+      cursor: pointer;
+      transition: border-color 0.15s ease, background-color 0.15s ease;
+    }
+    .opt-btn:hover:not(:disabled) { border-color: #94a3b8; background: #f8fafc; }
+    .opt-btn.selected { border-color: var(--accent); background: var(--accent-soft); color: #1e3a8a; font-weight: 500; }
+    .opt-btn.correct { border-color: var(--ok-border); background: var(--ok-bg); color: #064e3b; font-weight: 600; }
+    .opt-btn.wrong { border-color: var(--bad-border); background: var(--bad-bg); color: #7f1d1d; }
+    .opt-letter {
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      border: 1px solid #cbd5e1;
+      background: #fff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .opt-btn.selected .opt-letter { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .tf-list { display: flex; flex-direction: column; gap: 10px; }
+    .tf-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #fff;
+    }
+    .tf-row.ok { border-color: var(--ok-border); background: var(--ok-bg); }
+    .tf-row.bad { border-color: var(--bad-border); background: var(--bad-bg); }
+    .tf-text { font-size: 14px; flex: 1; }
+    .tf-actions { display: flex; gap: 6px; flex-shrink: 0; }
+    .tf-choice {
+      padding: 6px 12px;
+      border-radius: 6px;
+      border: 1px solid #cbd5e1;
+      background: #fff;
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .tf-choice.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .tf-choice.right-ans { border-color: var(--ok); color: var(--ok); }
+    .short-box { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+    .short-input {
+      width: 240px;
+      max-width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px;
+    }
+    .short-input:focus { outline: 2px solid var(--accent); border-color: var(--accent); }
+    .short-feedback { font-size: 13px; font-weight: 600; }
+    .solution-box {
+      display: none;
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: 8px;
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      font-size: 13px;
+      color: #334155;
+    }
+    .solution-box.visible { display: block; }
+    .sidebar {
+      position: sticky;
+      top: 76px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+    }
+    .palette-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 6px;
+      margin: 12px 0 16px;
+    }
+    .p-btn {
+      height: 34px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: #f8fafc;
+      font-size: 12px;
+      font-weight: 700;
+      color: #334155;
+      cursor: pointer;
+    }
+    .p-btn.done { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .p-btn.ok { background: var(--ok); color: #fff; border-color: var(--ok); }
+    .p-btn.bad { background: var(--bad); color: #fff; border-color: var(--bad); }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div>
+        <h1 class="exam-title">Đông Anh – Hà Nội Lần 1</h1>
+        <div class="exam-meta">Vật lý · Khối 12 · ltđh 2027 · 28 câu · Thang 10 điểm</div>
+      </div>
+      <div class="topbar-actions">
+        <span id="progressLabel" class="exam-meta mono">0/28</span>
+        <div id="timerBox" class="timer-box mono">00:00</div>
+        <button id="topSubmitBtn" type="button" class="btn btn-primary">Nộp bài</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <main class="main-col">
+      <div id="confirmBar" class="confirm-bar">
+        <span id="confirmMsg">Bạn vẫn còn câu chưa trả lời. Xác nhận nộp bài ngay?</span>
+        <div style="display:flex;gap:8px;">
+          <button id="confirmCancelBtn" type="button" class="btn btn-secondary">Làm tiếp</button>
+          <button id="confirmYesBtn" type="button" class="btn btn-primary">Xác nhận nộp</button>
+        </div>
+      </div>
+
+      <section id="resultScreen" class="result-card">
+        <div style="font-size:12px;font-weight:700;color:#047857;">KẾT QUẢ BÀI LÀM</div>
+        <div id="scoreText" class="result-score mono">0 / 10</div>
+        <div id="correctText" class="result-sub mono">0 / 28</div>
+        <div id="explanationsSection" class="result-sub" style="margin-top:6px;">
+          Xem lại từng câu và lời giải chi tiết ở bên dưới.
+        </div>
+      </section>
+
+      <div id="questionsRoot" class="main-col"></div>
+    </main>
+
+    <aside class="sidebar">
+      <div style="font-size:14px;font-weight:700;">Bảng câu hỏi</div>
+      <div id="sidebarCount" class="exam-meta mono">Đã làm 0/28</div>
+      <div id="paletteRoot" class="palette-grid"></div>
+      <button id="sideSubmitBtn" type="button" class="btn btn-primary" style="width:100%;">Nộp bài &amp; Chấm điểm</button>
+    </aside>
+  </div>
+
+  <script type="application/json" id="edusync-exam-json">{
+  "id": "c0597965-38d6-4933-8c25-15616f3d3f80",
+  "title": "Đông Anh – Hà Nội Lần 1",
+  "subject": "Vật lý",
+  "grade": "12",
+  "type": "test",
+  "category": "ltđh 2027",
+  "durationMinutes": 50,
+  "shuffleQuestions": false,
+  "shuffleOptions": false,
+  "questionCount": 28,
+  "questions": [
+    {
+      "id": "82627770-6059-4a56-8b8c-8f78533a1374",
+      "index": 1,
+      "type": "mcq",
+      "level": "H",
+      "text": "Với cùng một chất, quá trình chuyển thể nào sẽ làm giảm lực tương tác giữa các phân tử nhiều nhất?",
+      "options": [
+        "Nóng chảy.",
+        "Hoá hơi.",
+        "Đông đặc.",
+        "Ngưng tụ."
+      ],
+      "correctAnswer": "Hoá hơi.",
+      "solution": "Trong quá trình hóa hơi, khoảng cách giữa các phân tử tăng mạnh nhất (chuyển từ lỏng sang khí), nên lực tương tác giữa các phân tử giảm nhiều nhất.",
+      "points": 0.25,
+      "chapterName": "Chương 1: vật lý nhiệt"
+    },
+    {
+      "id": "ed6a325d-bc85-4e15-bcc6-d41a8c32e91c",
+      "index": 2,
+      "type": "mcq",
+      "level": "H",
+      "text": "Đồ thị hình bên biểu diễn sự thay đổi nhiệt độ của một lượng nước đun sôi đến khi chuyển thể hoàn toàn thành hơi (đoạn $AB$ từ $20^{\\circ}\\text{C}$ đến $100^{\\circ}\\text{C}$ trong $4$ phút đầu; đoạn $BC$ nằm ngang ở $100^{\\circ}\\text{C}$ từ phút thứ $4$ đến phút thứ $14$; đoạn $CD$ từ $100^{\\circ}\\text{C}$ đến $120^{\\circ}\\text{C}$ từ phút thứ $14$ đến phút thứ $16$). Nhận định nào sau đây đúng?",
+      "options": [
+        "Trong $4$ phút đầu tiên nước sôi và tăng nhiệt độ đến $100^{\\circ}\\text{C}$.",
+        "Nước bắt đầu hoá hơi từ $t=14$ phút đến $t=16$ phút.",
+        "Nước bắt đầu sôi từ $t=4$ phút.",
+        "Trong $14$ phút đầu tiên, nhiệt độ của nước tăng liên tục."
+      ],
+      "correctAnswer": "Nước bắt đầu sôi từ $t=4$ phút.",
+      "solution": "Từ phút thứ $4$ đến phút thứ $14$ (đoạn $BC$), nhiệt độ giữ không đổi ở $100^{\\circ}\\text{C}$ nên nước sôi từ thời điểm $t = 4$ phút.",
+      "points": 0.25,
+      "imageUrl": "https://buelyuxsztnhrwinrldp.supabase.co/storage/v1/object/public/quiz-images/1013b6ee-9973-4327-9054-cabb7e6c3443.png",
+      "chapterName": "Chương 1: vật lý nhiệt"
+    },
+    {
+      "id": "165cecc6-c1eb-4a03-a153-52a1119e9dc3",
+      "index": 3,
+      "type": "mcq",
+      "level": "H",
+      "text": "Phát biểu nào sau đây về nhiệt lượng là không đúng?",
+      "options": [
+        "Một vật lúc nào cũng có nội năng do đó lúc nào cũng có nhiệt lượng.",
+        "Đơn vị của nhiệt lượng cũng là đơn vị của nội năng.",
+        "Nhiệt lượng không phải là nội năng.",
+        "Nhiệt lượng là phần nội năng vật tăng thêm hoặc giảm đi khi nhận được từ vật khác hoặc truyền cho vật khác."
+      ],
+      "correctAnswer": "Một vật lúc nào cũng có nội năng do đó lúc nào cũng có nhiệt lượng.",
+      "solution": "Một vật luôn có nội năng, nhưng nhiệt lượng chỉ xuất hiện trong quá trình truyền nhiệt (là phần nội năng trao đổi), vật không 'có sẵn' nhiệt lượng khi không truyền nhiệt.",
+      "points": 0.25,
+      "chapterName": "Chương 1: vật lý nhiệt"
+    },
+    {
+      "id": "efe56605-22c6-43c1-9567-0a3b83595dd5",
+      "index": 4,
+      "type": "mcq",
+      "level": "B",
+      "text": "Quy ước dấu nào sau đây phù hợp với định luật I của Nhiệt động lực học?",
+      "options": [
+        "Vật nhận công: $A<0;$ vật nhận nhiệt lượng: $Q<0$",
+        "Vật thực hiện công: $A<0$; vật truyền nhiệt lượng: $Q<0$.",
+        "Vật nhận công: $A>0;$ vật nhận nhiệt lượng: $Q<0$.",
+        "Vật thực hiện công: $A>0;$ vật truyền nhiệt lượng: $Q>0$."
+      ],
+      "correctAnswer": "Vật thực hiện công: $A<0$; vật truyền nhiệt lượng: $Q<0$.",
+      "solution": "Theo quy ước dấu chuẩn: vật nhận công thì $A > 0$, thực hiện công thì $A < 0$; vật nhận nhiệt lượng thì $Q > 0$, truyền nhiệt lượng thì $Q < 0$.",
+      "points": 0.25,
+      "chapterName": "Chương 1: vật lý nhiệt"
+    },
+    {
+      "id": "378df4d9-1b29-4c96-889e-d0807925665f",
+      "index": 5,
+      "type": "mcq",
+      "level": "B",
+      "text": "Điểm đóng băng và sôi của nước theo thang nhiệt độ Kelvin là",
+      "options": [
+        "$0\\text{ K}$ và $100\\text{ K}$.",
+        "$73\\text{ K}$ và $37\\text{ K}$.",
+        "$32\\text{ K}$ và $212\\text{ K}$.",
+        "$273\\text{ K}$ và $373\\text{ K}$."
+      ],
+      "correctAnswer": "$273\\text{ K}$ và $373\\text{ K}$.",
+      "solution": "Điểm đóng băng của nước ($0^{\\circ}\\text{C}$) tương ứng khoảng $273\\text{ K}$ (chính xác $273{,}15\\text{ K}$) và điểm sôi ($100^{\\circ}\\text{C}$) tương ứng khoảng $373\\text{ K}$ (chính xác $373{,}15\\text{ K}$).",
+      "points": 0.25,
+      "chapterName": "Chương 1: vật lý nhiệt"
+    },
+    {
+      "id": "f18e5432-0c85-4e58-a370-8062af9ee537",
+      "index": 6,
+      "type": "mcq",
+      "level": "H",
+      "text": "Bảng dưới đây ghi tên các loại nhiệt kế và nhiệt độ ghi trên thang đo của chúng.\n- Thủy ngân: Từ $-10^{\\circ}\\text{C}$ đến $110^{\\circ}\\text{C}$\n- Rượu: Từ $-30^{\\circ}\\text{C}$ đến $60^{\\circ}\\text{C}$\n- Kim loại: Từ $0^{\\circ}\\text{C}$ đến $400^{\\circ}\\text{C}$\n- Y tế: Từ $34^{\\circ}\\text{C}$ đến $42^{\\circ}\\text{C}$\nDựa vào bảng trên, để đo nhiệt độ của bàn là ta cần dùng nhiệt kế",
+      "options": [
+        "tế.",
+        "Thủy ngân.",
+        "Rượu.",
+        "Kim loại."
+      ],
+      "correctAnswer": "Kim loại.",
+      "solution": "Bàn là thường có nhiệt độ khoảng $120^{\\circ}\\text{C} - 200^{\\circ}\\text{C}$ (vượt quá giới hạn đo của nhiệt kế y tế, rượu và thủy ngân), nên chỉ có nhiệt kế kim loại ($0^{\\circ}\\text{C}$ đến $400^{\\circ}\\text{C}$) phù hợp.",
+      "points": 0.25,
+      "imageUrl": "https://buelyuxsztnhrwinrldp.supabase.co/storage/v1/object/public/quiz-images/b7ca05d2-1707-4638-9ca3-4397e089f583.png",
+      "chapterName": "Chương 1: vật lý nhiệt"
+    },
+    {
+      "id": "5505b3f1-90c7-4bde-b003-a76a12706b5a",
+      "index": 7,
+      "type": "mcq",
+      "level": "B",
+      "text": "Công thức tính nhiệt lượng là",
+      "options": [
+        "$Q=mc\\Delta t.$",
+        "$Q=c\\Delta t.$",
+        "$Q=m\\Delta t$",
+        "$Q=mc.$"
+      ],
+      "correctAnswer": "$Q=mc\\Delta t.$",
+      "solution": "Nhiệt lượng vật thu vào hoặc tỏa ra khi thay đổi nhiệt độ (không chuyển thể) tính theo công thức $Q = mc\\Delta t$.",
+      "points": 0.25,
+      "chapterName": "Chương 1: vật lý nhiệt"
+    },
+    {
+      "id": "99623034-37af-4ed0-9df8-37e69b4e47cd",
+      "index": 8,
+      "type": "mcq",
+      "level": "H",
+      "text": "Nhiệt dung riêng của đồng lớn hơn chì. Vì vậy để tăng nhiệt độ của $3\\text{ kg}$ đồng và $3\\text{ kg}$ chì thêm $15^{\\circ}\\text{C}$ thì",
+      "options": [
+        "khối chì cần nhiệt lượng lớn hơn khối đồng.",
+        "khối đồng cần nhiệt lượng lớn hơn khối chì.",
+        "hai khối đều cần nhiệt lượng như nhau.",
+        "không khẳng định được."
+      ],
+      "correctAnswer": "khối đồng cần nhiệt lượng lớn hơn khối chì.",
+      "solution": "Với cùng khối lượng $m = 3\\text{ kg}$ và độ tăng nhiệt độ $\\Delta t = 15^{\\circ}\\text{C}$, nhiệt lượng $Q = mc\\Delta t$ tỉ lệ thuận với nhiệt dung riêng $c$; vì $c_{\\text{đồng}} > c_{\\text{chì}}$ nên khối đồng cần nhiệt lượng lớn hơn.",
+      "points": 0.25,
+      "chapterName": "Chương 1: vật lý nhiệt"
+    },
+    {
+      "id": "bb1e6048-bf63-4b0f-bf96-63ce9abdba2a",
+      "index": 9,
+      "type": "mcq",
+      "level": "VD",
+      "text": "Nhiệt lượng cần cung cấp cho $0{,}5\\text{ kg}$ nước ở $0^{\\circ}\\text{C}$ đến khi nó sôi là bao nhiêu? Biết nhiệt dung riêng của nước là $4180\\text{ J/kg.K}$.",
+      "options": [
+        "$2{,}09.10^{5}\\text{ J}$.",
+        "$3.10^{5}\\text{ J}$.",
+        "$4{,}18.10^{5}\\text{ J}$",
+        "$5.10^{5}\\text{ J}$."
+      ],
+      "correctAnswer": "$2{,}09.10^{5}\\text{ J}$.",
+      "solution": "Nước sôi ở $100^{\\circ}\\text{C}$ (áp suất chuẩn). Nhiệt lượng cần cung cấp: $Q = mc\\Delta t = 0{,}5 \\cdot 4180 \\cdot (100 - 0) = 209000\\text{ J} = 2{,}09 \\cdot 10^5\\text{ J}$.",
+      "points": 0.25,
+      "chapterName": "Chương 1: vật lý nhiệt"
+    },
+    {
+      "id": "de7f642b-4f55-4640-88ed-384f44e8d500",
+      "index": 10,
+      "type": "mcq",
+      "level": "H",
+      "text": "Để giải thích hiện tượng tách kim loại bằng nóng chảy người ta dùng khái niệm về đại lượng nào?",
+      "options": [
+        "Nhiệt dung riêng",
+        "Nhiệt lượng",
+        "Nhiệt độ nóng chảy",
+        "Nhiệt hoá hơi riêng"
+      ],
+      "correctAnswer": "Nhiệt độ nóng chảy",
+      "solution": "Các chất/kim loại khác nhau có nhiệt độ nóng chảy khác nhau, dựa vào đặc điểm này người ta có thể nung chảy và tách các kim loại.",
+      "points": 0.25,
+      "chapterName": "Chương 1: vật lý nhiệt"
+    },
+    {
+      "id": "d02eb95d-66d2-451b-89cf-b22e788a0680",
+      "index": 11,
+      "type": "mcq",
+      "level": "VD",
+      "text": "Nhiệt lượng cần cung cấp cho $2\\text{ kg}$ nước đá ở nhiệt độ $0^{\\circ}\\text{C}$ là bao nhiêu để chuyển lên nhiệt độ $60^{\\circ}\\text{C}$. Biết nhiệt dung riêng của nước là $4200\\text{ J/kg.K}$, nhiệt nóng chảy riêng của nước đá là $3{,}4.10^{5}\\text{ J/kg}$",
+      "options": [
+        "$2{,}254.10^{6}\\text{ J}$",
+        "$0{,}72.10^{6}\\text{ J}$.",
+        "$1{,}184.10^{6}\\text{ J}$.",
+        "$1{,}548.10^{6}\\text{ J}$"
+      ],
+      "correctAnswer": "$1{,}184.10^{6}\\text{ J}$.",
+      "solution": "Nhiệt lượng làm nóng chảy hoàn toàn $2\\text{ kg}$ nước đá ở $0^{\\circ}\\text{C}$: $Q_1 = m\\lambda = 2 \\cdot 3{,}4 \\cdot 10^5 = 6{,}8 \\cdot 10^5\\text{ J}$. Nhiệt lượng làm nước tăng từ $0^{\\circ}\\text{C}$ lên $60^{\\circ}\\text{C}$: $Q_2 = mc\\Delta t = 2 \\cdot 4200 \\cdot 60 = 5{,}04 \\cdot 10^5\\text{ J}$. Tổng nhiệt lượng: $Q = Q_1 + Q_2 = 1{,}184 \\cdot 10^6\\text{ J}$.",
+      "points": 0.25,
+      "chapterName": "Chương 1: vật lý nhiệt"
+    },
+    {
+      "id": "c90525bf-a534-45fc-89a0-464ce25c5786",
+      "index": 12,
+      "type": "mcq",
+      "level": "VD",
+      "text": "Để đúc các vật bằng thép, người ta nấu chảy thép trong lò, Thép đưa vào lò có nhiệt độ $20^{\\circ}\\text{C}$, hiệu suất của lò là $60\\%$ (nghĩa là $60\\%$ nhiệt lượng cung cấp cho lò được dùng vào việc đun nóng thép cho đến khi nóng chảy). Để cung cấp nhiệt lượng, người ta đốt hết $200\\text{ kg}$ than đá có năng suất tỏa nhiệt là $29.10^{6}\\text{ J/kg}$. Nhiệt nóng chảy riêng của thép là $\\lambda=83{,}7.10^{3}\\text{ J/kg}$; nhiệt độ nóng chảy là $1400^{\\circ}\\text{C}$; nhiệt dung riêng của thép là $460\\text{ J/kg.K}$ Xác định khối lượng của mẻ thép đang nấu chảy là bao nhiêu?",
+      "options": [
+        "$3126\\text{ kg}$.",
+        "$4843\\text{ kg}$",
+        "$1189\\text{ kg}$.",
+        "$6826\\text{ kg}$."
+      ],
+      "correctAnswer": "$4843\\text{ kg}$",
+      "solution": "Nhiệt lượng do than tỏa ra: $Q_{tp} = 200 \\cdot 29 \\cdot 10^6 = 5{,}8 \\cdot 10^9\\text{ J}$. Nhiệt lượng có ích: $Q_i = 0{,}6 \\cdot 5{,}8 \\cdot 10^9 = 3{,}48 \\cdot 10^9\\text{ J}$. Nhiệt lượng riêng cần để nấu chảy $1\\text{ kg}$ thép từ $20^{\\circ}\\text{C}$ đến $1400^{\\circ}\\text{C}$: $q = c(1400 - 20) + \\lambda = 460 \\cdot 1380 + 83700 = 634800 + 83700 = 718500\\text{ J/kg}$. Khối lượng thép: $m = \\frac{3{,}48 \\cdot 10^9}{718500} \\approx 4843{,}4\\text{ kg} \\approx 4843\\text{ kg}$.",
+      "points": 0.25,
+      "chapterName": "Chương 1: vật lý nhiệt"
+    },
+    {
+      "id": "06e11f52-9202-46d9-a774-e24799a1f083",
+      "index": 13,
+      "type": "mcq",
+      "level": "B",
+      "text": "Trong các hiện tượng sau đây, hiện tượng nào không phải là sự bay hơi?",
+      "options": [
+        "Quần áo sau khi giặt được phơi khô.",
+        "Lau ướt bảng, một lúc sau bảng sẽ khô.",
+        "Mực khô sau khi viết.",
+        "Sự tạo thành giọt nước đọng trên lá cây."
+      ],
+      "correctAnswer": "Sự tạo thành giọt nước đọng trên lá cây.",
+      "solution": "Giọt nước đọng trên lá cây (đặc biệt vào sáng sớm) là do hơi nước trong không khí gặp lạnh ngưng tụ thành chất lỏng, không phải sự bay hơi.",
+      "points": 0.25,
+      "chapterName": "Chương 1: vật lý nhiệt"
+    },
+    {
+      "id": "4de8f8ed-0fc0-4836-a3aa-8ad18ed6be93",
+      "index": 14,
+      "type": "mcq",
+      "level": "B",
+      "text": "Để đảm bảo an toàn trong tiến hành thí nghiệm xác định nhiệt hoá hơi riêng của nước cần chú ý. Chọn câu sai",
+      "options": [
+        "cẩn thận khi sử dụng nước nóng và nguồn điện",
+        "cẩn thận khi bật tắt nguồn điện và dây điện trở",
+        "Chú ý quan sát mọi người xung quanh khi thao tác thí nghiệm",
+        "nước không quá nóng và dòng điện nhỏ nên không cần chú ý."
+      ],
+      "correctAnswer": "nước không quá nóng và dòng điện nhỏ nên không cần chú ý.",
+      "solution": "Nước sôi ở $100^{\\circ}\\text{C}$ có thể gây bỏng nặng và nguồn điện có thể gây nguy hiểm nếu thao tác bất cẩn, nên luôn phải chú ý an toàn điện và nhiệt.",
+      "points": 0.25,
+      "chapterName": "Chương 1: vật lý nhiệt"
+    },
+    {
+      "id": "0c9b999a-2503-4215-8d45-5439f84e4241",
+      "index": 15,
+      "type": "mcq",
+      "level": "VD",
+      "text": "Tìm nhiệt lượng để hóa hơi hoàn toàn $2{,}5\\text{ lít}$ nước đang sôi ở nhiệt độ $100^{\\circ}\\text{C}$. Biết nhiệt hóa hơi riêng của nước ở $100^{\\circ}\\text{C}$ là $2{,}26.10^{6}\\text{ J/kg}$",
+      "options": [
+        "$5{,}65.10^{6}\\text{ J}$",
+        "$9{,}04.10^{5}\\text{ J}$",
+        "$8{,}24.10^{6}\\text{ J}$",
+        "$8{,}4.10^{5}\\text{ J}$"
+      ],
+      "correctAnswer": "$5{,}65.10^{6}\\text{ J}$",
+      "solution": "Khối lượng $2{,}5\\text{ lít}$ nước là $m = 2{,}5\\text{ kg}$. Nhiệt lượng hóa hơi: $Q = mL = 2{,}5 \\cdot 2{,}26 \\cdot 10^6 = 5{,}65 \\cdot 10^6\\text{ J}$.",
+      "points": 0.25,
+      "chapterName": "Chương 1: vật lý nhiệt"
+    },
+    {
+      "id": "da0f43d5-3654-4522-b15d-d243f1e63d00",
+      "index": 16,
+      "type": "mcq",
+      "level": "H",
+      "text": "Một lượng xác định trong điều kiện áp suất bình thường khi ở thể lỏng và thể khí sẽ không khác nhau về",
+      "options": [
+        "khoảng cách giữa các phân tử (nguyên tử).",
+        "khối lượng riêng.",
+        "kích thước phân tử (nguyên tử).",
+        "vận tốc của các phân tử (nguyên tử)."
+      ],
+      "correctAnswer": "kích thước phân tử (nguyên tử).",
+      "solution": "Khi chuyển thể từ lỏng sang khí, bản thân kích thước của mỗi phân tử/nguyên tử không thay đổi, chỉ có khoảng cách giữa chúng, khối lượng riêng và chuyển động nhiệt thay đổi.",
+      "points": 0.25,
+      "chapterName": "Chương 1: vật lý nhiệt"
+    },
+    {
+      "id": "3c5a0a8b-44ef-4d16-bcf4-3b7da8f519bc",
+      "index": 17,
+      "type": "mcq",
+      "level": "B",
+      "text": "Công thức nào sau đây là công thức chuyển đổi đúng đơn vị nhiệt độ từ °C sang thang K?",
+      "options": [
+        "$T(K)=t(^{\\circ}C)-273.$",
+        "$T(K)=t(^{\\circ}C)+273$.",
+        "$T(K)=\\frac{9}{5}t(^{\\circ}C)-273.$",
+        "$T(K)=\\frac{9}{5}t(^{\\circ}C)+273.$"
+      ],
+      "correctAnswer": "$T(K)=t(^{\\circ}C)+273$.",
+      "solution": "Công thức chuyển đổi từ thang Celsius sang thang Kelvin là $T(\\text{K}) = t(^{\\circ}\\text{C}) + 273$ (hoặc $+273{,}15$).",
+      "points": 0.25,
+      "chapterName": "Chương 1: vật lý nhiệt"
+    },
+    {
+      "id": "9419d608-7483-4247-b0f5-90092988ba24",
+      "index": 18,
+      "type": "mcq",
+      "level": "H",
+      "text": "Hai cốc giống nhau chứa nước nóng ở cùng một nhiệt độ ban đầu. Nước ở cốc thứ nhất nguội đi $15^{\\circ}\\text{C}$ trong $5\\text{ phút}$ trong khi nước ở cốc thứ hai chỉ nguội đi $10^{\\circ}\\text{C}$ trong $5\\text{ phút}$. Đó là do",
+      "options": [
+        "nước trong cốc thứ hai nhiều hơn.",
+        "nước trong cốc thứ hai ít hơn.",
+        "nước trong cốc thứ hai có nhiệt độ ban đầu cao hơn cốc thứ nhất.",
+        "nước trong cốc thứ hai có nhiệt độ ban đầu thấp hơn cốc thứ nhất."
+      ],
+      "correctAnswer": "nước trong cốc thứ hai nhiều hơn.",
+      "solution": "Cùng tỏa một lượng nhiệt tương đương trong $5\\text{ phút}$, khối lượng nước càng lớn ($m$) thì độ giảm nhiệt độ $\\Delta t = \\frac{Q}{mc}$ càng nhỏ, nên cốc thứ hai có nhiều nước hơn.",
+      "points": 0.25,
+      "chapterName": "Chương 1: vật lý nhiệt"
+    },
+    {
+      "id": "9951f141-cf6d-4bfb-8404-6761f2a7c02e",
+      "index": 19,
+      "type": "group-tf",
+      "level": "H",
+      "text": "Khi nói về tính chất của nguyên tử, phân tử, xét các phát biểu sau:",
+      "subQuestions": [
+        {
+          "id": "81947793-736d-42eb-910b-a74f48b5f2d9",
+          "text": "phân tử của vật chất ở thể khí chuyển động hỗn loạn xung quanh các vị trí cân bằng xác định.",
+          "level": "H",
+          "correctAnswer": "False"
+        },
+        {
+          "id": "61482418-9cae-4016-9f40-c0a93398c74a",
+          "text": "Khi khoảng cách giữa các phân tử rất nhỏ, thì giữa các phân tử có cả lực hút và lực đẩy, nhưng lực đẩy lớn hơn lực hút.",
+          "level": "H",
+          "correctAnswer": "True"
+        },
+        {
+          "id": "4d92c0ce-f43a-4bc8-848c-223254c79972",
+          "text": "Phân tử có lúc đứng yên, có lúc chuyển động.",
+          "level": "H",
+          "correctAnswer": "False"
+        },
+        {
+          "id": "38d75290-3359-406e-b134-6572320b27f6",
+          "text": "Vận tốc chuyển động của các phân tử không phụ thuộc vào nhiệt độ.",
+          "level": "H",
+          "correctAnswer": "False"
+        }
+      ],
+      "solution": "a) Sai: Phân tử chất khí chuyển động hỗn loạn không ngừng về mọi phía, không có vị trí cân bằng cố định. b) Đúng: Khi khoảng cách nhỏ hơn khoảng cách cân bằng, lực đẩy chiếm ưu thế ($F_{\\text{đẩy}} > F_{\\text{hút}}$). c) Sai: Các phân tử chuyển động nhiệt không ngừng. d) Sai: Nhiệt độ càng cao thì chuyển động nhiệt của phân tử càng nhanh.",
+      "points": 1,
+      "chapterName": "Chương 1: vật lý nhiệt"
+    },
+    {
+      "id": "738e91e2-2df2-4d71-8f4b-01671a921e19",
+      "index": 20,
+      "type": "group-tf",
+      "level": "H",
+      "text": "Bảng sau đây ghi sự thay đổi nhiệt độ của không khí theo thời gian dựa trên số liệu của một trạm khí tượng ở Hà Nội ghi được vào ngày mùa đông:\n- Thời gian (giờ): $1$; $4$; $7$; $10$; $13$; $16$; $19$; $22$\n- Nhiệt độ (°C): $13$; $13$; $13$; $18$; $18$; $20$; $17$; $12$",
+      "subQuestions": [
+        {
+          "id": "82ae4e3e-a8d9-4f14-9d31-4cb9defb2c04",
+          "text": "Nhiệt độ lúc $4$ giờ là $13^{\\circ}\\text{C}$",
+          "level": "B",
+          "correctAnswer": "True"
+        },
+        {
+          "id": "49e2dd54-3d4f-4fb4-91fa-ba6673f45358",
+          "text": "Nhiệt độ thấp nhất trong ngày là vào lúc $1$ giờ.",
+          "level": "H",
+          "correctAnswer": "False"
+        },
+        {
+          "id": "b0c336fa-0599-4fd6-94d8-4647c036d9d2",
+          "text": "Nhiệt độ cao nhất trong ngày là vào lúc $16$ giờ.",
+          "level": "H",
+          "correctAnswer": "True"
+        },
+        {
+          "id": "3be9a9b1-b820-4c34-a8d5-9235631fde13",
+          "text": "Độ chênh lệch nhiệt độ trong ngày lớn nhất là $6^{\\circ}\\text{C}.$",
+          "level": "H",
+          "correctAnswer": "False"
+        }
+      ],
+      "solution": "a) Đúng: Tại $4$ giờ, nhiệt độ là $13^{\\circ}\\text{C}$. b) Sai: Nhiệt độ thấp nhất trong bảng là $12^{\\circ}\\text{C}$ vào lúc $22$ giờ. c) Đúng: Nhiệt độ cao nhất trong bảng là $20^{\\circ}\\text{C}$ vào lúc $16$ giờ. d) Sai: Độ chênh lệch nhiệt độ lớn nhất là $20 - 12 = 8^{\\circ}\\text{C}$ (không phải $6^{\\circ}\\text{C}$).",
+      "points": 1,
+      "chapterName": "Chương 1: vật lý nhiệt"
+    },
+    {
+      "id": "bb6a6a08-02b0-40c3-87c4-b0159540a4f6",
+      "index": 21,
+      "type": "group-tf",
+      "level": "VD",
+      "text": "Một cốc nhôm có khối lượng $120\\text{ g}$ chứa $400\\text{ g}$ nước ở nhiệt độ $24^{\\circ}\\text{C}$. Người ta thả vào cốc nước một thìa đồng khối lượng $80\\text{ g}$ ở nhiệt độ $100^{\\circ}\\text{C}$. Biết nhiệt dung riêng của nhôm là $880\\text{ J/kgK}$, của đồng là $380\\text{ J/kgK}$ và của nước là $4{,}19.10^{3}\\text{ J/kgK}$",
+      "subQuestions": [
+        {
+          "id": "c7a84e2b-d9fd-4a70-9e5b-52048b7432d0",
+          "text": "Cốc nhôm và đồng tỏa nhiệt lượng, nước thu nhiệt lượng.",
+          "level": "H",
+          "correctAnswer": "False"
+        },
+        {
+          "id": "8fd19aa3-3b95-4f72-a051-34b59c731ff2",
+          "text": "Nhiệt độ của nước khi có sự cân bằng nhiệt là $5{,}27^{\\circ}\\text{C}.$",
+          "level": "VD",
+          "correctAnswer": "False"
+        },
+        {
+          "id": "10e2be7c-f352-480c-8cc2-40eac6662e65",
+          "text": "Nhiệt lượng đồng tỏa ra là $2271{,}792\\text{ J}$.",
+          "level": "VD",
+          "correctAnswer": "False"
+        },
+        {
+          "id": "62589e7a-2d28-4288-ab71-b869a7de6a4a",
+          "text": "Nhiệt lượng do nước thu vào là $2128{,}52\\text{ J}$.",
+          "level": "VD",
+          "correctAnswer": "False"
+        }
+      ],
+      "solution": "a) Sai: Cốc nhôm ban đầu ở $24^{\\circ}\\text{C}$ (cùng nước) sẽ thu nhiệt cùng nước, còn thìa đồng ở $100^{\\circ}\\text{C}$ tỏa nhiệt. \nb)Sai :  Phương trình cân bằng nhiệt: $0{,}08 \\cdot 380 \\cdot (100 - t) = (0{,}4 \\cdot 4190 + 0{,}12 \\cdot 880) \\cdot (t - 24) \\Rightarrow 30{,}4(100 - t) = 1781{,}6(t - 24) \\Rightarrow 3040 - 30{,}4t = 1781{,}6t - 42758{,}4 \\Rightarrow 1812t = 45798{,}4 \\Rightarrow t \\approx 25{,}275^{\\circ}\\text{C}$ \nc) Sai : Nhiệt lượng đồng tỏa ra $Q_{\\text{đồng}} = 0,08 \\cdot (100 - 25{,}275) \\approx 2271{,}6\\text{ J}$\nd) Sai : nhiệt lượng nước thu vào $Q_{\\text{nước}} = 0{,}4 \\cdot 4190 \\cdot (25{,}275 - 24) \\approx 2137\\text{ J}$",
+      "points": 1,
+      "chapterName": "Chương 1: vật lý nhiệt"
+    },
+    {
+      "id": "3d16ba8f-6e2a-4716-88fe-6aa247c8b99e",
+      "index": 22,
+      "type": "group-tf",
+      "level": "VD",
+      "text": "Người ta cung cấp nhiệt lượng $1{,}5\\text{ J}$ cho chất khí đựng trong $1$ xylanh đặt nằm ngang. Chất khí nở ra, đẩy piston đi một đoạn $5\\text{ cm}$. Biết lực ma sát giữa piston và xylanh có độ lớn là $20\\text{ N}$. Bỏ qua áp suất khí quyển.",
+      "subQuestions": [
+        {
+          "id": "01d74dfa-f360-4fbd-a26e-3283df40da3e",
+          "text": "Công của khối khí thực hiện có độ lớn là $100\\text{ J}$.",
+          "level": "VD",
+          "correctAnswer": "False"
+        },
+        {
+          "id": "51211f42-d572-45f5-870c-cdf788860b19",
+          "text": "Do khối khí thực hiện công nên $A=-1\\text{ J}$",
+          "level": "VD",
+          "correctAnswer": "True"
+        },
+        {
+          "id": "2f08c248-9cb4-4ae1-a7b0-e8f99ed5670b",
+          "text": "Do khối khí nhận nhiệt lượng nên $Q=-1{,}5\\text{ J}.$",
+          "level": "H",
+          "correctAnswer": "False"
+        },
+        {
+          "id": "a71b8ac1-bf18-407b-9201-3490ad213953",
+          "text": "Độ biến thiên nội năng của khối khí là $0{,}5\\text{ J}$.",
+          "level": "VD",
+          "correctAnswer": "True"
+        }
+      ],
+      "solution": "a) Sai: Độ lớn công khí thực hiện là $|A| = F_{ms} \\cdot s = 20 \\cdot 0{,}05 = 1\\text{ J}$. b) Đúng: Vì khí thực hiện công nên $A = -1\\text{ J}$. c) Sai: Khí nhận nhiệt lượng nên $Q = +1{,}5\\text{ J}$. d) Đúng: $\\Delta U = A + Q = -1 + 1{,}5 = 0{,}5\\text{ J}$.",
+      "points": 1,
+      "chapterName": "Chương 1: vật lý nhiệt"
+    },
+    {
+      "id": "4ec940cd-7fcb-4fe5-aedf-52a57305e8b2",
+      "index": 23,
+      "type": "short",
+      "level": "H",
+      "text": "Hình dưới là đường biểu diễn sự thay đổi nhiệt độ theo thời gian của một chất (từ $160^{\\circ}\\text{C}$ giảm xuống $120^{\\circ}\\text{C}$ tại phút thứ $3$, nằm ngang ở $120^{\\circ}\\text{C}$ từ phút thứ $3$ đến phút thứ $7$, giảm xuống $40^{\\circ}\\text{C}$ tại phút thứ $9$, nằm ngang ở $40^{\\circ}\\text{C}$ từ phút thứ $9$ đến phút thứ $11$, giảm xuống $0^{\\circ}\\text{C}$ tại phút thứ $16$). Nhiệt độ nóng chảy của chất đó là bao nhiêu °C?",
+      "correctAnswer": "40",
+      "solution": "Trên đồ thị, quá trình nóng chảy/đông đặc của pha rắn - lỏng diễn ra ở đoạn nằm ngang tại nhiệt độ $40^{\\circ}\\text{C}$ (từ phút thứ $9$ đến phút thứ $11$), nên nhiệt độ nóng chảy của chất là $40^{\\circ}\\text{C}$.",
+      "points": 0.25,
+      "imageUrl": "https://buelyuxsztnhrwinrldp.supabase.co/storage/v1/object/public/quiz-images/b0af7abd-fb71-4408-be06-a901b7bff591.png",
+      "chapterName": "Chương 1: vật lý nhiệt"
+    },
+    {
+      "id": "204b546f-5c0c-426c-891b-3f23a56f0468",
+      "index": 24,
+      "type": "short",
+      "level": "VD",
+      "text": "Người ta cung cấp nhiệt lượng $2\\text{ J}$ cho chất khí đựng trong $1$ xilanh đặt nằm ngang. Chất khí nở ra, đẩy pittông đi một đoạn $4\\text{ cm}$. Biết lực ma sát giữa pittông và xilanh có độ lớn là $15\\text{ N}$. Bỏ qua áp suất khí quyển. Độ biến thiên nội năng của chất khí là bao nhiêu J?",
+      "correctAnswer": "1.4",
+      "solution": "Khí nhận nhiệt $Q = 2\\text{ J}$ và sinh công độ lớn $|A| = F_{ms} \\cdot s = 15 \\cdot 0{,}04 = 0{,}6\\text{ J} \\Rightarrow A = -0{,}6\\text{ J}$. Độ biến thiên nội năng: $\\Delta U = A + Q = -0{,}6 + 2 = 1{,}4\\text{ J}$.",
+      "points": 0.25,
+      "chapterName": "Chương 1: vật lý nhiệt"
+    },
+    {
+      "id": "93c4144d-63e7-4285-8b13-ab99c2037dae",
+      "index": 25,
+      "type": "short",
+      "level": "VD",
+      "text": "Ở nhiệt độ nào $(^{\\circ}\\text{C})$ thì số đọc trên thang nhiệt độ Fa-ren-hai gấp đôi số đọc trên thang nhiệt độ Xen-xi-út?",
+      "correctAnswer": "160",
+      "solution": "Ta có $t(^{\\circ}\\text{F}) = 1{,}8 t(^{\\circ}\\text{C}) + 32$. Để $t(^{\\circ}\\text{F}) = 2 t(^{\\circ}\\text{C})$: $2t = 1{,}8t + 32 \\Rightarrow 0{,}2t = 32 \\Rightarrow t = 160^{\\circ}\\text{C}$.",
+      "points": 0.25,
+      "chapterName": "Chương 1: vật lý nhiệt"
+    },
+    {
+      "id": "db54fc31-ec27-4eef-87ad-f5267004088f",
+      "index": 26,
+      "type": "short",
+      "level": "VDC",
+      "text": "Sự biến thiên nhiệt độ của khối nước đá đựng trong ca nhôm theo nhiệt lượng cung cấp được cho trên đồ thị như hình (nhiệt độ giữ ở $0^{\\circ}\\text{C}$ khi $Q$ tăng từ $0$ đến $204\\text{ kJ}$, sau đó tăng tuyến tính đến $15^{\\circ}\\text{C}$ tại điểm $C$). Biết nhiệt nóng chảy riêng của nước đá là $\\lambda=3{,}4.10^{5}\\text{ J/kg}$; nhiệt dung riêng của nước $c_{1}=4200\\text{ J/kg.K}$; nhiệt dung riêng của nhôm $c_{2}=880\\text{ J/kg.K}$. Tổng khối lượng nước đá và ca nhôm là bao nhiêu kg?",
+      "correctAnswer": "1.6",
+      "solution": "1/ Từ $Q = 0$ đến $Q_1 = 204000\\text{ J}$, nước đá nóng chảy hoàn toàn ở $0^{\\circ}\\text{C}$: $m_1 = \\frac{Q_1}{\\lambda} = \\frac{204000}{3{,}4 \\cdot 10^5} = 0{,}6\\text{ kg}$. \n2/ 1 ô tương đương 51kJ, nên Nhiệt lượng làm hệ tăng nhiệt độ đến $15^0C$ là : $ Q = m_{Al}.c_{Al}.(15)+m_{đ}.c_n.15 \\Rightarrow m_{Al} = 1kg $",
+      "points": 0.25,
+      "imageUrl": "https://buelyuxsztnhrwinrldp.supabase.co/storage/v1/object/public/quiz-images/d357e371-1c0c-4070-8ac6-882fa5a11308.png",
+      "chapterName": "Chương 1: vật lý nhiệt"
+    },
+    {
+      "id": "eb6291c5-54a6-4b8b-bf98-fe7ac2c4c9e8",
+      "index": 27,
+      "type": "short",
+      "level": "H",
+      "text": "Một học sinh thực hiện thí nghiệm khảo sát quá trình nóng chảy của một chậu nước đá và vẽ đồ thị biểu diễn nhiệt độ của chậu nước đá theo thời gian như sau (nhiệt độ giữ ở $0^{\\circ}\\text{C}$ từ $\\tau = 0$ đến điểm $M$ tại khoảng $\\tau = 600\\text{ s}$, sau đó tăng dần lên đến $1{,}5^{\\circ}\\text{C}$ tại khoảng $\\tau = 980\\text{ s}$). Dựa vào đồ thị trên, thời gian chậu nước đá nóng chảy hoàn toàn là bao nhiêu phút (làm tròn kết quả đến chữ số hàng đơn vị)?",
+      "correctAnswer": "10",
+      "solution": "Nước đá nóng chảy ở $0^{\\circ}\\text{C}$ đến điểm $M$ tại thời điểm $\\tau \\approx 600\\text{ s} = \\frac{600}{60}\\text{ phút} = 10\\text{ phút}$.",
+      "points": 0.25,
+      "imageUrl": "https://buelyuxsztnhrwinrldp.supabase.co/storage/v1/object/public/quiz-images/7c35b187-3bda-4703-821b-4ec08b4fb6cd.png",
+      "chapterName": "Chương 1: vật lý nhiệt"
+    },
+    {
+      "id": "0a530e4d-79c5-432e-a2d0-551dfcb7ad41",
+      "index": 28,
+      "type": "short",
+      "level": "VD",
+      "text": "Trong một thí nghiệm xác định nhiệt hoá hơi riêng của nước, người ta dùng một ấm điện để đun sôi nước, khi nước sôi thì người ta mở nắp ấm cho nước bay hơi và tiến hành đo thời gian bay hơi của nước. Biết công suất của ấm, khối lượng nước và thời gian để nước bay hơi hết lần lượt là: $P=1800\\pm 10\\text{ W}$; $m=150\\pm 5\\text{ g}$; $t=196\\pm 1\\text{ s}$. Cho rằng ấm luôn hoạt động đúng định mức, mọi hao phí nhiệt là không đáng kể. Sai số tỉ đối của nhiệt hoá hơi riêng trong cách làm này bằng bao nhiêu % ? Kết quả làm tròn về 1 chữ số thập phân sau dấu phẩy.",
+      "correctAnswer": "4.4",
+      "solution": "Ta có $L = \\frac{Pt}{m}$. Sai số tỉ đối của $L$: $\\frac{\\Delta L}{L} = \\frac{\\Delta P}{P} + \\frac{\\Delta t}{t} + \\frac{\\Delta m}{m} = \\frac{10}{1800} + \\frac{1}{196} + \\frac{5}{150} \\approx 0{,}005556 + 0{,}005102 + 0{,}033333 \\approx 0{,}043991 = 4{,}3991\\%$. Làm tròn đến $1$ chữ số thập phân được $4{,}4\\%$.",
+      "points": 0.25,
+      "chapterName": "Chương 1: vật lý nhiệt"
+    }
+  ]
+}</script>
+  <script id="edusync-runtime-data" type="application/json">{"examId":"c0597965-38d6-4933-8c25-15616f3d3f80","title":"Đông Anh – Hà Nội Lần 1","subject":"Vật lý","grade":"12","category":"ltđh 2027","durationMinutes":50,"maxScore":10,"shuffleQuestions":false,"shuffleOptions":false,"blocks":[{"blockId":"single_82627770-6059-4a56-8b8c-8f78533a1374_0","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"82627770-6059-4a56-8b8c-8f78533a1374","type":"mcq","level":"H","chapterName":"Chương 1: vật lý nhiệt","points":0.25,"textHtml":"Với cùng một chất, quá trình chuyển thể nào sẽ làm giảm lực tương tác giữa các phân tử nhiều nhất?","rawText":"Với cùng một chất, quá trình chuyển thể nào sẽ làm giảm lực tương tác giữa các phân tử nhiều nhất?","ownImageUrl":"","optionsHtml":["Nóng chảy.","Hoá hơi.","Đông đặc.","Ngưng tụ."],"optionsRaw":["Nóng chảy.","Hoá hơi.","Đông đặc.","Ngưng tụ."],"correctIndex":1,"correctAnswer":"Hoá hơi.","subQuestions":[],"solutionHtml":"Trong quá trình hóa hơi, khoảng cách giữa các phân tử tăng mạnh nhất (chuyển từ lỏng sang khí), nên lực tương tác giữa các phân tử giảm nhiều nhất.","rawSolution":"Trong quá trình hóa hơi, khoảng cách giữa các phân tử tăng mạnh nhất (chuyển từ lỏng sang khí), nên lực tương tác giữa các phân tử giảm nhiều nhất."}]},{"blockId":"single_ed6a325d-bc85-4e15-bcc6-d41a8c32e91c_1","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"ed6a325d-bc85-4e15-bcc6-d41a8c32e91c","type":"mcq","level":"H","chapterName":"Chương 1: vật lý nhiệt","points":0.25,"textHtml":"Đồ thị hình bên biểu diễn sự thay đổi nhiệt độ của một lượng nước đun sôi đến khi chuyển thể hoàn toàn thành hơi (đoạn $AB$ từ $20^{\\circ}\\text{C}$ đến $100^{\\circ}\\text{C}$ trong $4$ phút đầu; đoạn $BC$ nằm ngang ở $100^{\\circ}\\text{C}$ từ phút thứ $4$ đến phút thứ $14$; đoạn $CD$ từ $100^{\\circ}\\text{C}$ đến $120^{\\circ}\\text{C}$ từ phút thứ $14$ đến phút thứ $16$). Nhận định nào sau đây đúng?","rawText":"Đồ thị hình bên biểu diễn sự thay đổi nhiệt độ của một lượng nước đun sôi đến khi chuyển thể hoàn toàn thành hơi (đoạn $AB$ từ $20^{\\circ}\\text{C}$ đến $100^{\\circ}\\text{C}$ trong $4$ phút đầu; đoạn $BC$ nằm ngang ở $100^{\\circ}\\text{C}$ từ phút thứ $4$ đến phút thứ $14$; đoạn $CD$ từ $100^{\\circ}\\text{C}$ đến $120^{\\circ}\\text{C}$ từ phút thứ $14$ đến phút thứ $16$). Nhận định nào sau đây đúng?","ownImageUrl":"https://buelyuxsztnhrwinrldp.supabase.co/storage/v1/object/public/quiz-images/1013b6ee-9973-4327-9054-cabb7e6c3443.png","optionsHtml":["Trong $4$ phút đầu tiên nước sôi và tăng nhiệt độ đến $100^{\\circ}\\text{C}$.","Nước bắt đầu hoá hơi từ $t=14$ phút đến $t=16$ phút.","Nước bắt đầu sôi từ $t=4$ phút.","Trong $14$ phút đầu tiên, nhiệt độ của nước tăng liên tục."],"optionsRaw":["Trong $4$ phút đầu tiên nước sôi và tăng nhiệt độ đến $100^{\\circ}\\text{C}$.","Nước bắt đầu hoá hơi từ $t=14$ phút đến $t=16$ phút.","Nước bắt đầu sôi từ $t=4$ phút.","Trong $14$ phút đầu tiên, nhiệt độ của nước tăng liên tục."],"correctIndex":2,"correctAnswer":"Nước bắt đầu sôi từ $t=4$ phút.","subQuestions":[],"solutionHtml":"Từ phút thứ $4$ đến phút thứ $14$ (đoạn $BC$), nhiệt độ giữ không đổi ở $100^{\\circ}\\text{C}$ nên nước sôi từ thời điểm $t = 4$ phút.","rawSolution":"Từ phút thứ $4$ đến phút thứ $14$ (đoạn $BC$), nhiệt độ giữ không đổi ở $100^{\\circ}\\text{C}$ nên nước sôi từ thời điểm $t = 4$ phút."}]},{"blockId":"single_165cecc6-c1eb-4a03-a153-52a1119e9dc3_2","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"165cecc6-c1eb-4a03-a153-52a1119e9dc3","type":"mcq","level":"H","chapterName":"Chương 1: vật lý nhiệt","points":0.25,"textHtml":"Phát biểu nào sau đây về nhiệt lượng là không đúng?","rawText":"Phát biểu nào sau đây về nhiệt lượng là không đúng?","ownImageUrl":"","optionsHtml":["Một vật lúc nào cũng có nội năng do đó lúc nào cũng có nhiệt lượng.","Đơn vị của nhiệt lượng cũng là đơn vị của nội năng.","Nhiệt lượng không phải là nội năng.","Nhiệt lượng là phần nội năng vật tăng thêm hoặc giảm đi khi nhận được từ vật khác hoặc truyền cho vật khác."],"optionsRaw":["Một vật lúc nào cũng có nội năng do đó lúc nào cũng có nhiệt lượng.","Đơn vị của nhiệt lượng cũng là đơn vị của nội năng.","Nhiệt lượng không phải là nội năng.","Nhiệt lượng là phần nội năng vật tăng thêm hoặc giảm đi khi nhận được từ vật khác hoặc truyền cho vật khác."],"correctIndex":0,"correctAnswer":"Một vật lúc nào cũng có nội năng do đó lúc nào cũng có nhiệt lượng.","subQuestions":[],"solutionHtml":"Một vật luôn có nội năng, nhưng nhiệt lượng chỉ xuất hiện trong quá trình truyền nhiệt (là phần nội năng trao đổi), vật không &#39;có sẵn&#39; nhiệt lượng khi không truyền nhiệt.","rawSolution":"Một vật luôn có nội năng, nhưng nhiệt lượng chỉ xuất hiện trong quá trình truyền nhiệt (là phần nội năng trao đổi), vật không 'có sẵn' nhiệt lượng khi không truyền nhiệt."}]},{"blockId":"single_efe56605-22c6-43c1-9567-0a3b83595dd5_3","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"efe56605-22c6-43c1-9567-0a3b83595dd5","type":"mcq","level":"B","chapterName":"Chương 1: vật lý nhiệt","points":0.25,"textHtml":"Quy ước dấu nào sau đây phù hợp với định luật I của Nhiệt động lực học?","rawText":"Quy ước dấu nào sau đây phù hợp với định luật I của Nhiệt động lực học?","ownImageUrl":"","optionsHtml":["Vật nhận công: $A&lt;0;$ vật nhận nhiệt lượng: $Q&lt;0$","Vật thực hiện công: $A&lt;0$; vật truyền nhiệt lượng: $Q&lt;0$.","Vật nhận công: $A&gt;0;$ vật nhận nhiệt lượng: $Q&lt;0$.","Vật thực hiện công: $A&gt;0;$ vật truyền nhiệt lượng: $Q&gt;0$."],"optionsRaw":["Vật nhận công: $A<0;$ vật nhận nhiệt lượng: $Q<0$","Vật thực hiện công: $A<0$; vật truyền nhiệt lượng: $Q<0$.","Vật nhận công: $A>0;$ vật nhận nhiệt lượng: $Q<0$.","Vật thực hiện công: $A>0;$ vật truyền nhiệt lượng: $Q>0$."],"correctIndex":1,"correctAnswer":"Vật thực hiện công: $A<0$; vật truyền nhiệt lượng: $Q<0$.","subQuestions":[],"solutionHtml":"Theo quy ước dấu chuẩn: vật nhận công thì $A &gt; 0$, thực hiện công thì $A &lt; 0$; vật nhận nhiệt lượng thì $Q &gt; 0$, truyền nhiệt lượng thì $Q &lt; 0$.","rawSolution":"Theo quy ước dấu chuẩn: vật nhận công thì $A > 0$, thực hiện công thì $A < 0$; vật nhận nhiệt lượng thì $Q > 0$, truyền nhiệt lượng thì $Q < 0$."}]},{"blockId":"single_378df4d9-1b29-4c96-889e-d0807925665f_4","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"378df4d9-1b29-4c96-889e-d0807925665f","type":"mcq","level":"B","chapterName":"Chương 1: vật lý nhiệt","points":0.25,"textHtml":"Điểm đóng băng và sôi của nước theo thang nhiệt độ Kelvin là","rawText":"Điểm đóng băng và sôi của nước theo thang nhiệt độ Kelvin là","ownImageUrl":"","optionsHtml":["$0\\text{ K}$ và $100\\text{ K}$.","$73\\text{ K}$ và $37\\text{ K}$.","$32\\text{ K}$ và $212\\text{ K}$.","$273\\text{ K}$ và $373\\text{ K}$."],"optionsRaw":["$0\\text{ K}$ và $100\\text{ K}$.","$73\\text{ K}$ và $37\\text{ K}$.","$32\\text{ K}$ và $212\\text{ K}$.","$273\\text{ K}$ và $373\\text{ K}$."],"correctIndex":3,"correctAnswer":"$273\\text{ K}$ và $373\\text{ K}$.","subQuestions":[],"solutionHtml":"Điểm đóng băng của nước ($0^{\\circ}\\text{C}$) tương ứng khoảng $273\\text{ K}$ (chính xác $273{,}15\\text{ K}$) và điểm sôi ($100^{\\circ}\\text{C}$) tương ứng khoảng $373\\text{ K}$ (chính xác $373{,}15\\text{ K}$).","rawSolution":"Điểm đóng băng của nước ($0^{\\circ}\\text{C}$) tương ứng khoảng $273\\text{ K}$ (chính xác $273{,}15\\text{ K}$) và điểm sôi ($100^{\\circ}\\text{C}$) tương ứng khoảng $373\\text{ K}$ (chính xác $373{,}15\\text{ K}$)."}]},{"blockId":"single_f18e5432-0c85-4e58-a370-8062af9ee537_5","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"f18e5432-0c85-4e58-a370-8062af9ee537","type":"mcq","level":"H","chapterName":"Chương 1: vật lý nhiệt","points":0.25,"textHtml":"Bảng dưới đây ghi tên các loại nhiệt kế và nhiệt độ ghi trên thang đo của chúng.<br>- Thủy ngân: Từ $-10^{\\circ}\\text{C}$ đến $110^{\\circ}\\text{C}$<br>- Rượu: Từ $-30^{\\circ}\\text{C}$ đến $60^{\\circ}\\text{C}$<br>- Kim loại: Từ $0^{\\circ}\\text{C}$ đến $400^{\\circ}\\text{C}$<br>- Y tế: Từ $34^{\\circ}\\text{C}$ đến $42^{\\circ}\\text{C}$<br>Dựa vào bảng trên, để đo nhiệt độ của bàn là ta cần dùng nhiệt kế","rawText":"Bảng dưới đây ghi tên các loại nhiệt kế và nhiệt độ ghi trên thang đo của chúng.\n- Thủy ngân: Từ $-10^{\\circ}\\text{C}$ đến $110^{\\circ}\\text{C}$\n- Rượu: Từ $-30^{\\circ}\\text{C}$ đến $60^{\\circ}\\text{C}$\n- Kim loại: Từ $0^{\\circ}\\text{C}$ đến $400^{\\circ}\\text{C}$\n- Y tế: Từ $34^{\\circ}\\text{C}$ đến $42^{\\circ}\\text{C}$\nDựa vào bảng trên, để đo nhiệt độ của bàn là ta cần dùng nhiệt kế","ownImageUrl":"https://buelyuxsztnhrwinrldp.supabase.co/storage/v1/object/public/quiz-images/b7ca05d2-1707-4638-9ca3-4397e089f583.png","optionsHtml":["tế.","Thủy ngân.","Rượu.","Kim loại."],"optionsRaw":["tế.","Thủy ngân.","Rượu.","Kim loại."],"correctIndex":3,"correctAnswer":"Kim loại.","subQuestions":[],"solutionHtml":"Bàn là thường có nhiệt độ khoảng $120^{\\circ}\\text{C} - 200^{\\circ}\\text{C}$ (vượt quá giới hạn đo của nhiệt kế y tế, rượu và thủy ngân), nên chỉ có nhiệt kế kim loại ($0^{\\circ}\\text{C}$ đến $400^{\\circ}\\text{C}$) phù hợp.","rawSolution":"Bàn là thường có nhiệt độ khoảng $120^{\\circ}\\text{C} - 200^{\\circ}\\text{C}$ (vượt quá giới hạn đo của nhiệt kế y tế, rượu và thủy ngân), nên chỉ có nhiệt kế kim loại ($0^{\\circ}\\text{C}$ đến $400^{\\circ}\\text{C}$) phù hợp."}]},{"blockId":"single_5505b3f1-90c7-4bde-b003-a76a12706b5a_6","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"5505b3f1-90c7-4bde-b003-a76a12706b5a","type":"mcq","level":"B","chapterName":"Chương 1: vật lý nhiệt","points":0.25,"textHtml":"Công thức tính nhiệt lượng là","rawText":"Công thức tính nhiệt lượng là","ownImageUrl":"","optionsHtml":["$Q=mc\\Delta t.$","$Q=c\\Delta t.$","$Q=m\\Delta t$","$Q=mc.$"],"optionsRaw":["$Q=mc\\Delta t.$","$Q=c\\Delta t.$","$Q=m\\Delta t$","$Q=mc.$"],"correctIndex":0,"correctAnswer":"$Q=mc\\Delta t.$","subQuestions":[],"solutionHtml":"Nhiệt lượng vật thu vào hoặc tỏa ra khi thay đổi nhiệt độ (không chuyển thể) tính theo công thức $Q = mc\\Delta t$.","rawSolution":"Nhiệt lượng vật thu vào hoặc tỏa ra khi thay đổi nhiệt độ (không chuyển thể) tính theo công thức $Q = mc\\Delta t$."}]},{"blockId":"single_99623034-37af-4ed0-9df8-37e69b4e47cd_7","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"99623034-37af-4ed0-9df8-37e69b4e47cd","type":"mcq","level":"H","chapterName":"Chương 1: vật lý nhiệt","points":0.25,"textHtml":"Nhiệt dung riêng của đồng lớn hơn chì. Vì vậy để tăng nhiệt độ của $3\\text{ kg}$ đồng và $3\\text{ kg}$ chì thêm $15^{\\circ}\\text{C}$ thì","rawText":"Nhiệt dung riêng của đồng lớn hơn chì. Vì vậy để tăng nhiệt độ của $3\\text{ kg}$ đồng và $3\\text{ kg}$ chì thêm $15^{\\circ}\\text{C}$ thì","ownImageUrl":"","optionsHtml":["khối chì cần nhiệt lượng lớn hơn khối đồng.","khối đồng cần nhiệt lượng lớn hơn khối chì.","hai khối đều cần nhiệt lượng như nhau.","không khẳng định được."],"optionsRaw":["khối chì cần nhiệt lượng lớn hơn khối đồng.","khối đồng cần nhiệt lượng lớn hơn khối chì.","hai khối đều cần nhiệt lượng như nhau.","không khẳng định được."],"correctIndex":1,"correctAnswer":"khối đồng cần nhiệt lượng lớn hơn khối chì.","subQuestions":[],"solutionHtml":"Với cùng khối lượng $m = 3\\text{ kg}$ và độ tăng nhiệt độ $\\Delta t = 15^{\\circ}\\text{C}$, nhiệt lượng $Q = mc\\Delta t$ tỉ lệ thuận với nhiệt dung riêng $c$; vì $c_{\\text{đồng}} &gt; c_{\\text{chì}}$ nên khối đồng cần nhiệt lượng lớn hơn.","rawSolution":"Với cùng khối lượng $m = 3\\text{ kg}$ và độ tăng nhiệt độ $\\Delta t = 15^{\\circ}\\text{C}$, nhiệt lượng $Q = mc\\Delta t$ tỉ lệ thuận với nhiệt dung riêng $c$; vì $c_{\\text{đồng}} > c_{\\text{chì}}$ nên khối đồng cần nhiệt lượng lớn hơn."}]},{"blockId":"single_bb1e6048-bf63-4b0f-bf96-63ce9abdba2a_8","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"bb1e6048-bf63-4b0f-bf96-63ce9abdba2a","type":"mcq","level":"VD","chapterName":"Chương 1: vật lý nhiệt","points":0.25,"textHtml":"Nhiệt lượng cần cung cấp cho $0{,}5\\text{ kg}$ nước ở $0^{\\circ}\\text{C}$ đến khi nó sôi là bao nhiêu? Biết nhiệt dung riêng của nước là $4180\\text{ J/kg.K}$.","rawText":"Nhiệt lượng cần cung cấp cho $0{,}5\\text{ kg}$ nước ở $0^{\\circ}\\text{C}$ đến khi nó sôi là bao nhiêu? Biết nhiệt dung riêng của nước là $4180\\text{ J/kg.K}$.","ownImageUrl":"","optionsHtml":["$2{,}09.10^{5}\\text{ J}$.","$3.10^{5}\\text{ J}$.","$4{,}18.10^{5}\\text{ J}$","$5.10^{5}\\text{ J}$."],"optionsRaw":["$2{,}09.10^{5}\\text{ J}$.","$3.10^{5}\\text{ J}$.","$4{,}18.10^{5}\\text{ J}$","$5.10^{5}\\text{ J}$."],"correctIndex":0,"correctAnswer":"$2{,}09.10^{5}\\text{ J}$.","subQuestions":[],"solutionHtml":"Nước sôi ở $100^{\\circ}\\text{C}$ (áp suất chuẩn). Nhiệt lượng cần cung cấp: $Q = mc\\Delta t = 0{,}5 \\cdot 4180 \\cdot (100 - 0) = 209000\\text{ J} = 2{,}09 \\cdot 10^5\\text{ J}$.","rawSolution":"Nước sôi ở $100^{\\circ}\\text{C}$ (áp suất chuẩn). Nhiệt lượng cần cung cấp: $Q = mc\\Delta t = 0{,}5 \\cdot 4180 \\cdot (100 - 0) = 209000\\text{ J} = 2{,}09 \\cdot 10^5\\text{ J}$."}]},{"blockId":"single_de7f642b-4f55-4640-88ed-384f44e8d500_9","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"de7f642b-4f55-4640-88ed-384f44e8d500","type":"mcq","level":"H","chapterName":"Chương 1: vật lý nhiệt","points":0.25,"textHtml":"Để giải thích hiện tượng tách kim loại bằng nóng chảy người ta dùng khái niệm về đại lượng nào?","rawText":"Để giải thích hiện tượng tách kim loại bằng nóng chảy người ta dùng khái niệm về đại lượng nào?","ownImageUrl":"","optionsHtml":["Nhiệt dung riêng","Nhiệt lượng","Nhiệt độ nóng chảy","Nhiệt hoá hơi riêng"],"optionsRaw":["Nhiệt dung riêng","Nhiệt lượng","Nhiệt độ nóng chảy","Nhiệt hoá hơi riêng"],"correctIndex":2,"correctAnswer":"Nhiệt độ nóng chảy","subQuestions":[],"solutionHtml":"Các chất/kim loại khác nhau có nhiệt độ nóng chảy khác nhau, dựa vào đặc điểm này người ta có thể nung chảy và tách các kim loại.","rawSolution":"Các chất/kim loại khác nhau có nhiệt độ nóng chảy khác nhau, dựa vào đặc điểm này người ta có thể nung chảy và tách các kim loại."}]},{"blockId":"single_d02eb95d-66d2-451b-89cf-b22e788a0680_10","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"d02eb95d-66d2-451b-89cf-b22e788a0680","type":"mcq","level":"VD","chapterName":"Chương 1: vật lý nhiệt","points":0.25,"textHtml":"Nhiệt lượng cần cung cấp cho $2\\text{ kg}$ nước đá ở nhiệt độ $0^{\\circ}\\text{C}$ là bao nhiêu để chuyển lên nhiệt độ $60^{\\circ}\\text{C}$. Biết nhiệt dung riêng của nước là $4200\\text{ J/kg.K}$, nhiệt nóng chảy riêng của nước đá là $3{,}4.10^{5}\\text{ J/kg}$","rawText":"Nhiệt lượng cần cung cấp cho $2\\text{ kg}$ nước đá ở nhiệt độ $0^{\\circ}\\text{C}$ là bao nhiêu để chuyển lên nhiệt độ $60^{\\circ}\\text{C}$. Biết nhiệt dung riêng của nước là $4200\\text{ J/kg.K}$, nhiệt nóng chảy riêng của nước đá là $3{,}4.10^{5}\\text{ J/kg}$","ownImageUrl":"","optionsHtml":["$2{,}254.10^{6}\\text{ J}$","$0{,}72.10^{6}\\text{ J}$.","$1{,}184.10^{6}\\text{ J}$.","$1{,}548.10^{6}\\text{ J}$"],"optionsRaw":["$2{,}254.10^{6}\\text{ J}$","$0{,}72.10^{6}\\text{ J}$.","$1{,}184.10^{6}\\text{ J}$.","$1{,}548.10^{6}\\text{ J}$"],"correctIndex":2,"correctAnswer":"$1{,}184.10^{6}\\text{ J}$.","subQuestions":[],"solutionHtml":"Nhiệt lượng làm nóng chảy hoàn toàn $2\\text{ kg}$ nước đá ở $0^{\\circ}\\text{C}$: $Q_1 = m\\lambda = 2 \\cdot 3{,}4 \\cdot 10^5 = 6{,}8 \\cdot 10^5\\text{ J}$. Nhiệt lượng làm nước tăng từ $0^{\\circ}\\text{C}$ lên $60^{\\circ}\\text{C}$: $Q_2 = mc\\Delta t = 2 \\cdot 4200 \\cdot 60 = 5{,}04 \\cdot 10^5\\text{ J}$. Tổng nhiệt lượng: $Q = Q_1 + Q_2 = 1{,}184 \\cdot 10^6\\text{ J}$.","rawSolution":"Nhiệt lượng làm nóng chảy hoàn toàn $2\\text{ kg}$ nước đá ở $0^{\\circ}\\text{C}$: $Q_1 = m\\lambda = 2 \\cdot 3{,}4 \\cdot 10^5 = 6{,}8 \\cdot 10^5\\text{ J}$. Nhiệt lượng làm nước tăng từ $0^{\\circ}\\text{C}$ lên $60^{\\circ}\\text{C}$: $Q_2 = mc\\Delta t = 2 \\cdot 4200 \\cdot 60 = 5{,}04 \\cdot 10^5\\text{ J}$. Tổng nhiệt lượng: $Q = Q_1 + Q_2 = 1{,}184 \\cdot 10^6\\text{ J}$."}]},{"blockId":"single_c90525bf-a534-45fc-89a0-464ce25c5786_11","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"c90525bf-a534-45fc-89a0-464ce25c5786","type":"mcq","level":"VD","chapterName":"Chương 1: vật lý nhiệt","points":0.25,"textHtml":"Để đúc các vật bằng thép, người ta nấu chảy thép trong lò, Thép đưa vào lò có nhiệt độ $20^{\\circ}\\text{C}$, hiệu suất của lò là $60\\%$ (nghĩa là $60\\%$ nhiệt lượng cung cấp cho lò được dùng vào việc đun nóng thép cho đến khi nóng chảy). Để cung cấp nhiệt lượng, người ta đốt hết $200\\text{ kg}$ than đá có năng suất tỏa nhiệt là $29.10^{6}\\text{ J/kg}$. Nhiệt nóng chảy riêng của thép là $\\lambda=83{,}7.10^{3}\\text{ J/kg}$; nhiệt độ nóng chảy là $1400^{\\circ}\\text{C}$; nhiệt dung riêng của thép là $460\\text{ J/kg.K}$ Xác định khối lượng của mẻ thép đang nấu chảy là bao nhiêu?","rawText":"Để đúc các vật bằng thép, người ta nấu chảy thép trong lò, Thép đưa vào lò có nhiệt độ $20^{\\circ}\\text{C}$, hiệu suất của lò là $60\\%$ (nghĩa là $60\\%$ nhiệt lượng cung cấp cho lò được dùng vào việc đun nóng thép cho đến khi nóng chảy). Để cung cấp nhiệt lượng, người ta đốt hết $200\\text{ kg}$ than đá có năng suất tỏa nhiệt là $29.10^{6}\\text{ J/kg}$. Nhiệt nóng chảy riêng của thép là $\\lambda=83{,}7.10^{3}\\text{ J/kg}$; nhiệt độ nóng chảy là $1400^{\\circ}\\text{C}$; nhiệt dung riêng của thép là $460\\text{ J/kg.K}$ Xác định khối lượng của mẻ thép đang nấu chảy là bao nhiêu?","ownImageUrl":"","optionsHtml":["$3126\\text{ kg}$.","$4843\\text{ kg}$","$1189\\text{ kg}$.","$6826\\text{ kg}$."],"optionsRaw":["$3126\\text{ kg}$.","$4843\\text{ kg}$","$1189\\text{ kg}$.","$6826\\text{ kg}$."],"correctIndex":1,"correctAnswer":"$4843\\text{ kg}$","subQuestions":[],"solutionHtml":"Nhiệt lượng do than tỏa ra: $Q_{tp} = 200 \\cdot 29 \\cdot 10^6 = 5{,}8 \\cdot 10^9\\text{ J}$. Nhiệt lượng có ích: $Q_i = 0{,}6 \\cdot 5{,}8 \\cdot 10^9 = 3{,}48 \\cdot 10^9\\text{ J}$. Nhiệt lượng riêng cần để nấu chảy $1\\text{ kg}$ thép từ $20^{\\circ}\\text{C}$ đến $1400^{\\circ}\\text{C}$: $q = c(1400 - 20) + \\lambda = 460 \\cdot 1380 + 83700 = 634800 + 83700 = 718500\\text{ J/kg}$. Khối lượng thép: $m = \\frac{3{,}48 \\cdot 10^9}{718500} \\approx 4843{,}4\\text{ kg} \\approx 4843\\text{ kg}$.","rawSolution":"Nhiệt lượng do than tỏa ra: $Q_{tp} = 200 \\cdot 29 \\cdot 10^6 = 5{,}8 \\cdot 10^9\\text{ J}$. Nhiệt lượng có ích: $Q_i = 0{,}6 \\cdot 5{,}8 \\cdot 10^9 = 3{,}48 \\cdot 10^9\\text{ J}$. Nhiệt lượng riêng cần để nấu chảy $1\\text{ kg}$ thép từ $20^{\\circ}\\text{C}$ đến $1400^{\\circ}\\text{C}$: $q = c(1400 - 20) + \\lambda = 460 \\cdot 1380 + 83700 = 634800 + 83700 = 718500\\text{ J/kg}$. Khối lượng thép: $m = \\frac{3{,}48 \\cdot 10^9}{718500} \\approx 4843{,}4\\text{ kg} \\approx 4843\\text{ kg}$."}]},{"blockId":"single_06e11f52-9202-46d9-a774-e24799a1f083_12","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"06e11f52-9202-46d9-a774-e24799a1f083","type":"mcq","level":"B","chapterName":"Chương 1: vật lý nhiệt","points":0.25,"textHtml":"Trong các hiện tượng sau đây, hiện tượng nào không phải là sự bay hơi?","rawText":"Trong các hiện tượng sau đây, hiện tượng nào không phải là sự bay hơi?","ownImageUrl":"","optionsHtml":["Quần áo sau khi giặt được phơi khô.","Lau ướt bảng, một lúc sau bảng sẽ khô.","Mực khô sau khi viết.","Sự tạo thành giọt nước đọng trên lá cây."],"optionsRaw":["Quần áo sau khi giặt được phơi khô.","Lau ướt bảng, một lúc sau bảng sẽ khô.","Mực khô sau khi viết.","Sự tạo thành giọt nước đọng trên lá cây."],"correctIndex":3,"correctAnswer":"Sự tạo thành giọt nước đọng trên lá cây.","subQuestions":[],"solutionHtml":"Giọt nước đọng trên lá cây (đặc biệt vào sáng sớm) là do hơi nước trong không khí gặp lạnh ngưng tụ thành chất lỏng, không phải sự bay hơi.","rawSolution":"Giọt nước đọng trên lá cây (đặc biệt vào sáng sớm) là do hơi nước trong không khí gặp lạnh ngưng tụ thành chất lỏng, không phải sự bay hơi."}]},{"blockId":"single_4de8f8ed-0fc0-4836-a3aa-8ad18ed6be93_13","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"4de8f8ed-0fc0-4836-a3aa-8ad18ed6be93","type":"mcq","level":"B","chapterName":"Chương 1: vật lý nhiệt","points":0.25,"textHtml":"Để đảm bảo an toàn trong tiến hành thí nghiệm xác định nhiệt hoá hơi riêng của nước cần chú ý. Chọn câu sai","rawText":"Để đảm bảo an toàn trong tiến hành thí nghiệm xác định nhiệt hoá hơi riêng của nước cần chú ý. Chọn câu sai","ownImageUrl":"","optionsHtml":["cẩn thận khi sử dụng nước nóng và nguồn điện","cẩn thận khi bật tắt nguồn điện và dây điện trở","Chú ý quan sát mọi người xung quanh khi thao tác thí nghiệm","nước không quá nóng và dòng điện nhỏ nên không cần chú ý."],"optionsRaw":["cẩn thận khi sử dụng nước nóng và nguồn điện","cẩn thận khi bật tắt nguồn điện và dây điện trở","Chú ý quan sát mọi người xung quanh khi thao tác thí nghiệm","nước không quá nóng và dòng điện nhỏ nên không cần chú ý."],"correctIndex":3,"correctAnswer":"nước không quá nóng và dòng điện nhỏ nên không cần chú ý.","subQuestions":[],"solutionHtml":"Nước sôi ở $100^{\\circ}\\text{C}$ có thể gây bỏng nặng và nguồn điện có thể gây nguy hiểm nếu thao tác bất cẩn, nên luôn phải chú ý an toàn điện và nhiệt.","rawSolution":"Nước sôi ở $100^{\\circ}\\text{C}$ có thể gây bỏng nặng và nguồn điện có thể gây nguy hiểm nếu thao tác bất cẩn, nên luôn phải chú ý an toàn điện và nhiệt."}]},{"blockId":"single_0c9b999a-2503-4215-8d45-5439f84e4241_14","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"0c9b999a-2503-4215-8d45-5439f84e4241","type":"mcq","level":"VD","chapterName":"Chương 1: vật lý nhiệt","points":0.25,"textHtml":"Tìm nhiệt lượng để hóa hơi hoàn toàn $2{,}5\\text{ lít}$ nước đang sôi ở nhiệt độ $100^{\\circ}\\text{C}$. Biết nhiệt hóa hơi riêng của nước ở $100^{\\circ}\\text{C}$ là $2{,}26.10^{6}\\text{ J/kg}$","rawText":"Tìm nhiệt lượng để hóa hơi hoàn toàn $2{,}5\\text{ lít}$ nước đang sôi ở nhiệt độ $100^{\\circ}\\text{C}$. Biết nhiệt hóa hơi riêng của nước ở $100^{\\circ}\\text{C}$ là $2{,}26.10^{6}\\text{ J/kg}$","ownImageUrl":"","optionsHtml":["$5{,}65.10^{6}\\text{ J}$","$9{,}04.10^{5}\\text{ J}$","$8{,}24.10^{6}\\text{ J}$","$8{,}4.10^{5}\\text{ J}$"],"optionsRaw":["$5{,}65.10^{6}\\text{ J}$","$9{,}04.10^{5}\\text{ J}$","$8{,}24.10^{6}\\text{ J}$","$8{,}4.10^{5}\\text{ J}$"],"correctIndex":0,"correctAnswer":"$5{,}65.10^{6}\\text{ J}$","subQuestions":[],"solutionHtml":"Khối lượng $2{,}5\\text{ lít}$ nước là $m = 2{,}5\\text{ kg}$. Nhiệt lượng hóa hơi: $Q = mL = 2{,}5 \\cdot 2{,}26 \\cdot 10^6 = 5{,}65 \\cdot 10^6\\text{ J}$.","rawSolution":"Khối lượng $2{,}5\\text{ lít}$ nước là $m = 2{,}5\\text{ kg}$. Nhiệt lượng hóa hơi: $Q = mL = 2{,}5 \\cdot 2{,}26 \\cdot 10^6 = 5{,}65 \\cdot 10^6\\text{ J}$."}]},{"blockId":"single_da0f43d5-3654-4522-b15d-d243f1e63d00_15","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"da0f43d5-3654-4522-b15d-d243f1e63d00","type":"mcq","level":"H","chapterName":"Chương 1: vật lý nhiệt","points":0.25,"textHtml":"Một lượng xác định trong điều kiện áp suất bình thường khi ở thể lỏng và thể khí sẽ không khác nhau về","rawText":"Một lượng xác định trong điều kiện áp suất bình thường khi ở thể lỏng và thể khí sẽ không khác nhau về","ownImageUrl":"","optionsHtml":["khoảng cách giữa các phân tử (nguyên tử).","khối lượng riêng.","kích thước phân tử (nguyên tử).","vận tốc của các phân tử (nguyên tử)."],"optionsRaw":["khoảng cách giữa các phân tử (nguyên tử).","khối lượng riêng.","kích thước phân tử (nguyên tử).","vận tốc của các phân tử (nguyên tử)."],"correctIndex":2,"correctAnswer":"kích thước phân tử (nguyên tử).","subQuestions":[],"solutionHtml":"Khi chuyển thể từ lỏng sang khí, bản thân kích thước của mỗi phân tử/nguyên tử không thay đổi, chỉ có khoảng cách giữa chúng, khối lượng riêng và chuyển động nhiệt thay đổi.","rawSolution":"Khi chuyển thể từ lỏng sang khí, bản thân kích thước của mỗi phân tử/nguyên tử không thay đổi, chỉ có khoảng cách giữa chúng, khối lượng riêng và chuyển động nhiệt thay đổi."}]},{"blockId":"single_3c5a0a8b-44ef-4d16-bcf4-3b7da8f519bc_16","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"3c5a0a8b-44ef-4d16-bcf4-3b7da8f519bc","type":"mcq","level":"B","chapterName":"Chương 1: vật lý nhiệt","points":0.25,"textHtml":"Công thức nào sau đây là công thức chuyển đổi đúng đơn vị nhiệt độ từ °C sang thang K?","rawText":"Công thức nào sau đây là công thức chuyển đổi đúng đơn vị nhiệt độ từ °C sang thang K?","ownImageUrl":"","optionsHtml":["$T(K)=t(^{\\circ}C)-273.$","$T(K)=t(^{\\circ}C)+273$.","$T(K)=\\frac{9}{5}t(^{\\circ}C)-273.$","$T(K)=\\frac{9}{5}t(^{\\circ}C)+273.$"],"optionsRaw":["$T(K)=t(^{\\circ}C)-273.$","$T(K)=t(^{\\circ}C)+273$.","$T(K)=\\frac{9}{5}t(^{\\circ}C)-273.$","$T(K)=\\frac{9}{5}t(^{\\circ}C)+273.$"],"correctIndex":1,"correctAnswer":"$T(K)=t(^{\\circ}C)+273$.","subQuestions":[],"solutionHtml":"Công thức chuyển đổi từ thang Celsius sang thang Kelvin là $T(\\text{K}) = t(^{\\circ}\\text{C}) + 273$ (hoặc $+273{,}15$).","rawSolution":"Công thức chuyển đổi từ thang Celsius sang thang Kelvin là $T(\\text{K}) = t(^{\\circ}\\text{C}) + 273$ (hoặc $+273{,}15$)."}]},{"blockId":"single_9419d608-7483-4247-b0f5-90092988ba24_17","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"9419d608-7483-4247-b0f5-90092988ba24","type":"mcq","level":"H","chapterName":"Chương 1: vật lý nhiệt","points":0.25,"textHtml":"Hai cốc giống nhau chứa nước nóng ở cùng một nhiệt độ ban đầu. Nước ở cốc thứ nhất nguội đi $15^{\\circ}\\text{C}$ trong $5\\text{ phút}$ trong khi nước ở cốc thứ hai chỉ nguội đi $10^{\\circ}\\text{C}$ trong $5\\text{ phút}$. Đó là do","rawText":"Hai cốc giống nhau chứa nước nóng ở cùng một nhiệt độ ban đầu. Nước ở cốc thứ nhất nguội đi $15^{\\circ}\\text{C}$ trong $5\\text{ phút}$ trong khi nước ở cốc thứ hai chỉ nguội đi $10^{\\circ}\\text{C}$ trong $5\\text{ phút}$. Đó là do","ownImageUrl":"","optionsHtml":["nước trong cốc thứ hai nhiều hơn.","nước trong cốc thứ hai ít hơn.","nước trong cốc thứ hai có nhiệt độ ban đầu cao hơn cốc thứ nhất.","nước trong cốc thứ hai có nhiệt độ ban đầu thấp hơn cốc thứ nhất."],"optionsRaw":["nước trong cốc thứ hai nhiều hơn.","nước trong cốc thứ hai ít hơn.","nước trong cốc thứ hai có nhiệt độ ban đầu cao hơn cốc thứ nhất.","nước trong cốc thứ hai có nhiệt độ ban đầu thấp hơn cốc thứ nhất."],"correctIndex":0,"correctAnswer":"nước trong cốc thứ hai nhiều hơn.","subQuestions":[],"solutionHtml":"Cùng tỏa một lượng nhiệt tương đương trong $5\\text{ phút}$, khối lượng nước càng lớn ($m$) thì độ giảm nhiệt độ $\\Delta t = \\frac{Q}{mc}$ càng nhỏ, nên cốc thứ hai có nhiều nước hơn.","rawSolution":"Cùng tỏa một lượng nhiệt tương đương trong $5\\text{ phút}$, khối lượng nước càng lớn ($m$) thì độ giảm nhiệt độ $\\Delta t = \\frac{Q}{mc}$ càng nhỏ, nên cốc thứ hai có nhiều nước hơn."}]},{"blockId":"single_9951f141-cf6d-4bfb-8404-6761f2a7c02e_18","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"9951f141-cf6d-4bfb-8404-6761f2a7c02e","type":"group-tf","level":"H","chapterName":"Chương 1: vật lý nhiệt","points":1,"textHtml":"Khi nói về tính chất của nguyên tử, phân tử, xét các phát biểu sau:","rawText":"Khi nói về tính chất của nguyên tử, phân tử, xét các phát biểu sau:","ownImageUrl":"","optionsHtml":[],"optionsRaw":[],"correctIndex":0,"correctAnswer":"","subQuestions":[{"id":"81947793-736d-42eb-910b-a74f48b5f2d9","level":"H","textHtml":"phân tử của vật chất ở thể khí chuyển động hỗn loạn xung quanh các vị trí cân bằng xác định.","rawText":"phân tử của vật chất ở thể khí chuyển động hỗn loạn xung quanh các vị trí cân bằng xác định.","correctAnswer":"False"},{"id":"61482418-9cae-4016-9f40-c0a93398c74a","level":"H","textHtml":"Khi khoảng cách giữa các phân tử rất nhỏ, thì giữa các phân tử có cả lực hút và lực đẩy, nhưng lực đẩy lớn hơn lực hút.","rawText":"Khi khoảng cách giữa các phân tử rất nhỏ, thì giữa các phân tử có cả lực hút và lực đẩy, nhưng lực đẩy lớn hơn lực hút.","correctAnswer":"True"},{"id":"4d92c0ce-f43a-4bc8-848c-223254c79972","level":"H","textHtml":"Phân tử có lúc đứng yên, có lúc chuyển động.","rawText":"Phân tử có lúc đứng yên, có lúc chuyển động.","correctAnswer":"False"},{"id":"38d75290-3359-406e-b134-6572320b27f6","level":"H","textHtml":"Vận tốc chuyển động của các phân tử không phụ thuộc vào nhiệt độ.","rawText":"Vận tốc chuyển động của các phân tử không phụ thuộc vào nhiệt độ.","correctAnswer":"False"}],"solutionHtml":"a) Sai: Phân tử chất khí chuyển động hỗn loạn không ngừng về mọi phía, không có vị trí cân bằng cố định. b) Đúng: Khi khoảng cách nhỏ hơn khoảng cách cân bằng, lực đẩy chiếm ưu thế ($F_{\\text{đẩy}} &gt; F_{\\text{hút}}$). c) Sai: Các phân tử chuyển động nhiệt không ngừng. d) Sai: Nhiệt độ càng cao thì chuyển động nhiệt của phân tử càng nhanh.","rawSolution":"a) Sai: Phân tử chất khí chuyển động hỗn loạn không ngừng về mọi phía, không có vị trí cân bằng cố định. b) Đúng: Khi khoảng cách nhỏ hơn khoảng cách cân bằng, lực đẩy chiếm ưu thế ($F_{\\text{đẩy}} > F_{\\text{hút}}$). c) Sai: Các phân tử chuyển động nhiệt không ngừng. d) Sai: Nhiệt độ càng cao thì chuyển động nhiệt của phân tử càng nhanh."}]},{"blockId":"single_738e91e2-2df2-4d71-8f4b-01671a921e19_19","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"738e91e2-2df2-4d71-8f4b-01671a921e19","type":"group-tf","level":"H","chapterName":"Chương 1: vật lý nhiệt","points":1,"textHtml":"Bảng sau đây ghi sự thay đổi nhiệt độ của không khí theo thời gian dựa trên số liệu của một trạm khí tượng ở Hà Nội ghi được vào ngày mùa đông:<br>- Thời gian (giờ): $1$; $4$; $7$; $10$; $13$; $16$; $19$; $22$<br>- Nhiệt độ (°C): $13$; $13$; $13$; $18$; $18$; $20$; $17$; $12$","rawText":"Bảng sau đây ghi sự thay đổi nhiệt độ của không khí theo thời gian dựa trên số liệu của một trạm khí tượng ở Hà Nội ghi được vào ngày mùa đông:\n- Thời gian (giờ): $1$; $4$; $7$; $10$; $13$; $16$; $19$; $22$\n- Nhiệt độ (°C): $13$; $13$; $13$; $18$; $18$; $20$; $17$; $12$","ownImageUrl":"","optionsHtml":[],"optionsRaw":[],"correctIndex":0,"correctAnswer":"","subQuestions":[{"id":"82ae4e3e-a8d9-4f14-9d31-4cb9defb2c04","level":"B","textHtml":"Nhiệt độ lúc $4$ giờ là $13^{\\circ}\\text{C}$","rawText":"Nhiệt độ lúc $4$ giờ là $13^{\\circ}\\text{C}$","correctAnswer":"True"},{"id":"49e2dd54-3d4f-4fb4-91fa-ba6673f45358","level":"H","textHtml":"Nhiệt độ thấp nhất trong ngày là vào lúc $1$ giờ.","rawText":"Nhiệt độ thấp nhất trong ngày là vào lúc $1$ giờ.","correctAnswer":"False"},{"id":"b0c336fa-0599-4fd6-94d8-4647c036d9d2","level":"H","textHtml":"Nhiệt độ cao nhất trong ngày là vào lúc $16$ giờ.","rawText":"Nhiệt độ cao nhất trong ngày là vào lúc $16$ giờ.","correctAnswer":"True"},{"id":"3be9a9b1-b820-4c34-a8d5-9235631fde13","level":"H","textHtml":"Độ chênh lệch nhiệt độ trong ngày lớn nhất là $6^{\\circ}\\text{C}.$","rawText":"Độ chênh lệch nhiệt độ trong ngày lớn nhất là $6^{\\circ}\\text{C}.$","correctAnswer":"False"}],"solutionHtml":"a) Đúng: Tại $4$ giờ, nhiệt độ là $13^{\\circ}\\text{C}$. b) Sai: Nhiệt độ thấp nhất trong bảng là $12^{\\circ}\\text{C}$ vào lúc $22$ giờ. c) Đúng: Nhiệt độ cao nhất trong bảng là $20^{\\circ}\\text{C}$ vào lúc $16$ giờ. d) Sai: Độ chênh lệch nhiệt độ lớn nhất là $20 - 12 = 8^{\\circ}\\text{C}$ (không phải $6^{\\circ}\\text{C}$).","rawSolution":"a) Đúng: Tại $4$ giờ, nhiệt độ là $13^{\\circ}\\text{C}$. b) Sai: Nhiệt độ thấp nhất trong bảng là $12^{\\circ}\\text{C}$ vào lúc $22$ giờ. c) Đúng: Nhiệt độ cao nhất trong bảng là $20^{\\circ}\\text{C}$ vào lúc $16$ giờ. d) Sai: Độ chênh lệch nhiệt độ lớn nhất là $20 - 12 = 8^{\\circ}\\text{C}$ (không phải $6^{\\circ}\\text{C}$)."}]},{"blockId":"single_bb6a6a08-02b0-40c3-87c4-b0159540a4f6_20","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"bb6a6a08-02b0-40c3-87c4-b0159540a4f6","type":"group-tf","level":"VD","chapterName":"Chương 1: vật lý nhiệt","points":1,"textHtml":"Một cốc nhôm có khối lượng $120\\text{ g}$ chứa $400\\text{ g}$ nước ở nhiệt độ $24^{\\circ}\\text{C}$. Người ta thả vào cốc nước một thìa đồng khối lượng $80\\text{ g}$ ở nhiệt độ $100^{\\circ}\\text{C}$. Biết nhiệt dung riêng của nhôm là $880\\text{ J/kgK}$, của đồng là $380\\text{ J/kgK}$ và của nước là $4{,}19.10^{3}\\text{ J/kgK}$","rawText":"Một cốc nhôm có khối lượng $120\\text{ g}$ chứa $400\\text{ g}$ nước ở nhiệt độ $24^{\\circ}\\text{C}$. Người ta thả vào cốc nước một thìa đồng khối lượng $80\\text{ g}$ ở nhiệt độ $100^{\\circ}\\text{C}$. Biết nhiệt dung riêng của nhôm là $880\\text{ J/kgK}$, của đồng là $380\\text{ J/kgK}$ và của nước là $4{,}19.10^{3}\\text{ J/kgK}$","ownImageUrl":"","optionsHtml":[],"optionsRaw":[],"correctIndex":0,"correctAnswer":"","subQuestions":[{"id":"c7a84e2b-d9fd-4a70-9e5b-52048b7432d0","level":"H","textHtml":"Cốc nhôm và đồng tỏa nhiệt lượng, nước thu nhiệt lượng.","rawText":"Cốc nhôm và đồng tỏa nhiệt lượng, nước thu nhiệt lượng.","correctAnswer":"False"},{"id":"8fd19aa3-3b95-4f72-a051-34b59c731ff2","level":"VD","textHtml":"Nhiệt độ của nước khi có sự cân bằng nhiệt là $5{,}27^{\\circ}\\text{C}.$","rawText":"Nhiệt độ của nước khi có sự cân bằng nhiệt là $5{,}27^{\\circ}\\text{C}.$","correctAnswer":"False"},{"id":"10e2be7c-f352-480c-8cc2-40eac6662e65","level":"VD","textHtml":"Nhiệt lượng đồng tỏa ra là $2271{,}792\\text{ J}$.","rawText":"Nhiệt lượng đồng tỏa ra là $2271{,}792\\text{ J}$.","correctAnswer":"False"},{"id":"62589e7a-2d28-4288-ab71-b869a7de6a4a","level":"VD","textHtml":"Nhiệt lượng do nước thu vào là $2128{,}52\\text{ J}$.","rawText":"Nhiệt lượng do nước thu vào là $2128{,}52\\text{ J}$.","correctAnswer":"False"}],"solutionHtml":"a) Sai: Cốc nhôm ban đầu ở $24^{\\circ}\\text{C}$ (cùng nước) sẽ thu nhiệt cùng nước, còn thìa đồng ở $100^{\\circ}\\text{C}$ tỏa nhiệt. <br>b)Sai :  Phương trình cân bằng nhiệt: $0{,}08 \\cdot 380 \\cdot (100 - t) = (0{,}4 \\cdot 4190 + 0{,}12 \\cdot 880) \\cdot (t - 24) \\Rightarrow 30{,}4(100 - t) = 1781{,}6(t - 24) \\Rightarrow 3040 - 30{,}4t = 1781{,}6t - 42758{,}4 \\Rightarrow 1812t = 45798{,}4 \\Rightarrow t \\approx 25{,}275^{\\circ}\\text{C}$ <br>c) Sai : Nhiệt lượng đồng tỏa ra $Q_{\\text{đồng}} = 0,08 \\cdot (100 - 25{,}275) \\approx 2271{,}6\\text{ J}$<br>d) Sai : nhiệt lượng nước thu vào $Q_{\\text{nước}} = 0{,}4 \\cdot 4190 \\cdot (25{,}275 - 24) \\approx 2137\\text{ J}$","rawSolution":"a) Sai: Cốc nhôm ban đầu ở $24^{\\circ}\\text{C}$ (cùng nước) sẽ thu nhiệt cùng nước, còn thìa đồng ở $100^{\\circ}\\text{C}$ tỏa nhiệt. \nb)Sai :  Phương trình cân bằng nhiệt: $0{,}08 \\cdot 380 \\cdot (100 - t) = (0{,}4 \\cdot 4190 + 0{,}12 \\cdot 880) \\cdot (t - 24) \\Rightarrow 30{,}4(100 - t) = 1781{,}6(t - 24) \\Rightarrow 3040 - 30{,}4t = 1781{,}6t - 42758{,}4 \\Rightarrow 1812t = 45798{,}4 \\Rightarrow t \\approx 25{,}275^{\\circ}\\text{C}$ \nc) Sai : Nhiệt lượng đồng tỏa ra $Q_{\\text{đồng}} = 0,08 \\cdot (100 - 25{,}275) \\approx 2271{,}6\\text{ J}$\nd) Sai : nhiệt lượng nước thu vào $Q_{\\text{nước}} = 0{,}4 \\cdot 4190 \\cdot (25{,}275 - 24) \\approx 2137\\text{ J}$"}]},{"blockId":"single_3d16ba8f-6e2a-4716-88fe-6aa247c8b99e_21","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"3d16ba8f-6e2a-4716-88fe-6aa247c8b99e","type":"group-tf","level":"VD","chapterName":"Chương 1: vật lý nhiệt","points":1,"textHtml":"Người ta cung cấp nhiệt lượng $1{,}5\\text{ J}$ cho chất khí đựng trong $1$ xylanh đặt nằm ngang. Chất khí nở ra, đẩy piston đi một đoạn $5\\text{ cm}$. Biết lực ma sát giữa piston và xylanh có độ lớn là $20\\text{ N}$. Bỏ qua áp suất khí quyển.","rawText":"Người ta cung cấp nhiệt lượng $1{,}5\\text{ J}$ cho chất khí đựng trong $1$ xylanh đặt nằm ngang. Chất khí nở ra, đẩy piston đi một đoạn $5\\text{ cm}$. Biết lực ma sát giữa piston và xylanh có độ lớn là $20\\text{ N}$. Bỏ qua áp suất khí quyển.","ownImageUrl":"","optionsHtml":[],"optionsRaw":[],"correctIndex":0,"correctAnswer":"","subQuestions":[{"id":"01d74dfa-f360-4fbd-a26e-3283df40da3e","level":"VD","textHtml":"Công của khối khí thực hiện có độ lớn là $100\\text{ J}$.","rawText":"Công của khối khí thực hiện có độ lớn là $100\\text{ J}$.","correctAnswer":"False"},{"id":"51211f42-d572-45f5-870c-cdf788860b19","level":"VD","textHtml":"Do khối khí thực hiện công nên $A=-1\\text{ J}$","rawText":"Do khối khí thực hiện công nên $A=-1\\text{ J}$","correctAnswer":"True"},{"id":"2f08c248-9cb4-4ae1-a7b0-e8f99ed5670b","level":"H","textHtml":"Do khối khí nhận nhiệt lượng nên $Q=-1{,}5\\text{ J}.$","rawText":"Do khối khí nhận nhiệt lượng nên $Q=-1{,}5\\text{ J}.$","correctAnswer":"False"},{"id":"a71b8ac1-bf18-407b-9201-3490ad213953","level":"VD","textHtml":"Độ biến thiên nội năng của khối khí là $0{,}5\\text{ J}$.","rawText":"Độ biến thiên nội năng của khối khí là $0{,}5\\text{ J}$.","correctAnswer":"True"}],"solutionHtml":"a) Sai: Độ lớn công khí thực hiện là $|A| = F_{ms} \\cdot s = 20 \\cdot 0{,}05 = 1\\text{ J}$. b) Đúng: Vì khí thực hiện công nên $A = -1\\text{ J}$. c) Sai: Khí nhận nhiệt lượng nên $Q = +1{,}5\\text{ J}$. d) Đúng: $\\Delta U = A + Q = -1 + 1{,}5 = 0{,}5\\text{ J}$.","rawSolution":"a) Sai: Độ lớn công khí thực hiện là $|A| = F_{ms} \\cdot s = 20 \\cdot 0{,}05 = 1\\text{ J}$. b) Đúng: Vì khí thực hiện công nên $A = -1\\text{ J}$. c) Sai: Khí nhận nhiệt lượng nên $Q = +1{,}5\\text{ J}$. d) Đúng: $\\Delta U = A + Q = -1 + 1{,}5 = 0{,}5\\text{ J}$."}]},{"blockId":"single_4ec940cd-7fcb-4fe5-aedf-52a57305e8b2_22","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"4ec940cd-7fcb-4fe5-aedf-52a57305e8b2","type":"short","level":"H","chapterName":"Chương 1: vật lý nhiệt","points":0.25,"textHtml":"Hình dưới là đường biểu diễn sự thay đổi nhiệt độ theo thời gian của một chất (từ $160^{\\circ}\\text{C}$ giảm xuống $120^{\\circ}\\text{C}$ tại phút thứ $3$, nằm ngang ở $120^{\\circ}\\text{C}$ từ phút thứ $3$ đến phút thứ $7$, giảm xuống $40^{\\circ}\\text{C}$ tại phút thứ $9$, nằm ngang ở $40^{\\circ}\\text{C}$ từ phút thứ $9$ đến phút thứ $11$, giảm xuống $0^{\\circ}\\text{C}$ tại phút thứ $16$). Nhiệt độ nóng chảy của chất đó là bao nhiêu °C?","rawText":"Hình dưới là đường biểu diễn sự thay đổi nhiệt độ theo thời gian của một chất (từ $160^{\\circ}\\text{C}$ giảm xuống $120^{\\circ}\\text{C}$ tại phút thứ $3$, nằm ngang ở $120^{\\circ}\\text{C}$ từ phút thứ $3$ đến phút thứ $7$, giảm xuống $40^{\\circ}\\text{C}$ tại phút thứ $9$, nằm ngang ở $40^{\\circ}\\text{C}$ từ phút thứ $9$ đến phút thứ $11$, giảm xuống $0^{\\circ}\\text{C}$ tại phút thứ $16$). Nhiệt độ nóng chảy của chất đó là bao nhiêu °C?","ownImageUrl":"https://buelyuxsztnhrwinrldp.supabase.co/storage/v1/object/public/quiz-images/b0af7abd-fb71-4408-be06-a901b7bff591.png","optionsHtml":[],"optionsRaw":[],"correctIndex":0,"correctAnswer":"40","subQuestions":[],"solutionHtml":"Trên đồ thị, quá trình nóng chảy/đông đặc của pha rắn - lỏng diễn ra ở đoạn nằm ngang tại nhiệt độ $40^{\\circ}\\text{C}$ (từ phút thứ $9$ đến phút thứ $11$), nên nhiệt độ nóng chảy của chất là $40^{\\circ}\\text{C}$.","rawSolution":"Trên đồ thị, quá trình nóng chảy/đông đặc của pha rắn - lỏng diễn ra ở đoạn nằm ngang tại nhiệt độ $40^{\\circ}\\text{C}$ (từ phút thứ $9$ đến phút thứ $11$), nên nhiệt độ nóng chảy của chất là $40^{\\circ}\\text{C}$."}]},{"blockId":"single_204b546f-5c0c-426c-891b-3f23a56f0468_23","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"204b546f-5c0c-426c-891b-3f23a56f0468","type":"short","level":"VD","chapterName":"Chương 1: vật lý nhiệt","points":0.25,"textHtml":"Người ta cung cấp nhiệt lượng $2\\text{ J}$ cho chất khí đựng trong $1$ xilanh đặt nằm ngang. Chất khí nở ra, đẩy pittông đi một đoạn $4\\text{ cm}$. Biết lực ma sát giữa pittông và xilanh có độ lớn là $15\\text{ N}$. Bỏ qua áp suất khí quyển. Độ biến thiên nội năng của chất khí là bao nhiêu J?","rawText":"Người ta cung cấp nhiệt lượng $2\\text{ J}$ cho chất khí đựng trong $1$ xilanh đặt nằm ngang. Chất khí nở ra, đẩy pittông đi một đoạn $4\\text{ cm}$. Biết lực ma sát giữa pittông và xilanh có độ lớn là $15\\text{ N}$. Bỏ qua áp suất khí quyển. Độ biến thiên nội năng của chất khí là bao nhiêu J?","ownImageUrl":"","optionsHtml":[],"optionsRaw":[],"correctIndex":0,"correctAnswer":"1.4","subQuestions":[],"solutionHtml":"Khí nhận nhiệt $Q = 2\\text{ J}$ và sinh công độ lớn $|A| = F_{ms} \\cdot s = 15 \\cdot 0{,}04 = 0{,}6\\text{ J} \\Rightarrow A = -0{,}6\\text{ J}$. Độ biến thiên nội năng: $\\Delta U = A + Q = -0{,}6 + 2 = 1{,}4\\text{ J}$.","rawSolution":"Khí nhận nhiệt $Q = 2\\text{ J}$ và sinh công độ lớn $|A| = F_{ms} \\cdot s = 15 \\cdot 0{,}04 = 0{,}6\\text{ J} \\Rightarrow A = -0{,}6\\text{ J}$. Độ biến thiên nội năng: $\\Delta U = A + Q = -0{,}6 + 2 = 1{,}4\\text{ J}$."}]},{"blockId":"single_93c4144d-63e7-4285-8b13-ab99c2037dae_24","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"93c4144d-63e7-4285-8b13-ab99c2037dae","type":"short","level":"VD","chapterName":"Chương 1: vật lý nhiệt","points":0.25,"textHtml":"Ở nhiệt độ nào $(^{\\circ}\\text{C})$ thì số đọc trên thang nhiệt độ Fa-ren-hai gấp đôi số đọc trên thang nhiệt độ Xen-xi-út?","rawText":"Ở nhiệt độ nào $(^{\\circ}\\text{C})$ thì số đọc trên thang nhiệt độ Fa-ren-hai gấp đôi số đọc trên thang nhiệt độ Xen-xi-út?","ownImageUrl":"","optionsHtml":[],"optionsRaw":[],"correctIndex":0,"correctAnswer":"160","subQuestions":[],"solutionHtml":"Ta có $t(^{\\circ}\\text{F}) = 1{,}8 t(^{\\circ}\\text{C}) + 32$. Để $t(^{\\circ}\\text{F}) = 2 t(^{\\circ}\\text{C})$: $2t = 1{,}8t + 32 \\Rightarrow 0{,}2t = 32 \\Rightarrow t = 160^{\\circ}\\text{C}$.","rawSolution":"Ta có $t(^{\\circ}\\text{F}) = 1{,}8 t(^{\\circ}\\text{C}) + 32$. Để $t(^{\\circ}\\text{F}) = 2 t(^{\\circ}\\text{C})$: $2t = 1{,}8t + 32 \\Rightarrow 0{,}2t = 32 \\Rightarrow t = 160^{\\circ}\\text{C}$."}]},{"blockId":"single_db54fc31-ec27-4eef-87ad-f5267004088f_25","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"db54fc31-ec27-4eef-87ad-f5267004088f","type":"short","level":"VDC","chapterName":"Chương 1: vật lý nhiệt","points":0.25,"textHtml":"Sự biến thiên nhiệt độ của khối nước đá đựng trong ca nhôm theo nhiệt lượng cung cấp được cho trên đồ thị như hình (nhiệt độ giữ ở $0^{\\circ}\\text{C}$ khi $Q$ tăng từ $0$ đến $204\\text{ kJ}$, sau đó tăng tuyến tính đến $15^{\\circ}\\text{C}$ tại điểm $C$). Biết nhiệt nóng chảy riêng của nước đá là $\\lambda=3{,}4.10^{5}\\text{ J/kg}$; nhiệt dung riêng của nước $c_{1}=4200\\text{ J/kg.K}$; nhiệt dung riêng của nhôm $c_{2}=880\\text{ J/kg.K}$. Tổng khối lượng nước đá và ca nhôm là bao nhiêu kg?","rawText":"Sự biến thiên nhiệt độ của khối nước đá đựng trong ca nhôm theo nhiệt lượng cung cấp được cho trên đồ thị như hình (nhiệt độ giữ ở $0^{\\circ}\\text{C}$ khi $Q$ tăng từ $0$ đến $204\\text{ kJ}$, sau đó tăng tuyến tính đến $15^{\\circ}\\text{C}$ tại điểm $C$). Biết nhiệt nóng chảy riêng của nước đá là $\\lambda=3{,}4.10^{5}\\text{ J/kg}$; nhiệt dung riêng của nước $c_{1}=4200\\text{ J/kg.K}$; nhiệt dung riêng của nhôm $c_{2}=880\\text{ J/kg.K}$. Tổng khối lượng nước đá và ca nhôm là bao nhiêu kg?","ownImageUrl":"https://buelyuxsztnhrwinrldp.supabase.co/storage/v1/object/public/quiz-images/d357e371-1c0c-4070-8ac6-882fa5a11308.png","optionsHtml":[],"optionsRaw":[],"correctIndex":0,"correctAnswer":"1.6","subQuestions":[],"solutionHtml":"1/ Từ $Q = 0$ đến $Q_1 = 204000\\text{ J}$, nước đá nóng chảy hoàn toàn ở $0^{\\circ}\\text{C}$: $m_1 = \\frac{Q_1}{\\lambda} = \\frac{204000}{3{,}4 \\cdot 10^5} = 0{,}6\\text{ kg}$. <br>2/ 1 ô tương đương 51kJ, nên Nhiệt lượng làm hệ tăng nhiệt độ đến $15^0C$ là : $ Q = m_{Al}.c_{Al}.(15)+m_{đ}.c_n.15 \\Rightarrow m_{Al} = 1kg $","rawSolution":"1/ Từ $Q = 0$ đến $Q_1 = 204000\\text{ J}$, nước đá nóng chảy hoàn toàn ở $0^{\\circ}\\text{C}$: $m_1 = \\frac{Q_1}{\\lambda} = \\frac{204000}{3{,}4 \\cdot 10^5} = 0{,}6\\text{ kg}$. \n2/ 1 ô tương đương 51kJ, nên Nhiệt lượng làm hệ tăng nhiệt độ đến $15^0C$ là : $ Q = m_{Al}.c_{Al}.(15)+m_{đ}.c_n.15 \\Rightarrow m_{Al} = 1kg $"}]},{"blockId":"single_eb6291c5-54a6-4b8b-bf98-fe7ac2c4c9e8_26","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"eb6291c5-54a6-4b8b-bf98-fe7ac2c4c9e8","type":"short","level":"H","chapterName":"Chương 1: vật lý nhiệt","points":0.25,"textHtml":"Một học sinh thực hiện thí nghiệm khảo sát quá trình nóng chảy của một chậu nước đá và vẽ đồ thị biểu diễn nhiệt độ của chậu nước đá theo thời gian như sau (nhiệt độ giữ ở $0^{\\circ}\\text{C}$ từ $\\tau = 0$ đến điểm $M$ tại khoảng $\\tau = 600\\text{ s}$, sau đó tăng dần lên đến $1{,}5^{\\circ}\\text{C}$ tại khoảng $\\tau = 980\\text{ s}$). Dựa vào đồ thị trên, thời gian chậu nước đá nóng chảy hoàn toàn là bao nhiêu phút (làm tròn kết quả đến chữ số hàng đơn vị)?","rawText":"Một học sinh thực hiện thí nghiệm khảo sát quá trình nóng chảy của một chậu nước đá và vẽ đồ thị biểu diễn nhiệt độ của chậu nước đá theo thời gian như sau (nhiệt độ giữ ở $0^{\\circ}\\text{C}$ từ $\\tau = 0$ đến điểm $M$ tại khoảng $\\tau = 600\\text{ s}$, sau đó tăng dần lên đến $1{,}5^{\\circ}\\text{C}$ tại khoảng $\\tau = 980\\text{ s}$). Dựa vào đồ thị trên, thời gian chậu nước đá nóng chảy hoàn toàn là bao nhiêu phút (làm tròn kết quả đến chữ số hàng đơn vị)?","ownImageUrl":"https://buelyuxsztnhrwinrldp.supabase.co/storage/v1/object/public/quiz-images/7c35b187-3bda-4703-821b-4ec08b4fb6cd.png","optionsHtml":[],"optionsRaw":[],"correctIndex":0,"correctAnswer":"10","subQuestions":[],"solutionHtml":"Nước đá nóng chảy ở $0^{\\circ}\\text{C}$ đến điểm $M$ tại thời điểm $\\tau \\approx 600\\text{ s} = \\frac{600}{60}\\text{ phút} = 10\\text{ phút}$.","rawSolution":"Nước đá nóng chảy ở $0^{\\circ}\\text{C}$ đến điểm $M$ tại thời điểm $\\tau \\approx 600\\text{ s} = \\frac{600}{60}\\text{ phút} = 10\\text{ phút}$."}]},{"blockId":"single_0a530e4d-79c5-432e-a2d0-551dfcb7ad41_27","isSharedGroup":false,"contextHtml":"","sharedImageUrl":"","questions":[{"id":"0a530e4d-79c5-432e-a2d0-551dfcb7ad41","type":"short","level":"VD","chapterName":"Chương 1: vật lý nhiệt","points":0.25,"textHtml":"Trong một thí nghiệm xác định nhiệt hoá hơi riêng của nước, người ta dùng một ấm điện để đun sôi nước, khi nước sôi thì người ta mở nắp ấm cho nước bay hơi và tiến hành đo thời gian bay hơi của nước. Biết công suất của ấm, khối lượng nước và thời gian để nước bay hơi hết lần lượt là: $P=1800\\pm 10\\text{ W}$; $m=150\\pm 5\\text{ g}$; $t=196\\pm 1\\text{ s}$. Cho rằng ấm luôn hoạt động đúng định mức, mọi hao phí nhiệt là không đáng kể. Sai số tỉ đối của nhiệt hoá hơi riêng trong cách làm này bằng bao nhiêu % ? Kết quả làm tròn về 1 chữ số thập phân sau dấu phẩy.","rawText":"Trong một thí nghiệm xác định nhiệt hoá hơi riêng của nước, người ta dùng một ấm điện để đun sôi nước, khi nước sôi thì người ta mở nắp ấm cho nước bay hơi và tiến hành đo thời gian bay hơi của nước. Biết công suất của ấm, khối lượng nước và thời gian để nước bay hơi hết lần lượt là: $P=1800\\pm 10\\text{ W}$; $m=150\\pm 5\\text{ g}$; $t=196\\pm 1\\text{ s}$. Cho rằng ấm luôn hoạt động đúng định mức, mọi hao phí nhiệt là không đáng kể. Sai số tỉ đối của nhiệt hoá hơi riêng trong cách làm này bằng bao nhiêu % ? Kết quả làm tròn về 1 chữ số thập phân sau dấu phẩy.","ownImageUrl":"","optionsHtml":[],"optionsRaw":[],"correctIndex":0,"correctAnswer":"4.4","subQuestions":[],"solutionHtml":"Ta có $L = \\frac{Pt}{m}$. Sai số tỉ đối của $L$: $\\frac{\\Delta L}{L} = \\frac{\\Delta P}{P} + \\frac{\\Delta t}{t} + \\frac{\\Delta m}{m} = \\frac{10}{1800} + \\frac{1}{196} + \\frac{5}{150} \\approx 0{,}005556 + 0{,}005102 + 0{,}033333 \\approx 0{,}043991 = 4{,}3991\\%$. Làm tròn đến $1$ chữ số thập phân được $4{,}4\\%$.","rawSolution":"Ta có $L = \\frac{Pt}{m}$. Sai số tỉ đối của $L$: $\\frac{\\Delta L}{L} = \\frac{\\Delta P}{P} + \\frac{\\Delta t}{t} + \\frac{\\Delta m}{m} = \\frac{10}{1800} + \\frac{1}{196} + \\frac{5}{150} \\approx 0{,}005556 + 0{,}005102 + 0{,}033333 \\approx 0{,}043991 = 4{,}3991\\%$. Làm tròn đến $1$ chữ số thập phân được $4{,}4\\%$."}]}]}</script>
+  <script>
+    (function() {
+      var dataEl = document.getElementById('edusync-runtime-data');
+      var EXAM = JSON.parse(dataEl.textContent || '{}');
+      var LETTERS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+      var TF_LABELS = ['a', 'b', 'c', 'd', 'e', 'f'];
+
+      function shuffle(arr) {
+        var copy = arr.slice();
+        for (var i = copy.length - 1; i > 0; i--) {
+          var j = Math.floor(Math.random() * (i + 1));
+          var tmp = copy[i]; copy[i] = copy[j]; copy[j] = tmp;
+        }
+        return copy;
+      }
+
+      var blocks = EXAM.shuffleQuestions ? shuffle(EXAM.blocks || []) : (EXAM.blocks || []);
+      var flatQuestions = [];
+      blocks.forEach(function(block) {
+        block.questions.forEach(function(q) {
+          if (q.type === 'mcq' && EXAM.shuffleOptions && Array.isArray(q.optionsHtml)) {
+            var tagged = q.optionsHtml.map(function(html, idx) {
+              return { html: html, raw: q.optionsRaw[idx], isCorrect: idx === q.correctIndex };
+            });
+            var mixed = shuffle(tagged);
+            q.optionsHtml = mixed.map(function(m) { return m.html; });
+            q.optionsRaw = mixed.map(function(m) { return m.raw; });
+            q.correctIndex = Math.max(0, mixed.findIndex(function(m) { return m.isCorrect; }));
+          }
+          q.displayNumber = flatQuestions.length + 1;
+          flatQuestions.push(q);
+        });
+      });
+
+      var userAnswers = {};
+      var submitted = false;
+      var durationLimit = (EXAM.durationMinutes || 0) > 0 ? EXAM.durationMinutes * 60 : 0;
+      var startTime = Date.now();
+      var timerHandle = null;
+
+      function fmtTime(sec) {
+        var s = Math.max(0, Math.floor(sec));
+        var m = Math.floor(s / 60);
+        var r = s % 60;
+        return String(m).padStart(2, '0') + ':' + String(r).padStart(2, '0');
+      }
+
+      function isQuestionAnswered(q) {
+        var ans = userAnswers[q.id];
+        if (q.type === 'mcq') return typeof ans === 'number';
+        if (q.type === 'short') return typeof ans === 'string' && ans.trim().length > 0;
+        if (q.type === 'group-tf') {
+          if (!ans || typeof ans !== 'object') return false;
+          return q.subQuestions.some(function(sq) { return ans[sq.id] === 'True' || ans[sq.id] === 'False'; });
+        }
+        return false;
+      }
+
+      function updateProgress() {
+        var done = flatQuestions.filter(isQuestionAnswered).length;
+        document.getElementById('progressLabel').textContent = done + '/' + flatQuestions.length;
+        document.getElementById('sidebarCount').textContent = 'Đã làm ' + done + '/' + flatQuestions.length;
+        flatQuestions.forEach(function(q) {
+          var pBtn = document.getElementById('pbtn_' + q.displayNumber);
+          if (!pBtn || submitted) return;
+          pBtn.className = 'p-btn mono' + (isQuestionAnswered(q) ? ' done' : '');
+        });
+      }
+
+      function buildQuestionEl(q) {
+        var card = document.createElement('article');
+        card.className = 'q-card';
+        card.id = 'qcard_' + q.displayNumber;
+
+        var header = document.createElement('div');
+        header.className = 'q-header';
+        var leftMeta = '<span class="q-num">Câu ' + q.displayNumber + '</span>';
+        var tags = [q.level ? ('Mức ' + q.level) : '', q.points + ' đ', q.chapterName || ''].filter(Boolean).join(' · ');
+        header.innerHTML = leftMeta + '<span id="qstatus_' + q.displayNumber + '" class="q-status">' + tags + '</span>';
+        card.appendChild(header);
+
+        var qTextEl = document.createElement('div');
+        qTextEl.className = 'q-text';
+        qTextEl.innerHTML = q.textHtml;
+        card.appendChild(qTextEl);
+
+        if (q.ownImageUrl) {
+          var fig = document.createElement('div');
+          fig.className = 'q-figure';
+          var img = document.createElement('img');
+          img.src = q.ownImageUrl;
+          img.alt = 'Hình minh họa câu ' + q.displayNumber;
+          fig.appendChild(img);
+          card.appendChild(fig);
+        }
+
+        if (q.type === 'mcq') {
+          var grid = document.createElement('div');
+          grid.className = 'options-grid';
+          q.optionsHtml.forEach(function(optHtml, optIdx) {
+            var btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'opt-btn';
+            btn.id = 'opt_' + q.id + '_' + optIdx;
+            btn.innerHTML = '<span class="opt-letter mono">' + (LETTERS[optIdx] || optIdx + 1) + '</span><span style="flex:1;">' + optHtml + '</span>';
+            btn.addEventListener('click', function() {
+              if (submitted) return;
+              userAnswers[q.id] = optIdx;
+              q.optionsHtml.forEach(function(_, i2) {
+                var el = document.getElementById('opt_' + q.id + '_' + i2);
+                if (el) el.classList.toggle('selected', i2 === optIdx);
+              });
+              updateProgress();
+            });
+            grid.appendChild(btn);
+          });
+          card.appendChild(grid);
+        } else if (q.type === 'group-tf') {
+          var list = document.createElement('div');
+          list.className = 'tf-list';
+          q.subQuestions.forEach(function(sq, sIdx) {
+            var row = document.createElement('div');
+            row.className = 'tf-row';
+            row.id = 'tfrow_' + sq.id;
+
+            var txt = document.createElement('div');
+            txt.className = 'tf-text';
+            txt.innerHTML = '<strong>' + (TF_LABELS[sIdx] || (sIdx + 1)) + ')</strong> ' + sq.textHtml;
+            row.appendChild(txt);
+
+            var actions = document.createElement('div');
+            actions.className = 'tf-actions';
+            ['True', 'False'].forEach(function(val) {
+              var b = document.createElement('button');
+              b.type = 'button';
+              b.className = 'tf-choice';
+              b.id = 'tfbtn_' + sq.id + '_' + val;
+              b.textContent = val === 'True' ? 'Đúng' : 'Sai';
+              b.addEventListener('click', function() {
+                if (submitted) return;
+                if (!userAnswers[q.id] || typeof userAnswers[q.id] !== 'object') userAnswers[q.id] = {};
+                userAnswers[q.id][sq.id] = val;
+                var bt = document.getElementById('tfbtn_' + sq.id + '_True');
+                var bf = document.getElementById('tfbtn_' + sq.id + '_False');
+                if (bt) bt.classList.toggle('active', val === 'True');
+                if (bf) bf.classList.toggle('active', val === 'False');
+                updateProgress();
+              });
+              actions.appendChild(b);
+            });
+            row.appendChild(actions);
+            list.appendChild(row);
+          });
+          card.appendChild(list);
+        } else {
+          var sBox = document.createElement('div');
+          sBox.className = 'short-box';
+          var inp = document.createElement('input');
+          inp.type = 'text';
+          inp.className = 'short-input';
+          inp.id = 'short_' + q.id;
+          inp.placeholder = 'Nhập đáp số (vd: 2.6 hoặc 36)';
+          inp.addEventListener('input', function() {
+            if (submitted) return;
+            userAnswers[q.id] = inp.value;
+            updateProgress();
+          });
+          var fb = document.createElement('span');
+          fb.id = 'shortfb_' + q.id;
+          fb.className = 'short-feedback';
+          sBox.appendChild(inp);
+          sBox.appendChild(fb);
+          card.appendChild(sBox);
+        }
+
+        if (q.solutionHtml) {
+          var sol = document.createElement('div');
+          sol.className = 'solution-box';
+          sol.id = 'sol_' + q.id;
+          sol.innerHTML = '<strong>Lời giải chi tiết:</strong><div style="margin-top:4px;">' + q.solutionHtml + '</div>';
+          card.appendChild(sol);
+        }
+
+        return card;
+      }
+
+      function renderExam() {
+        var root = document.getElementById('questionsRoot');
+        var pal = document.getElementById('paletteRoot');
+        root.innerHTML = '';
+        pal.innerHTML = '';
+
+        blocks.forEach(function(block) {
+          if (block.contextHtml || block.sharedImageUrl) {
+            var groupEl = document.createElement('section');
+            groupEl.className = 'context-group';
+
+            var head = document.createElement('div');
+            head.className = 'context-header';
+            var firstNum = block.questions[0].displayNumber;
+            var lastNum = block.questions[block.questions.length - 1].displayNumber;
+            var labelText = block.questions.length > 1
+              ? 'Dữ liệu dùng chung cho Câu ' + firstNum + ' – Câu ' + lastNum
+              : 'Dữ liệu đề bài (Câu ' + firstNum + ')';
+            var html = '<div class="context-label">' + labelText + '</div>';
+            if (block.contextHtml) {
+              html += '<div class="context-body">' + block.contextHtml + '</div>';
+            }
+            head.innerHTML = html;
+            if (block.sharedImageUrl) {
+              var fig = document.createElement('div');
+              fig.className = 'q-figure';
+              var img = document.createElement('img');
+              img.src = block.sharedImageUrl;
+              img.alt = labelText;
+              fig.appendChild(img);
+              head.appendChild(fig);
+            }
+            groupEl.appendChild(head);
+
+            var inner = document.createElement('div');
+            inner.className = 'context-questions';
+            block.questions.forEach(function(q) {
+              inner.appendChild(buildQuestionEl(q));
+            });
+            groupEl.appendChild(inner);
+            root.appendChild(groupEl);
+          } else {
+            block.questions.forEach(function(q) {
+              root.appendChild(buildQuestionEl(q));
+            });
+          }
+        });
+
+        flatQuestions.forEach(function(q) {
+          var b = document.createElement('button');
+          b.type = 'button';
+          b.className = 'p-btn mono';
+          b.id = 'pbtn_' + q.displayNumber;
+          b.textContent = String(q.displayNumber);
+          b.addEventListener('click', function() {
+            var target = document.getElementById('qcard_' + q.displayNumber);
+            if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          });
+          pal.appendChild(b);
+        });
+
+        updateProgress();
+        if (window.MathJax && window.MathJax.typesetPromise) {
+          window.MathJax.typesetPromise().catch(function() {});
+        }
+      }
+
+      function normalizeShort(val) {
+        return String(val || '').trim().replace(/,/g, '.').replace(/\s+/g, '').toLowerCase();
+      }
+
+      function isShortMatch(userVal, expectedVal) {
+        var u = normalizeShort(userVal);
+        var e = normalizeShort(expectedVal);
+        if (!u) return false;
+        if (u === e) return true;
+        var nu = parseFloat(u);
+        var ne = parseFloat(e);
+        if (!isNaN(nu) && !isNaN(ne) && String(nu) === u || !isNaN(nu) && !isNaN(ne)) {
+          if (/^-?\d+(?:\.\d+)?$/.test(u) && /^-?\d+(?:\.\d+)?$/.test(e)) {
+            return Math.abs(nu - ne) < 1e-6;
+          }
+        }
+        return false;
+      }
+
+      function gradeAndSubmit(force) {
+        if (submitted) return;
+        var answered = flatQuestions.filter(isQuestionAnswered).length;
+        if (!force && answered < flatQuestions.length) {
+          document.getElementById('confirmMsg').textContent =
+            'Bạn mới làm ' + answered + '/' + flatQuestions.length + ' câu. Bạn có chắc muốn nộp bài ngay?';
+          document.getElementById('confirmBar').classList.add('visible');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+          return;
+        }
+        document.getElementById('confirmBar').classList.remove('visible');
+        submitted = true;
+        if (timerHandle) clearInterval(timerHandle);
+
+        var totalScore = 0;
+        var maxScore = EXAM.maxScore || 10;
+        var correctQuestions = 0;
+        var answerDetails = [];
+
+        flatQuestions.forEach(function(q) {
+          var qCorrect = false;
+          var pBtn = document.getElementById('pbtn_' + q.displayNumber);
+          var stEl = document.getElementById('qstatus_' + q.displayNumber);
+          var solEl = document.getElementById('sol_' + q.id);
+          if (solEl) solEl.classList.add('visible');
+
+          if (q.type === 'mcq') {
+            var chosen = typeof userAnswers[q.id] === 'number' ? userAnswers[q.id] : -1;
+            qCorrect = chosen === q.correctIndex;
+            if (qCorrect) {
+              totalScore += q.points;
+              correctQuestions++;
+            }
+            q.optionsHtml.forEach(function(_, i) {
+              var ob = document.getElementById('opt_' + q.id + '_' + i);
+              if (!ob) return;
+              ob.disabled = true;
+              ob.classList.remove('selected');
+              if (i === q.correctIndex) ob.classList.add('correct');
+              else if (i === chosen) ob.classList.add('wrong');
+            });
+            if (stEl) {
+              stEl.textContent = qCorrect ? ('Đúng (+' + q.points + 'đ)') : 'Sai (0đ)';
+              stEl.className = 'q-status ' + (qCorrect ? 'ok' : 'bad');
+            }
+            answerDetails.push({
+              orderIndex: answerDetails.length,
+              questionText: 'Câu ' + q.displayNumber + ': ' + q.rawText,
+              options: q.optionsRaw,
+              selectedIndex: chosen,
+              correctIndex: q.correctIndex,
+              isCorrect: qCorrect,
+              explanation: q.rawSolution
+            });
+          } else if (q.type === 'group-tf') {
+            var tfMap = (userAnswers[q.id] && typeof userAnswers[q.id] === 'object') ? userAnswers[q.id] : {};
+            var rightSubs = 0;
+            q.subQuestions.forEach(function(sq, sIdx) {
+              var picked = tfMap[sq.id] || '';
+              var subOk = picked === sq.correctAnswer;
+              if (subOk) rightSubs++;
+              var row = document.getElementById('tfrow_' + sq.id);
+              if (row) row.classList.add(subOk ? 'ok' : 'bad');
+              ['True', 'False'].forEach(function(v) {
+                var btn = document.getElementById('tfbtn_' + sq.id + '_' + v);
+                if (!btn) return;
+                btn.disabled = true;
+                if (v === sq.correctAnswer) btn.classList.add('right-ans');
+              });
+              answerDetails.push({
+                orderIndex: answerDetails.length,
+                questionText: 'Câu ' + q.displayNumber + (TF_LABELS[sIdx] || '') + ': ' + sq.rawText,
+                options: ['Đúng', 'Sai'],
+                selectedIndex: picked === 'True' ? 0 : (picked === 'False' ? 1 : -1),
+                correctIndex: sq.correctAnswer === 'True' ? 0 : 1,
+                isCorrect: subOk,
+                explanation: sIdx === q.subQuestions.length - 1 ? q.rawSolution : ''
+              });
+            });
+            var earnedRatio = 0;
+            if (q.subQuestions.length === 4) {
+              earnedRatio = rightSubs === 1 ? 0.1 : rightSubs === 2 ? 0.25 : rightSubs === 3 ? 0.5 : rightSubs === 4 ? 1 : 0;
+            } else if (q.subQuestions.length > 0) {
+              earnedRatio = rightSubs / q.subQuestions.length;
+            }
+            var earned = Math.round(q.points * earnedRatio * 100) / 100;
+            totalScore += earned;
+            qCorrect = rightSubs === q.subQuestions.length;
+            if (qCorrect) correctQuestions++;
+            if (stEl) {
+              stEl.textContent = 'Đúng ' + rightSubs + '/' + q.subQuestions.length + ' ý (+' + earned + 'đ)';
+              stEl.className = 'q-status ' + (qCorrect ? 'ok' : 'bad');
+            }
+          } else {
+            var rawInput = document.getElementById('short_' + q.id);
+            var typed = rawInput ? rawInput.value.trim() : '';
+            if (rawInput) rawInput.disabled = true;
+            qCorrect = isShortMatch(typed, q.correctAnswer);
+            if (qCorrect) {
+              totalScore += q.points;
+              correctQuestions++;
+            }
+            var fbEl = document.getElementById('shortfb_' + q.id);
+            if (fbEl) {
+              fbEl.textContent = qCorrect
+                ? ('Chính xác (+' + q.points + 'đ)')
+                : ('Đáp án đúng: ' + q.correctAnswer);
+              fbEl.style.color = qCorrect ? 'var(--ok)' : 'var(--bad)';
+            }
+            if (stEl) {
+              stEl.textContent = qCorrect ? ('Đúng (+' + q.points + 'đ)') : 'Sai (0đ)';
+              stEl.className = 'q-status ' + (qCorrect ? 'ok' : 'bad');
+            }
+            answerDetails.push({
+              orderIndex: answerDetails.length,
+              questionText: 'Câu ' + q.displayNumber + ': ' + q.rawText,
+              options: ['Bài làm: ' + (typed || '(bỏ trống)'), 'Đáp án chuẩn: ' + q.correctAnswer],
+              selectedIndex: qCorrect ? 1 : 0,
+              correctIndex: 1,
+              isCorrect: qCorrect,
+              explanation: q.rawSolution
+            });
+          }
+
+          if (pBtn) {
+            pBtn.className = 'p-btn mono ' + (qCorrect ? 'ok' : 'bad');
+          }
+        });
+
+        totalScore = Math.round(totalScore * 100) / 100;
+        var pct = maxScore > 0 ? Math.round((totalScore / maxScore) * 1000) / 10 : 0;
+
+        document.getElementById('scoreText').textContent = totalScore + ' / ' + maxScore + ' điểm';
+        document.getElementById('correctText').textContent =
+          'Đúng hoàn toàn ' + correctQuestions + ' / ' + flatQuestions.length + ' câu (' + pct + '%)';
+        document.getElementById('resultScreen').classList.add('visible');
+        document.getElementById('topSubmitBtn').style.display = 'none';
+        document.getElementById('sideSubmitBtn').style.display = 'none';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+
+        if (window.MathJax && window.MathJax.typesetPromise) {
+          window.MathJax.typesetPromise().catch(function() {});
+        }
+
+        if (typeof window.EduSyncSubmitScore === 'function') {
+          window.EduSyncSubmitScore(totalScore, maxScore, correctQuestions, flatQuestions.length, answerDetails);
+        } else if (window.parent && window.parent !== window) {
+          window.parent.postMessage({
+            type: 'QUIZ_RESULT',
+            score: totalScore,
+            maxScore: maxScore,
+            correctCount: correctQuestions,
+            totalQuestions: flatQuestions.length,
+            answerDetails: answerDetails
+          }, '*');
+        }
+      }
+
+      document.getElementById('topSubmitBtn').addEventListener('click', function() { gradeAndSubmit(false); });
+      document.getElementById('sideSubmitBtn').addEventListener('click', function() { gradeAndSubmit(false); });
+      document.getElementById('confirmYesBtn').addEventListener('click', function() { gradeAndSubmit(true); });
+      document.getElementById('confirmCancelBtn').addEventListener('click', function() {
+        document.getElementById('confirmBar').classList.remove('visible');
+      });
+
+      function tickTimer() {
+        if (submitted) return;
+        var elapsed = Math.floor((Date.now() - startTime) / 1000);
+        var box = document.getElementById('timerBox');
+        if (durationLimit > 0) {
+          var rem = Math.max(0, durationLimit - elapsed);
+          box.textContent = fmtTime(rem);
+          box.classList.toggle('urgent', rem <= 60);
+          if (rem <= 0) gradeAndSubmit(true);
+        } else {
+          box.textContent = fmtTime(elapsed);
+        }
+      }
+
+      renderExam();
+      tickTimer();
+      timerHandle = setInterval(tickTimer, 1000);
+    })();
+  </script>
+</body>
+</html>
